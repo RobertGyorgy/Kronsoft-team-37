@@ -15,7 +15,7 @@ import { RouterLink } from '@angular/router';
 
       <!-- Interaction Grid (2x3) -->
       <section class="interaction-grid">
-        <div class="grid-card orange" (click)="onBusScheduleClick()">
+        <div class="grid-card orange" routerLink="/transport/bus">
           <span class="material-icons card-bg-icon">directions_bus</span>
           <span class="card-title">Program Autobuze</span>
         </div>
@@ -89,15 +89,15 @@ import { RouterLink } from '@angular/router';
       .interaction-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 1.25rem; /* Matches container gap for perfect symmetry */
-        flex: 1;
+        grid-auto-rows: 1fr; /* Make rows equal height and dynamic */
+        gap: 1.25rem;
+        flex: 1; /* Stretch to fill available space */
       }
 
       .grid-card {
         position: relative;
         border-radius: 28px;
         padding: 1.25rem;
-        height: 150px; /* Increased height for better proportions */
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
@@ -106,6 +106,7 @@ import { RouterLink } from '@angular/router';
         cursor: pointer;
         transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
         border: none;
+        min-height: 120px; /* Minimum safety height */
       }
 
       .grid-card:active {
