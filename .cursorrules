@@ -1,0 +1,15 @@
+# AI Coding Guidelines: Smart City Brașov (Frontend)
+
+## Role & Tech Stack
+You are an expert Angular and TypeScript developer. The stack is Angular (latest), TypeScript, SCSS, and HTML.
+
+## Architectural & UI Rules
+1. **MOBILE-FIRST DESIGN ALWAYS:** This is a PWA. Base SCSS must target mobile screens first. Use media queries (`@media (min-width: ...)`) only for scaling UP to tablets/desktops. Ensure tap targets (buttons/links) are large and touch-friendly.
+2. **Standalone Components Only:** Do not generate `NgModule` files.
+3. **Localization First:** All components and services specific to a page must live inside that page's folder in `src/app/features/`.
+4. **The "Rule of Two":** Do NOT place items in `src/app/shared/` unless used by at least two different features.
+5. **Styling:** Use SCSS. Keep styles scoped.
+
+## Code Quality
+- Strictly type all variables. Avoid `any`.
+- Keep components focused strictly on UI. Move API calls to `.service.ts` files.

@@ -1,0 +1,64 @@
+<section class="auth-shell">
+  <div class="auth-card">
+    <header class="auth-header">
+      <div class="brand-mark" aria-hidden="true">SCB</div>
+      <div>
+        <p class="eyebrow">Smart City Brașov</p>
+        <h1>Create your account</h1>
+        <p class="intro">Join the citizen portal to unlock the city dashboard and services.</p>
+      </div>
+    </header>
+
+    <form class="auth-form" [formGroup]="registerForm" (ngSubmit)="submit()" novalidate>
+      <label class="field">
+        <span>Full Name</span>
+        <input type="text" formControlName="fullName" autocomplete="name" placeholder="Ion Popescu" />
+        @if (fullNameControl.touched && fullNameControl.invalid) {
+          <small class="error">Please enter your full name.</small>
+        }
+      </label>
+
+      <label class="field">
+        <span>Email</span>
+        <input type="email" formControlName="email" autocomplete="email" placeholder="citizen@brasov.ro" />
+        @if (emailControl.touched && emailControl.invalid) {
+          <small class="error">Enter a valid email address.</small>
+        }
+      </label>
+
+      <label class="field">
+        <span>Password</span>
+        <input type="password" formControlName="password" autocomplete="new-password" placeholder="Choose a secure password" />
+        <div class="strength" [attr.aria-label]="'Password strength: ' + passwordStrength().label" aria-live="polite">
+          <div class="strength-bar">
+            <span [class]="passwordStrength().className" [style.width]="passwordStrength().width"></span>
+          </div>
+          <small>Password strength: {{ passwordStrength().label }}</small>
+        </div>
+        @if (passwordControl.touched && passwordControl.invalid) {
+          <small class="error">Password must be at least 8 characters long.</small>
+        }
+      </label>
+
+      <label class="field">
+        <span>Confirm Password</span>
+        <input type="password" formControlName="confirmPassword" autocomplete="new-password" placeholder="Repeat your password" />
+        @if (confirmPasswordControl.touched && confirmPasswordControl.invalid) {
+          <small class="error">Please confirm your password.</small>
+        }
+        @if (confirmPasswordControl.touched && confirmPasswordControl.hasError('mismatch')) {
+          <small class="error">Passwords do not match.</small>
+        }
+      </label>
+
+      <button class="primary-button" type="submit" [disabled]="isSubmitting()">
+        {{ isSubmitting() ? 'Creating Account...' : 'Create Account' }}
+      </button>
+    </form>
+
+    <p class="secondary-action">
+      Already have an account?
+      <a routerLink="/login">Log In</a>
+    </p>
+  </div>
+</section>

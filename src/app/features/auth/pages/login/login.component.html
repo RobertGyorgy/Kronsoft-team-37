@@ -1,0 +1,57 @@
+<section class="auth-shell">
+  <div class="auth-card">
+    <header class="auth-header">
+      <div class="brand-mark" aria-hidden="true">SCB</div>
+      <div>
+        <p class="eyebrow">Smart City Brașov</p>
+        <h1>Welcome back</h1>
+        <p class="intro">Sign in to access the city dashboard, services, and updates.</p>
+      </div>
+    </header>
+
+    <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="submit()" novalidate>
+      <label class="field">
+        <span>Email</span>
+        <input type="email" formControlName="email" autocomplete="email" placeholder="citizen@brasov.ro" />
+        @if (emailControl.touched && emailControl.invalid) {
+          <small class="error">Enter a valid email address.</small>
+        }
+      </label>
+
+      <label class="field">
+        <span>Password</span>
+        <div class="password-field">
+          <input
+            [type]="isPasswordVisible() ? 'text' : 'password'"
+            formControlName="password"
+            autocomplete="current-password"
+            placeholder="Your password"
+          />
+          <button type="button" class="toggle-button" (click)="togglePasswordVisibility()" [attr.aria-label]="isPasswordVisible() ? 'Hide password' : 'Show password'">
+            @if (isPasswordVisible()) {
+              <span aria-hidden="true">🙈</span>
+            } @else {
+              <span aria-hidden="true">👁️</span>
+            }
+          </button>
+        </div>
+        @if (passwordControl.touched && passwordControl.invalid) {
+          <small class="error">Password must be at least 8 characters long.</small>
+        }
+      </label>
+
+      <div class="form-footer">
+        <a routerLink="/login" class="forgot-link">Forgot Password?</a>
+      </div>
+
+      <button class="primary-button" type="submit" [disabled]="isSubmitting()">
+        {{ isSubmitting() ? 'Logging in...' : 'Log In' }}
+      </button>
+    </form>
+
+    <p class="secondary-action">
+      Don't have an account?
+      <a routerLink="/register">Sign Up</a>
+    </p>
+  </div>
+</section>

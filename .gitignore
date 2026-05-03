@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.angular/
+.cache/
+src/environments/environment*.ts
+.env
+.idea/
+.vscode/*
+!.vscode/settings.json
+.DS_Store
