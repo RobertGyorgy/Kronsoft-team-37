@@ -122,7 +122,7 @@ export class RegisterComponent implements AfterViewInit {
   });
 
   formConfig = JSON.stringify({
-    blurAmount: 0.3,
+    blurAmount: 0.2,
     refraction: 0.8,
     chromAberration: 0.05,
     edgeHighlight: 0.1,
@@ -132,18 +132,18 @@ export class RegisterComponent implements AfterViewInit {
     zRadius: 20,
     opacity: 0.85,
     shadowOpacity: 0.25,
-    shadowSpread: 8,
+    shadowSpread: 6,
   });
 
   gliderConfig = JSON.stringify({
-    blurAmount: 0.4,
+    blurAmount: 0.35,
     refraction: 0.9,
     cornerRadius: 999,
     zRadius: 15,
     opacity: 0.75,
     edgeHighlight: 0.15,
     shadowOpacity: 0.2,
-    shadowSpread: 6,
+    shadowSpread: 4,
   });
 
   toggleConfig = JSON.stringify({
@@ -154,7 +154,7 @@ export class RegisterComponent implements AfterViewInit {
     opacity: 0.7,
     edgeHighlight: 0.05,
     shadowOpacity: 0.15,
-    shadowSpread: 4,
+    shadowSpread: 3,
   });
 
   ngAfterViewInit(): void {
