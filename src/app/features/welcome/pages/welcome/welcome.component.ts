@@ -13,17 +13,11 @@ import { RouterLink } from '@angular/router';
           alt="Brașov city background"
           class="hero-image"
         />
-        <div class="scrim"></div>
       </figure>
 
       <div class="content">
-        <div class="header">
-          <span class="city-name">Smart City Brașov</span>
-        </div>
-
-        <div class="text-group">
-          <h1>Experience your city</h1>
-          <p>The official portal for modern citizens.</p>
+        <div class="middle-title">
+          <h1>Smart City Brașov</h1>
         </div>
 
         <div class="actions">
@@ -54,7 +48,7 @@ import { RouterLink } from '@angular/router';
         display: flex;
         flex-direction: column;
         background: #000;
-        font-family: 'Outfit', sans-serif;
+        font-family: 'Surgena', sans-serif;
         color: #fff;
         overflow: hidden;
       }
@@ -70,17 +64,8 @@ import { RouterLink } from '@angular/router';
         width: 100%;
         height: 100%;
         object-fit: cover;
-        filter: brightness(0.6) saturate(1.1);
-      }
-
-      .scrim {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-          to bottom,
-          rgba(0,0,0,0.1) 0%,
-          rgba(0,0,0,0.7) 100%
-        );
+        filter: blur(2px) brightness(0.85); /* Added professional blur */
+        transform: scale(1.1); /* Scale up to cover edges from blur */
       }
 
       .content {
@@ -90,31 +75,24 @@ import { RouterLink } from '@angular/router';
         padding: 3rem 2rem calc(4rem + env(safe-area-inset-bottom));
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        justify-content: space-between; /* Spreads title to middle and button to bottom */
         align-items: center;
         text-align: center;
       }
 
-      .city-name {
-        font-size: 0.9rem;
-        font-weight: 700;
-        letter-spacing: 0.25em;
-        text-transform: uppercase;
-        color: rgba(255,255,255,0.9);
+      .middle-title {
+        flex: 1;
+        display: flex;
+        align-items: center; /* Vertical center */
+        justify-content: center;
       }
 
       h1 {
-        font-size: 3.25rem;
+        font-size: 3.5rem;
         font-weight: 800;
         line-height: 1;
-        margin: 0 0 1rem;
         letter-spacing: -0.04em;
-      }
-
-      p {
-        font-size: 1.1rem;
-        color: rgba(255,255,255,0.8);
-        margin: 0;
+        text-shadow: 0 10px 30px rgba(0,0,0,0.5);
       }
 
       .actions {
@@ -127,13 +105,13 @@ import { RouterLink } from '@angular/router';
       .bicolored-btn {
         background: #fff;
         text-decoration: none;
-        padding: 0.35rem 0.35rem 0.35rem 2rem; /* Reduced height */
+        padding: 0.35rem 0.35rem 0.35rem 2rem;
         border-radius: 999px;
         display: flex;
         align-items: center;
         gap: 1.25rem;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
         max-width: 100%;
         width: 300px;
         justify-content: space-between;
@@ -141,7 +119,6 @@ import { RouterLink } from '@angular/router';
 
       .bicolored-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
       }
 
       .bicolored-btn:active {
@@ -156,10 +133,10 @@ import { RouterLink } from '@angular/router';
       }
 
       .btn-icon {
-        width: 3rem; /* Reduced size */
-        height: 3rem; /* Reduced size */
-        background: #ff4500; /* Solid Orange */
-        border-radius: 999px; /* More rounded for compactness */
+        width: 3rem;
+        height: 3rem;
+        background: #ff4500;
+        border-radius: 999px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -193,7 +170,6 @@ import { RouterLink } from '@angular/router';
       @media (max-width: 400px) {
         h1 { font-size: 2.75rem; }
         .bicolored-btn { width: 100%; padding-left: 1.25rem; }
-        .btn-icon { width: 2.75rem; height: 2.75rem; }
       }
     `
   ]

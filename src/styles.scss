@@ -1,3 +1,38 @@
+@font-face {
+  font-family: 'Surgena';
+  src: url('/fonts/Web-PS/Surgena-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Surgena';
+  src: url('/fonts/Web-PS/Surgena-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Surgena';
+  src: url('/fonts/Web-PS/Surgena-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Surgena';
+  src: url('/fonts/Web-PS/Surgena-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Surgena';
+  src: url('/fonts/Web-PS/Surgena-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
 html {
 	color-scheme: light;
 }
@@ -11,7 +46,7 @@ body {
 
 body {
 	margin: 0;
-	font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	font-family: 'Surgena', Inter, system-ui, sans-serif;
 	background: transparent;
 }
 
