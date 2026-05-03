@@ -20,12 +20,12 @@ import { AuthService } from '../../auth.service';
       <div class="auth-content">
         <div class="toggle-pill">
           <div class="active-glider"></div>
-          <button class="toggle-btn active">Sign In</button>
-          <button class="toggle-btn" (click)="navigateToRegister()">Sign Up</button>
+          <button class="toggle-btn active" routerLink="/login">Sign In</button>
+          <button class="toggle-btn" routerLink="/register">Sign Up</button>
         </div>
 
         <form [formGroup]="loginForm" (ngSubmit)="submit()" class="form" novalidate>
-          <div class="input-wrapper">
+          <div class="input-wrapper email-wrapper">
             <span class="material-icons input-icon">mail_outline</span>
             <input
               type="email"
@@ -39,7 +39,7 @@ import { AuthService } from '../../auth.service';
             <span class="error-text">Enter a valid email address</span>
           }
 
-          <div class="input-wrapper">
+          <div class="input-wrapper password-wrapper">
             <span class="material-icons input-icon">lock_outline</span>
             <input
               [type]="isPasswordVisible() ? 'text' : 'password'"
@@ -96,16 +96,6 @@ export class LoginComponent {
 
   protected togglePasswordVisibility(): void {
     this.isPasswordVisible.update((visible) => !visible);
-  }
-
-  protected async navigateToRegister(): Promise<void> {
-    if (document.startViewTransition) {
-      document.startViewTransition(async () => {
-        await this.router.navigateByUrl('/register');
-      });
-    } else {
-      await this.router.navigateByUrl('/register');
-    }
   }
 
   protected submit(): void {

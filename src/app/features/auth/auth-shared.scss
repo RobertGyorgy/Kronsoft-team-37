@@ -47,7 +47,6 @@
   padding: 0 1.5rem;
   max-width: 450px;
   margin: 0 auto;
-  view-transition-name: auth-content; // The only name we keep for sliding
 }
 
 .auth-title {
@@ -63,6 +62,7 @@
   position: relative;
   margin-bottom: 2rem;
   z-index: 10;
+  view-transition-name: auth-toggle;
 }
 
 .active-glider {
@@ -75,7 +75,7 @@
   border-radius: 999px;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1;
-  // REMOVED view-transition-name to force it to slide with the content
+  view-transition-name: auth-glider;
 }
 
 .on-register .active-glider {
@@ -104,7 +104,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.15rem;
-  // REMOVED view-transition-name to prevent inner morphing
+  view-transition-name: auth-form;
 }
 
 .input-wrapper {
@@ -115,6 +115,17 @@
   border-radius: 999px;
   padding: 0 1.25rem;
 }
+
+/* 
+   Assigning names to wrappers instead of just inputs 
+   to ensure background and icons stay stable.
+*/
+.email-wrapper { view-transition-name: auth-email-wrap; }
+.password-wrapper { view-transition-name: auth-password-wrap; }
+.confirm-password-wrapper { view-transition-name: auth-confirm-password-wrap; }
+.name-wrapper { view-transition-name: auth-name-wrap; }
+.phone-wrapper { view-transition-name: auth-phone-wrap; }
+.age-wrapper { view-transition-name: auth-age-wrap; }
 
 .input-icon {
   color: #888;
@@ -132,8 +143,6 @@
   font-family: inherit;
   outline: none;
 }
-
-// REMOVED individual input view-transition-names
 
 .password-toggle-btn {
   background: none;
@@ -184,7 +193,7 @@
   cursor: pointer;
   margin-top: 0.5rem;
   box-shadow: 0 4px 12px rgba(255, 69, 0, 0.25);
-  // REMOVED view-transition-name
+  view-transition-name: auth-submit;
 }
 
 .divider {
@@ -220,7 +229,7 @@
   justify-content: center;
   gap: 0.75rem;
   margin-bottom: 2rem;
-  // REMOVED view-transition-name
+  view-transition-name: auth-google;
 }
 
 .google-icon {
@@ -233,43 +242,4 @@
   font-size: 0.8rem;
   margin-top: -0.9rem;
   margin-left: 1.25rem;
-}
-
-/* 
-   FORCED SLIDING TRANSITIONS
-   By removing inner names, the entire auth-content slides as one.
-*/
-
-::view-transition-old(auth-content) {
-  animation: 400ms cubic-bezier(0.4, 0, 0.2, 1) both slide-left-out;
-}
-::view-transition-new(auth-content) {
-  animation: 400ms cubic-bezier(0.4, 0, 0.2, 1) both slide-left-in;
-}
-
-:root.slide-back ::view-transition-old(auth-content) {
-  animation-name: slide-right-out;
-}
-:root.slide-back ::view-transition-new(auth-content) {
-  animation-name: slide-right-in;
-}
-
-@keyframes slide-left-out {
-  from { opacity: 1; transform: translateX(0); }
-  to { opacity: 0; transform: translateX(-80px); }
-}
-
-@keyframes slide-left-in {
-  from { opacity: 0; transform: translateX(80px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes slide-right-out {
-  from { opacity: 1; transform: translateX(0); }
-  to { opacity: 0; transform: translateX(80px); }
-}
-
-@keyframes slide-right-in {
-  from { opacity: 0; transform: translateX(-80px); }
-  to { opacity: 1; transform: translateX(0); }
 }

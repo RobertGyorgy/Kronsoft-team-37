@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, AfterViewInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../auth.service';
+import { gsap } from 'gsap';
 
 @Component({
   selector: 'app-register',
@@ -20,98 +21,105 @@ import { AuthService } from '../../auth.service';
       <div class="auth-content">
         <div class="toggle-pill on-register">
           <div class="active-glider"></div>
-          <button class="toggle-btn" (click)="navigateToLogin()">Sign In</button>
-          <button class="toggle-btn active">Sign Up</button>
+          <button class="toggle-btn" routerLink="/login">Sign In</button>
+          <button class="toggle-btn active" routerLink="/register">Sign Up</button>
         </div>
 
         <form [formGroup]="registerForm" (ngSubmit)="submit()" class="form" novalidate>
-          @if (currentStep() === 1) {
+          <div class="steps-container">
             <!-- Step 1: Email and Passwords -->
-            <div class="input-wrapper">
-              <span class="material-icons input-icon">mail_outline</span>
-              <input
-                type="email"
-                placeholder="Email Address"
-                formControlName="email"
-                class="input-field"
-                autocomplete="email"
-              />
-            </div>
-            @if (emailControl.touched && emailControl.invalid) {
-              <span class="error-text">Enter a valid email address</span>
+            @if (currentStep() === 1) {
+              <div class="step-content step-1">
+                <div class="input-wrapper email-wrapper">
+                  <span class="material-icons input-icon">mail_outline</span>
+                  <input
+                    type="email"
+                    placeholder="Email Address"
+                    formControlName="email"
+                    class="input-field"
+                    autocomplete="email"
+                  />
+                </div>
+                @if (emailControl.touched && emailControl.invalid) {
+                  <span class="error-text">Enter a valid email address</span>
+                }
+
+                <div class="input-wrapper password-wrapper">
+                  <span class="material-icons input-icon">lock_outline</span>
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    formControlName="password"
+                    class="input-field"
+                    autocomplete="new-password"
+                  />
+                </div>
+                
+                <div class="input-wrapper confirm-password-wrapper">
+                  <span class="material-icons input-icon">lock_outline</span>
+                  <input
+                    type="password"
+                    placeholder="Confirm Password"
+                    formControlName="confirmPassword"
+                    class="input-field"
+                  />
+                </div>
+                @if (passwordControl.touched && registerForm.errors?.['mismatch']) {
+                  <span class="error-text">Passwords do not match</span>
+                }
+
+                <button type="button" class="primary-btn" (click)="nextStep()">
+                  Continue
+                </button>
+              </div>
             }
 
-            <div class="input-wrapper">
-              <span class="material-icons input-icon">lock_outline</span>
-              <input
-                [type]="isPasswordVisible() ? 'text' : 'password'"
-                placeholder="Password"
-                formControlName="password"
-                class="input-field"
-                autocomplete="new-password"
-              />
-            </div>
-            
-            <div class="input-wrapper">
-              <span class="material-icons input-icon">lock_outline</span>
-              <input
-                [type]="isPasswordVisible() ? 'text' : 'password'"
-                placeholder="Confirm Password"
-                formControlName="confirmPassword"
-                class="input-field"
-                autocomplete="new-password"
-              />
-            </div>
-            @if (passwordControl.touched && registerForm.errors?.['mismatch']) {
-              <span class="error-text">Passwords do not match</span>
-            }
-
-            <button type="button" class="primary-btn" (click)="nextStep()">
-              Continue
-            </button>
-          } @else {
             <!-- Step 2: Name, Age, Phone -->
-            <div class="input-wrapper">
-              <span class="material-icons input-icon">person_outline</span>
-              <input
-                type="text"
-                placeholder="Full Name"
-                formControlName="fullName"
-                class="input-field"
-                autocomplete="name"
-              />
-            </div>
+            @if (currentStep() === 2) {
+              <div class="step-content step-2">
+                <div class="input-wrapper name-wrapper">
+                  <span class="material-icons input-icon">person_outline</span>
+                  <input
+                    type="text"
+                    placeholder="Full Name"
+                    formControlName="fullName"
+                    class="input-field"
+                    autocomplete="name"
+                  />
+                </div>
 
-            <div class="input-wrapper">
-              <span class="material-icons input-icon">phone_iphone</span>
-              <input
-                type="tel"
-                placeholder="Phone Number"
-                formControlName="phone"
-                class="input-field"
-                autocomplete="tel"
-              />
-            </div>
+                <div class="input-wrapper phone-wrapper">
+                  <span class="material-icons input-icon">phone_iphone</span>
+                  <input
+                    type="tel"
+                    placeholder="Phone Number"
+                    formControlName="phone"
+                    class="input-field"
+                    autocomplete="tel"
+                  />
+                </div>
 
-            <div class="input-wrapper">
-              <span class="material-icons input-icon">cake</span>
-              <input
-                type="number"
-                placeholder="Age"
-                formControlName="age"
-                class="input-field"
-              />
-            </div>
+                <div class="input-wrapper age-wrapper">
+                  <span class="material-icons input-icon">cake</span>
+                  <input
+                    type="number"
+                    placeholder="Age"
+                    formControlName="age"
+                    class="input-field"
+                  />
+                </div>
 
-            <label class="checkbox-label">
-              <input type="checkbox" class="checkbox-input" />
-              <span>I Have Read And Agree To <a href="#">User Agreement Privacy Policy</a></span>
-            </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" class="checkbox-input" />
+                  <span>I Have Read And Agree To <a href="#">User Agreement Privacy Policy</a></span>
+                </label>
 
-            <button type="submit" class="primary-btn" [disabled]="isSubmitting()">
-              {{ isSubmitting() ? 'Creating Account...' : 'Complete Registration' }}
-            </button>
-          }
+                <button type="submit" class="primary-btn" [disabled]="isSubmitting()">
+                  {{ isSubmitting() ? 'Creating Account...' : 'Complete Registration' }}
+                </button>
+              </div>
+            }
+          </div>
         </form>
 
         <div class="divider">OR</div>
@@ -166,42 +174,42 @@ export class RegisterComponent {
     if (this.registerForm.errors?.['mismatch']) step1Valid = false;
 
     if (step1Valid) {
-      this.startTransition(() => this.currentStep.set(2));
+      this.animateStep(2);
     }
   }
 
   protected goBack(): void {
     if (this.currentStep() === 2) {
-      this.startTransition(() => this.currentStep.set(1), true);
+      this.animateStep(1, true);
     } else {
       this.router.navigateByUrl('/');
     }
   }
 
-  private async startTransition(updateFn: () => void, isReverse = false): Promise<void> {
-    if (document.startViewTransition) {
-      if (isReverse) document.documentElement.classList.add('slide-back');
-      
-      const transition = document.startViewTransition(updateFn);
-      
-      try {
-        await transition.finished;
-      } finally {
-        if (isReverse) document.documentElement.classList.remove('slide-back');
+  private animateStep(targetStep: number, isReverse = false): void {
+    const tl = gsap.timeline({
+      onComplete: () => {
+        this.currentStep.set(targetStep);
+        // Wait for next tick to animate in
+        setTimeout(() => {
+          gsap.fromTo('.step-content', 
+            { x: isReverse ? -50 : 50, opacity: 0 },
+            { x: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }
+          );
+        }, 0);
       }
-    } else {
-      updateFn();
-    }
+    });
+
+    tl.to('.step-content', { 
+      x: isReverse ? 50 : -50, 
+      opacity: 0, 
+      duration: 0.3, 
+      ease: 'power2.in' 
+    });
   }
 
   protected togglePasswordVisibility(): void {
     this.isPasswordVisible.update((visible) => !visible);
-  }
-
-  protected async navigateToLogin(): Promise<void> {
-    await this.startTransition(async () => {
-      await this.router.navigateByUrl('/login');
-    }, true);
   }
 
   protected submit(): void {
