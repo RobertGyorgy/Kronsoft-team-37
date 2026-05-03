@@ -5,15 +5,17 @@ html {
 html,
 body {
 	height: 100dvh;
+	min-height: -webkit-fill-available; /* Fix for older Safari */
 	margin: 0;
 	padding: 0;
-	overflow: hidden; /* Prevent bouncing on mobile */
+	overflow: hidden;
+	overscroll-behavior: none;
 }
 
 body {
 	margin: 0;
 	font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-	background: #000; /* Match Welcome page and hide bezels */
+	background: #ffffff;
 }
 
 *,

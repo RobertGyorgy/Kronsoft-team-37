@@ -48,7 +48,7 @@ import { RouterLink } from '@angular/router';
       }
 
       .welcome-shell {
-        height: 100dvh;
+        min-height: 100dvh;
         width: 100%;
         position: relative;
         display: flex;
@@ -60,8 +60,11 @@ import { RouterLink } from '@angular/router';
       }
 
       .hero-figure {
-        position: absolute;
-        inset: 0;
+        position: fixed; /* Use fixed to stay pinned to viewport */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100dvh;
         margin: 0;
         z-index: 0;
       }
