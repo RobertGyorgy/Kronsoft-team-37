@@ -21,7 +21,7 @@ import { RouterLink } from '@angular/router';
         </div>
         <!-- ... (cards stay the same) -->
 
-        <div class="grid-card blue" (click)="onPayParkingClick()">
+        <div class="grid-card blue" routerLink="/parking">
           <span class="material-icons card-bg-icon">local_parking</span>
           <span class="card-title">Plătește Parcarea</span>
         </div>
