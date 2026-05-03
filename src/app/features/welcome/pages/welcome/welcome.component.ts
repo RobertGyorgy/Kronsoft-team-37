@@ -67,8 +67,8 @@ import { RouterLink } from '@angular/router';
         text-decoration: none;
         font-weight: 700;
         color: #fff;
-        background: linear-gradient(180deg, #d2732b 0%, #c45f13 100%);
-        box-shadow: 0 8px 16px rgba(196, 95, 19, 0.24);
+        background: #ff4500;
+        box-shadow: 0 8px 16px rgba(255, 69, 0, 0.24);
       }
 
       .hero-figure {

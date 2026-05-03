@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../auth.service';
@@ -12,7 +12,7 @@ import { AuthService } from '../../auth.service';
   template: `
     <section class="auth-shell">
       <div class="auth-header">
-        <button class="back-btn" routerLink="/">
+        <button class="back-btn" (click)="goBack()" [routerLink]="step() === 1 ? '/' : null">
           <span class="material-icons">arrow_back</span>
         </button>
       </div>
@@ -25,63 +25,115 @@ import { AuthService } from '../../auth.service';
         </div>
 
         <form [formGroup]="registerForm" (ngSubmit)="submit()" class="form" novalidate>
-          <div class="input-wrapper">
-            <span class="material-icons input-icon">mail_outline</span>
-            <input
-              type="email"
-              placeholder="Phone/Email Id"
-              formControlName="email"
-              class="input-field"
-              autocomplete="email"
-            />
-          </div>
-          @if (emailControl.touched && emailControl.invalid) {
-            <span class="error-text">Enter a valid email address</span>
-          }
+          
+          <!-- Step 1: Email & Password -->
+          @if (step() === 1) {
+            <div class="input-wrapper">
+              <span class="material-icons input-icon">mail_outline</span>
+              <input
+                type="email"
+                placeholder="Email Address"
+                formControlName="email"
+                class="input-field"
+                autocomplete="email"
+              />
+            </div>
+            @if (emailControl.touched && emailControl.invalid) {
+              <span class="error-text">Enter a valid email address</span>
+            }
 
-          <div class="input-wrapper">
-            <span class="material-icons input-icon">person_outline</span>
-            <input
-              type="text"
-              placeholder="Full Name"
-              formControlName="fullName"
-              class="input-field"
-              autocomplete="name"
-            />
-          </div>
-          @if (fullNameControl.touched && fullNameControl.invalid) {
-            <span class="error-text">Enter your full name</span>
-          }
+            <div class="input-wrapper">
+              <span class="material-icons input-icon">lock_outline</span>
+              <input
+                [type]="isPasswordVisible() ? 'text' : 'password'"
+                placeholder="Password"
+                formControlName="password"
+                class="input-field"
+                autocomplete="new-password"
+              />
+              <button
+                type="button"
+                class="password-toggle-btn"
+                (click)="togglePasswordVisibility()"
+              >
+                {{ isPasswordVisible() ? 'Hide' : 'Show' }}
+              </button>
+            </div>
+            @if (passwordControl.touched && passwordControl.invalid) {
+              <span class="error-text">Password is required</span>
+            }
 
-          <div class="input-wrapper">
-            <span class="material-icons input-icon">lock_outline</span>
-            <input
-              [type]="isPasswordVisible() ? 'text' : 'password'"
-              placeholder="Password"
-              formControlName="password"
-              class="input-field"
-              autocomplete="new-password"
-            />
-            <button
-              type="button"
-              class="password-toggle-btn"
-              (click)="togglePasswordVisibility()"
-            >
-              {{ isPasswordVisible() ? 'Hide' : 'Show' }}
+            <div class="input-wrapper">
+              <span class="material-icons input-icon">lock_outline</span>
+              <input
+                [type]="isPasswordVisible() ? 'text' : 'password'"
+                placeholder="Confirm Password"
+                formControlName="confirmPassword"
+                class="input-field"
+                autocomplete="new-password"
+              />
+            </div>
+            @if (registerForm.hasError('mismatch') && confirmPasswordControl.touched) {
+              <span class="error-text">Passwords do not match</span>
+            }
+
+            <button type="button" class="primary-btn" (click)="nextStep()">
+              Continue
             </button>
-          </div>
-          @if (passwordControl.touched && passwordControl.invalid) {
-            <span class="error-text">Password is required</span>
           }
 
-          <label class="checkbox-label">
-            <input type="checkbox" class="checkbox-input" />
-            <span>I Have Read And Agree To <a href="#">User Agreement Privacy Policy</a></span>
-          </label>
+          <!-- Step 2: Details -->
+          @if (step() === 2) {
+            <div class="input-wrapper">
+              <span class="material-icons input-icon">person_outline</span>
+              <input
+                type="text"
+                placeholder="Full Name"
+                formControlName="fullName"
+                class="input-field"
+                autocomplete="name"
+              />
+            </div>
+            @if (fullNameControl.touched && fullNameControl.invalid) {
+              <span class="error-text">Enter your full name</span>
+            }
 
-          <button type="submit" class="primary-btn" [disabled]="isSubmitting()">
-            {{ isSubmitting() ? 'Creating Account...' : 'Continue' }}
-          </button>
+            <div class="input-wrapper">
+              <span class="material-icons input-icon">phone_iphone</span>
+              <input
+                type="tel"
+                placeholder="Phone Number"
+                formControlName="phone"
+                class="input-field"
+                autocomplete="tel"
+              />
+            </div>
+            @if (phoneControl.touched && phoneControl.invalid) {
+              <span class="error-text">Enter a valid phone number</span>
+            }
+
+            <div class="input-wrapper">
+              <span class="material-icons input-icon">event</span>
+              <input
+                type="number"
+                placeholder="Age"
+                formControlName="age"
+                class="input-field"
+              />
+            </div>
+            @if (ageControl.touched && ageControl.invalid) {
+              <span class="error-text">Age must be between 14 and 120</span>
+            }
+
+            <label class="checkbox-label">
+              <input type="checkbox" class="checkbox-input" />
+              <span>I Have Read And Agree To <a href="#">User Agreement Privacy Policy</a></span>
+            </label>
+
+            <button type="submit" class="primary-btn" [disabled]="isSubmitting()">
+              {{ isSubmitting() ? 'Creating Account...' : 'Finish' }}
+            </button>
+          }
         </form>
 
         <div class="divider">OR</div>
@@ -104,16 +156,49 @@ export class RegisterComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
+  protected readonly step = signal(1);
   protected readonly isPasswordVisible = signal(false);
   protected readonly isSubmitting = signal(false);
+
   protected readonly registerForm = this.formBuilder.nonNullable.group({
-    fullName: ['', [Validators.required, Validators.minLength(2)]],
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]]
-  });
+    password: ['', [Validators.required, Validators.minLength(6)]],
+    confirmPassword: ['', [Validators.required]],
+    fullName: ['', [Validators.required, Validators.minLength(2)]],
+    phone: ['', [Validators.required, Validators.pattern(/^[0-9+ ]{10,15}$/)]],
+    age: [null as number | null, [Validators.required, Validators.min(14), Validators.max(120)]]
+  }, { validators: this.passwordMatchValidator });
+
+  private passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+    const password = control.get('password');
+    const confirmPassword = control.get('confirmPassword');
+    return password && confirmPassword && password.value !== confirmPassword.value 
+      ? { mismatch: true } 
+      : null;
+  }
 
   protected togglePasswordVisibility(): void {
     this.isPasswordVisible.update((visible) => !visible);
+  }
+
+  protected nextStep(): void {
+    const email = this.registerForm.controls.email;
+    const password = this.registerForm.controls.password;
+    const confirm = this.registerForm.controls.confirmPassword;
+
+    if (email.valid && password.valid && confirm.valid && !this.registerForm.hasError('mismatch')) {
+      this.step.set(2);
+    } else {
+      email.markAsTouched();
+      password.markAsTouched();
+      confirm.markAsTouched();
+    }
+  }
+
+  protected goBack(): void {
+    if (this.step() === 2) {
+      this.step.set(1);
+    }
   }
 
   protected submit(): void {
@@ -123,7 +208,12 @@ export class RegisterComponent {
     }
 
     this.isSubmitting.set(true);
-    this.authService.register(this.registerForm.getRawValue()).subscribe({
+    const { confirmPassword, ...data } = this.registerForm.getRawValue();
+    
+    // Type casting age for safety
+    const payload = { ...data, age: Number(data.age) };
+
+    this.authService.register(payload as any).subscribe({
       next: async () => {
         this.isSubmitting.set(false);
         await this.router.navigateByUrl('/login');
@@ -134,15 +224,10 @@ export class RegisterComponent {
     });
   }
 
-  protected get emailControl() {
-    return this.registerForm.controls.email;
-  }
-
-  protected get fullNameControl() {
-    return this.registerForm.controls.fullName;
-  }
-
-  protected get passwordControl() {
-    return this.registerForm.controls.password;
-  }
+  protected get emailControl() { return this.registerForm.controls.email; }
+  protected get passwordControl() { return this.registerForm.controls.password; }
+  protected get confirmPasswordControl() { return this.registerForm.controls.confirmPassword; }
+  protected get fullNameControl() { return this.registerForm.controls.fullName; }
+  protected get phoneControl() { return this.registerForm.controls.phone; }
+  protected get ageControl() { return this.registerForm.controls.age; }
 }
