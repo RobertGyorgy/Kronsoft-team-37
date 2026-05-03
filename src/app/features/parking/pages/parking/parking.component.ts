@@ -47,6 +47,19 @@ import { RouterLink } from '@angular/router';
         </div>
       </div>
 
+      <!-- Zone Selection -->
+      <section class="section zone-picker">
+        <div class="section-header">
+          <h3>Selectează Zona</h3>
+        </div>
+        <div class="zone-grid">
+          <div class="zone-pill active">Zona A</div>
+          <div class="zone-pill">Zona B</div>
+          <div class="zone-pill">Zona C</div>
+          <div class="zone-pill">Rezidențial</div>
+        </div>
+      </section>
+
       <!-- New Payment -->
       <div class="scroll-content">
         <section class="section">
@@ -283,6 +296,42 @@ import { RouterLink } from '@angular/router';
         font-weight: 700;
         font-size: 0.9rem;
         cursor: pointer;
+      }
+
+      /* Zone Picker */
+      .zone-picker {
+        padding: 0 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .zone-grid {
+        display: flex;
+        gap: 0.75rem;
+        overflow-x: auto;
+        padding: 0.5rem 0;
+        scrollbar-width: none; /* Hide scrollbar for clean look */
+      }
+
+      .zone-grid::-webkit-scrollbar { display: none; }
+
+      .zone-pill {
+        white-space: nowrap;
+        padding: 0.75rem 1.5rem;
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #666;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .zone-pill.active {
+        background: #4285f4;
+        color: #fff;
+        border-color: #4285f4;
+        box-shadow: 0 4px 12px rgba(66, 133, 244, 0.2);
       }
 
       .payment-options {
