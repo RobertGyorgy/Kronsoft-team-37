@@ -47,7 +47,7 @@
   padding: 0 1.5rem;
   max-width: 450px;
   margin: 0 auto;
-  view-transition-name: auth-content;
+  view-transition-name: auth-content; // The only name we keep for sliding
 }
 
 .auth-title {
@@ -63,7 +63,6 @@
   position: relative;
   margin-bottom: 2rem;
   z-index: 10;
-  view-transition-name: auth-toggle;
 }
 
 .active-glider {
@@ -76,7 +75,7 @@
   border-radius: 999px;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1;
-  view-transition-name: auth-glider;
+  // REMOVED view-transition-name to force it to slide with the content
 }
 
 .on-register .active-glider {
@@ -105,6 +104,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.15rem;
+  // REMOVED view-transition-name to prevent inner morphing
 }
 
 .input-wrapper {
@@ -133,10 +133,7 @@
   outline: none;
 }
 
-input[autocomplete="email"] { view-transition-name: auth-email; }
-input[autocomplete="current-password"] { view-transition-name: auth-password; }
-input[placeholder="Confirm Password"] { view-transition-name: auth-confirm-password; }
-input[autocomplete="new-password"]:not([placeholder="Confirm Password"]) { view-transition-name: auth-password; }
+// REMOVED individual input view-transition-names
 
 .password-toggle-btn {
   background: none;
@@ -187,7 +184,7 @@ input[autocomplete="new-password"]:not([placeholder="Confirm Password"]) { view-
   cursor: pointer;
   margin-top: 0.5rem;
   box-shadow: 0 4px 12px rgba(255, 69, 0, 0.25);
-  view-transition-name: auth-submit;
+  // REMOVED view-transition-name
 }
 
 .divider {
@@ -223,7 +220,7 @@ input[autocomplete="new-password"]:not([placeholder="Confirm Password"]) { view-
   justify-content: center;
   gap: 0.75rem;
   margin-bottom: 2rem;
-  view-transition-name: auth-google;
+  // REMOVED view-transition-name
 }
 
 .google-icon {
@@ -239,11 +236,10 @@ input[autocomplete="new-password"]:not([placeholder="Confirm Password"]) { view-
 }
 
 /* 
-   REWRITTEN SLIDING TRANSITIONS
-   We use the root level to ensure they are picked up by the View Transition API.
+   FORCED SLIDING TRANSITIONS
+   By removing inner names, the entire auth-content slides as one.
 */
 
-/* Default forward animation (Right to Left) */
 ::view-transition-old(auth-content) {
   animation: 400ms cubic-bezier(0.4, 0, 0.2, 1) both slide-left-out;
 }
@@ -251,32 +247,29 @@ input[autocomplete="new-password"]:not([placeholder="Confirm Password"]) { view-
   animation: 400ms cubic-bezier(0.4, 0, 0.2, 1) both slide-left-in;
 }
 
-/* Reverse animation (Left to Right) */
-:root.slide-back {
-  &::view-transition-old(auth-content) {
-    animation-name: slide-right-out;
-  }
-  &::view-transition-new(auth-content) {
-    animation-name: slide-right-in;
-  }
+:root.slide-back ::view-transition-old(auth-content) {
+  animation-name: slide-right-out;
+}
+:root.slide-back ::view-transition-new(auth-content) {
+  animation-name: slide-right-in;
 }
 
 @keyframes slide-left-out {
   from { opacity: 1; transform: translateX(0); }
-  to { opacity: 0; transform: translateX(-60px); }
+  to { opacity: 0; transform: translateX(-80px); }
 }
 
 @keyframes slide-left-in {
-  from { opacity: 0; transform: translateX(60px); }
+  from { opacity: 0; transform: translateX(80px); }
   to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes slide-right-out {
   from { opacity: 1; transform: translateX(0); }
-  to { opacity: 0; transform: translateX(60px); }
+  to { opacity: 0; transform: translateX(80px); }
 }
 
 @keyframes slide-right-in {
-  from { opacity: 0; transform: translateX(-60px); }
+  from { opacity: 0; transform: translateX(-80px); }
   to { opacity: 1; transform: translateX(0); }
 }

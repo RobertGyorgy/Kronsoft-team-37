@@ -20,8 +20,8 @@ import { AuthService } from '../../auth.service';
       <div class="auth-content">
         <div class="toggle-pill on-register">
           <div class="active-glider"></div>
-          <button class="toggle-btn" routerLink="/login">Sign In</button>
-          <button class="toggle-btn active" routerLink="/register">Sign Up</button>
+          <button class="toggle-btn" (click)="navigateToLogin()">Sign In</button>
+          <button class="toggle-btn active">Sign Up</button>
         </div>
 
         <form [formGroup]="registerForm" (ngSubmit)="submit()" class="form" novalidate>
@@ -196,6 +196,12 @@ export class RegisterComponent {
 
   protected togglePasswordVisibility(): void {
     this.isPasswordVisible.update((visible) => !visible);
+  }
+
+  protected async navigateToLogin(): Promise<void> {
+    await this.startTransition(async () => {
+      await this.router.navigateByUrl('/login');
+    }, true);
   }
 
   protected submit(): void {
