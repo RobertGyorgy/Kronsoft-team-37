@@ -22,6 +22,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/transport/pages/bus-schedule/bus-schedule.component').then((component) => component.BusScheduleComponent)
   },
   {
+    path: 'parking',
+    loadComponent: () => import('./features/parking/pages/parking/parking.component').then((component) => component.ParkingComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }
