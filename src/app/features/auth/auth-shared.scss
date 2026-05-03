@@ -10,7 +10,7 @@
 .auth-shell {
   min-height: 100dvh;
   width: 100%;
-  background: var(--auth-bg);
+  background: #fff !important;
   font-family: 'Outfit', sans-serif;
   color: var(--auth-text);
   padding: 0;
@@ -48,7 +48,7 @@
 }
 
 .auth-title {
-  display: none; // Title removed as requested
+  display: none;
 }
 
 .toggle-pill {
@@ -68,11 +68,10 @@
   left: 0.3rem;
   width: calc(50% - 0.3rem);
   height: calc(100% - 0.6rem);
-  background: #333; // Darker glider as requested
+  background: #333 !important;
   border-radius: 999px;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1;
-  view-transition-name: auth-glider;
 }
 
 .on-register .active-glider {
@@ -89,26 +88,26 @@
   color: var(--auth-text-light);
   cursor: pointer;
   z-index: 2;
-  transition: color 0.3s ease;
+  transition: color 0.1s ease; // Faster color change as requested
 }
 
 .toggle-btn.active {
-  color: #fff; // Light text on dark glider
+  color: #ffffff !important;
 }
 
 .form {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 1.15rem; // Slightly tighter spacing
+  gap: 1.15rem;
 }
 
 .input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
-  background: var(--auth-input-bg);
-  border-radius: 999px; // Fully rounded as requested for inputs too
+  background: var(--auth-input-bg) !important;
+  border-radius: 999px;
   padding: 0 1.25rem;
 }
 
@@ -124,7 +123,7 @@
   background: none !important;
   padding: 1rem 0;
   font-size: 1rem;
-  color: var(--auth-text);
+  color: var(--auth-text) !important;
   font-family: inherit;
   outline: none;
 }
@@ -168,16 +167,19 @@
 }
 
 .primary-btn {
-  background: var(--auth-primary); // Solid blue background
-  color: #fff;
-  border: none;
+  background-color: var(--auth-primary) !important; // Forced blue background
+  background: var(--auth-primary) !important;
+  color: #ffffff !important;
+  border: none !important;
   padding: 1.15rem;
-  border-radius: 999px; // Fully rounded as requested
+  border-radius: 999px;
   font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;
   margin-top: 0.5rem;
-  box-shadow: 0 4px 12px rgba(66, 133, 244, 0.25);
+  box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3) !important;
+  display: block;
+  width: 100%;
 }
 
 .divider {
@@ -201,10 +203,10 @@
 .google-btn {
   width: 100%;
   padding: 1rem 1.25rem;
-  border: 1px solid #eee;
+  border: 1px solid #eee !important;
   border-radius: 999px;
-  background: #fff;
-  color: var(--auth-text);
+  background: #fff !important;
+  color: var(--auth-text) !important;
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
