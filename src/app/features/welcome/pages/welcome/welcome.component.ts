@@ -67,7 +67,7 @@ import { RouterLink } from '@angular/router';
         text-decoration: none;
         font-weight: 700;
         color: #fff;
-        background: #ff4500;
+        background: linear-gradient(180deg, #ff4500 0%, #e63e00 100%);
         box-shadow: 0 8px 16px rgba(255, 69, 0, 0.24);
       }
 

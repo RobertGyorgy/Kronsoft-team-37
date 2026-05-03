@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../auth.service';
@@ -12,7 +12,7 @@ import { AuthService } from '../../auth.service';
   template: `
     <section class="auth-shell">
       <div class="auth-header">
-        <button class="back-btn" (click)="goBack()" [routerLink]="step() === 1 ? '/' : null">
+        <button class="back-btn" (click)="goBack()">
           <span class="material-icons">arrow_back</span>
         </button>
       </div>
@@ -25,9 +25,8 @@ import { AuthService } from '../../auth.service';
         </div>
 
         <form [formGroup]="registerForm" (ngSubmit)="submit()" class="form" novalidate>
-          
-          <!-- Step 1: Email & Password -->
-          @if (step() === 1) {
+          @if (currentStep() === 1) {
+            <!-- Step 1: Email and Passwords -->
             <div class="input-wrapper">
               <span class="material-icons input-icon">mail_outline</span>
               <input
@@ -51,18 +50,8 @@ import { AuthService } from '../../auth.service';
                 class="input-field"
                 autocomplete="new-password"
               />
-              <button
-                type="button"
-                class="password-toggle-btn"
-                (click)="togglePasswordVisibility()"
-              >
-                {{ isPasswordVisible() ? 'Hide' : 'Show' }}
-              </button>
             </div>
-            @if (passwordControl.touched && passwordControl.invalid) {
-              <span class="error-text">Password is required</span>
-            }
-
+            
             <div class="input-wrapper">
               <span class="material-icons input-icon">lock_outline</span>
               <input
@@ -73,17 +62,15 @@ import { AuthService } from '../../auth.service';
                 autocomplete="new-password"
               />
             </div>
-            @if (registerForm.hasError('mismatch') && confirmPasswordControl.touched) {
+            @if (passwordControl.touched && registerForm.errors?.['mismatch']) {
               <span class="error-text">Passwords do not match</span>
             }
 
             <button type="button" class="primary-btn" (click)="nextStep()">
               Continue
             </button>
-          }
-
-          <!-- Step 2: Details -->
-          @if (step() === 2) {
+          } @else {
+            <!-- Step 2: Name, Age, Phone -->
             <div class="input-wrapper">
               <span class="material-icons input-icon">person_outline</span>
               <input
@@ -94,9 +81,6 @@ import { AuthService } from '../../auth.service';
                 autocomplete="name"
               />
             </div>
-            @if (fullNameControl.touched && fullNameControl.invalid) {
-              <span class="error-text">Enter your full name</span>
-            }
 
             <div class="input-wrapper">
               <span class="material-icons input-icon">phone_iphone</span>
@@ -108,12 +92,9 @@ import { AuthService } from '../../auth.service';
                 autocomplete="tel"
               />
             </div>
-            @if (phoneControl.touched && phoneControl.invalid) {
-              <span class="error-text">Enter a valid phone number</span>
-            }
 
             <div class="input-wrapper">
-              <span class="material-icons input-icon">event</span>
+              <span class="material-icons input-icon">cake</span>
               <input
                 type="number"
                 placeholder="Age"
@@ -121,9 +102,6 @@ import { AuthService } from '../../auth.service';
                 class="input-field"
               />
             </div>
-            @if (ageControl.touched && ageControl.invalid) {
-              <span class="error-text">Age must be between 14 and 120</span>
-            }
 
             <label class="checkbox-label">
               <input type="checkbox" class="checkbox-input" />
@@ -131,7 +109,7 @@ import { AuthService } from '../../auth.service';
             </label>
 
             <button type="submit" class="primary-btn" [disabled]="isSubmitting()">
-              {{ isSubmitting() ? 'Creating Account...' : 'Finish' }}
+              {{ isSubmitting() ? 'Creating Account...' : 'Complete Registration' }}
             </button>
           }
         </form>
@@ -156,7 +134,7 @@ export class RegisterComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
-  protected readonly step = signal(1);
+  protected readonly currentStep = signal(1);
   protected readonly isPasswordVisible = signal(false);
   protected readonly isSubmitting = signal(false);
 
@@ -164,41 +142,60 @@ export class RegisterComponent {
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     confirmPassword: ['', [Validators.required]],
-    fullName: ['', [Validators.required, Validators.minLength(2)]],
-    phone: ['', [Validators.required, Validators.pattern(/^[0-9+ ]{10,15}$/)]],
-    age: [null as number | null, [Validators.required, Validators.min(14), Validators.max(120)]]
-  }, { validators: this.passwordMatchValidator });
-
-  private passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
-    const password = control.get('password');
-    const confirmPassword = control.get('confirmPassword');
-    return password && confirmPassword && password.value !== confirmPassword.value 
-      ? { mismatch: true } 
-      : null;
-  }
-
-  protected togglePasswordVisibility(): void {
-    this.isPasswordVisible.update((visible) => !visible);
-  }
+    fullName: ['', [Validators.required]],
+    phone: ['', [Validators.required]],
+    age: ['', [Validators.required, Validators.min(13)]]
+  }, {
+    validators: (group) => {
+      const pass = group.get('password')?.value;
+      const confirmPass = group.get('confirmPassword')?.value;
+      return pass === confirmPass ? null : { mismatch: true };
+    }
+  });
 
   protected nextStep(): void {
-    const email = this.registerForm.controls.email;
-    const password = this.registerForm.controls.password;
-    const confirm = this.registerForm.controls.confirmPassword;
+    const step1Fields = ['email', 'password', 'confirmPassword'];
+    let step1Valid = true;
+    
+    step1Fields.forEach(field => {
+      const control = this.registerForm.get(field);
+      control?.markAsTouched();
+      if (control?.invalid) step1Valid = false;
+    });
 
-    if (email.valid && password.valid && confirm.valid && !this.registerForm.hasError('mismatch')) {
-      this.step.set(2);
-    } else {
-      email.markAsTouched();
-      password.markAsTouched();
-      confirm.markAsTouched();
+    if (this.registerForm.errors?.['mismatch']) step1Valid = false;
+
+    if (step1Valid) {
+      this.startTransition(() => this.currentStep.set(2));
     }
   }
 
   protected goBack(): void {
-    if (this.step() === 2) {
-      this.step.set(1);
+    if (this.currentStep() === 2) {
+      this.startTransition(() => this.currentStep.set(1), true);
+    } else {
+      this.router.navigateByUrl('/');
     }
+  }
+
+  private async startTransition(updateFn: () => void, isReverse = false): Promise<void> {
+    if (document.startViewTransition) {
+      if (isReverse) document.documentElement.classList.add('slide-back');
+      
+      const transition = document.startViewTransition(updateFn);
+      
+      try {
+        await transition.finished;
+      } finally {
+        if (isReverse) document.documentElement.classList.remove('slide-back');
+      }
+    } else {
+      updateFn();
+    }
+  }
+
+  protected togglePasswordVisibility(): void {
+    this.isPasswordVisible.update((visible) => !visible);
   }
 
   protected submit(): void {
@@ -208,12 +205,9 @@ export class RegisterComponent {
     }
 
     this.isSubmitting.set(true);
-    const { confirmPassword, ...data } = this.registerForm.getRawValue();
+    const { confirmPassword, ...submitData } = this.registerForm.getRawValue();
     
-    // Type casting age for safety
-    const payload = { ...data, age: Number(data.age) };
-
-    this.authService.register(payload as any).subscribe({
+    this.authService.register(submitData).subscribe({
       next: async () => {
         this.isSubmitting.set(false);
         await this.router.navigateByUrl('/login');
@@ -226,8 +220,5 @@ export class RegisterComponent {
 
   protected get emailControl() { return this.registerForm.controls.email; }
   protected get passwordControl() { return this.registerForm.controls.password; }
-  protected get confirmPasswordControl() { return this.registerForm.controls.confirmPassword; }
   protected get fullNameControl() { return this.registerForm.controls.fullName; }
-  protected get phoneControl() { return this.registerForm.controls.phone; }
-  protected get ageControl() { return this.registerForm.controls.age; }
 }
