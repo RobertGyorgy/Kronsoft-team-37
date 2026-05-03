@@ -2,9 +2,9 @@
   --auth-bg: #ffffff;
   --auth-primary: #4285f4;
   --auth-text: #333;
-  --auth-text-light: #777;
-  --auth-input-bg: #f2f2f2;
-  --auth-glider-dark: #2d3436; // Darker glider as requested
+  --auth-text-light: #666;
+  --auth-input-bg: #f5f5f5;
+  --auth-border: transparent;
 }
 
 .auth-shell {
@@ -16,11 +16,11 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 .auth-header {
-  padding: 1rem 1.25rem 0;
+  padding: 1rem 1.5rem 0.5rem;
   display: flex;
   align-items: center;
 }
@@ -31,6 +31,7 @@
   cursor: pointer;
   color: var(--auth-text);
   padding: 0.5rem;
+  margin-left: -0.5rem;
   display: flex;
   align-items: center;
 }
@@ -41,10 +42,14 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  padding: 0.5rem 1.75rem;
+  padding: 0 1.5rem;
+  max-width: 450px;
+  margin: 0 auto;
 }
 
-/* Removed auth-title as requested */
+.auth-title {
+  display: none; // Title removed as requested
+}
 
 .toggle-pill {
   width: 100%;
@@ -63,11 +68,11 @@
   left: 0.3rem;
   width: calc(50% - 0.3rem);
   height: calc(100% - 0.6rem);
-  background: var(--auth-glider-dark); // Dark glider
+  background: #333; // Darker glider as requested
   border-radius: 999px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-  transition: transform 0.45s cubic-bezier(0.18, 0.89, 0.32, 1.28); // Smooth, slightly bouncy glide
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1;
+  view-transition-name: auth-glider;
 }
 
 .on-register .active-glider {
@@ -88,14 +93,14 @@
 }
 
 .toggle-btn.active {
-  color: #fff; // White text for active state over dark glider
+  color: #fff; // Light text on dark glider
 }
 
 .form {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.15rem; // Slightly tighter spacing
 }
 
 .input-wrapper {
@@ -103,9 +108,8 @@
   display: flex;
   align-items: center;
   background: var(--auth-input-bg);
-  border: none;
-  border-radius: 12px; // Slightly smaller radius
-  padding: 0 1rem;
+  border-radius: 999px; // Fully rounded as requested for inputs too
+  padding: 0 1.25rem;
 }
 
 .input-icon {
@@ -130,9 +134,9 @@
   border: none;
   color: var(--auth-primary);
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   cursor: pointer;
-  padding: 0.4rem;
+  padding: 0.5rem;
 }
 
 .forgot-link {
@@ -164,7 +168,7 @@
 }
 
 .primary-btn {
-  background: var(--auth-primary);
+  background: var(--auth-primary); // Solid blue background
   color: #fff;
   border: none;
   padding: 1.15rem;
@@ -172,17 +176,17 @@
   font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;
-  margin-top: 0.75rem;
-  box-shadow: 0 8px 25px rgba(66, 133, 244, 0.2);
+  margin-top: 0.5rem;
+  box-shadow: 0 4px 12px rgba(66, 133, 244, 0.25);
 }
 
 .divider {
-  margin: 2.5rem 0;
+  margin: 2rem 0;
   width: 100%;
   display: flex;
   align-items: center;
   gap: 1rem;
-  color: #bbb;
+  color: #aaa;
   font-size: 0.85rem;
   font-weight: 600;
 }
@@ -191,38 +195,27 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: #f0f0f0;
+  background: #eee;
 }
 
-.social-login {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 2rem;
+.google-btn {
   width: 100%;
-}
-
-.google-btn-large {
-  width: 100%;
+  padding: 1rem 1.25rem;
+  border: 1px solid #eee;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--auth-text);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  padding: 1rem;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 999px;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #555;
-  cursor: pointer;
-  transition: background 0.3s ease;
+  margin-bottom: 2rem;
 }
 
-.google-btn-large:hover {
-  background: #fafafa;
-}
-
-.google-icon-svg {
+.google-icon {
   width: 1.5rem;
   height: 1.5rem;
 }
@@ -230,6 +223,6 @@
 .error-text {
   color: #ff4757;
   font-size: 0.8rem;
-  margin-top: -1rem;
-  margin-left: 0.5rem;
+  margin-top: -0.9rem;
+  margin-left: 1.25rem;
 }
