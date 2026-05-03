@@ -9,15 +9,11 @@ import { RouterLink } from '@angular/router';
     <section class="welcome-shell">
       <div class="welcome-card">
         <figure class="hero-figure">
-          <video
-            src="/videos/brasov-drone.mp4"
-            class="hero-video"
-            autoplay
-            muted
-            [muted]="true"
-            loop
-            playsinline
-          ></video>
+          <img
+            src="/images/poza%20intro%20screen%20.jpg"
+            alt="Brașov city background"
+            class="hero-image"
+          />
         </figure>
 
         <div class="overlay-copy">
@@ -84,7 +80,7 @@ import { RouterLink } from '@angular/router';
         background: #111;
       }
 
-      .hero-video {
+      .hero-image {
         width: 100%;
         height: 100%;
         object-fit: cover;

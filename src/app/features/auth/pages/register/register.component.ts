@@ -11,19 +11,8 @@ import { AuthService } from '../../auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="auth-shell on-register" #authShell>
-      <!-- Background reference for WebGL capture (Liquid Glass needs an image) -->
-      <img src="/images/poza%20intro%20screen%20.jpg" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; pointer-events: none; z-index: -1;" aria-hidden="true" />
-      
-      <!-- Actual background video -->
-      <video
-        src="/videos/brasov-drone.mp4"
-        class="auth-bg"
-        autoplay
-        muted
-        [muted]="true"
-        loop
-        playsinline
-      ></video>
+      <!-- Background image must be first for WebGL capture -->
+      <img class="auth-bg" src="/images/poza%20intro%20screen%20.jpg" alt="background" />
       
       <div class="toggle-pill" #togglePill [attr.data-config]="toggleConfig">
         <button
