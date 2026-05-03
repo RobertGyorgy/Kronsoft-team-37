@@ -19,7 +19,15 @@ export const routes: Routes = [
   },
   {
     path: 'transport/bus',
-    loadComponent: () => import('./features/transport/pages/bus-schedule/bus-schedule.component').then((component) => component.BusScheduleComponent)
+    loadComponent: () => import('./features/transport/pages/bus-menu/bus-menu.component').then((component) => component.BusMenuComponent)
+  },
+  {
+    path: 'transport/bus/program',
+    loadComponent: () => import('./features/transport/pages/bus-program/bus-program.component').then((component) => component.BusProgramComponent)
+  },
+  {
+    path: 'transport/bus/search',
+    loadComponent: () => import('./features/transport/pages/bus-search/bus-search.component').then((component) => component.BusSearchComponent)
   },
   {
     path: 'parking',

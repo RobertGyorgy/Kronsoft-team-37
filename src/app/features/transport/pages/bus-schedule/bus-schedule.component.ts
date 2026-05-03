@@ -26,13 +26,19 @@ import { RouterLink } from '@angular/router';
         </div>
       </section>
 
-      <!-- Search Bar -->
+      <!-- Advanced Search Container -->
       <div class="search-container">
-        <div class="search-pill">
-          <span class="material-icons search-icon">search</span>
-          <input type="text" placeholder="Introdu destinația" />
-          <div class="map-preview">
-            <span class="material-icons">map</span>
+        <div class="search-group">
+          <div class="search-pill">
+            <span class="material-icons search-icon">place</span>
+            <input type="text" placeholder="Caută stația" />
+          </div>
+          <div class="search-pill bus-number-search">
+            <span class="material-icons search-icon">directions_bus</span>
+            <input type="text" placeholder="Nr. Autobuz" />
+            <button class="search-execute-btn">
+              <span class="material-icons">search</span>
+            </button>
           </div>
         </div>
       </div>
@@ -63,23 +69,17 @@ import { RouterLink } from '@angular/router';
               <span class="status-pill">La timp</span>
             </div>
           </div>
-        </section>
 
-        <!-- Your Addresses -->
-        <section class="section">
-          <div class="section-header">
-            <h3>Adresele tale</h3>
-            <button class="show-all">Gestionează</button>
-          </div>
-          <div class="address-card">
-            <div class="address-icon">
-              <span class="material-icons">home</span>
+          <div class="route-card">
+            <div class="route-badge orange">28</div>
+            <div class="route-details">
+              <span class="destination">Livada Poștei</span>
+              <span class="origin">din Fundătură</span>
             </div>
-            <div class="address-info">
-              <span class="label">Acasă</span>
-              <span class="sub">Linia 71 din Gara Brașov</span>
+            <div class="arrival-info">
+              <span class="time">în 5 min</span>
+              <span class="status-pill warning">Întârziat</span>
             </div>
-            <span class="arrival-est">în 7 min</span>
           </div>
         </section>
       </div>
@@ -155,7 +155,13 @@ import { RouterLink } from '@angular/router';
 
       .search-container {
         padding: 0 1.5rem;
-        margin-bottom: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .search-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
       }
 
       .search-pill {
@@ -165,10 +171,10 @@ import { RouterLink } from '@angular/router';
         display: flex;
         align-items: center;
         padding: 0.5rem 0.5rem 0.5rem 1.25rem;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.04);
       }
 
-      .search-icon { color: #888; margin-right: 0.75rem; }
+      .search-icon { color: #ff4500; margin-right: 0.75rem; font-size: 1.25rem; }
 
       input {
         flex: 1;
@@ -179,20 +185,26 @@ import { RouterLink } from '@angular/router';
         color: #333;
       }
 
-      .map-preview {
-        width: 3.5rem;
+      .bus-number-search {
+        padding-right: 0.35rem;
+      }
+
+      .search-execute-btn {
+        width: 3rem;
         height: 2.5rem;
-        background: #f5f5f5;
+        background: #ff4500;
+        border: none;
         border-radius: 20px;
+        color: #fff;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #ff4500;
+        cursor: pointer;
       }
 
       .main-action-container {
         padding: 0 1.5rem;
-        margin-bottom: 2rem;
+        margin-bottom: 2.5rem;
       }
 
       .buy-ticket-btn {
@@ -237,15 +249,6 @@ import { RouterLink } from '@angular/router';
         margin: 0;
       }
 
-      .show-all {
-        background: none;
-        border: none;
-        color: #ff4500;
-        font-weight: 700;
-        font-size: 0.9rem;
-        cursor: pointer;
-      }
-
       /* Route Card */
       .route-card {
         background: #fff;
@@ -255,6 +258,7 @@ import { RouterLink } from '@angular/router';
         display: flex;
         align-items: center;
         gap: 1rem;
+        margin-bottom: 0.75rem;
       }
 
       .route-badge {
@@ -285,31 +289,10 @@ import { RouterLink } from '@angular/router';
         text-transform: uppercase;
       }
 
-      /* Address Card */
-      .address-card {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        padding: 1rem;
-        background: #f8f9fa;
-        border-radius: 24px;
+      .status-pill.warning {
+        background: #fff3e0;
+        color: #ef6c00;
       }
-
-      .address-icon {
-        width: 2.75rem;
-        height: 2.75rem;
-        background: #fff;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #888;
-      }
-
-      .address-info { flex: 1; display: flex; flex-direction: column; }
-      .address-info .label { font-weight: 700; font-size: 1rem; }
-      .address-info .sub { font-size: 0.85rem; color: #888; }
-      .arrival-est { font-weight: 600; color: #333; font-size: 0.95rem; }
     `
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
