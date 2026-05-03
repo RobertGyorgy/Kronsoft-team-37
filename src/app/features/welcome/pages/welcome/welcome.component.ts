@@ -7,18 +7,36 @@ import { RouterLink } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="welcome-shell">
-      <div class="welcome-card">
-        <figure class="hero-figure">
-          <img
-            src="/images/poza%20intro%20screen%20.jpg"
-            alt="Brașov city background"
-            class="hero-image"
-          />
-        </figure>
+      <figure class="hero-figure">
+        <img
+          src="/images/poza%20intro%20screen%20.jpg"
+          alt="Brașov city background"
+          class="hero-image"
+        />
+        <div class="scrim"></div>
+      </figure>
 
-        <div class="overlay-copy">
-          <h1>Welcome to Smart City Brașov</h1>
-          <a routerLink="/login" class="continue-button">Get Started</a>
+      <div class="content">
+        <div class="header">
+          <span class="city-name">Smart City Brașov</span>
+        </div>
+
+        <div class="text-group">
+          <h1>Experience your city</h1>
+          <p>The official portal for modern citizens.</p>
+        </div>
+
+        <div class="actions">
+          <a routerLink="/login" class="bicolored-btn">
+            <span class="btn-text">Get Started</span>
+            <div class="btn-icon">
+              <span class="chevron-group">
+                <span class="chevron"></span>
+                <span class="chevron"></span>
+                <span class="chevron"></span>
+              </span>
+            </div>
+          </a>
         </div>
       </div>
     </section>
@@ -30,101 +48,140 @@ import { RouterLink } from '@angular/router';
       }
 
       .welcome-shell {
-        min-height: 100dvh;
-        padding: 0;
-        display: grid;
-        place-items: stretch;
-        background: #000;
-        overflow: hidden;
-      }
-
-      .welcome-card {
-        position: relative;
+        height: 100dvh;
         width: 100%;
-        min-height: 100dvh;
-        display: grid;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        background: #000;
+        font-family: 'Outfit', sans-serif;
+        color: #fff;
         overflow: hidden;
-        background: #111;
-        color: #fff;
-      }
-
-      h1 {
-        margin: 0;
-        color: #fff;
-        font-size: clamp(2rem, 8vw, 3rem);
-        line-height: 1.05;
-        letter-spacing: -0.03em;
-        text-align: center;
-        text-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
-      }
-
-      .continue-button {
-        min-height: 3.1rem;
-        width: min(100%, 18rem);
-        border-radius: 0.45rem;
-        display: grid;
-        place-items: center;
-        text-decoration: none;
-        font-weight: 700;
-        color: #fff;
-        background: linear-gradient(180deg, #ff4500 0%, #e63e00 100%);
-        box-shadow: 0 8px 16px rgba(255, 69, 0, 0.24);
       }
 
       .hero-figure {
         position: absolute;
         inset: 0;
         margin: 0;
-        display: grid;
-        overflow: hidden;
-        background: #111;
+        z-index: 0;
       }
 
       .hero-image {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        object-position: center center;
-        transform: scale(1.03);
-        filter: saturate(0.95) contrast(0.98);
+        filter: brightness(0.6) saturate(1.1);
       }
 
-      .hero-figure::after {
-        content: '';
+      .scrim {
         position: absolute;
         inset: 0;
-        background:
-          linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.02) 18%, rgba(0, 0, 0, 0.1) 58%, rgba(0, 0, 0, 0.38) 100%),
-          linear-gradient(180deg, rgba(0, 0, 0, 0.06) 0%, rgba(0, 0, 0, 0.2) 100%);
-        pointer-events: none;
+        background: linear-gradient(
+          to bottom,
+          rgba(0,0,0,0.1) 0%,
+          rgba(0,0,0,0.7) 100%
+        );
       }
 
-      .overlay-copy {
+      .content {
         position: relative;
-        z-index: 1;
-        align-self: end;
-        padding: 1.5rem 1.25rem calc(1.75rem + env(safe-area-inset-bottom));
-        display: grid;
-        gap: 1rem;
-        justify-items: center;
+        z-index: 10;
+        flex: 1;
+        padding: 3rem 2rem calc(4rem + env(safe-area-inset-bottom));
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        text-align: center;
       }
 
-      @media (min-width: 768px) {
-        .welcome-shell {
-          padding: 0;
-        }
+      .city-name {
+        font-size: 0.9rem;
+        font-weight: 700;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.9);
+      }
 
-        .welcome-card {
-          min-height: 100dvh;
-        }
+      h1 {
+        font-size: 3.25rem;
+        font-weight: 800;
+        line-height: 1;
+        margin: 0 0 1rem;
+        letter-spacing: -0.04em;
+      }
 
-        .hero-figure {
-          inset: 0;
-        }
+      p {
+        font-size: 1.1rem;
+        color: rgba(255,255,255,0.8);
+        margin: 0;
+      }
 
-        .overlay-copy {
-          padding-bottom: 2.25rem;
-        }
+      .actions {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+      }
+
+      /* Bicolored Button Implementation */
+      .bicolored-btn {
+        background: #fff;
+        text-decoration: none;
+        padding: 0.35rem 0.35rem 0.35rem 2.5rem;
+        border-radius: 999px;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        transition: transform 0.2s ease;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        max-width: 100%;
+        width: 320px;
+        justify-content: space-between;
+      }
+
+      .bicolored-btn:active {
+        transform: scale(0.97);
+      }
+
+      .btn-text {
+        color: #000;
+        font-weight: 700;
+        font-size: 1.15rem;
+      }
+
+      .btn-icon {
+        width: 3.25rem;
+        height: 3.25rem;
+        background: #ff4500; /* Solid Orange */
+        border-radius: 999px; /* Pill/Circle */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Custom CSS Chevrons for '>>>' effect */
+      .chevron-group {
+        display: flex;
+        gap: 2px;
+      }
+
+      .chevron {
+        width: 10px;
+        height: 10px;
+        border-right: 2.5px solid #fff;
+        border-top: 2.5px solid #fff;
+        transform: rotate(45deg);
+        display: block;
+      }
+
+      .chevron:nth-child(1) { opacity: 0.4; }
+      .chevron:nth-child(2) { opacity: 0.7; }
+      .chevron:nth-child(3) { opacity: 1; }
+
+      @media (max-width: 400px) {
+        h1 { font-size: 2.75rem; }
+        .bicolored-btn { width: 100%; padding-left: 1.5rem; }
+        .btn-icon { width: 3.5rem; height: 3.5rem; }
       }
     `
   ]

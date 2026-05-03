@@ -65,6 +65,10 @@ import { AuthService } from '../../auth.service';
           <button type="submit" class="primary-btn" [disabled]="isSubmitting()">
             {{ isSubmitting() ? 'Signing In...' : 'Continue' }}
           </button>
+          
+          <button type="button" class="secondary-btn" routerLink="/dashboard">
+            Continue (Demo)
+          </button>
         </form>
 
         <div class="divider">OR</div>

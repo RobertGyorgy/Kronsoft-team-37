@@ -107,6 +107,18 @@
   view-transition-name: auth-form;
 }
 
+.steps-container {
+  width: 100%;
+  position: relative;
+}
+
+.step-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
 .input-wrapper {
   position: relative;
   display: flex;
@@ -116,10 +128,6 @@
   padding: 0 1.25rem;
 }
 
-/* 
-   Assigning names to wrappers instead of just inputs 
-   to ensure background and icons stay stable.
-*/
 .email-wrapper { view-transition-name: auth-email-wrap; }
 .password-wrapper { view-transition-name: auth-password-wrap; }
 .confirm-password-wrapper { view-transition-name: auth-confirm-password-wrap; }
@@ -183,6 +191,7 @@
 }
 
 .primary-btn {
+  width: 100%; // Enforcing width
   background-color: #ff4500 !important;
   color: #ffffff !important;
   border: none;
@@ -194,6 +203,24 @@
   margin-top: 0.5rem;
   box-shadow: 0 4px 12px rgba(255, 69, 0, 0.25);
   view-transition-name: auth-submit;
+}
+
+.secondary-btn {
+  width: 100%;
+  background-color: transparent;
+  color: var(--auth-primary);
+  border: 2px solid var(--auth-primary);
+  padding: 0.9rem;
+  border-radius: 999px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.secondary-btn:hover {
+  background: rgba(255, 69, 0, 0.05);
 }
 
 .divider {

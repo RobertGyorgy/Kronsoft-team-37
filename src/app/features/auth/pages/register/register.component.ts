@@ -120,6 +120,10 @@ import { gsap } from 'gsap';
               </div>
             }
           </div>
+
+          <button type="button" class="secondary-btn" (click)="demoContinue()">
+            Continue (Demo)
+          </button>
         </form>
 
         <div class="divider">OR</div>
@@ -175,6 +179,14 @@ export class RegisterComponent {
 
     if (step1Valid) {
       this.animateStep(2);
+    }
+  }
+
+  protected demoContinue(): void {
+    if (this.currentStep() === 1) {
+      this.animateStep(2);
+    } else {
+      this.router.navigateByUrl('/dashboard');
     }
   }
 
