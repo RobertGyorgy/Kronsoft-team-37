@@ -79,7 +79,6 @@ import { AuthService } from '../../auth.service';
           Continue with Google
         </button>
       </div>
-      </div>
     </section>
   `,
 })
