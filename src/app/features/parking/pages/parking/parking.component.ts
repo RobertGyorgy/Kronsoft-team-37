@@ -192,7 +192,7 @@ import { RouterLink } from '@angular/router';
       }
 
       .hero-map-section {
-        padding: 1rem;
+        padding: 0.5rem 1rem; /* Reduced padding */
       }
 
       .custom-map-container {
@@ -201,31 +201,36 @@ import { RouterLink } from '@angular/router';
         border-radius: 16px;
         background: #e9ecef;
         line-height: 0;
+        max-height: 35vh; /* Limit map height to leave room for the card */
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .neighborhood-img {
         width: 100%;
-        height: auto;
+        height: 100%;
+        object-fit: cover; /* Ensures map fits nicely */
         display: block;
       }
 
       /* Info Card Section */
       .info-card-section {
-        padding: 0 1rem 1.5rem;
+        padding: 0 1rem 1rem;
       }
 
       .zona-card {
         background: #fff;
-        border-radius: 32px;
-        padding: 2rem 1.5rem;
+        border-radius: 28px; /* Slightly tighter radius */
+        padding: 1.5rem 1.25rem; /* Reduced padding */
         box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
+        gap: 1rem; /* Reduced gap */
       }
 
       .zona-title {
-        font-size: 1.6rem;
+        font-size: 1.4rem; /* Slightly smaller for fit */
         font-weight: 800;
         margin: 0;
         text-align: left;
@@ -234,8 +239,8 @@ import { RouterLink } from '@angular/router';
 
       .sms-instruction {
         background: #ffe0b2;
-        padding: 1.25rem;
-        border-radius: 24px;
+        padding: 1rem; /* Tighter padding */
+        border-radius: 20px;
       }
 
       .sms-instruction p {
