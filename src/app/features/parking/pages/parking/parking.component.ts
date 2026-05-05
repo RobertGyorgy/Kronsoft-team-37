@@ -28,10 +28,57 @@ import { RouterLink } from '@angular/router';
             </div>
             <div class="card-actions">
               <button class="black-btn" (click)="toggleTariffs()">Tarifare</button>
-              <button class="black-btn">Spre SMS</button>
+              <button class="black-btn" (click)="toggleSms()">Spre SMS</button>
             </div>
           </div>
         </section>
+
+        <!-- Tariffs Modal Overlay -->
+        <!-- ... (previous modal code) ... -->
+
+        <!-- SMS Simulator Modal -->
+        <div class="modal-overlay sms-theme" *ngIf="showSms" (click)="toggleSms()">
+          <div class="sms-modal" (click)="$event.stopPropagation()">
+            <header class="sms-header">
+              <button class="sms-back" (click)="toggleSms()">
+                <span class="material-icons">chevron_left</span>
+              </button>
+              <div class="sms-contact">
+                <div class="contact-avatar">7</div>
+                <div class="contact-info">
+                  <span class="contact-number">7442</span>
+                  <span class="contact-status">Mesaje</span>
+                </div>
+              </div>
+              <button class="sms-info">
+                <span class="material-icons">info</span>
+              </button>
+            </header>
+
+            <div class="sms-chat-area">
+              <div class="chat-timestamp">Astăzi 12:45</div>
+              
+              <div class="message sent">
+                <div class="message-bubble">1234 BV01ABC 1</div>
+              </div>
+
+              <div class="message received">
+                <div class="message-bubble">
+                  Plata parcării pentru autovehiculul BV 01 ABC în Zona 0 a fost confirmată. Valabilă până la 13:45. Cod confirmare: XA92.
+                </div>
+              </div>
+            </div>
+
+            <footer class="sms-footer">
+              <div class="sms-input-row">
+                <span class="material-icons sms-icon">camera_alt</span>
+                <span class="material-icons sms-icon">apps</span>
+                <div class="sms-input-mock">iMessage</div>
+                <span class="material-icons sms-icon mic">mic</span>
+              </div>
+            </footer >
+          </div>
+        </div>
 
         <!-- Tariffs Modal Overlay -->
         <div class="modal-overlay" *ngIf="showTariffs" (click)="toggleTariffs()">
@@ -442,14 +489,134 @@ import { RouterLink } from '@angular/router';
       .zona-0 { background: #ff4757; box-shadow: 0 8px 20px rgba(255, 71, 87, 0.2); }
       .zona-1 { background: #ffa502; box-shadow: 0 8px 20px rgba(255, 165, 2, 0.2); }
       .zona-2 { background: #2ed573; box-shadow: 0 8px 20px rgba(46, 213, 115, 0.2); }
+
+      /* SMS Simulator Styles */
+      .sms-modal {
+        background: #fff;
+        height: 90vh;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        border-radius: 32px 32px 0 0;
+        animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .sms-header {
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #f9f9f9;
+        border-bottom: 1px solid #eee;
+        border-radius: 32px 32px 0 0;
+      }
+
+      .sms-contact {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .contact-avatar {
+        width: 36px;
+        height: 36px;
+        background: #8e8e93;
+        color: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        margin-bottom: 0.25rem;
+      }
+
+      .contact-number { font-size: 0.8rem; font-weight: 700; color: #000; }
+      .contact-status { font-size: 0.65rem; color: #8e8e93; }
+
+      .sms-back { color: #007aff; background: none; border: none; font-size: 2rem; cursor: pointer; }
+      .sms-info { color: #007aff; background: none; border: none; cursor: pointer; }
+
+      .sms-chat-area {
+        flex: 1;
+        padding: 1.5rem 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        background: #fff;
+        overflow-y: auto;
+      }
+
+      .chat-timestamp {
+        text-align: center;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #8e8e93;
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+      }
+
+      .message { display: flex; width: 100%; margin-bottom: 0.5rem; }
+      .message.sent { justify-content: flex-end; }
+      .message.received { justify-content: flex-start; }
+
+      .message-bubble {
+        max-width: 75%;
+        padding: 0.75rem 1rem;
+        border-radius: 20px;
+        font-size: 0.95rem;
+        line-height: 1.4;
+      }
+
+      .sent .message-bubble {
+        background: #007aff;
+        color: #fff;
+        border-bottom-right-radius: 4px;
+      }
+
+      .received .message-bubble {
+        background: #e9e9eb;
+        color: #000;
+        border-bottom-left-radius: 4px;
+      }
+
+      .sms-footer {
+        padding: 1rem;
+        background: #f9f9f9;
+        border-top: 1px solid #eee;
+      }
+
+      .sms-input-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .sms-input-mock {
+        flex: 1;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        padding: 0.5rem 1rem;
+        color: #c7c7cc;
+        font-size: 0.95rem;
+      }
+
+      .sms-icon { color: #8e8e93; cursor: pointer; }
     `
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ParkingComponent {
   showTariffs = false;
+  showSms = false;
 
   toggleTariffs() {
     this.showTariffs = !this.showTariffs;
+    if (this.showTariffs) this.showSms = false;
+  }
+
+  toggleSms() {
+    this.showSms = !this.showSms;
+    if (this.showSms) this.showTariffs = false;
   }
 }
