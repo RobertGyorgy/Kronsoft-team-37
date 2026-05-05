@@ -229,8 +229,12 @@ import { RouterLink } from '@angular/router';
         border-radius: 28px;
         box-shadow: 0 15px 35px rgba(0,0,0,0.1);
         border: 1px solid #eee;
-        background: #fff;
+        background: #e9ecef; /* Placeholder color */
         line-height: 0;
+        min-height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .neighborhood-img {
@@ -238,12 +242,13 @@ import { RouterLink } from '@angular/router';
         height: auto;
         display: block;
         opacity: 0.9;
+        z-index: 1;
       }
 
       .official-pin {
         position: absolute;
-        width: 32px;
-        height: 32px;
+        width: 44px;
+        height: 44px;
         transform: translate(-50%, -50%);
         z-index: 10;
         display: flex;
@@ -252,12 +257,12 @@ import { RouterLink } from '@angular/router';
       }
 
       .pin-dot {
-        width: 14px;
-        height: 14px;
+        width: 18px;
+        height: 18px;
         background: #2E7D32;
-        border: 3px solid #fff;
+        border: 4px solid #fff;
         border-radius: 50%;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.3);
         z-index: 2;
       }
 
@@ -267,8 +272,8 @@ import { RouterLink } from '@angular/router';
         height: 100%;
         background: #2E7D32;
         border-radius: 50%;
-        opacity: 0.4;
-        animation: pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+        opacity: 0.3;
+        animation: pulse 2.5s infinite ease-out;
       }
 
       @keyframes pulse {
