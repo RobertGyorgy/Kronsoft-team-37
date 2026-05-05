@@ -18,15 +18,6 @@ import { RouterLink } from '@angular/router';
 
       <div class="main-scroll-area">
         <!-- 2. Map Section (Ultra Compact) -->
-        <section class="hero-map-section">
-          <div class="custom-map-container">
-            <img src="/images/neighborhood-map.png" alt="Hartă Zonare" class="neighborhood-img">
-            <div class="official-pin" style="top: 50%; left: 50%;">
-              <div class="pin-pulse"></div>
-              <div class="pin-dot"></div>
-            </div>
-          </div>
-        </section>
 
         <!-- 3. Zona Info Card (MUST FIT IN VIEWPORT) -->
         <section class="info-card-section">
@@ -141,29 +132,8 @@ import { RouterLink } from '@angular/router';
         -webkit-overflow-scrolling: touch;
       }
 
-      .hero-map-section {
-        padding: 0.5rem 1rem;
-      }
-
-      .custom-map-container {
-        position: relative;
-        overflow: hidden;
-        border-radius: 16px;
-        height: 180px; /* Adjust height slightly to fit the full map proportionally */
-        background: #f8f9fa; /* Match page background */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .neighborhood-img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain; /* DO NOT CROP - Fit whole image */
-      }
-
       .info-card-section {
-        padding: 0 1rem 0.5rem;
+        padding: 1rem;
       }
 
       .zona-card {
@@ -334,15 +304,6 @@ import { RouterLink } from '@angular/router';
       .amount { font-weight: 700; color: #ff4757; }
       .show-all { background: none; border: none; color: #4285f4; font-weight: 700; font-size: 0.9rem; }
 
-      /* Pin Animation */
-      .official-pin { position: absolute; width: 32px; height: 32px; transform: translate(-50%, -50%); z-index: 10; display: flex; align-items: center; justify-content: center; }
-      .pin-dot { width: 14px; height: 14px; background: #2E7D32; border: 3px solid #fff; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 2; }
-      .pin-pulse { position: absolute; width: 100%; height: 100%; background: #2E7D32; border-radius: 50%; opacity: 0.3; animation: pulse 2.5s infinite ease-out; }
-
-      @keyframes pulse {
-        0% { transform: scale(1); opacity: 0.3; }
-        100% { transform: scale(2.5); opacity: 0; }
-      }
     `
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
