@@ -26,6 +26,24 @@ import { RouterLink } from '@angular/router';
         </div>
       </section>
 
+      <!-- Map Section -->
+      <section class="section map-section">
+        <div class="section-header">
+          <h3>Localizare Parcare</h3>
+        </div>
+        <div class="map-container">
+          <iframe 
+            width="100%" 
+            height="250" 
+            style="border:0;" 
+            loading="lazy" 
+            allowfullscreen 
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d44558.11475878434!2d25.568160432328143!3d45.65797371190538!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40b35c7ee2c8349f%3A0x1f9453c07659a85a!2zQnJhyJlvdg!5e0!3m2!1sro!2sro!4v1714934000000!5m2!1sro!2sro">
+          </iframe>
+        </div>
+      </section>
+
       <!-- Active Sessions / Quick Action -->
       <div class="action-container">
         <div class="parking-card active-session">
@@ -178,6 +196,23 @@ import { RouterLink } from '@angular/router';
         font-size: 120px !important;
         color: #4285f4;
         transform: rotate(-10deg);
+      }
+
+      .map-section {
+        padding: 0 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .map-container {
+        overflow: hidden;
+        border-radius: 28px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        border: 1px solid #eee;
+        background: #f0f0f0;
+      }
+
+      .map-container iframe {
+        display: block;
       }
 
       .action-container {
