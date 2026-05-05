@@ -9,39 +9,56 @@ import { RouterLink } from '@angular/router';
   template: `
     <main class="parking-shell">
       <!-- Top Nav -->
-      <header class="top-nav">
-        <button class="back-pill" routerLink="/dashboard">
+      <header class="top-nav-white">
+        <h1 class="header-title">Zona metropolitana Brasov</h1>
+        <button class="back-arrow" routerLink="/dashboard">
           <span class="material-icons">arrow_back</span>
-          Înapoi
         </button>
       </header>
 
-      <section class="hero-section">
-        <div class="greeting-block">
-          <p class="section-label">Parcare</p>
-          <h1 class="page-title">Plătește Parcarea</h1>
-        </div>
-        <div class="page-illustration">
-          <span class="material-icons illustration-icon">local_parking</span>
-        </div>
-      </section>
-
-      <!-- Custom Neighborhood Map Section -->
-      <section class="section map-section">
-        <div class="section-header">
-          <h3>Zonare Parcare Brașov</h3>
-          <span class="map-hint">Vizualizare Hartă</span>
-        </div>
-        <div class="custom-map-container">
-          <img src="/images/neighborhood-map.png" alt="Hartă Zonare" class="neighborhood-img">
-          
-          <!-- Minimalist Official Pin (Refined) -->
-          <div class="official-pin" style="top: 50%; left: 50%;">
-            <div class="pin-pulse"></div>
-            <div class="pin-dot"></div>
+      <div class="main-scroll-area">
+        <!-- Map Section (Top) -->
+        <section class="hero-map-section">
+          <div class="custom-map-container no-shadow">
+            <img src="/images/neighborhood-map.png" alt="Hartă Zonare" class="neighborhood-img">
+            
+            <!-- Minimalist Official Pin -->
+            <div class="official-pin" style="top: 50%; left: 50%;">
+              <div class="pin-pulse"></div>
+              <div class="pin-dot"></div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        <!-- Zona Info Card -->
+        <section class="info-card-section">
+          <div class="zona-card">
+            <h2 class="zona-title">Te afli in zona 0 - Centru Vechi</h2>
+            
+            <div class="sms-instruction">
+              <p>Pentru plata te rugam trimite prin SMS numarul 1234 urmat de numarul de inmatriculare si numarul de ore</p>
+            </div>
+
+            <div class="card-actions">
+              <button class="black-btn">Tarifare</button>
+              <button class="black-btn">Spre SMS</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Rest of the content (Scrollable below) -->
+        <div class="additional-content">
+          <section class="section zone-picker">
+            <div class="section-header">
+              <h3>Selectează Altă Zonă</h3>
+            </div>
+            <div class="zone-grid">
+              <div class="zone-pill active">Zona A</div>
+              <div class="zone-pill">Zona B</div>
+              <div class="zone-pill">Zona C</div>
+              <div class="zone-pill">Rezidențial</div>
+            </div>
+          </section>
 
       <!-- Active Sessions / Quick Action -->
       <div class="action-container">
@@ -133,118 +150,125 @@ import { RouterLink } from '@angular/router';
     `
       .parking-shell {
         min-height: 100dvh;
-        background: #fcfcfc;
-        font-family: 'Surgena', sans-serif;
+        background: #f8f9fa;
+        font-family: 'Outfit', sans-serif;
         display: flex;
         flex-direction: column;
         color: #1a1a1a;
-        padding-bottom: 3rem;
       }
 
-      .top-nav {
-        padding: 1.5rem 1.5rem 0.5rem;
-        display: flex;
-        align-items: center;
-      }
-
-      .back-pill {
+      .top-nav-white {
         background: #fff;
-        border: 1px solid #eee;
-        padding: 0.6rem 1.2rem;
-        border-radius: 999px;
+        padding: 1.25rem 1.5rem;
         display: flex;
+        justify-content: center;
         align-items: center;
-        gap: 0.5rem;
-        color: #333;
-        font-weight: 700;
-        font-size: 0.95rem;
-        cursor: pointer;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-        text-decoration: none;
-      }
-
-      .hero-section {
-        padding: 1rem 1.5rem 1.5rem;
         position: relative;
-        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        z-index: 100;
       }
 
-      .section-label {
-        font-size: 1.1rem;
-        font-weight: 500;
-        color: #666;
-        margin: 0;
-      }
-
-      .page-title {
-        font-size: 2.25rem;
+      .header-title {
+        font-size: 1.4rem;
         font-weight: 800;
-        color: #4285f4; /* Blue color from dashboard */
         margin: 0;
-        letter-spacing: -0.02em;
+        color: #1a1a1a;
       }
 
-      .page-illustration {
+      .back-arrow {
         position: absolute;
-        top: 0;
-        right: -10px;
-        opacity: 0.1;
+        right: 1.5rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #1a1a1a;
       }
 
-      .illustration-icon {
-        font-size: 120px !important;
-        color: #4285f4;
-        transform: rotate(-10deg);
+      .main-scroll-area {
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
       }
 
-      .map-section {
-        padding: 0 1.5rem;
-        margin-bottom: 2rem;
-      }
-
-      .map-hint {
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: #2E7D32;
-        background: #E8F5E9;
-        padding: 0.25rem 0.75rem;
-        border-radius: 999px;
-      }
-
-      .map-container {
-        overflow: hidden;
-        border-radius: 28px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        border: 1px solid #eee;
-        background: #f0f0f0;
-      }
-
-      .map-container iframe {
-        display: block;
+      .hero-map-section {
+        padding: 1rem;
       }
 
       .custom-map-container {
         position: relative;
         overflow: hidden;
-        border-radius: 28px;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-        border: 1px solid #eee;
-        background: #e9ecef; /* Placeholder color */
+        border-radius: 16px;
+        background: #e9ecef;
         line-height: 0;
-        min-height: 200px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
       }
 
       .neighborhood-img {
         width: 100%;
         height: auto;
         display: block;
-        opacity: 0.9;
-        z-index: 1;
       }
 
+      /* Info Card Section */
+      .info-card-section {
+        padding: 0 1rem 1.5rem;
+      }
+
+      .zona-card {
+        background: #fff;
+        border-radius: 32px;
+        padding: 2rem 1.5rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .zona-title {
+        font-size: 1.6rem;
+        font-weight: 800;
+        margin: 0;
+        text-align: left;
+        line-height: 1.2;
+      }
+
+      .sms-instruction {
+        background: #ffe0b2;
+        padding: 1.25rem;
+        border-radius: 24px;
+      }
+
+      .sms-instruction p {
+        margin: 0;
+        font-size: 1.05rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #1a1a1a;
+      }
+
+      .card-actions {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .black-btn {
+        flex: 1;
+        background: #1a1a1a;
+        color: #fff;
+        border: none;
+        padding: 1.25rem;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+      }
+
+      .black-btn:active {
+        transform: scale(0.96);
+      }
+
+      /* Pin Styles */
       .official-pin {
         position: absolute;
         width: 44px;
@@ -277,8 +301,67 @@ import { RouterLink } from '@angular/router';
       }
 
       @keyframes pulse {
-        0% { transform: scale(1); opacity: 0.4; }
+        0% { transform: scale(1); opacity: 0.3; }
         100% { transform: scale(2.5); opacity: 0; }
+      }
+
+      .additional-content {
+        padding-bottom: 3rem;
+      }
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.25rem;
+      }
+
+      h3 {
+        font-size: 1.25rem;
+        font-weight: 800;
+        margin: 0;
+      }
+
+      .show-all {
+        background: none;
+        border: none;
+        color: #4285f4;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+      }
+
+      .zone-picker {
+        padding: 0 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .zone-grid {
+        display: flex;
+        gap: 0.75rem;
+        overflow-x: auto;
+        padding: 0.5rem 0;
+        scrollbar-width: none;
+      }
+
+      .zone-grid::-webkit-scrollbar { display: none; }
+
+      .zone-pill {
+        white-space: nowrap;
+        padding: 0.75rem 1.5rem;
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #666;
+        cursor: pointer;
+      }
+
+      .zone-pill.active {
+        background: #4285f4;
+        color: #fff;
+        border-color: #4285f4;
       }
 
       .action-container {
