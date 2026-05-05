@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { GoogleMapsModule } from '@angular/google-maps';
 
 @Component({
   selector: 'app-parking',
   standalone: true,
-  imports: [CommonModule, RouterLink, GoogleMapsModule],
+  imports: [CommonModule, RouterLink],
   template: `
     <main class="parking-shell">
       <!-- Top Nav -->
@@ -27,34 +26,20 @@ import { GoogleMapsModule } from '@angular/google-maps';
         </div>
       </section>
 
-      <!-- Map Section -->
+      <!-- Custom Neighborhood Map Section -->
       <section class="section map-section">
         <div class="section-header">
-          <h3>Localizare Parcare</h3>
-          <span class="map-hint">Brașov - Zonare</span>
+          <h3>Zonare Parcare Brașov</h3>
+          <span class="map-hint">Vizualizare Hartă</span>
         </div>
-        <div class="map-container advanced-map">
-          <google-map 
-            height="350px" 
-            width="100%" 
-            [center]="center" 
-            [zoom]="zoom"
-            [options]="mapOptions">
-            
-            <!-- Minimalist Green Pin -->
-            <map-marker 
-              [position]="center" 
-              [options]="markerOptions">
-            </map-marker>
-
-            <!-- Neighborhood Overlay -->
-            <map-ground-overlay
-              [url]="overlayImageUrl"
-              [bounds]="overlayBounds"
-              [opacity]="0.6">
-            </map-ground-overlay>
-
-          </google-map>
+        <div class="custom-map-container">
+          <img src="assets/neighborhood-map.png" alt="Hartă Zonare" class="neighborhood-img">
+          
+          <!-- Minimalist Official Pin -->
+          <div class="official-pin" style="top: 45%; left: 48%;">
+            <div class="pin-pulse"></div>
+            <div class="pin-dot"></div>
+          </div>
         </div>
       </section>
 
@@ -236,6 +221,59 @@ import { GoogleMapsModule } from '@angular/google-maps';
 
       .map-container iframe {
         display: block;
+      }
+
+      .custom-map-container {
+        position: relative;
+        overflow: hidden;
+        border-radius: 28px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        border: 1px solid #eee;
+        background: #fff;
+        line-height: 0;
+      }
+
+      .neighborhood-img {
+        width: 100%;
+        height: auto;
+        display: block;
+        opacity: 0.9;
+      }
+
+      .official-pin {
+        position: absolute;
+        width: 32px;
+        height: 32px;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .pin-dot {
+        width: 14px;
+        height: 14px;
+        background: #2E7D32;
+        border: 3px solid #fff;
+        border-radius: 50%;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        z-index: 2;
+      }
+
+      .pin-pulse {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #2E7D32;
+        border-radius: 50%;
+        opacity: 0.4;
+        animation: pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+      }
+
+      @keyframes pulse {
+        0% { transform: scale(1); opacity: 0.4; }
+        100% { transform: scale(2.5); opacity: 0; }
       }
 
       .action-container {
@@ -459,46 +497,4 @@ import { GoogleMapsModule } from '@angular/google-maps';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ParkingComponent {
-  // Brașov Center Coordinates
-  center: google.maps.LatLngLiteral = { lat: 45.657974, lng: 25.568160 };
-  zoom = 13;
-
-  mapOptions: google.maps.MapOptions = {
-    disableDefaultUI: true,
-    styles: [
-      {
-        featureType: 'poi',
-        elementType: 'labels',
-        stylers: [{ visibility: 'off' }]
-      }
-    ]
-  };
-
-  // Minimalist Green Pin SVG
-  private pinSvg = `
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="20" cy="20" r="18" fill="white" fill-opacity="0.9"/>
-      <circle cx="20" cy="20" r="14" fill="#2E7D32"/>
-      <circle cx="20" cy="20" r="6" fill="white"/>
-    </svg>
-  `;
-
-  markerOptions: google.maps.MarkerOptions = {
-    icon: {
-      url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(this.pinSvg),
-      scaledSize: new google.maps.Size(40, 40),
-      anchor: new google.maps.Point(20, 20)
-    },
-    animation: google.maps.Animation.DROP
-  };
-
-  // Neighborhood Overlay
-  overlayImageUrl = 'assets/map-overlay.png'; // User to place their image here
-  overlayBounds: google.maps.LatLngBoundsLiteral = {
-    north: 45.68,
-    south: 45.63,
-    east: 25.62,
-    west: 25.51
-  };
-}
+export class ParkingComponent {}
