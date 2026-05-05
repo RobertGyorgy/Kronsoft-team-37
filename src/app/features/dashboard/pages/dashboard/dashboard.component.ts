@@ -31,9 +31,9 @@ import { RouterLink } from '@angular/router';
           <span class="card-title">Sesizează o Problemă</span>
         </div>
 
-        <div class="grid-card green" (click)="onPayTaxesClick()">
-          <span class="material-icons card-bg-icon">payments</span>
-          <span class="card-title">Plată Taxe și Impozite</span>
+        <div class="grid-card green" (click)="onTownHallClick()">
+          <span class="material-icons card-bg-icon">account_balance</span>
+          <span class="card-title">Servicii Primărie</span>
         </div>
 
         <div class="grid-card purple" (click)="onCityEventsClick()">
@@ -41,9 +41,9 @@ import { RouterLink } from '@angular/router';
           <span class="card-title">Evenimente Oraș</span>
         </div>
 
-        <div class="grid-card teal" (click)="onUsefulInfoClick()">
-          <span class="material-icons card-bg-icon">info</span>
-          <span class="card-title">Informații Utile</span>
+        <div class="grid-card teal" (click)="onWeekendRecommendationsClick()">
+          <span class="material-icons card-bg-icon">auto_awesome</span>
+          <span class="card-title">Recomandări de Weekend</span>
         </div>
       </section>
 
@@ -193,10 +193,14 @@ import { RouterLink } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent {
+  onTownHallClick() { 
+    window.open('https://www.brasovcity.ro', '_blank');
+  }
+  onWeekendRecommendationsClick() {
+    console.log('Opening Weekend Recommendations...');
+  }
   onBusScheduleClick() { console.log('Navigating to Bus Schedule...'); }
   onPayParkingClick() { console.log('Navigating to Parking Payment...'); }
   onReportIssueClick() { console.log('Opening Issue Reporting...'); }
-  onPayTaxesClick() { console.log('Navigating to Tax Payments...'); }
   onCityEventsClick() { console.log('Opening City Events...'); }
-  onUsefulInfoClick() { console.log('Opening Useful Information...'); }
 }
