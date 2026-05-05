@@ -27,11 +27,50 @@ import { RouterLink } from '@angular/router';
               <p>Pentru plata te rugam trimite prin SMS numarul 1234 urmat de numarul de inmatriculare si numarul de ore</p>
             </div>
             <div class="card-actions">
-              <button class="black-btn">Tarifare</button>
+              <button class="black-btn" (click)="toggleTariffs()">Tarifare</button>
               <button class="black-btn">Spre SMS</button>
             </div>
           </div>
         </section>
+
+        <!-- Tariffs Modal Overlay -->
+        <div class="modal-overlay" *ngIf="showTariffs" (click)="toggleTariffs()">
+          <div class="tariffs-modal" (click)="$event.stopPropagation()">
+            <div class="modal-handle"></div>
+            <div class="modal-header">
+              <h2>Tarife parcare</h2>
+              <button class="close-modal" (click)="toggleTariffs()">
+                <span class="material-icons">close</span>
+              </button>
+            </div>
+            
+            <div class="tariffs-list">
+              <div class="tariff-card zona-0">
+                <span class="tariff-zone">Zona 0</span>
+                <div class="tariff-details">
+                  <p>1h - 3.00 lei</p>
+                  <p>2h - 6.00 lei</p>
+                </div>
+              </div>
+
+              <div class="tariff-card zona-1">
+                <span class="tariff-zone">Zona 1</span>
+                <div class="tariff-details">
+                  <p>1h - 2.00 lei</p>
+                  <p>2h - 4.00 lei</p>
+                </div>
+              </div>
+
+              <div class="tariff-card zona-2">
+                <span class="tariff-zone">Zona 2</span>
+                <div class="tariff-details">
+                  <p>1h - 1.50 lei</p>
+                  <p>2h - 3.00 lei</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <!-- 4. ORIGINAL CONTENT FLOW (Scrollable) -->
         <div class="original-content-flow">
@@ -309,8 +348,108 @@ import { RouterLink } from '@angular/router';
       .amount { font-weight: 700; color: #ff4757; }
       .show-all { background: none; border: none; color: #4285f4; font-weight: 700; font-size: 0.9rem; }
 
+
+      /* Tariffs Modal Styles */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+      }
+
+      .tariffs-modal {
+        background: #fff;
+        border-radius: 32px 32px 0 0;
+        padding: 1.5rem;
+        max-height: 80vh;
+        overflow-y: auto;
+        animation: slideUp 0.3s ease-out;
+      }
+
+      @keyframes slideUp {
+        from { transform: translateY(100%); }
+        to { transform: translateY(0); }
+      }
+
+      .modal-handle {
+        width: 40px;
+        height: 4px;
+        background: #eee;
+        border-radius: 2px;
+        margin: 0 auto 1.5rem;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+
+      .modal-header h2 {
+        font-size: 1.5rem;
+        font-weight: 800;
+        margin: 0;
+      }
+
+      .close-modal {
+        background: #f5f5f5;
+        border: none;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+
+      .tariffs-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+
+      .tariff-card {
+        padding: 1.5rem;
+        border-radius: 24px;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .tariff-zone {
+        font-size: 1.2rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .tariff-details p {
+        margin: 0;
+        font-weight: 700;
+        font-size: 1.1rem;
+        opacity: 0.95;
+      }
+
+      .zona-0 { background: #ff4757; box-shadow: 0 8px 20px rgba(255, 71, 87, 0.2); }
+      .zona-1 { background: #ffa502; box-shadow: 0 8px 20px rgba(255, 165, 2, 0.2); }
+      .zona-2 { background: #2ed573; box-shadow: 0 8px 20px rgba(46, 213, 115, 0.2); }
     `
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ParkingComponent {}
+export class ParkingComponent {
+  showTariffs = false;
+
+  toggleTariffs() {
+    this.showTariffs = !this.showTariffs;
+  }
+}
