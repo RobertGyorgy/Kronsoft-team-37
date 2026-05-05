@@ -33,10 +33,10 @@ import { RouterLink } from '@angular/router';
           <span class="map-hint">Vizualizare Hartă</span>
         </div>
         <div class="custom-map-container">
-          <img src="assets/neighborhood-map.png" alt="Hartă Zonare" class="neighborhood-img">
+          <img src="images/neighborhood-map.png" alt="Hartă Zonare" class="neighborhood-img">
           
-          <!-- Minimalist Official Pin -->
-          <div class="official-pin" style="top: 45%; left: 48%;">
+          <!-- Minimalist Official Pin (Refined) -->
+          <div class="official-pin" style="top: 50%; left: 50%;">
             <div class="pin-pulse"></div>
             <div class="pin-dot"></div>
           </div>
