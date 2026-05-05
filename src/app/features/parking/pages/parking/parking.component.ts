@@ -133,10 +133,19 @@ import { RouterLink } from '@angular/router';
                 <p class="location-text">Zona A - Centru Istoric</p>
               </div>
               <div class="timer-display">
-                <span class="time-left">01:45:12</span>
+                <span class="time-left">{{ timeLeft }}</span>
                 <span class="time-label">timp rămas</span>
               </div>
-              <button class="extend-btn" (click)="toggleSms()">Prelungește timpul</button>
+              <div class="extend-container">
+                <button class="extend-btn" (click)="toggleQuickAdd()">Prelungește timpul</button>
+                
+                <!-- Quick Add Menu -->
+                <div class="quick-add-menu" *ngIf="showQuickAdd">
+                  <div class="quick-option" (click)="extendTime(30)">+30 min</div>
+                  <div class="quick-option" (click)="extendTime(60)">+1h</div>
+                  <div class="quick-option" (click)="extendTime(120)">+2h</div>
+                </div>
+              </div>
             </div>
           </section>
 
@@ -601,7 +610,49 @@ import { RouterLink } from '@angular/router';
         font-size: 0.95rem;
       }
 
-      .sms-icon { color: #8e8e93; cursor: pointer; }
+
+      /* Quick Add Menu Styles */
+      .extend-container { position: relative; width: 100%; }
+      
+      .quick-add-menu {
+        position: absolute;
+        bottom: 120%;
+        left: 0;
+        width: 100%;
+        background: #fff;
+        border-radius: 20px;
+        padding: 0.5rem;
+        box-shadow: 0 -10px 25px rgba(0,0,0,0.15);
+        display: flex;
+        justify-content: space-around;
+        gap: 0.5rem;
+        animation: popUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 10;
+      }
+
+      @keyframes popUp {
+        from { opacity: 0; transform: translateY(10px) scale(0.95); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+      }
+
+      .quick-option {
+        flex: 1;
+        padding: 0.75rem;
+        background: #f0f7ff;
+        color: #4285f4;
+        border-radius: 12px;
+        font-weight: 800;
+        text-align: center;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .quick-option:active {
+        background: #4285f4;
+        color: #fff;
+        transform: scale(0.95);
+      }
     `
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -609,14 +660,36 @@ import { RouterLink } from '@angular/router';
 export class ParkingComponent {
   showTariffs = false;
   showSms = false;
+  showQuickAdd = false;
+  timeLeft = '01:45:12';
 
   toggleTariffs() {
     this.showTariffs = !this.showTariffs;
-    if (this.showTariffs) this.showSms = false;
+    if (this.showTariffs) { this.showSms = false; this.showQuickAdd = false; }
   }
 
   toggleSms() {
     this.showSms = !this.showSms;
-    if (this.showSms) this.showTariffs = false;
+    if (this.showSms) { this.showTariffs = false; this.showQuickAdd = false; }
+  }
+
+  toggleQuickAdd() {
+    this.showQuickAdd = !this.showQuickAdd;
+  }
+
+  extendTime(minutes: number) {
+    // Simulate payment and time update
+    console.log(`Extending by ${minutes} minutes...`);
+    
+    // Simple mock update (just for visual feedback)
+    const [h, m, s] = this.timeLeft.split(':').map(Number);
+    let totalMin = h * 60 + m + minutes;
+    const newH = Math.floor(totalMin / 60);
+    const newM = totalMin % 60;
+    
+    this.timeLeft = `${String(newH).padStart(2, '0')}:${String(newM).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    this.showQuickAdd = false;
+    
+    alert(`Plată confirmată! Timpul a fost prelungit cu ${minutes} minute.`);
   }
 }
