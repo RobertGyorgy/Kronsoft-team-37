@@ -149,15 +149,17 @@ import { RouterLink } from '@angular/router';
         position: relative;
         overflow: hidden;
         border-radius: 16px;
-        height: 150px; /* Ultra compact height */
-        background: #eee;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        height: 180px; /* Adjust height slightly to fit the full map proportionally */
+        background: #f8f9fa; /* Match page background */
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .neighborhood-img {
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: contain; /* DO NOT CROP - Fit whole image */
       }
 
       .info-card-section {
