@@ -136,7 +136,7 @@ import { RouterLink } from '@angular/router';
                 <span class="time-left">01:45:12</span>
                 <span class="time-label">timp rămas</span>
               </div>
-              <button class="extend-btn">Prelungește timpul</button>
+              <button class="extend-btn" (click)="toggleSms()">Prelungește timpul</button>
             </div>
           </section>
 
