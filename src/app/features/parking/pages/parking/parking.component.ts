@@ -137,51 +137,56 @@ import { RouterLink } from '@angular/router';
       }
 
       .zona-card {
-        background: #fff;
-        border-radius: 24px;
-        padding: 1.25rem;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+        background: linear-gradient(135deg, #4285f4 0%, #2b6edb 100%);
+        border-radius: 28px;
+        padding: 1.5rem;
+        box-shadow: 0 12px 30px rgba(66, 133, 244, 0.25);
         display: flex;
         flex-direction: column;
-        gap: 0.75rem;
+        gap: 1rem;
+        color: #fff;
       }
 
       .zona-title {
-        font-size: 1.4rem;
-        font-weight: 800;
+        font-size: 1.5rem;
+        font-weight: 900;
         margin: 0;
         letter-spacing: -0.02em;
+        color: #fff;
       }
 
       .sms-instruction {
-        background: #ffe0b2;
-        padding: 0.85rem;
-        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.15);
+        padding: 1rem;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
       }
 
       .sms-instruction p {
         margin: 0;
-        font-size: 0.95rem;
+        font-size: 1rem;
         font-weight: 600;
-        line-height: 1.3;
-        color: #5d4037;
+        line-height: 1.4;
+        color: #fff;
       }
 
       .card-actions {
         display: flex;
         gap: 0.75rem;
+        margin-top: 0.5rem;
       }
 
       .black-btn {
         flex: 1;
-        background: #1a1a1a;
-        color: #fff;
+        background: #fff;
+        color: #4285f4;
         border: none;
-        padding: 0.85rem;
+        padding: 1rem;
         border-radius: 999px;
-        font-weight: 700;
-        font-size: 0.95rem;
+        font-weight: 800;
+        font-size: 1rem;
         cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       }
 
       /* Original Content Styling */
