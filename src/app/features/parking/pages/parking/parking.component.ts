@@ -27,13 +27,10 @@ import { RouterLink } from '@angular/router';
         <!-- 3. Zona Info Card -->
         <section class="info-card-section">
           <div class="zona-card">
-            <h2 class="zona-title">Te afli in zona 0 - Centru Vechi</h2>
-            <div class="sms-instruction">
-              <p>Pentru plata te rugam trimite prin SMS numarul 1234 urmat de numarul de inmatriculare si numarul de ore</p>
-            </div>
+            <h2 class="zona-title">Zona 0 - Centru Vechi</h2>
             <div class="card-actions">
-              <button class="black-btn" (click)="toggleTariffs()">Tarifare</button>
-              <button class="black-btn" (click)="sendNativeSms()">Spre SMS</button>
+              <button class="black-btn" (click)="toggleTariffs()">Tarife</button>
+              <button class="black-btn" (click)="sendNativeSms()">SMS</button>
             </div>
           </div>
         </section>
@@ -196,12 +193,12 @@ import { RouterLink } from '@angular/router';
       .custom-map-container {
         border-radius: 16px;
         overflow: hidden;
-        height: 160px; /* Ultra-compact height */
+        height: 30vh; /* Dynamic height based on viewport */
+        min-height: 150px;
         background: #f8f9fa;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
       }
 
       .neighborhood-img {
@@ -211,59 +208,49 @@ import { RouterLink } from '@angular/router';
       }
 
       .info-card-section {
-        padding: 0.25rem 0.75rem; /* Minimum padding */
+        padding: 0.25rem 0.75rem;
       }
 
       .zona-card {
         background: linear-gradient(135deg, #4285f4 0%, #2b6edb 100%);
-        border-radius: 20px;
-        padding: 0.75rem; /* Super tight */
+        border-radius: 16px;
+        padding: 0.6rem 1rem;
         display: flex;
-        flex-direction: column;
+        flex-direction: row; /* Horizontal to save vertical space */
+        align-items: center;
+        justify-content: space-between;
         gap: 0.5rem;
         color: #fff;
       }
 
       .zona-title {
-        font-size: 1.1rem;
+        font-size: 1rem;
         font-weight: 800;
         margin: 0;
-      }
-
-      .sms-instruction {
-        background: rgba(255, 255, 255, 0.1);
-        padding: 0.5rem;
-        border-radius: 12px;
-      }
-
-      .sms-instruction p {
-        margin: 0;
-        font-size: 0.8rem;
-        line-height: 1.2;
+        max-width: 60%;
       }
 
       .card-actions {
         display: flex;
-        gap: 0.5rem;
+        gap: 0.4rem;
       }
 
       .black-btn {
-        flex: 1;
         background: #fff;
         color: #4285f4;
         border: none;
-        padding: 0.6rem;
-        border-radius: 12px;
+        padding: 0.4rem 0.75rem;
+        border-radius: 8px;
         font-weight: 800;
-        font-size: 0.85rem;
+        font-size: 0.75rem;
       }
 
-      /* Active Session Compact Styles */
+      /* Ultra Slim Session Card */
       .compact-session {
         margin: 0.25rem 0.75rem;
         background: #4285f4;
-        border-radius: 20px;
-        padding: 0.75rem;
+        border-radius: 16px;
+        padding: 0.6rem 1rem;
         color: #fff;
       }
 
@@ -271,21 +258,21 @@ import { RouterLink } from '@angular/router';
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 0.5rem;
       }
 
-      .car-plate-small { font-size: 1.2rem; font-weight: 900; }
-      .session-timer-mini { background: rgba(255,255,255,0.2); padding: 0.4rem 0.75rem; border-radius: 12px; font-weight: 800; font-size: 1.1rem; }
+      .car-plate-small { font-size: 1.1rem; font-weight: 900; }
+      .session-timer-mini { font-weight: 800; font-size: 1.1rem; }
       
       .extend-btn-mini {
         width: 100%;
         background: #fff;
         color: #4285f4;
         border: none;
-        padding: 0.6rem;
-        border-radius: 12px;
+        padding: 0.5rem;
+        border-radius: 8px;
         font-weight: 800;
-        font-size: 0.85rem;
+        font-size: 0.8rem;
+        margin-top: 0.5rem;
       }
 
       /* Original Content Styling */
