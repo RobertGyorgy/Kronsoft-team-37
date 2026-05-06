@@ -338,6 +338,9 @@ export class ParkingComponent implements OnInit, OnDestroy {
       totalSeconds--;
 
       // Trigger notifications at specific intervals
+      if (totalSeconds === 3480) { // 58 minutes
+        this.sendExpiryNotification('Update: Mai ai 58 de minute din timpul de parcare.');
+      }
       if (totalSeconds === 3240) { // 54 minutes
         this.sendExpiryNotification('Mai ai 54 de minute din timpul de parcare.');
       }
