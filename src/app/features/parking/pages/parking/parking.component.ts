@@ -54,27 +54,30 @@ import { FormsModule } from '@angular/forms';
             </div>
             
             <div class="tariffs-list">
+              <!-- Zona 0 -->
               <div class="tariff-card zona-0">
                 <span class="tariff-zone">Zona 0</span>
                 <div class="tariff-details">
-                  <p>1h - 3.00 lei</p>
-                  <p>2h - 6.00 lei</p>
+                  <p>1h - 0.60 € + TVA</p>
+                  <p>24h - 3.00 € + TVA</p>
                 </div>
               </div>
 
+              <!-- Zona 1 -->
               <div class="tariff-card zona-1">
                 <span class="tariff-zone">Zona 1</span>
                 <div class="tariff-details">
-                  <p>1h - 2.00 lei</p>
-                  <p>2h - 4.00 lei</p>
+                  <p>1h - 0.40 € + TVA</p>
+                  <p>24h - 2.00 € + TVA</p>
                 </div>
               </div>
 
+              <!-- Zona 2 -->
               <div class="tariff-card zona-2">
                 <span class="tariff-zone">Zona 2</span>
                 <div class="tariff-details">
-                  <p>1h - 1.50 lei</p>
-                  <p>2h - 3.00 lei</p>
+                  <p>1h - 0.30 € + TVA</p>
+                  <p>24h - 1.50 € + TVA</p>
                 </div>
               </div>
             </div>
