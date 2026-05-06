@@ -30,7 +30,18 @@ import { FormsModule } from '@angular/forms';
         <section class="info-card-section">
           <div class="zona-card">
             <h2 class="zona-title">Zona 0 - Centru Vechi</h2>
-            <p class="sms-note">Pentru plata te rugam trimite prin SMS numarul 1234 urmat de numarul de inmatriculare si numarul de ore</p>
+            <p class="sms-note">Plata prin SMS la 1234: [Număr] [Ore]</p>
+            
+            <!-- Compact Stepper -->
+            <div class="stepper-container">
+              <span class="stepper-label">Selectează durata:</span>
+              <div class="stepper-controls">
+                <button class="step-btn" (click)="decrementHours()">-</button>
+                <span class="step-value">{{ selectedHours }}h</span>
+                <button class="step-btn" (click)="incrementHours()">+</button>
+              </div>
+            </div>
+
             <div class="card-actions">
               <button class="black-btn" (click)="toggleTariffs()">Tarife</button>
               <button class="black-btn" (click)="sendNativeSms()">SMS</button>
@@ -261,11 +272,54 @@ import { FormsModule } from '@angular/forms';
       }
 
       .sms-note {
-        font-size: 0.8rem;
-        line-height: 1.2;
+        font-size: 0.75rem; /* Even smaller to save space */
+        line-height: 1.1;
         margin: 0;
-        opacity: 0.9;
+        opacity: 0.8;
         font-weight: 600;
+      }
+
+      .stepper-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 0.4rem 0.75rem;
+        border-radius: 12px;
+        margin: 0.1rem 0;
+      }
+
+      .stepper-label {
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+
+      .stepper-controls {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .step-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: #fff;
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        font-weight: 800;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+
+      .step-value {
+        font-size: 1.1rem;
+        font-weight: 900;
+        min-width: 35px;
+        text-align: center;
       }
 
       .card-actions {
@@ -669,12 +723,23 @@ export class ParkingComponent {
     this.tempPlate = this.carPlate;
   }
 
+  // Hours Stepper State
+  selectedHours = 1;
+
+  incrementHours() {
+    if (this.selectedHours < 24) this.selectedHours++;
+  }
+
+  decrementHours() {
+    if (this.selectedHours > 1) this.selectedHours--;
+  }
+
   sendNativeSms() {
     const recipient = '1234';
-    // Use the saved car plate or a placeholder if not set
-    const body = (this.carPlate || 'BV 01 ABC') + ' ';
+    // Automatically combine plate and hours
+    const body = (this.carPlate || 'BV 01 ABC') + ' ' + this.selectedHours;
     
-    // 1. Try to copy to clipboard immediately as backup
+    // 1. Backup copy
     try {
       const el = document.createElement('textarea');
       el.value = body;
@@ -686,7 +751,7 @@ export class ParkingComponent {
       navigator.clipboard.writeText(body).catch(() => {});
     }
 
-    // 2. Immediate redirect with platform-specific separator
+    // 2. Redirect
     const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
     const separator = isIos ? '&' : '?';
     const smsUrl = `sms:${recipient}${separator}body=${encodeURIComponent(body)}`;
