@@ -171,7 +171,7 @@ import { interval, Subscription } from 'rxjs';
   styles: [`
     .parking-shell { min-height: 100vh; background: #fdfdfd; font-family: 'Outfit', sans-serif; color: #1a1a1a; }
     .top-nav-white { background: #fff; padding: 0.75rem 1rem; display: flex; align-items: center; position: relative; border-bottom: 1px solid #f0f0f0; z-index: 10; min-height: 60px; }
-    .header-title { font-size: 1.1rem; font-weight: 800; margin: 0; flex: 1; text-align: center; padding: 0 4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .header-title { font-size: 1.15rem; font-weight: 800; margin: 0; flex: 1; text-align: center; padding: 0 4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #1a1a1a; }
     .back-pill { position: absolute; left: 1rem; display: flex; align-items: center; gap: 0.4rem; background: #fff; border: 1px solid #e0e0e0; padding: 0.4rem 0.8rem; border-radius: 999px; color: #1a1a1a; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
     .back-text { font-weight: 700; font-size: 0.9rem; }
     .main-scroll-area { height: calc(100vh - 60px); overflow-y: auto; -webkit-overflow-scrolling: touch; }
@@ -180,7 +180,7 @@ import { interval, Subscription } from 'rxjs';
     .neighborhood-img { width: 100%; height: 100%; object-fit: contain; }
     .info-card-section { padding: 0.5rem 1rem; }
     .zona-card { background: linear-gradient(135deg, #4285f4 0%, #2b6edb 100%); border-radius: 20px; padding: 1rem; box-shadow: 0 10px 25px rgba(66,133,244,0.2); display: flex; flex-direction: column; gap: 0.5rem; color: #fff; }
-    .zona-title { font-size: 1.2rem; font-weight: 800; margin: 0; }
+    .zona-title { font-size: 1.2rem; font-weight: 800; margin: 0; text-align: center; width: 100%; }
     .sms-preview-badge {
       background: rgba(255, 255, 255, 0.15);
       padding: 0.5rem 0.75rem;
@@ -270,6 +270,34 @@ export class ParkingComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.requestNotificationPermission();
+    this.loadPersistedData();
+  }
+
+  private loadPersistedData() {
+    // 1. Load Plate
+    const savedPlate = localStorage.getItem('parking_carPlate');
+    if (savedPlate) {
+      this.carPlate = savedPlate;
+      this.tempPlate = savedPlate;
+      this.isPlateSaved = true;
+    }
+
+    // 2. Load History
+    const savedHistory = localStorage.getItem('parking_history');
+    if (savedHistory) {
+      this.history = JSON.parse(savedHistory);
+    }
+
+    // 3. Resume Timer
+    const expiryTime = localStorage.getItem('parking_expiry');
+    if (expiryTime) {
+      const remainingSeconds = Math.floor((parseInt(expiryTime) - Date.now()) / 1000);
+      if (remainingSeconds > 0) {
+        this.startCountdown(remainingSeconds / 3600);
+      } else {
+        localStorage.removeItem('parking_expiry');
+      }
+    }
   }
 
   ngOnDestroy() {
@@ -295,6 +323,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
     if (this.tempPlate.trim()) {
       this.carPlate = this.tempPlate.toUpperCase();
       this.isPlateSaved = true;
+      localStorage.setItem('parking_carPlate', this.carPlate);
     }
   }
 
@@ -334,11 +363,16 @@ export class ParkingComponent implements OnInit, OnDestroy {
     
     this.currentParkingSeconds = hours * 3600;
     this.timeLeft = this.formatTime(this.currentParkingSeconds);
+    
+    // Save expiry timestamp
+    const expiryTimestamp = Date.now() + (this.currentParkingSeconds * 1000);
+    localStorage.setItem('parking_expiry', expiryTimestamp.toString());
 
     this.timerSubscription = interval(1000).subscribe(() => {
       if (this.currentParkingSeconds <= 0) {
         this.currentParkingSeconds = 0;
         this.timeLeft = '00:00:00';
+        localStorage.removeItem('parking_expiry');
         if (this.timerSubscription) this.timerSubscription.unsubscribe();
         this.cdr.detectChanges();
         return;
@@ -382,7 +416,8 @@ export class ParkingComponent implements OnInit, OnDestroy {
     };
 
     this.history.unshift(newEntry);
-    if (this.history.length > 5) this.history.pop();
+    if (this.history.length > 10) this.history.pop();
+    localStorage.setItem('parking_history', JSON.stringify(this.history));
   }
 
   toggleTariffs() { this.showTariffs = !this.showTariffs; }
