@@ -189,8 +189,8 @@ import { RouterLink } from '@angular/router';
 
       .hero-map-section {
         padding: 0.5rem 1rem 0;
-        height: 38vh; /* Occupy significant vertical space */
-        min-height: 250px;
+        height: 30vh; /* Reduced from 38vh to fit all 3 blocks */
+        min-height: 200px;
       }
 
       .custom-map-container {
@@ -211,22 +211,22 @@ import { RouterLink } from '@angular/router';
       }
 
       .info-card-section {
-        padding: 0.75rem 1rem;
+        padding: 0.5rem 1rem;
       }
 
       .zona-card {
         background: linear-gradient(135deg, #4285f4 0%, #2b6edb 100%);
-        border-radius: 24px;
-        padding: 1.25rem;
-        box-shadow: 0 10px 30px rgba(66, 133, 244, 0.2);
+        border-radius: 20px;
+        padding: 1rem;
+        box-shadow: 0 10px 25px rgba(66, 133, 244, 0.2);
         display: flex;
         flex-direction: column;
-        gap: 0.75rem;
+        gap: 0.5rem;
         color: #fff;
       }
 
       .zona-title {
-        font-size: 1.4rem;
+        font-size: 1.25rem;
         font-weight: 800;
         margin: 0;
         color: #fff;
@@ -234,8 +234,8 @@ import { RouterLink } from '@angular/router';
 
       .card-actions {
         display: flex;
-        gap: 0.75rem;
-        margin-top: 0.25rem;
+        gap: 0.6rem;
+        margin-top: 0.15rem;
       }
 
       .black-btn {
@@ -243,45 +243,45 @@ import { RouterLink } from '@angular/router';
         background: #fff;
         color: #4285f4;
         border: none;
-        padding: 0.9rem;
-        border-radius: 16px;
+        padding: 0.75rem;
+        border-radius: 14px;
         font-weight: 800;
-        font-size: 1rem;
+        font-size: 0.9rem;
         cursor: pointer;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       }
 
       .section-full-height {
-        padding: 0.5rem 1rem 1rem;
+        padding: 0.25rem 1rem 0.75rem;
       }
 
-      /* Active Session Premium Card */
+      /* Active Session Premium Card (Refined) */
       .parking-card.active-session {
         background: #4285f4;
-        border-radius: 24px;
-        padding: 1.25rem;
+        border-radius: 20px;
+        padding: 1rem;
         color: #fff;
-        box-shadow: 0 10px 30px rgba(66, 133, 244, 0.2);
+        box-shadow: 0 8px 25px rgba(66, 133, 244, 0.2);
       }
 
-      .card-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
-      .status-dot-pulse { width: 10px; height: 10px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 10px #4ade80; animation: blink 2s infinite; }
+      .card-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+      .status-dot-pulse { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 10px #4ade80; animation: blink 2s infinite; }
       @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-      .status-label { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+      .status-label { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
 
-      .car-plate { font-size: 2rem; font-weight: 900; margin: 0; letter-spacing: -0.02em; }
-      .location-text { font-size: 1rem; opacity: 0.9; margin: 0.25rem 0 1rem; }
+      .car-plate { font-size: 1.7rem; font-weight: 900; margin: 0; letter-spacing: -0.02em; }
+      .location-text { font-size: 0.9rem; opacity: 0.9; margin: 0.15rem 0 0.75rem; }
 
       .timer-display {
         background: rgba(255, 255, 255, 0.15);
-        border-radius: 20px;
-        padding: 1.25rem;
+        border-radius: 16px;
+        padding: 1rem;
         text-align: center;
-        margin-bottom: 1rem;
+        margin-bottom: 0.75rem;
       }
 
-      .time-left { font-size: 2.5rem; font-weight: 800; display: block; line-height: 1; }
-      .time-label { font-size: 0.75rem; text-transform: uppercase; font-weight: 700; opacity: 0.8; letter-spacing: 0.1em; margin-top: 0.25rem; display: block; }
+      .time-left { font-size: 2.2rem; font-weight: 800; display: block; line-height: 1; }
+      .time-label { font-size: 0.7rem; text-transform: uppercase; font-weight: 700; opacity: 0.8; letter-spacing: 0.1em; margin-top: 0.2rem; display: block; }
 
       .extend-container { position: relative; }
       .extend-btn {
@@ -289,10 +289,10 @@ import { RouterLink } from '@angular/router';
         background: #fff;
         color: #4285f4;
         border: none;
-        padding: 1rem;
-        border-radius: 16px;
+        padding: 0.85rem;
+        border-radius: 14px;
         font-weight: 800;
-        font-size: 1rem;
+        font-size: 0.95rem;
         cursor: pointer;
       }
 
