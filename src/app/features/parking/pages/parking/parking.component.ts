@@ -319,6 +319,12 @@ export class ParkingComponent implements OnInit, OnDestroy {
     
     let totalSeconds = hours * 3600;
     
+    // Set initial value immediately (0ms delay)
+    const hInitial = Math.floor(totalSeconds / 3600);
+    const mInitial = Math.floor((totalSeconds % 3600) / 60);
+    const sInitial = totalSeconds % 60;
+    this.timeLeft = `${String(hInitial).padStart(2, '0')}:${String(mInitial).padStart(2, '0')}:${String(sInitial).padStart(2, '0')}`;
+
     this.timerInterval = setInterval(() => {
       if (totalSeconds <= 0) {
         clearInterval(this.timerInterval);
