@@ -322,12 +322,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
     if (this.timerInterval) clearInterval(this.timerInterval);
     
     let totalSeconds = hours * 3600;
-    
-    // Set initial value immediately (0ms delay)
-    const hInitial = Math.floor(totalSeconds / 3600);
-    const mInitial = Math.floor((totalSeconds % 3600) / 60);
-    const sInitial = totalSeconds % 60;
-    this.timeLeft = `${String(hInitial).padStart(2, '0')}:${String(mInitial).padStart(2, '0')}:${String(sInitial).padStart(2, '0')}`;
+    this.timeLeft = this.formatTime(totalSeconds);
 
     this.timerInterval = setInterval(() => {
       if (totalSeconds <= 0) {
@@ -338,22 +333,19 @@ export class ParkingComponent implements OnInit, OnDestroy {
       totalSeconds--;
 
       // Trigger notifications at specific intervals
-      if (totalSeconds === 3480) { // 58 minutes
-        this.sendExpiryNotification('Update: Mai ai 58 de minute din timpul de parcare.');
-      }
-      if (totalSeconds === 3240) { // 54 minutes
-        this.sendExpiryNotification('Mai ai 54 de minute din timpul de parcare.');
-      }
-      if (totalSeconds === 300) { // 5 minutes
-        this.sendExpiryNotification('ATENȚIE: Parcarea expiră în 5 minute!');
-      }
+      if (totalSeconds === 3480) { this.sendExpiryNotification('Update: Mai ai 58 de minute din timpul de parcare.'); }
+      if (totalSeconds === 3240) { this.sendExpiryNotification('Mai ai 54 de minute din timpul de parcare.'); }
+      if (totalSeconds === 300) { this.sendExpiryNotification('ATENȚIE: Parcarea expiră în 5 minute!'); }
       
-      const h = Math.floor(totalSeconds / 3600);
-      const m = Math.floor((totalSeconds % 3600) / 60);
-      const s = totalSeconds % 60;
-      
-      this.timeLeft = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      this.timeLeft = this.formatTime(totalSeconds);
     }, 1000);
+  }
+
+  private formatTime(totalSeconds: number): string {
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
   }
 
   isExpiryWarning(): boolean {
@@ -386,15 +378,14 @@ export class ParkingComponent implements OnInit, OnDestroy {
     const [h, m, s] = this.timeLeft.split(':').map(Number);
     let totalSec = (h * 3600) + (m * 60) + s + (minutes * 60);
     
+    this.timeLeft = this.formatTime(totalSec); // Update UI instantly
+    
     if (this.timerInterval) clearInterval(this.timerInterval);
     
     this.timerInterval = setInterval(() => {
       if (totalSec <= 0) { clearInterval(this.timerInterval); this.timeLeft = '00:00:00'; return; }
       totalSec--;
-      const hh = Math.floor(totalSec / 3600);
-      const mm = Math.floor((totalSec % 3600) / 60);
-      const ss = totalSec % 60;
-      this.timeLeft = `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
+      this.timeLeft = this.formatTime(totalSec);
     }, 1000);
 
     this.showQuickAdd = false;
