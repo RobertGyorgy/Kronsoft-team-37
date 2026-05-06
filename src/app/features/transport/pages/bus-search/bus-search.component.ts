@@ -330,8 +330,14 @@ export class BusSearchComponent implements OnInit, OnDestroy {
       if (!url || typeof url !== 'string') { completed++; return; }
       
       console.log(`🔗 Fetching Line ${line} from:`, url);
-      // Switched to allorigins.win for better reliability on live site
-      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+      
+      // Use our custom Vercel proxy. 
+      // On localhost (ng serve), /api/proxy won't exist unless using 'vercel dev'.
+      // So we fallback to allorigins only if /api/proxy fails or we detect localhost.
+      const isLocalhost = window.location.hostname === 'localhost';
+      const proxyUrl = isLocalhost 
+        ? `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
+        : `/api/proxy?url=${encodeURIComponent(url)}`;
       
       this.http.get(proxyUrl, { responseType: 'text' }).subscribe({
         next: (html) => {
