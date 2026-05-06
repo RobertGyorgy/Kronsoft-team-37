@@ -13,7 +13,6 @@ import { FormsModule } from '@angular/forms';
       <header class="top-nav-white">
         <button class="back-pill" routerLink="/dashboard">
           <span class="material-icons">arrow_back</span>
-          <span class="v-line">|</span>
           <span class="back-text">Înapoi</span>
         </button>
         <h1 class="header-title">Zona metropolitana Brasov</h1>
@@ -192,13 +191,6 @@ import { FormsModule } from '@angular/forms';
       .back-pill:active {
         transform: scale(0.95);
         background: #f5f5f5;
-      }
-
-      .v-line {
-        color: #ddd;
-        font-weight: 300;
-        font-size: 1.2rem;
-        margin-top: -2px;
       }
 
       .back-text {
