@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -142,16 +142,19 @@ import { FormsModule } from '@angular/forms';
               <h3>Istoric Recent</h3>
               <button class="show-all">Vezi tot</button>
             </div>
-            <div class="history-item">
-              <div class="history-date">
-                <span class="day">02</span>
-                <span class="month">MAI</span>
+            
+            <div class="history-list">
+              <div class="history-item" *ngFor="let item of history">
+                <div class="history-date">
+                  <span class="day">{{ item.day }}</span>
+                  <span class="month">{{ item.month }}</span>
+                </div>
+                <div class="history-info">
+                  <span class="plate">{{ item.plate }}</span>
+                  <span class="loc">{{ item.zone }}</span>
+                </div>
+                <span class="amount">- {{ item.amount }} €</span>
               </div>
-              <div class="history-info">
-                <span class="plate">BV 01 ABC</span>
-                <span class="loc">Livada Poștei</span>
-              </div>
-              <span class="amount">- 6.00 RON</span>
             </div>
           </section>
         </div>
@@ -223,16 +226,28 @@ import { FormsModule } from '@angular/forms';
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ParkingComponent {
+export class ParkingComponent implements OnInit, OnDestroy {
   showTariffs = false;
   showSms = false;
   showQuickAdd = false;
-  timeLeft = '01:45:12';
+  timeLeft = '00:00:00';
   
-  // Dynamic Car Plate State
   carPlate = '';
   isPlateSaved = false;
   tempPlate = '';
+  selectedHours = 1;
+  
+  history: any[] = [
+    { day: '05', month: 'MAI', plate: 'BV 01 ABC', zone: 'Zona 0 - Centru', amount: '1.20' }
+  ];
+
+  private timerInterval: any;
+
+  ngOnInit() {}
+
+  ngOnDestroy() {
+    if (this.timerInterval) clearInterval(this.timerInterval);
+  }
 
   savePlate() {
     if (this.tempPlate.trim()) {
@@ -246,71 +261,82 @@ export class ParkingComponent {
     this.tempPlate = this.carPlate;
   }
 
-  // Hours Stepper State
-  selectedHours = 1;
-
-  incrementHours() {
-    if (this.selectedHours < 24) this.selectedHours++;
-  }
-
-  decrementHours() {
-    if (this.selectedHours > 1) this.selectedHours--;
-  }
+  incrementHours() { if (this.selectedHours < 24) this.selectedHours++; }
+  decrementHours() { if (this.selectedHours > 1) this.selectedHours--; }
 
   sendNativeSms() {
     const recipient = '1234';
-    // Automatically combine plate and hours
     const body = (this.carPlate || 'BV 01 ABC') + ' ' + this.selectedHours;
     
-    // 1. Backup copy
-    try {
-      const el = document.createElement('textarea');
-      el.value = body;
-      document.body.appendChild(el);
-      el.select();
-      document.execCommand('copy');
-      document.body.removeChild(el);
-    } catch (e) {
-      navigator.clipboard.writeText(body).catch(() => {});
-    }
+    // 1. Start the countdown based on selected hours
+    this.startCountdown(this.selectedHours);
 
-    // 2. Redirect
+    // 2. Add to history
+    this.addToHistory();
+
+    // 3. Redirect to SMS
     const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
     const separator = isIos ? '&' : '?';
-    const smsUrl = `sms:${recipient}${separator}body=${encodeURIComponent(body)}`;
+    window.location.href = `sms:${recipient}${separator}body=${encodeURIComponent(body)}`;
+  }
+
+  private startCountdown(hours: number) {
+    if (this.timerInterval) clearInterval(this.timerInterval);
     
-    window.location.href = smsUrl;
+    let totalSeconds = hours * 3600;
+    
+    this.timerInterval = setInterval(() => {
+      if (totalSeconds <= 0) {
+        clearInterval(this.timerInterval);
+        this.timeLeft = '00:00:00';
+        return;
+      }
+      totalSeconds--;
+      
+      const h = Math.floor(totalSeconds / 3600);
+      const m = Math.floor((totalSeconds % 3600) / 60);
+      const s = totalSeconds % 60;
+      
+      this.timeLeft = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }, 1000);
   }
 
-  toggleTariffs() {
-    this.showTariffs = !this.showTariffs;
-    if (this.showTariffs) { this.showSms = false; this.showQuickAdd = false; }
+  private addToHistory() {
+    const now = new Date();
+    const months = ['IAN', 'FEB', 'MAR', 'APR', 'MAI', 'IUN', 'IUL', 'AUG', 'SEP', 'OCT', 'NOI', 'DEC'];
+    
+    const newEntry = {
+      day: String(now.getDate()).padStart(2, '0'),
+      month: months[now.getMonth()],
+      plate: this.carPlate || 'BV 01 ABC',
+      zone: 'Zona 0 - Centru Vechi',
+      amount: (this.selectedHours * 0.6).toFixed(2)
+    };
+
+    this.history.unshift(newEntry);
+    if (this.history.length > 5) this.history.pop();
   }
 
-  toggleSms() {
-    // We keep this for compatibility or internal simulation if needed, 
-    // but the main button now calls sendNativeSms()
-    this.showSms = !this.showSms;
-    if (this.showSms) { this.showTariffs = false; this.showQuickAdd = false; }
-  }
-
-  toggleQuickAdd() {
-    this.showQuickAdd = !this.showQuickAdd;
-  }
+  toggleTariffs() { this.showTariffs = !this.showTariffs; }
+  toggleQuickAdd() { this.showQuickAdd = !this.showQuickAdd; }
 
   extendTime(minutes: number) {
-    // Simulate payment and time update
-    console.log(`Extending by ${minutes} minutes...`);
-    
-    // Simple mock update (just for visual feedback)
+    // Add minutes to existing countdown
     const [h, m, s] = this.timeLeft.split(':').map(Number);
-    let totalMin = h * 60 + m + minutes;
-    const newH = Math.floor(totalMin / 60);
-    const newM = totalMin % 60;
+    let totalSec = (h * 3600) + (m * 60) + s + (minutes * 60);
     
-    this.timeLeft = `${String(newH).padStart(2, '0')}:${String(newM).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    if (this.timerInterval) clearInterval(this.timerInterval);
+    
+    this.timerInterval = setInterval(() => {
+      if (totalSec <= 0) { clearInterval(this.timerInterval); this.timeLeft = '00:00:00'; return; }
+      totalSec--;
+      const hh = Math.floor(totalSec / 3600);
+      const mm = Math.floor((totalSec % 3600) / 60);
+      const ss = totalSec % 60;
+      this.timeLeft = `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
+    }, 1000);
+
     this.showQuickAdd = false;
-    
-    alert(`Plată confirmată! Timpul a fost prelungit cu ${minutes} minute.`);
+    alert(`Plată confirmată pentru încă ${minutes} minute!`);
   }
 }
