@@ -121,19 +121,6 @@ import { FormsModule } from '@angular/forms';
 
         <!-- 5. ORIGINAL CONTENT FLOW (Scrollable) -->
         <div class="original-content-flow">
-          <!-- Zone Selection -->
-          <section class="section">
-            <div class="section-header">
-              <h3>Selectează Zona</h3>
-            </div>
-            <div class="zone-grid">
-              <div class="zone-pill active">Zona A</div>
-              <div class="zone-pill">Zona B</div>
-              <div class="zone-pill">Zona C</div>
-              <div class="zone-pill">Rezidențial</div>
-            </div>
-          </section>
-
           <!-- History -->
           <section class="section">
             <div class="section-header">
