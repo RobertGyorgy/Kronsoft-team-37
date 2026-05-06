@@ -77,19 +77,30 @@ import { RouterLink } from '@angular/router';
             </div>
           </div>
         </div>
-        <!-- 4. Active Session (Compact Version) -->
-        <section class="compact-session" (click)="toggleQuickAdd()">
-          <div class="session-row">
-            <span class="car-plate-small">BV 01 ABC</span>
-            <div class="session-timer-mini">{{ timeLeft }}</div>
-          </div>
-          <div class="extend-container">
-            <button class="extend-btn-mini">Prelungește timpul</button>
-            
-            <div class="quick-add-menu" *ngIf="showQuickAdd">
-              <div class="quick-option" (click)="extendTime(30); $event.stopPropagation()">+30 min</div>
-              <div class="quick-option" (click)="extendTime(60); $event.stopPropagation()">+1h</div>
-              <div class="quick-option" (click)="extendTime(120); $event.stopPropagation()">+2h</div>
+        <!-- 4. Active Session (Full Version) -->
+        <section class="section-full-height">
+          <div class="parking-card active-session">
+            <div class="card-header">
+              <div class="status-dot-pulse"></div>
+              <span class="status-label">Sesiune Activă</span>
+            </div>
+            <div class="card-body">
+              <p class="car-plate">BV 01 ABC</p>
+              <p class="location-text">Zona A - Centru Istoric</p>
+            </div>
+            <div class="timer-display">
+              <span class="time-left">{{ timeLeft }}</span>
+              <span class="time-label">timp rămas</span>
+            </div>
+            <div class="extend-container">
+              <button class="extend-btn" (click)="toggleQuickAdd()">Prelungește timpul</button>
+              
+              <!-- Quick Add Menu -->
+              <div class="quick-add-menu" *ngIf="showQuickAdd">
+                <div class="quick-option" (click)="extendTime(30); $event.stopPropagation()">+30 min</div>
+                <div class="quick-option" (click)="extendTime(60); $event.stopPropagation()">+1h</div>
+                <div class="quick-option" (click)="extendTime(120); $event.stopPropagation()">+2h</div>
+              </div>
             </div>
           </div>
         </section>
@@ -127,8 +138,8 @@ import { RouterLink } from '@angular/router';
               <span class="amount">- 6.00 RON</span>
             </div>
           </section>
-        </div> <!-- end original-content-flow -->
-      </div> <!-- end main-scroll-area -->
+        </div>
+      </div>
     </main>
   `,
   styles: [
@@ -175,19 +186,22 @@ import { RouterLink } from '@angular/router';
       }
 
 
+
       .hero-map-section {
         padding: 0.5rem 1rem 0;
+        height: 38vh; /* Occupy significant vertical space */
+        min-height: 250px;
       }
 
       .custom-map-container {
-        border-radius: 16px;
+        border-radius: 20px;
         overflow: hidden;
-        height: 30vh; /* Dynamic height based on viewport */
-        min-height: 150px;
+        height: 100%;
         background: #f8f9fa;
         display: flex;
         align-items: center;
         justify-content: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
       }
 
       .neighborhood-img {
@@ -197,71 +211,89 @@ import { RouterLink } from '@angular/router';
       }
 
       .info-card-section {
-        padding: 0.25rem 0.75rem;
+        padding: 0.75rem 1rem;
       }
 
       .zona-card {
         background: linear-gradient(135deg, #4285f4 0%, #2b6edb 100%);
-        border-radius: 16px;
-        padding: 0.6rem 1rem;
+        border-radius: 24px;
+        padding: 1.25rem;
+        box-shadow: 0 10px 30px rgba(66, 133, 244, 0.2);
         display: flex;
-        flex-direction: row; /* Horizontal to save vertical space */
-        align-items: center;
-        justify-content: space-between;
-        gap: 0.5rem;
+        flex-direction: column;
+        gap: 0.75rem;
         color: #fff;
       }
 
       .zona-title {
-        font-size: 1rem;
+        font-size: 1.4rem;
         font-weight: 800;
         margin: 0;
-        max-width: 60%;
+        color: #fff;
       }
 
       .card-actions {
         display: flex;
-        gap: 0.4rem;
+        gap: 0.75rem;
+        margin-top: 0.25rem;
       }
 
       .black-btn {
+        flex: 1;
         background: #fff;
         color: #4285f4;
         border: none;
-        padding: 0.4rem 0.75rem;
-        border-radius: 8px;
-        font-weight: 800;
-        font-size: 0.75rem;
-      }
-
-      /* Ultra Slim Session Card */
-      .compact-session {
-        margin: 0.25rem 0.75rem;
-        background: #4285f4;
+        padding: 0.9rem;
         border-radius: 16px;
-        padding: 0.6rem 1rem;
+        font-weight: 800;
+        font-size: 1rem;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      }
+
+      .section-full-height {
+        padding: 0.5rem 1rem 1rem;
+      }
+
+      /* Active Session Premium Card */
+      .parking-card.active-session {
+        background: #4285f4;
+        border-radius: 24px;
+        padding: 1.25rem;
         color: #fff;
+        box-shadow: 0 10px 30px rgba(66, 133, 244, 0.2);
       }
 
-      .session-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+      .card-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
+      .status-dot-pulse { width: 10px; height: 10px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 10px #4ade80; animation: blink 2s infinite; }
+      @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+      .status-label { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+
+      .car-plate { font-size: 2rem; font-weight: 900; margin: 0; letter-spacing: -0.02em; }
+      .location-text { font-size: 1rem; opacity: 0.9; margin: 0.25rem 0 1rem; }
+
+      .timer-display {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 20px;
+        padding: 1.25rem;
+        text-align: center;
+        margin-bottom: 1rem;
       }
 
-      .car-plate-small { font-size: 1.1rem; font-weight: 900; }
-      .session-timer-mini { font-weight: 800; font-size: 1.1rem; }
-      
-      .extend-btn-mini {
+      .time-left { font-size: 2.5rem; font-weight: 800; display: block; line-height: 1; }
+      .time-label { font-size: 0.75rem; text-transform: uppercase; font-weight: 700; opacity: 0.8; letter-spacing: 0.1em; margin-top: 0.25rem; display: block; }
+
+      .extend-container { position: relative; }
+      .extend-btn {
         width: 100%;
         background: #fff;
         color: #4285f4;
         border: none;
-        padding: 0.5rem;
-        border-radius: 8px;
+        padding: 1rem;
+        border-radius: 16px;
         font-weight: 800;
-        font-size: 0.8rem;
-        margin-top: 0.5rem;
+        font-size: 1rem;
+        cursor: pointer;
       }
 
       /* Original Content Styling */
