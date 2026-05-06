@@ -77,10 +77,6 @@ import { RouterLink } from '@angular/router';
             </div>
           </div>
         </div>
-
-        <!-- 4. ORIGINAL CONTENT FLOW (Scrollable) -->
-        <div class="original-content-flow">
-          <!-- Active Sessions (The Blue Card) -->
         <!-- 4. Active Session (Compact Version) -->
         <section class="compact-session" (click)="toggleQuickAdd()">
           <div class="session-row">
@@ -90,7 +86,6 @@ import { RouterLink } from '@angular/router';
           <div class="extend-container">
             <button class="extend-btn-mini">Prelungește timpul</button>
             
-            <!-- Quick Add Menu -->
             <div class="quick-add-menu" *ngIf="showQuickAdd">
               <div class="quick-option" (click)="extendTime(30); $event.stopPropagation()">+30 min</div>
               <div class="quick-option" (click)="extendTime(60); $event.stopPropagation()">+1h</div>
@@ -101,12 +96,6 @@ import { RouterLink } from '@angular/router';
 
         <!-- 5. ORIGINAL CONTENT FLOW (Scrollable) -->
         <div class="original-content-flow">
-          <!-- Zone Options -->
-          <section class="section">
-            <div class="section-header">
-              <h3>Zone parcare</h3>
-            </div>
-
           <!-- Zone Selection -->
           <section class="section">
             <div class="section-header">
@@ -138,8 +127,8 @@ import { RouterLink } from '@angular/router';
               <span class="amount">- 6.00 RON</span>
             </div>
           </section>
-        </div>
-      </div>
+        </div> <!-- end original-content-flow -->
+      </div> <!-- end main-scroll-area -->
     </main>
   `,
   styles: [
