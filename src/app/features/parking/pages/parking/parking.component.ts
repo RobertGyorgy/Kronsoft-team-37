@@ -670,10 +670,11 @@ export class ParkingComponent {
   }
 
   sendNativeSms() {
-    const recipient = '7442';
-    const body = '1234 BV01ABC 1';
+    const recipient = '1234';
+    // Use the saved car plate or a placeholder if not set
+    const body = (this.carPlate || 'BV 01 ABC') + ' ';
     
-    // 1. Try to copy to clipboard immediately
+    // 1. Try to copy to clipboard immediately as backup
     try {
       const el = document.createElement('textarea');
       el.value = body;
@@ -681,13 +682,11 @@ export class ParkingComponent {
       el.select();
       document.execCommand('copy');
       document.body.removeChild(el);
-      console.log('Copied via execCommand');
     } catch (e) {
-      // Fallback to navigator.clipboard if execCommand fails
-      navigator.clipboard.writeText(body).catch(err => console.error('Clipboard failed', err));
+      navigator.clipboard.writeText(body).catch(() => {});
     }
 
-    // 2. Immediate redirect
+    // 2. Immediate redirect with platform-specific separator
     const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
     const separator = isIos ? '&' : '?';
     const smsUrl = `sms:${recipient}${separator}body=${encodeURIComponent(body)}`;
