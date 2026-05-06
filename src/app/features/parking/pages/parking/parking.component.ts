@@ -17,9 +17,14 @@ import { RouterLink } from '@angular/router';
       </header>
 
       <div class="main-scroll-area">
-        <!-- 2. Map Section (Ultra Compact) -->
+        <!-- 2. Map Section (Compact) -->
+        <section class="hero-map-section">
+          <div class="custom-map-container">
+            <img src="/images/neighborhood-map.png" alt="Hartă Zonare" class="neighborhood-img">
+          </div>
+        </section>
 
-        <!-- 3. Zona Info Card (MUST FIT IN VIEWPORT) -->
+        <!-- 3. Zona Info Card -->
         <section class="info-card-section">
           <div class="zona-card">
             <h2 class="zona-title">Te afli in zona 0 - Centru Vechi</h2>
@@ -184,8 +189,30 @@ import { RouterLink } from '@angular/router';
         -webkit-overflow-scrolling: touch;
       }
 
+
+      .hero-map-section {
+        padding: 0.5rem 1rem 0;
+      }
+
+      .custom-map-container {
+        border-radius: 20px;
+        overflow: hidden;
+        height: 200px; /* Compact height to fit with the card */
+        background: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      }
+
+      .neighborhood-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
       .info-card-section {
-        padding: 1rem;
+        padding: 0.75rem 1rem;
       }
 
       .zona-card {
