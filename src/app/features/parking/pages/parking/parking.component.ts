@@ -84,32 +84,31 @@ import { RouterLink } from '@angular/router';
         <!-- 4. ORIGINAL CONTENT FLOW (Scrollable) -->
         <div class="original-content-flow">
           <!-- Active Sessions (The Blue Card) -->
-          <section class="section">
-            <div class="parking-card active-session">
-              <div class="card-header">
-                <span class="status-dot"></span>
-                <span class="status-text">Sesiune Activă</span>
-              </div>
-              <div class="car-info">
-                <h2 class="plate-number">BV 01 ABC</h2>
-                <p class="location-text">Zona A - Centru Istoric</p>
-              </div>
-              <div class="timer-display">
-                <span class="time-left">{{ timeLeft }}</span>
-                <span class="time-label">timp rămas</span>
-              </div>
-              <div class="extend-container">
-                <button class="extend-btn" (click)="toggleQuickAdd()">Prelungește timpul</button>
-                
-                <!-- Quick Add Menu -->
-                <div class="quick-add-menu" *ngIf="showQuickAdd">
-                  <div class="quick-option" (click)="extendTime(30)">+30 min</div>
-                  <div class="quick-option" (click)="extendTime(60)">+1h</div>
-                  <div class="quick-option" (click)="extendTime(120)">+2h</div>
-                </div>
-              </div>
+        <!-- 4. Active Session (Compact Version) -->
+        <section class="compact-session" (click)="toggleQuickAdd()">
+          <div class="session-row">
+            <span class="car-plate-small">BV 01 ABC</span>
+            <div class="session-timer-mini">{{ timeLeft }}</div>
+          </div>
+          <div class="extend-container">
+            <button class="extend-btn-mini">Prelungește timpul</button>
+            
+            <!-- Quick Add Menu -->
+            <div class="quick-add-menu" *ngIf="showQuickAdd">
+              <div class="quick-option" (click)="extendTime(30); $event.stopPropagation()">+30 min</div>
+              <div class="quick-option" (click)="extendTime(60); $event.stopPropagation()">+1h</div>
+              <div class="quick-option" (click)="extendTime(120); $event.stopPropagation()">+2h</div>
             </div>
-          </section>
+          </div>
+        </section>
+
+        <!-- 5. ORIGINAL CONTENT FLOW (Scrollable) -->
+        <div class="original-content-flow">
+          <!-- Zone Options -->
+          <section class="section">
+            <div class="section-header">
+              <h3>Zone parcare</h3>
+            </div>
 
           <!-- Zone Selection -->
           <section class="section">
@@ -195,14 +194,14 @@ import { RouterLink } from '@angular/router';
       }
 
       .custom-map-container {
-        border-radius: 20px;
+        border-radius: 16px;
         overflow: hidden;
-        height: 280px; /* Increased height for better visibility */
+        height: 160px; /* Ultra-compact height */
         background: #f8f9fa;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
       }
 
       .neighborhood-img {
@@ -212,47 +211,40 @@ import { RouterLink } from '@angular/router';
       }
 
       .info-card-section {
-        padding: 0.5rem 1rem;
+        padding: 0.25rem 0.75rem; /* Minimum padding */
       }
 
       .zona-card {
         background: linear-gradient(135deg, #4285f4 0%, #2b6edb 100%);
-        border-radius: 24px;
-        padding: 1rem; /* Reduced padding */
-        box-shadow: 0 10px 25px rgba(66, 133, 244, 0.2);
+        border-radius: 20px;
+        padding: 0.75rem; /* Super tight */
         display: flex;
         flex-direction: column;
-        gap: 0.75rem; /* Reduced gap */
+        gap: 0.5rem;
         color: #fff;
       }
 
       .zona-title {
-        font-size: 1.3rem; /* Slightly smaller font */
+        font-size: 1.1rem;
         font-weight: 800;
         margin: 0;
-        letter-spacing: -0.01em;
-        color: #fff;
       }
 
       .sms-instruction {
-        background: rgba(255, 255, 255, 0.15);
-        padding: 0.75rem; /* More compact bubble */
-        border-radius: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.1);
+        padding: 0.5rem;
+        border-radius: 12px;
       }
 
       .sms-instruction p {
         margin: 0;
-        font-size: 0.9rem; /* Slightly smaller text */
-        font-weight: 600;
-        line-height: 1.3;
-        color: #fff;
+        font-size: 0.8rem;
+        line-height: 1.2;
       }
 
       .card-actions {
         display: flex;
-        gap: 0.5rem; /* Tighter buttons */
-        margin-top: 0.25rem;
+        gap: 0.5rem;
       }
 
       .black-btn {
@@ -260,12 +252,40 @@ import { RouterLink } from '@angular/router';
         background: #fff;
         color: #4285f4;
         border: none;
-        padding: 0.85rem; /* More compact buttons */
-        border-radius: 999px;
+        padding: 0.6rem;
+        border-radius: 12px;
         font-weight: 800;
-        font-size: 0.95rem;
-        cursor: pointer;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        font-size: 0.85rem;
+      }
+
+      /* Active Session Compact Styles */
+      .compact-session {
+        margin: 0.25rem 0.75rem;
+        background: #4285f4;
+        border-radius: 20px;
+        padding: 0.75rem;
+        color: #fff;
+      }
+
+      .session-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+      }
+
+      .car-plate-small { font-size: 1.2rem; font-weight: 900; }
+      .session-timer-mini { background: rgba(255,255,255,0.2); padding: 0.4rem 0.75rem; border-radius: 12px; font-weight: 800; font-size: 1.1rem; }
+      
+      .extend-btn-mini {
+        width: 100%;
+        background: #fff;
+        color: #4285f4;
+        border: none;
+        padding: 0.6rem;
+        border-radius: 12px;
+        font-weight: 800;
+        font-size: 0.85rem;
       }
 
       /* Original Content Styling */
