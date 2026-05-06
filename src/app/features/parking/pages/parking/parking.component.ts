@@ -663,27 +663,30 @@ export class ParkingComponent {
   showQuickAdd = false;
   timeLeft = '01:45:12';
 
-  async sendNativeSms() {
+  sendNativeSms() {
     const recipient = '7442';
     const body = '1234 BV01ABC 1';
     
+    // 1. Try to copy to clipboard immediately
     try {
-      // 1. Copy to clipboard
-      await navigator.clipboard.writeText(body);
-      console.log('Message copied to clipboard');
-      
-      // 2. Determine platform and separator
-      const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
-      const separator = isIos ? '&' : '?';
-      const smsUrl = `sms:${recipient}${separator}body=${encodeURIComponent(body)}`;
-      
-      // 3. Open messaging app
-      window.location.href = smsUrl;
-    } catch (err) {
-      console.error('Failed to copy or open SMS:', err);
-      // Fallback for older browsers
-      window.location.href = `sms:7442?body=${encodeURIComponent(body)}`;
+      const el = document.createElement('textarea');
+      el.value = body;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      console.log('Copied via execCommand');
+    } catch (e) {
+      // Fallback to navigator.clipboard if execCommand fails
+      navigator.clipboard.writeText(body).catch(err => console.error('Clipboard failed', err));
     }
+
+    // 2. Immediate redirect
+    const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const separator = isIos ? '&' : '?';
+    const smsUrl = `sms:${recipient}${separator}body=${encodeURIComponent(body)}`;
+    
+    window.location.href = smsUrl;
   }
 
   toggleTariffs() {
