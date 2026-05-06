@@ -30,7 +30,11 @@ import { FormsModule } from '@angular/forms';
         <section class="info-card-section">
           <div class="zona-card">
             <h2 class="zona-title">Zona 0 - Centru Vechi</h2>
-            <p class="sms-note">Plata prin SMS la 1234: [Număr] [Ore]</p>
+            <div class="sms-preview-badge">
+              <span class="preview-label">Mesaj SMS:</span>
+              <span class="preview-text">{{ carPlate || 'BV 01 ABC' }} {{ selectedHours }}</span>
+              <span class="preview-to">la 1234</span>
+            </div>
             
             <!-- Compact Stepper -->
             <div class="stepper-container">
@@ -174,7 +178,19 @@ import { FormsModule } from '@angular/forms';
     .info-card-section { padding: 0.5rem 1rem; }
     .zona-card { background: linear-gradient(135deg, #4285f4 0%, #2b6edb 100%); border-radius: 20px; padding: 1rem; box-shadow: 0 10px 25px rgba(66,133,244,0.2); display: flex; flex-direction: column; gap: 0.5rem; color: #fff; }
     .zona-title { font-size: 1.2rem; font-weight: 800; margin: 0; }
-    .sms-note { font-size: 0.75rem; line-height: 1.1; margin: 0; opacity: 0.8; font-weight: 600; }
+    .sms-preview-badge {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 0.5rem 0.75rem;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin: 0.2rem 0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .preview-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; opacity: 0.8; }
+    .preview-text { font-size: 0.9rem; font-weight: 900; letter-spacing: 0.02em; }
+    .preview-to { font-size: 0.75rem; font-weight: 700; opacity: 0.9; }
     .stepper-container { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.1); padding: 0.4rem 0.75rem; border-radius: 12px; }
     .stepper-label { font-size: 0.8rem; font-weight: 700; }
     .stepper-controls { display: flex; align-items: center; gap: 1rem; }
