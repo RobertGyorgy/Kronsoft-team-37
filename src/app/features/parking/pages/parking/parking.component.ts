@@ -265,6 +265,10 @@ export class ParkingComponent implements OnInit, OnDestroy {
     this.requestNotificationPermission();
   }
 
+  ngOnDestroy() {
+    if (this.timerInterval) clearInterval(this.timerInterval);
+  }
+
   private requestNotificationPermission() {
     if ('Notification' in window) {
       Notification.requestPermission();
