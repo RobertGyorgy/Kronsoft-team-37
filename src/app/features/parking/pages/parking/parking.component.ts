@@ -122,7 +122,7 @@ import { FormsModule } from '@angular/forms';
               </div>
             </div>
             <div class="timer-display">
-              <span class="time-left">{{ timeLeft }}</span>
+              <span class="time-left" [class.warning]="isExpiryWarning()">{{ timeLeft }}</span>
               <span class="time-label">timp rămas</span>
             </div>
             <div class="extend-container">
@@ -203,6 +203,8 @@ import { FormsModule } from '@angular/forms';
     .car-plate { font-size: 1.7rem; font-weight: 900; margin: 0; letter-spacing: -0.02em; }
     .timer-display { background: rgba(255,255,255,0.15); border-radius: 16px; padding: 1rem; text-align: center; margin-bottom: 0.75rem; }
     .time-left { font-size: 2.2rem; font-weight: 800; display: block; line-height: 1; font-variant-numeric: tabular-nums; }
+    .time-left.warning { color: #ff4d4d; animation: pulse 1s infinite; }
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
     .time-label { font-size: 0.7rem; text-transform: uppercase; font-weight: 700; opacity: 0.8; letter-spacing: 0.1em; margin-top: 0.2rem; display: block; }
     .extend-container { position: relative; width: 100%; }
     .extend-btn { width: 100%; background: #fff; color: #4285f4; border: none; padding: 0.85rem; border-radius: 14px; font-weight: 800; font-size: 0.95rem; cursor: pointer; }
@@ -259,10 +261,23 @@ export class ParkingComponent implements OnInit, OnDestroy {
 
   private timerInterval: any;
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.requestNotificationPermission();
+  }
 
-  ngOnDestroy() {
-    if (this.timerInterval) clearInterval(this.timerInterval);
+  private requestNotificationPermission() {
+    if ('Notification' in window) {
+      Notification.requestPermission();
+    }
+  }
+
+  private sendExpiryNotification() {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification('Smart City Brașov', {
+        body: 'Parcarea expiră în 5 minute! Prelungește timpul din aplicație.',
+        icon: 'favicon.ico'
+      });
+    }
   }
 
   savePlate() {
@@ -308,6 +323,11 @@ export class ParkingComponent implements OnInit, OnDestroy {
         return;
       }
       totalSeconds--;
+
+      // Trigger notification at exactly 5 minutes (300 seconds)
+      if (totalSeconds === 300) {
+        this.sendExpiryNotification();
+      }
       
       const h = Math.floor(totalSeconds / 3600);
       const m = Math.floor((totalSeconds % 3600) / 60);
@@ -315,6 +335,12 @@ export class ParkingComponent implements OnInit, OnDestroy {
       
       this.timeLeft = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
     }, 1000);
+  }
+
+  isExpiryWarning(): boolean {
+    if (this.timeLeft === '00:00:00') return false;
+    const [h, m] = this.timeLeft.split(':').map(Number);
+    return h === 0 && m < 5;
   }
 
   private addToHistory() {
