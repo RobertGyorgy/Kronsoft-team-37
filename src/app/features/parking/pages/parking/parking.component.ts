@@ -109,6 +109,8 @@ import { FormsModule } from '@angular/forms';
                   <input 
                     type="text" 
                     [(ngModel)]="tempPlate" 
+                    (ngModelChange)="tempPlate = $event.toUpperCase()"
+                    (keyup.enter)="savePlate()"
                     placeholder="ex: BV 01 ABC"
                     class="plate-input-field"
                   >
@@ -239,10 +241,8 @@ import { FormsModule } from '@angular/forms';
     .zona-1 { background: #ffa502; }
     .zona-2 { background: #2ed573; }
     .quick-add-menu { position: absolute; bottom: 120%; left: 0; width: 100%; background: #fff; border-radius: 20px; padding: 0.5rem; box-shadow: 0 -10px 25px rgba(0,0,0,0.15); display: flex; justify-content: space-around; gap: 0.5rem; animation: popUp 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 10; }
-    @keyframes popUp { from { opacity: 0; transform: translateY(10px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
     .quick-option { flex: 1; padding: 0.75rem; background: #f0f7ff; color: #4285f4; border-radius: 12px; font-weight: 800; text-align: center; font-size: 0.9rem; cursor: pointer; }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  `]
 })
 export class ParkingComponent implements OnInit, OnDestroy {
   showTariffs = false;
