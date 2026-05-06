@@ -330,7 +330,10 @@ export class BusSearchComponent implements OnInit, OnDestroy {
       if (!url || typeof url !== 'string') { completed++; return; }
       
       console.log(`🔗 Fetching Line ${line} from:`, url);
-      this.http.get(`https://corsproxy.io/?${encodeURIComponent(url)}`, { responseType: 'text' }).subscribe({
+      // Switched to allorigins.win for better reliability on live site
+      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+      
+      this.http.get(proxyUrl, { responseType: 'text' }).subscribe({
         next: (html) => {
           console.log(`✅ Received HTML for Line ${line} (${html.length} chars)`);
           const nextBus = this.parseTimetable(html, line);
