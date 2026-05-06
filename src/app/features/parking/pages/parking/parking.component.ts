@@ -28,6 +28,7 @@ import { RouterLink } from '@angular/router';
         <section class="info-card-section">
           <div class="zona-card">
             <h2 class="zona-title">Zona 0 - Centru Vechi</h2>
+            <p class="sms-note">Pentru plata te rugam trimite prin SMS numarul 1234 urmat de numarul de inmatriculare si numarul de ore</p>
             <div class="card-actions">
               <button class="black-btn" (click)="toggleTariffs()">Tarife</button>
               <button class="black-btn" (click)="sendNativeSms()">SMS</button>
@@ -80,13 +81,8 @@ import { RouterLink } from '@angular/router';
         <!-- 4. Active Session (Full Version) -->
         <section class="section-full-height">
           <div class="parking-card active-session">
-            <div class="card-header">
-              <div class="status-dot-pulse"></div>
-              <span class="status-label">Sesiune Activă</span>
-            </div>
             <div class="card-body">
               <p class="car-plate">BV 01 ABC</p>
-              <p class="location-text">Zona A - Centru Istoric</p>
             </div>
             <div class="timer-display">
               <span class="time-left">{{ timeLeft }}</span>
@@ -226,10 +222,18 @@ import { RouterLink } from '@angular/router';
       }
 
       .zona-title {
-        font-size: 1.25rem;
+        font-size: 1.2rem;
         font-weight: 800;
         margin: 0;
         color: #fff;
+      }
+
+      .sms-note {
+        font-size: 0.8rem;
+        line-height: 1.2;
+        margin: 0;
+        opacity: 0.9;
+        font-weight: 600;
       }
 
       .card-actions {
