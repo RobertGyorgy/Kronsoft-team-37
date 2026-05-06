@@ -15,7 +15,6 @@ import { FormsModule } from '@angular/forms';
           <span class="material-icons">arrow_back</span>
           <span class="back-text">Înapoi</span>
         </button>
-        <h1 class="header-title">Zona metropolitana Brasov</h1>
       </header>
 
       <div class="main-scroll-area">
