@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-parking',
@@ -259,14 +260,20 @@ export class ParkingComponent implements OnInit, OnDestroy {
     { day: '05', month: 'MAI', plate: 'BV 01 ABC', zone: 'Zona 0 - Centru', amount: '1.20' }
   ];
 
-  private timerInterval: any;
+  private timerSubscription: Subscription | undefined;
+  private currentParkingSeconds = 0;
+
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private zone: NgZone
+  ) {}
 
   ngOnInit() {
     this.requestNotificationPermission();
   }
 
   ngOnDestroy() {
-    if (this.timerInterval) clearInterval(this.timerInterval);
+    if (this.timerSubscription) this.timerSubscription.unsubscribe();
   }
 
   private requestNotificationPermission() {
@@ -312,33 +319,41 @@ export class ParkingComponent implements OnInit, OnDestroy {
     // 2. Add to history
     this.addToHistory();
 
-    // 3. Redirect to SMS
+    // 3. Redirect to SMS (with a tiny delay to ensure timer starts)
     const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
     const separator = isIos ? '&' : '?';
-    window.location.href = `sms:${recipient}${separator}body=${encodeURIComponent(body)}`;
+    const smsUrl = `sms:${recipient}${separator}body=${encodeURIComponent(body)}`;
+    
+    setTimeout(() => {
+      window.location.href = smsUrl;
+    }, 150);
   }
 
   private startCountdown(hours: number) {
-    if (this.timerInterval) clearInterval(this.timerInterval);
+    if (this.timerSubscription) this.timerSubscription.unsubscribe();
     
-    let totalSeconds = hours * 3600;
-    this.timeLeft = this.formatTime(totalSeconds);
+    this.currentParkingSeconds = hours * 3600;
+    this.timeLeft = this.formatTime(this.currentParkingSeconds);
 
-    this.timerInterval = setInterval(() => {
-      if (totalSeconds <= 0) {
-        clearInterval(this.timerInterval);
+    this.timerSubscription = interval(1000).subscribe(() => {
+      if (this.currentParkingSeconds <= 0) {
+        this.currentParkingSeconds = 0;
         this.timeLeft = '00:00:00';
+        if (this.timerSubscription) this.timerSubscription.unsubscribe();
+        this.cdr.detectChanges();
         return;
       }
-      totalSeconds--;
 
-      // Trigger notifications at specific intervals
-      if (totalSeconds === 3480) { this.sendExpiryNotification('Update: Mai ai 58 de minute din timpul de parcare.'); }
-      if (totalSeconds === 3240) { this.sendExpiryNotification('Mai ai 54 de minute din timpul de parcare.'); }
-      if (totalSeconds === 300) { this.sendExpiryNotification('ATENȚIE: Parcarea expiră în 5 minute!'); }
+      this.currentParkingSeconds--;
+
+      // Triggers
+      if (this.currentParkingSeconds === 3480) { this.sendExpiryNotification('Update: Mai ai 58 de minute din timpul de parcare.'); }
+      if (this.currentParkingSeconds === 3240) { this.sendExpiryNotification('Mai ai 54 de minute din timpul de parcare.'); }
+      if (this.currentParkingSeconds === 300) { this.sendExpiryNotification('ATENȚIE: Parcarea expiră în 5 minute!'); }
       
-      this.timeLeft = this.formatTime(totalSeconds);
-    }, 1000);
+      this.timeLeft = this.formatTime(this.currentParkingSeconds);
+      this.cdr.detectChanges();
+    });
   }
 
   private formatTime(totalSeconds: number): string {
@@ -374,21 +389,16 @@ export class ParkingComponent implements OnInit, OnDestroy {
   toggleQuickAdd() { this.showQuickAdd = !this.showQuickAdd; }
 
   extendTime(minutes: number) {
-    // Add minutes to existing countdown
-    const [h, m, s] = this.timeLeft.split(':').map(Number);
-    let totalSec = (h * 3600) + (m * 60) + s + (minutes * 60);
+    this.currentParkingSeconds += (minutes * 60);
+    this.timeLeft = this.formatTime(this.currentParkingSeconds);
     
-    this.timeLeft = this.formatTime(totalSec); // Update UI instantly
-    
-    if (this.timerInterval) clearInterval(this.timerInterval);
-    
-    this.timerInterval = setInterval(() => {
-      if (totalSec <= 0) { clearInterval(this.timerInterval); this.timeLeft = '00:00:00'; return; }
-      totalSec--;
-      this.timeLeft = this.formatTime(totalSec);
-    }, 1000);
+    // If timer is not already running, start it
+    if (!this.timerSubscription || this.currentParkingSeconds <= minutes * 60) {
+      this.startCountdown(this.currentParkingSeconds / 3600);
+    }
 
     this.showQuickAdd = false;
+    this.cdr.detectChanges();
     alert(`Plată confirmată pentru încă ${minutes} minute!`);
   }
 }
