@@ -11,10 +11,12 @@ import { FormsModule } from '@angular/forms';
     <main class="parking-shell">
       <!-- 1. Header Fix (White & Clean) -->
       <header class="top-nav-white">
-        <h1 class="header-title">Zona metropolitana Brasov</h1>
-        <button class="back-arrow" routerLink="/dashboard">
+        <button class="back-pill" routerLink="/dashboard">
           <span class="material-icons">arrow_back</span>
+          <span class="v-line">|</span>
+          <span class="back-text">Înapoi</span>
         </button>
+        <h1 class="header-title">Zona metropolitana Brasov</h1>
       </header>
 
       <div class="main-scroll-area">
@@ -171,13 +173,37 @@ import { FormsModule } from '@angular/forms';
         margin: 0;
       }
 
-      .back-arrow {
+      .back-pill {
         position: absolute;
-        right: 1.5rem;
-        background: none;
-        border: none;
+        left: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        padding: 0.4rem 0.8rem;
+        border-radius: 999px;
         color: #1a1a1a;
         cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        transition: all 0.2s ease;
+      }
+
+      .back-pill:active {
+        transform: scale(0.95);
+        background: #f5f5f5;
+      }
+
+      .v-line {
+        color: #ddd;
+        font-weight: 300;
+        font-size: 1.2rem;
+        margin-top: -2px;
+      }
+
+      .back-text {
+        font-weight: 700;
+        font-size: 0.9rem;
       }
 
       .main-scroll-area {
