@@ -663,18 +663,27 @@ export class ParkingComponent {
   showQuickAdd = false;
   timeLeft = '01:45:12';
 
-  sendNativeSms() {
+  async sendNativeSms() {
     const recipient = '7442';
     const body = '1234 BV01ABC 1';
     
-    // Detect if iOS to use the correct separator (& for iOS, ? for others)
-    const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const separator = isIos ? '&' : '?';
-    
-    const smsUrl = `sms:${recipient}${separator}body=${encodeURIComponent(body)}`;
-    
-    console.log(`Opening native SMS: ${smsUrl}`);
-    window.location.href = smsUrl;
+    try {
+      // 1. Copy to clipboard
+      await navigator.clipboard.writeText(body);
+      console.log('Message copied to clipboard');
+      
+      // 2. Determine platform and separator
+      const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const separator = isIos ? '&' : '?';
+      const smsUrl = `sms:${recipient}${separator}body=${encodeURIComponent(body)}`;
+      
+      // 3. Open messaging app
+      window.location.href = smsUrl;
+    } catch (err) {
+      console.error('Failed to copy or open SMS:', err);
+      // Fallback for older browsers
+      window.location.href = `sms:7442?body=${encodeURIComponent(body)}`;
+    }
   }
 
   toggleTariffs() {
