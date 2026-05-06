@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-parking',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   template: `
     <main class="parking-shell">
       <!-- 1. Header Fix (White & Clean) -->
@@ -82,7 +83,24 @@ import { RouterLink } from '@angular/router';
         <section class="section-full-height">
           <div class="parking-card active-session">
             <div class="card-body">
-              <p class="car-plate">BV 01 ABC</p>
+              <!-- Input State -->
+              <div class="plate-input-container" *ngIf="!isPlateSaved">
+                <label class="input-label">Introdu numărul de înmatriculare</label>
+                <div class="input-row">
+                  <input 
+                    type="text" 
+                    [(ngModel)]="tempPlate" 
+                    placeholder="ex: BV 01 ABC"
+                    class="plate-input-field"
+                  >
+                  <button class="save-plate-btn" (click)="savePlate()">Salvează</button>
+                </div>
+              </div>
+
+              <!-- Display State -->
+              <div class="plate-display-container" *ngIf="isPlateSaved" (click)="editPlate()">
+                <p class="car-plate">{{ carPlate }}</p>
+              </div>
             </div>
             <div class="timer-display">
               <span class="time-left">{{ timeLeft }}</span>
@@ -300,7 +318,58 @@ import { RouterLink } from '@angular/router';
         cursor: pointer;
       }
 
-      /* Original Content Styling */
+      /* Plate Input Styles */
+      .plate-input-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .input-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        opacity: 0.9;
+        letter-spacing: 0.05em;
+      }
+
+      .input-row {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .plate-input-field {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 12px;
+        padding: 0.75rem;
+        color: #fff;
+        font-weight: 800;
+        font-size: 1rem;
+        outline: none;
+      }
+
+      .plate-input-field::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .save-plate-btn {
+        background: #fff;
+        color: #4285f4;
+        border: none;
+        padding: 0 1rem;
+        border-radius: 12px;
+        font-weight: 800;
+        font-size: 0.85rem;
+        cursor: pointer;
+      }
+
+      .plate-display-container {
+        cursor: pointer;
+        margin-bottom: 0.5rem;
+      }
       .original-content-flow {
         padding: 1.5rem;
         display: flex;
@@ -568,6 +637,23 @@ export class ParkingComponent {
   showSms = false;
   showQuickAdd = false;
   timeLeft = '01:45:12';
+  
+  // Dynamic Car Plate State
+  carPlate = '';
+  isPlateSaved = false;
+  tempPlate = '';
+
+  savePlate() {
+    if (this.tempPlate.trim()) {
+      this.carPlate = this.tempPlate.toUpperCase();
+      this.isPlateSaved = true;
+    }
+  }
+
+  editPlate() {
+    this.isPlateSaved = false;
+    this.tempPlate = this.carPlate;
+  }
 
   sendNativeSms() {
     const recipient = '7442';
