@@ -8,107 +8,136 @@ import { RouterLink } from '@angular/router';
   imports: [CommonModule, RouterLink],
   template: `
     <main class="parking-shell">
-      <!-- Top Nav -->
-      <header class="top-nav">
-        <button class="back-pill" routerLink="/dashboard">
+      <!-- 1. Header Fix (White & Clean) -->
+      <header class="top-nav-white">
+        <h1 class="header-title">Zona metropolitana Brasov</h1>
+        <button class="back-arrow" routerLink="/dashboard">
           <span class="material-icons">arrow_back</span>
-          Înapoi
         </button>
       </header>
 
-      <section class="hero-section">
-        <div class="greeting-block">
-          <p class="section-label">Parcare</p>
-          <h1 class="page-title">Plătește Parcarea</h1>
-        </div>
-        <div class="page-illustration">
-          <span class="material-icons illustration-icon">local_parking</span>
-        </div>
-      </section>
+      <div class="main-scroll-area">
+        <!-- 2. Map Section (Ultra Compact) -->
 
-      <!-- Active Sessions / Quick Action -->
-      <div class="action-container">
-        <div class="parking-card active-session">
-          <div class="card-header">
-            <span class="status-dot"></span>
-            <span class="status-text">Sesiune Activă</span>
+        <!-- 3. Zona Info Card (MUST FIT IN VIEWPORT) -->
+        <section class="info-card-section">
+          <div class="zona-card">
+            <h2 class="zona-title">Te afli in zona 0 - Centru Vechi</h2>
+            <div class="sms-instruction">
+              <p>Pentru plata te rugam trimite prin SMS numarul 1234 urmat de numarul de inmatriculare si numarul de ore</p>
+            </div>
+            <div class="card-actions">
+              <button class="black-btn" (click)="toggleTariffs()">Tarifare</button>
+              <button class="black-btn" (click)="sendNativeSms()">Spre SMS</button>
+            </div>
           </div>
-          <div class="car-info">
-            <h2 class="plate-number">BV 01 ABC</h2>
-            <p class="location-text">Zona A - Centru Istoric</p>
-          </div>
-          <div class="timer-display">
-            <span class="time-left">01:45:12</span>
-            <span class="time-label">timp rămas</span>
-          </div>
-          <button class="extend-btn">
-            Prelungește timpul
-          </button>
-        </div>
-      </div>
+        </section>
 
-      <!-- Zone Selection -->
-      <section class="section zone-picker">
-        <div class="section-header">
-          <h3>Selectează Zona</h3>
-        </div>
-        <div class="zone-grid">
-          <div class="zone-pill active">Zona A</div>
-          <div class="zone-pill">Zona B</div>
-          <div class="zone-pill">Zona C</div>
-          <div class="zone-pill">Rezidențial</div>
-        </div>
-      </section>
+        <!-- Tariffs Modal Overlay -->
+        <!-- ... (previous modal code) ... -->
 
-      <!-- New Payment -->
-      <div class="scroll-content">
-        <section class="section">
-          <div class="section-header">
-            <h3>Plată Nouă</h3>
-          </div>
-          <div class="payment-options">
-            <div class="option-card">
-              <div class="option-icon blue">
-                <span class="material-icons">directions_car</span>
-              </div>
-              <div class="option-info">
-                <span class="option-title">Parcare pe oră</span>
-                <span class="option-desc">3.00 RON / oră</span>
-              </div>
-              <span class="material-icons arrow">chevron_right</span>
+
+        <!-- Tariffs Modal Overlay -->
+        <div class="modal-overlay" *ngIf="showTariffs" (click)="toggleTariffs()">
+          <div class="tariffs-modal" (click)="$event.stopPropagation()">
+            <div class="modal-handle"></div>
+            <div class="modal-header">
+              <h2>Tarife parcare</h2>
+              <button class="close-modal" (click)="toggleTariffs()">
+                <span class="material-icons">close</span>
+              </button>
             </div>
             
-            <div class="option-card">
-              <div class="option-icon purple">
-                <span class="material-icons">calendar_today</span>
+            <div class="tariffs-list">
+              <div class="tariff-card zona-0">
+                <span class="tariff-zone">Zona 0</span>
+                <div class="tariff-details">
+                  <p>1h - 3.00 lei</p>
+                  <p>2h - 6.00 lei</p>
+                </div>
               </div>
-              <div class="option-info">
-                <span class="option-title">Abonament zi</span>
-                <span class="option-desc">24.00 RON / zi</span>
-              </div>
-              <span class="material-icons arrow">chevron_right</span>
-            </div>
-          </div>
-        </section>
 
-        <!-- History -->
-        <section class="section">
-          <div class="section-header">
-            <h3>Istoric Recent</h3>
-            <button class="show-all">Vezi tot</button>
-          </div>
-          <div class="history-item">
-            <div class="history-date">
-              <span class="day">02</span>
-              <span class="month">MAI</span>
+              <div class="tariff-card zona-1">
+                <span class="tariff-zone">Zona 1</span>
+                <div class="tariff-details">
+                  <p>1h - 2.00 lei</p>
+                  <p>2h - 4.00 lei</p>
+                </div>
+              </div>
+
+              <div class="tariff-card zona-2">
+                <span class="tariff-zone">Zona 2</span>
+                <div class="tariff-details">
+                  <p>1h - 1.50 lei</p>
+                  <p>2h - 3.00 lei</p>
+                </div>
+              </div>
             </div>
-            <div class="history-info">
-              <span class="plate">BV 01 ABC</span>
-              <span class="loc">Livada Poștei</span>
-            </div>
-            <span class="amount">- 6.00 RON</span>
           </div>
-        </section>
+        </div>
+
+        <!-- 4. ORIGINAL CONTENT FLOW (Scrollable) -->
+        <div class="original-content-flow">
+          <!-- Active Sessions (The Blue Card) -->
+          <section class="section">
+            <div class="parking-card active-session">
+              <div class="card-header">
+                <span class="status-dot"></span>
+                <span class="status-text">Sesiune Activă</span>
+              </div>
+              <div class="car-info">
+                <h2 class="plate-number">BV 01 ABC</h2>
+                <p class="location-text">Zona A - Centru Istoric</p>
+              </div>
+              <div class="timer-display">
+                <span class="time-left">{{ timeLeft }}</span>
+                <span class="time-label">timp rămas</span>
+              </div>
+              <div class="extend-container">
+                <button class="extend-btn" (click)="toggleQuickAdd()">Prelungește timpul</button>
+                
+                <!-- Quick Add Menu -->
+                <div class="quick-add-menu" *ngIf="showQuickAdd">
+                  <div class="quick-option" (click)="extendTime(30)">+30 min</div>
+                  <div class="quick-option" (click)="extendTime(60)">+1h</div>
+                  <div class="quick-option" (click)="extendTime(120)">+2h</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Zone Selection -->
+          <section class="section">
+            <div class="section-header">
+              <h3>Selectează Zona</h3>
+            </div>
+            <div class="zone-grid">
+              <div class="zone-pill active">Zona A</div>
+              <div class="zone-pill">Zona B</div>
+              <div class="zone-pill">Zona C</div>
+              <div class="zone-pill">Rezidențial</div>
+            </div>
+          </section>
+
+          <!-- History -->
+          <section class="section">
+            <div class="section-header">
+              <h3>Istoric Recent</h3>
+              <button class="show-all">Vezi tot</button>
+            </div>
+            <div class="history-item">
+              <div class="history-date">
+                <span class="day">02</span>
+                <span class="month">MAI</span>
+              </div>
+              <div class="history-info">
+                <span class="plate">BV 01 ABC</span>
+                <span class="loc">Livada Poștei</span>
+              </div>
+              <span class="amount">- 6.00 RON</span>
+            </div>
+          </section>
+        </div>
       </div>
     </main>
   `,
@@ -116,143 +145,91 @@ import { RouterLink } from '@angular/router';
     `
       .parking-shell {
         min-height: 100dvh;
-        background: #fcfcfc;
-        font-family: 'Surgena', sans-serif;
+        background: #f8f9fa;
+        font-family: 'Outfit', sans-serif;
         display: flex;
         flex-direction: column;
         color: #1a1a1a;
-        padding-bottom: 3rem;
       }
 
-      .top-nav {
-        padding: 1.5rem 1.5rem 0.5rem;
-        display: flex;
-        align-items: center;
-      }
-
-      .back-pill {
+      .top-nav-white {
         background: #fff;
-        border: 1px solid #eee;
-        padding: 0.6rem 1.2rem;
-        border-radius: 999px;
+        padding: 0.75rem 1.5rem;
         display: flex;
+        justify-content: center;
         align-items: center;
-        gap: 0.5rem;
-        color: #333;
-        font-weight: 700;
-        font-size: 0.95rem;
-        cursor: pointer;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-        text-decoration: none;
-      }
-
-      .hero-section {
-        padding: 1rem 1.5rem 1.5rem;
         position: relative;
-        overflow: hidden;
+        border-bottom: 1px solid #f0f0f0;
+        z-index: 10;
       }
 
-      .section-label {
-        font-size: 1.1rem;
-        font-weight: 500;
-        color: #666;
-        margin: 0;
-      }
-
-      .page-title {
-        font-size: 2.25rem;
+      .header-title {
+        font-size: 1.2rem;
         font-weight: 800;
-        color: #4285f4; /* Blue color from dashboard */
         margin: 0;
-        letter-spacing: -0.02em;
       }
 
-      .page-illustration {
+      .back-arrow {
         position: absolute;
-        top: 0;
-        right: -10px;
-        opacity: 0.1;
+        right: 1.5rem;
+        background: none;
+        border: none;
+        color: #1a1a1a;
+        cursor: pointer;
       }
 
-      .illustration-icon {
-        font-size: 120px !important;
-        color: #4285f4;
-        transform: rotate(-10deg);
+      .main-scroll-area {
+        flex: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
       }
 
-      .action-container {
-        padding: 0 1.5rem;
-        margin-bottom: 2rem;
+      .info-card-section {
+        padding: 1rem;
       }
 
-      .parking-card {
-        background: #4285f4;
-        border-radius: 32px;
+      .zona-card {
+        background: linear-gradient(135deg, #4285f4 0%, #2b6edb 100%);
+        border-radius: 28px;
         padding: 1.5rem;
-        color: #fff;
-        box-shadow: 0 15px 30px rgba(66, 133, 244, 0.25);
+        box-shadow: 0 12px 30px rgba(66, 133, 244, 0.25);
         display: flex;
         flex-direction: column;
         gap: 1rem;
+        color: #fff;
       }
 
-      .card-header {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-
-      .status-dot {
-        width: 8px;
-        height: 8px;
-        background: #4ade80;
-        border-radius: 50%;
-        box-shadow: 0 0 10px #4ade80;
-      }
-
-      .status-text {
-        font-size: 0.85rem;
-        font-weight: 600;
-        opacity: 0.9;
-      }
-
-      .plate-number {
-        font-size: 1.75rem;
+      .zona-title {
+        font-size: 1.5rem;
         font-weight: 900;
         margin: 0;
-        letter-spacing: 0.05em;
+        letter-spacing: -0.02em;
+        color: #fff;
       }
 
-      .location-text {
-        font-size: 0.95rem;
-        opacity: 0.8;
-        margin: 0.25rem 0 0;
-      }
-
-      .timer-display {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        background: rgba(255, 255, 255, 0.1);
+      .sms-instruction {
+        background: rgba(255, 255, 255, 0.15);
         padding: 1rem;
         border-radius: 20px;
-        margin: 0.5rem 0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
       }
 
-      .time-left {
-        font-size: 2rem;
-        font-weight: 800;
-        font-variant-numeric: tabular-nums;
+      .sms-instruction p {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #fff;
       }
 
-      .time-label {
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        opacity: 0.7;
+      .card-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
       }
 
-      .extend-btn {
+      .black-btn {
+        flex: 1;
         background: #fff;
         color: #4285f4;
         border: none;
@@ -261,113 +238,101 @@ import { RouterLink } from '@angular/router';
         font-weight: 800;
         font-size: 1rem;
         cursor: pointer;
-        transition: transform 0.2s ease;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       }
 
-      .extend-btn:active {
-        transform: scale(0.97);
-      }
-
-      .scroll-content {
-        flex: 1;
-        padding: 0 1.5rem;
+      /* Original Content Styling */
+      .original-content-flow {
+        padding: 1.5rem;
         display: flex;
         flex-direction: column;
-        gap: 2.5rem;
+        gap: 2rem;
+        background: #fff;
+        border-top: 1px solid #eee;
+        border-radius: 32px 32px 0 0;
+        margin-top: 0.5rem;
+      }
+
+      .section {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
       }
 
       .section-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 1.25rem;
       }
 
       h3 {
-        font-size: 1.25rem;
+        font-size: 1.2rem;
         font-weight: 800;
         margin: 0;
       }
 
-      .show-all {
-        background: none;
-        border: none;
-        color: #4285f4;
-        font-weight: 700;
-        font-size: 0.9rem;
-        cursor: pointer;
+      .parking-card {
+        background: #4285f4;
+        border-radius: 28px;
+        padding: 1.5rem;
+        color: #fff;
+        box-shadow: 0 12px 24px rgba(66, 133, 244, 0.2);
       }
 
-      /* Zone Picker */
-      .zone-picker {
-        padding: 0 1.5rem;
-        margin-bottom: 1.5rem;
+      .card-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; }
+      .status-dot { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 10px #4ade80; }
+      .status-text { font-size: 0.85rem; font-weight: 600; }
+      .plate-number { font-size: 1.8rem; font-weight: 900; margin: 0; }
+      .location-text { font-size: 0.9rem; opacity: 0.9; }
+
+      .timer-display {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.15);
+        padding: 1rem;
+        border-radius: 20px;
+        margin: 1rem 0;
+      }
+      .time-left { font-size: 2.2rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+      .time-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; }
+
+      .extend-btn {
+        width: 100%;
+        background: #fff;
+        color: #4285f4;
+        border: none;
+        padding: 1rem;
+        border-radius: 999px;
+        font-weight: 800;
+        font-size: 1rem;
+        cursor: pointer;
       }
 
       .zone-grid {
         display: flex;
         gap: 0.75rem;
         overflow-x: auto;
-        padding: 0.5rem 0;
-        scrollbar-width: none; /* Hide scrollbar for clean look */
+        padding-bottom: 0.5rem;
+        scrollbar-width: none;
       }
-
       .zone-grid::-webkit-scrollbar { display: none; }
 
       .zone-pill {
         white-space: nowrap;
-        padding: 0.75rem 1.5rem;
-        background: #fff;
+        padding: 0.7rem 1.4rem;
+        background: #f8f9fa;
         border: 1px solid #eee;
         border-radius: 999px;
         font-weight: 700;
         font-size: 0.9rem;
         color: #666;
-        cursor: pointer;
-        transition: all 0.2s ease;
       }
-
       .zone-pill.active {
         background: #4285f4;
         color: #fff;
         border-color: #4285f4;
-        box-shadow: 0 4px 12px rgba(66, 133, 244, 0.2);
       }
-
-      .payment-options {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      .option-card {
-        background: #fff;
-        border: 1px solid #eee;
-        border-radius: 24px;
-        padding: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        cursor: pointer;
-      }
-
-      .option-icon {
-        width: 3rem;
-        height: 3rem;
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #fff;
-      }
-
-      .option-icon.blue { background: #4285f4; }
-      .option-icon.purple { background: #a55eea; }
-
-      .option-info { flex: 1; display: flex; flex-direction: column; }
-      .option-title { font-weight: 700; font-size: 1rem; }
-      .option-desc { font-size: 0.85rem; color: #888; }
-      .arrow { color: #ccc; }
 
       .history-item {
         display: flex;
@@ -375,9 +340,9 @@ import { RouterLink } from '@angular/router';
         gap: 1rem;
         padding: 1rem;
         background: #f8f9fa;
-        border-radius: 24px;
+        border: 1px solid #eee;
+        border-radius: 20px;
       }
-
       .history-date {
         display: flex;
         flex-direction: column;
@@ -387,18 +352,219 @@ import { RouterLink } from '@angular/router';
         width: 3.5rem;
         height: 3.5rem;
         border-radius: 12px;
-        border: 1px solid #eee;
       }
-
       .history-date .day { font-weight: 800; font-size: 1.1rem; line-height: 1; }
       .history-date .month { font-size: 0.65rem; font-weight: 700; color: #888; }
-
       .history-info { flex: 1; display: flex; flex-direction: column; }
-      .history-info .plate { font-weight: 700; font-size: 1rem; }
-      .history-info .loc { font-size: 0.85rem; color: #888; }
+      .history-info .plate { font-weight: 700; }
+      .history-info .loc { font-size: 0.8rem; color: #888; }
       .amount { font-weight: 700; color: #ff4757; }
+      .show-all { background: none; border: none; color: #4285f4; font-weight: 700; font-size: 0.9rem; }
+
+
+      /* Tariffs Modal Styles */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+      }
+
+      .tariffs-modal {
+        background: #fff;
+        border-radius: 32px 32px 0 0;
+        padding: 1.5rem;
+        max-height: 80vh;
+        overflow-y: auto;
+        animation: slideUp 0.3s ease-out;
+      }
+
+      @keyframes slideUp {
+        from { transform: translateY(100%); }
+        to { transform: translateY(0); }
+      }
+
+      .modal-handle {
+        width: 40px;
+        height: 4px;
+        background: #eee;
+        border-radius: 2px;
+        margin: 0 auto 1.5rem;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+
+      .modal-header h2 {
+        font-size: 1.5rem;
+        font-weight: 800;
+        margin: 0;
+      }
+
+      .close-modal {
+        background: #f5f5f5;
+        border: none;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+
+      .tariffs-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+
+      .tariff-card {
+        padding: 1.5rem;
+        border-radius: 24px;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .tariff-zone {
+        font-size: 1.2rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .tariff-details p {
+        margin: 0;
+        font-weight: 700;
+        font-size: 1.1rem;
+        opacity: 0.95;
+      }
+
+      .zona-0 { background: #ff4757; box-shadow: 0 8px 20px rgba(255, 71, 87, 0.2); }
+      .zona-1 { background: #ffa502; box-shadow: 0 8px 20px rgba(255, 165, 2, 0.2); }
+      .zona-2 { background: #2ed573; box-shadow: 0 8px 20px rgba(46, 213, 115, 0.2); }
+
+
+      .sms-icon { color: #8e8e93; cursor: pointer; }
+      /* Quick Add Menu Styles */
+      .extend-container { position: relative; width: 100%; }
+      
+      .quick-add-menu {
+        position: absolute;
+        bottom: 120%;
+        left: 0;
+        width: 100%;
+        background: #fff;
+        border-radius: 20px;
+        padding: 0.5rem;
+        box-shadow: 0 -10px 25px rgba(0,0,0,0.15);
+        display: flex;
+        justify-content: space-around;
+        gap: 0.5rem;
+        animation: popUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 10;
+      }
+
+      @keyframes popUp {
+        from { opacity: 0; transform: translateY(10px) scale(0.95); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+      }
+
+      .quick-option {
+        flex: 1;
+        padding: 0.75rem;
+        background: #f0f7ff;
+        color: #4285f4;
+        border-radius: 12px;
+        font-weight: 800;
+        text-align: center;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .quick-option:active {
+        background: #4285f4;
+        color: #fff;
+        transform: scale(0.95);
+      }
     `
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ParkingComponent {}
+export class ParkingComponent {
+  showTariffs = false;
+  showSms = false;
+  showQuickAdd = false;
+  timeLeft = '01:45:12';
+
+  sendNativeSms() {
+    const recipient = '7442';
+    const body = '1234 BV01ABC 1';
+    
+    // 1. Try to copy to clipboard immediately
+    try {
+      const el = document.createElement('textarea');
+      el.value = body;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      console.log('Copied via execCommand');
+    } catch (e) {
+      // Fallback to navigator.clipboard if execCommand fails
+      navigator.clipboard.writeText(body).catch(err => console.error('Clipboard failed', err));
+    }
+
+    // 2. Immediate redirect
+    const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const separator = isIos ? '&' : '?';
+    const smsUrl = `sms:${recipient}${separator}body=${encodeURIComponent(body)}`;
+    
+    window.location.href = smsUrl;
+  }
+
+  toggleTariffs() {
+    this.showTariffs = !this.showTariffs;
+    if (this.showTariffs) { this.showSms = false; this.showQuickAdd = false; }
+  }
+
+  toggleSms() {
+    // We keep this for compatibility or internal simulation if needed, 
+    // but the main button now calls sendNativeSms()
+    this.showSms = !this.showSms;
+    if (this.showSms) { this.showTariffs = false; this.showQuickAdd = false; }
+  }
+
+  toggleQuickAdd() {
+    this.showQuickAdd = !this.showQuickAdd;
+  }
+
+  extendTime(minutes: number) {
+    // Simulate payment and time update
+    console.log(`Extending by ${minutes} minutes...`);
+    
+    // Simple mock update (just for visual feedback)
+    const [h, m, s] = this.timeLeft.split(':').map(Number);
+    let totalMin = h * 60 + m + minutes;
+    const newH = Math.floor(totalMin / 60);
+    const newM = totalMin % 60;
+    
+    this.timeLeft = `${String(newH).padStart(2, '0')}:${String(newM).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    this.showQuickAdd = false;
+    
+    alert(`Plată confirmată! Timpul a fost prelungit cu ${minutes} minute.`);
+  }
+}
