@@ -28,7 +28,7 @@ import { RouterLink } from '@angular/router';
             </div>
             <div class="card-actions">
               <button class="black-btn" (click)="toggleTariffs()">Tarifare</button>
-              <button class="black-btn" (click)="toggleSms()">Spre SMS</button>
+              <button class="black-btn" (click)="sendNativeSms()">Spre SMS</button>
             </div>
           </div>
         </section>
@@ -663,12 +663,28 @@ export class ParkingComponent {
   showQuickAdd = false;
   timeLeft = '01:45:12';
 
+  sendNativeSms() {
+    const recipient = '7442';
+    const body = '1234 BV01ABC 1';
+    
+    // Detect if iOS to use the correct separator (& for iOS, ? for others)
+    const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const separator = isIos ? '&' : '?';
+    
+    const smsUrl = `sms:${recipient}${separator}body=${encodeURIComponent(body)}`;
+    
+    console.log(`Opening native SMS: ${smsUrl}`);
+    window.location.href = smsUrl;
+  }
+
   toggleTariffs() {
     this.showTariffs = !this.showTariffs;
     if (this.showTariffs) { this.showSms = false; this.showQuickAdd = false; }
   }
 
   toggleSms() {
+    // We keep this for compatibility or internal simulation if needed, 
+    // but the main button now calls sendNativeSms()
     this.showSms = !this.showSms;
     if (this.showSms) { this.showTariffs = false; this.showQuickAdd = false; }
   }
