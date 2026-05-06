@@ -271,10 +271,10 @@ export class ParkingComponent implements OnInit, OnDestroy {
     }
   }
 
-  private sendExpiryNotification() {
+  private sendExpiryNotification(message: string) {
     if ('Notification' in window && Notification.permission === 'granted') {
       new Notification('Smart City Brașov', {
-        body: 'Parcarea expiră în 5 minute! Prelungește timpul din aplicație.',
+        body: message,
         icon: 'favicon.ico'
       });
     }
@@ -299,6 +299,9 @@ export class ParkingComponent implements OnInit, OnDestroy {
     const recipient = '1234';
     const body = (this.carPlate || 'BV 01 ABC') + ' ' + this.selectedHours;
     
+    // 0. Immediate confirmation notification for testing
+    this.sendExpiryNotification('Sistem de monitorizare activat. Vei primi alerte la 54 min și la 5 min.');
+
     // 1. Start the countdown based on selected hours
     this.startCountdown(this.selectedHours);
 
@@ -324,9 +327,12 @@ export class ParkingComponent implements OnInit, OnDestroy {
       }
       totalSeconds--;
 
-      // Trigger notification at exactly 5 minutes (300 seconds)
-      if (totalSeconds === 300) {
-        this.sendExpiryNotification();
+      // Trigger notifications at specific intervals
+      if (totalSeconds === 3240) { // 54 minutes
+        this.sendExpiryNotification('Mai ai 54 de minute din timpul de parcare.');
+      }
+      if (totalSeconds === 300) { // 5 minutes
+        this.sendExpiryNotification('ATENȚIE: Parcarea expiră în 5 minute!');
       }
       
       const h = Math.floor(totalSeconds / 3600);
