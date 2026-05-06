@@ -355,19 +355,35 @@ export class BusSearchComponent implements OnInit, OnDestroy {
   private parseTimetable(html: string, line: string): any {
     try {
       const doc = new DOMParser().parseFromString(html, 'text/html');
-      const hourDivs = doc.querySelectorAll('#web_class_hours');
-      const minuteDivs = doc.querySelectorAll('#web_class_minutes');
       const now = new Date();
+      const isWeekend = now.getDay() === 0 || now.getDay() === 6;
+      
+      const tables = doc.querySelectorAll('#tabel2');
+      if (tables.length === 0) return null;
+
+      // Pick the correct table (usually 0 is weekday, 1 is weekend)
+      let activeTable = tables[0];
+      if (isWeekend && tables.length > 1) {
+        // Double check title
+        const title = tables[1].querySelector('#web_class_title')?.textContent || '';
+        if (title.includes('SAMBATA') || title.includes('SÂMBĂTĂ') || title.includes('DUMINICA')) {
+          activeTable = tables[1];
+        }
+      } else if (!isWeekend && tables.length > 1) {
+        const title = tables[0].querySelector('#web_class_title')?.textContent || '';
+        if (title.includes('LUNI')) activeTable = tables[0];
+      }
+
+      const hourDivs = activeTable.querySelectorAll('#web_class_hours');
+      const minuteDivs = activeTable.querySelectorAll('#web_class_minutes');
       const curH = now.getHours();
       const curM = now.getMinutes();
       let bestEta = Infinity;
 
-      console.log(`⏱ Parsing Line ${line}. Current Time: ${curH}:${curM}`);
-
       hourDivs.forEach((hDiv, i) => {
         const hText = hDiv.textContent?.trim() || '';
         const hour = parseInt(hText.replace(/\D/g, ''));
-        if (isNaN(hour)) return;
+        if (isNaN(hour)) return; // Skip "Ora" header
         
         const mDiv = minuteDivs[i];
         if (!mDiv) return;
@@ -379,19 +395,13 @@ export class BusSearchComponent implements OnInit, OnDestroy {
           if (isNaN(min)) return;
           
           let diff = (hour * 60 + min) - (curH * 60 + curM);
-          if (diff < 0) diff += 1440; // Tomorrow
+          if (diff < 0) diff += 1440; // Next day
           
-          if (diff < bestEta) {
-            bestEta = diff;
-            console.log(`🎯 New Best ETA for Line ${line}: ${bestEta} min (at ${hour}:${min})`);
-          }
+          if (diff < bestEta) bestEta = diff;
         });
       });
 
-      if (bestEta === Infinity) {
-        console.warn(`⏳ No upcoming times found for Line ${line}`);
-        return null;
-      }
+      if (bestEta === Infinity) return null;
       
       const t = new Date(now.getTime() + bestEta * 60000);
       return { 
