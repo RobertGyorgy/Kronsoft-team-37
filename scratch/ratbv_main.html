@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--<meta http-equiv="refresh" content="120" />-->
+        <meta charset="utf-8">
+        <title>Brasov Programe orare Ghid Trasee informatii ore autobuze turist info planificari calatorii trasee</title>
+        <meta name="description" content="Brasov Ghid Trasee programe orare autobuze RAT Brasov ore de sosire in statii a autobuzelor transport Urban Brasov si traseu Poiana Brasov planificare calatorii harta liniilor traseelor harta Brasovului Oneves Carrefour Metro Selgros Auchan MALL comerciale">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="keywords" content="programe ghid trasee orare informatii ore autobuze turist info planificari calatorii trasee">	<meta http-equiv="cache-control" content="no-cache" />
+        <link rel="stylesheet" type="text/css" href="/css/style.css">
+        <link rel="stylesheet" type="text/css" href="/js/slick/slick.css"/>
+        <link rel="stylesheet" type="text/css" href="/js/dd.css" />
+        <link rel="stylesheet" href="/js/lightbox.css">
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel="stylesheet" type="text/css">
+        <link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+        <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>        
+        <script type="text/javascript" src="/js/slick/slick.min.js"></script>
+        <script src="/js/jquery.dd.js"></script>
+            </head>
+    <script>
+    document.addEventListener('contextmenu', 
+     event => event.preventDefault()
+);
+document.addEventListener("keydown", function (event){
+    if (event.ctrlKey){
+       event.preventDefault();
+    }
+    if(event.keyCode == 123){
+       event.preventDefault();
+    }
+});
+</script>
+
+    <body>        
+        <div class="butoane-laterale">
+                        <a href="/contact/" class="buton-lateral">CONTACT</a>
+                        <a href="/sesizari/" class="buton-lateral">Sesizari</a>
+                        <a href="/sondaj-de-opinie/" class="buton-lateral">Sondaj de opinie</a>
+                                    
+        </div>
+        <div class="wrapper">
+            <div class="container header">
+                <div class="box logo">
+                    <a href="/" title="Brasov Programe orare Ghid Trasee informatii ore autobuze turist info planificari calatorii trasee">Brasov Programe orare Ghid Trasee informatii ore autobuze turist info planificari calatorii trasee</a>
+                </div>
+                <div class="box cautare">
+                    <form method="get" action="/search.php">
+                        <input type="text" value="Cautare rapida" name="q" onblur="if(value=='') value = 'Cautare rapida'" onfocus="if(value=='Cautare rapida') value = ''">
+                        <button type="submit" class="submit">&#xf002;</button>
+                    </form>
+                </div>
+                <div class="box selecteaza-limba">
+                    <a href="/language.php?code=en" class="en">English</a>
+                    <a href="/language.php?code=ro" class="ro">Romana</a>
+                    <select name="limba" id="limba" style="width:100px;" data-maincss="blue">
+                        <option value="">Alta limba</option>
+                                                                                                                                                    </select>
+                    <script>
+                        
+                            $(document).ready(function(e) {		
+                                $("select").msDropdown({roundedBorder:false});                                
+                                $("#limba").change(function(){
+                                    window.location = $("#limba option:selected").attr('value');        
+                                });
+                                
+                                $('#newsletter').bind('submit', function () {
+                                    var email_pattern = new RegExp("^[0-9A-Za-z_.-]+@[A-Za-z0-9_.-]+[.]+[A-Za-z]{2,4}$", "i");
+                                    if (!$('input[name=newsletter_email]').val()) {
+                                        alert('Completati adresa de email!');
+                                        return false
+                                    } else if (!email_pattern.test($('input[name=newsletter_email]').val())) {
+                                        alert('Adresa de email nu este corecta!');
+                                        return false
+                                    }
+                                    $.ajax({
+                                        'url': '/ajax/newsletter.php',
+                                        'data': {
+                                            'email': $('input[name=newsletter_email]').val()
+                                        },
+                                        'type': 'POST',
+                                        'success': function (response) {
+                                            alert(response)
+                                        },
+                                        'async': false
+                                    });
+                                    $('input[name=newsletter_email]').val($('input[name=newsletter_email]').attr('title'));
+                                    return false
+                                });
+                            });
+                        
+                    </script>
+                </div>
+                <div class="box social-top">
+                    <a href="https://twitter.com/ratbv2">&#xf081;</a>
+                    <a href="https://www.facebook.com/RATBV-SA-150501902285918/">&#xf082;</a>
+                    <a href="https://www.facebook.com/150501902285918/videos/1439531053462004">&#xf166;</a>
+                </div>
+                <div class="clear"></div>
+
+                        <div class="meniu cf">
+                <ul>
+                                                                        <li><a href="/" title="ACASA">ACASA</a></li>
+                                                                                                <li>
+                                                                    <a href="/ratbv-sa/" title="RATBV S.A.">RATBV S.A.</a>
+                                                                
+                                                                <ul>
+                                                                            <li><a href="/conducerea-ratbv-sa/" title="Conducerea RATBV S.A.">Conducerea RATBV S.A.</a></li>
+                                                                            <li><a href="/adunarea-generala-a-actionarilor/" title="Adunarea Generala a Actionarilor">Adunarea Generala a Actionarilor</a></li>
+                                                                            <li><a href="/consiliul-de-administratie/" title="Consiliul de Administratie">Consiliul de Administratie</a></li>
+                                                                            <li><a href="/istoric/" title="Istoric">Istoric</a></li>
+                                                                            <li><a href="/proiecte/" title="Proiecte">Proiecte</a></li>
+                                                                            <li><a href="/achizitii-si-licitatii/" title="Achizitii si licitatii">Achizitii si licitatii</a></li>
+                                                                            <li><a href="/parteneriate/" title="Parteneriate">Parteneriate</a></li>
+                                                                            <li><a href="/reglementari/" title="Reglementari">Reglementari</a></li>
+                                                                            <li><a href="/informatii-publice/" title="Informatii publice">Informatii publice</a></li>
+                                                                    </ul>
+                                                             </li>
+                                                                                                <li>
+                                                                    <a href="/trasee-si-orare/" title="Trasee si orare">Trasee si orare</a>
+                                                                
+                                                             </li>
+                                                                                                <li>
+                                                                    <a href="/tarife/" title="Tarife">Tarife</a>
+                                                                
+                                                                <ul>
+                                                                            <li><a href="/tarife-trasee-urbane-si-metropolitane/" title="Tarife trasee urbane si metropolitane">Tarife trasee urbane si metropolitane</a></li>
+                                                                            <li><a href="/vinerea-verde/" title="Vinerea VERDE">Vinerea VERDE</a></li>
+                                                                            <li><a href="/reduceri-si-gratuitati-trasee-urbane/" title="Reduceri si Gratuitati Trasee Urbane">Reduceri si Gratuitati Trasee Urbane</a></li>
+                                                                            <li><a href="/reduceri-si-gratuitati-trasee-metropolitane/" title="Reduceri si Gratuitati Trasee Metropolitane">Reduceri si Gratuitati Trasee Metropolitane</a></li>
+                                                                            <li><a href="/solictare-factura/" title="Solictare FACTURA">Solictare FACTURA</a></li>
+                                                                            <li><a href="/retea-distributie-bilete-si-abonamente/" title="Retea distributie bilete si abonamente">Retea distributie bilete si abonamente</a></li>
+                                                                            <li><a href="/automate-de-vanzare-titluri-calatorie/" title="Automate de vanzare titluri calatorie">Automate de vanzare titluri calatorie</a></li>
+                                                                            <li><a href="/important-consimtamant-prelucrare-date/" title="Important - consimtamant prelucrare date">Important - consimtamant prelucrare date</a></li>
+                                                                            <li><a href="/contraventii-si-sanctiuni/" title="Contraventii si Sanctiuni">Contraventii si Sanctiuni</a></li>
+                                                                            <li><a href="/cardul-practic/" title="CARDUL PRACTIC">CARDUL PRACTIC</a></li>
+                                                                            <li><a href="/instructiuni-bilete-si-abonamente/" title="Instructiuni Bilete si Abonamente">Instructiuni Bilete si Abonamente</a></li>
+                                                                    </ul>
+                                                             </li>
+                                                                                                <li>
+                                                                    <a href="/informatii-utile/" title="Informatii utile">Informatii utile</a>
+                                                                
+                                                                <ul>
+                                                                            <li><a href="/inchiriere-spatii-interne-ale-ratbv-sa/" title="Inchiriere spatii interne ale RATBV S.A.">Inchiriere spatii interne ale RATBV S.A.</a></li>
+                                                                            <li><a href="/campanii/" title="Campanii">Campanii</a></li>
+                                                                            <li><a href="/evenimente/" title="Evenimente">Evenimente</a></li>
+                                                                            <li><a href="/obiecte-pierdute/" title="OBIECTE PIERDUTE">OBIECTE PIERDUTE</a></li>
+                                                                            <li><a href="/informatii-turisti/" title="Informaţii turişti">Informaţii turişti</a></li>
+                                                                            <li><a href="/siguranta-circulatiei/" title="SIGURANTA CIRCULATIEI">SIGURANTA CIRCULATIEI</a></li>
+                                                                            <li><a href="/intrebari-frecvente/" title="Intrebari frecvente">Intrebari frecvente</a></li>
+                                                                            <li><a href="/avize-lucrari-investitii/" title="Avize lucrari investitii">Avize lucrari investitii</a></li>
+                                                                    </ul>
+                                                             </li>
+                                                                                                <li>
+                                                                    <a href="/galerie-foto/" title="GALERIE FOTO">GALERIE FOTO</a>
+                                                                
+                                                             </li>
+                                                                                                <li>
+                                                                    <a href="/cariere/" title="Cariere">Cariere</a>
+                                                                
+                                                                <ul>
+                                                                            <li><a href="/selectie-consiliu-de-administratie-2026-2030/" title="Selectie Consiliu de Administratie 2026-2030">Selectie Consiliu de Administratie 2026-2030</a></li>
+                                                                    </ul>
+                                                             </li>
+                                                                                                <li>
+                                                                    <a href="/guvernanta/" title="Guvernanta">Guvernanta</a>
+                                                                
+                                                             </li>
+                                              
+                </ul>
+            </div>
+            
+                        <div class="noutati">
+                <a href="/noutati/" class="vezi-noutati">Noutati</a>
+                <div class="slideshow-noutati">
+                                        <div><a href="/noutati/trei-sta%c8%9bii-de-pe-strada-lunga-blocate-timp-de-30-de-minute_823/" title="Trei stații de pe strada Lungă, blocate timp de 30 de minute"><span>06.05.2026</span> Trei stații de pe strada Lungă, blocate timp de 30 de minute - Pe 7 mai, de Crosul Universității ”Transilvania”</a></div>
+                                        <div><a href="/noutati/conducatorii-auto-ratbv-sesiune-de-instruire-preventiva-cu-poli%c8%9bia-rutiera_822/" title="Conducătorii auto RATBV, sesiune de instruire preventivă cu Poliția Rutieră"><span>04.05.2026</span> Conducătorii auto RATBV, sesiune de instruire preventivă cu Poliția Rutieră - Siguranța, pe primul plan</a></div>
+                                        <div><a href="/noutati/program-specific-unei-zile-de-duminica-pe-data-de-1-mai_820/" title="Program specific unei zile de duminică pe data de 1 mai"><span>29.04.2026</span> Program specific unei zile de duminică pe data de 1 mai - Cinci puncte de vânzare deschise</a></div>
+                                        <div><a href="/noutati/modificari-de-orare-pentru-liniile-metropolitane-611-%c8%99i-612_821/" title="Modificări de orare pentru liniile metropolitane 611 și 612"><span>29.04.2026</span> Modificări de orare pentru liniile metropolitane 611 și 612 - Schimbările survin de pe 1 mai a.c.</a></div>
+                                        <div><a href="/noutati/ratbv-reia-serviciul-de-transport-al-bicicletelor-pe-linia-20_819/" title="RATBV reia serviciul de transport al bicicletelor pe linia 20"><span>23.04.2026</span> RATBV reia serviciul de transport al bicicletelor pe linia 20 - De sâmbătă, 25 aprilie 2026</a></div>
+                                    </div>
+                <script>
+                    
+                    $(document).ready(function(){
+                    	$('.slideshow-noutati').slick({
+                    		infinite: true,
+                    		autoplay: true,
+                    		autoplaySpeed: 5000,
+                    		slidesToShow: 1,
+                    		slidesToScroll: 1
+                    	});
+                    });
+                    
+                </script>
+            </div>            
+        </div>
+        <div class="clear"></div>
+        <div class="container continut">
+                        <div class="box sidebar-stanga">
+                                <a href="https://www.google.ro/maps/dir///@45.6524567,25.5264227,12z/data=!4m2!4m1!3e3?hl=ro">
+                    <div class="ghid-trasee">
+                        <span class="icon">&#xf124;</span>
+                        <h2>GOOGLE MAPS</h2>
+                        Utilizeaza Google Maps pt. configurarea calatoriei cu transportul public
+                    </div>
+                </a>
+                                
+                                <a href="https://card.ratbv.ro">
+                    <div class="harta-trasee">
+                        <span class="icon">&#xf041;</span>
+                        <h2>Încarcă sau consultă cardul on-line!</h2>
+                        Achiziționează abonament sau portofel electronic.
+                    </div>
+                </a>
+                                                <a href="https://elevi.ratbv.ro">
+                    <div class="planificare-trasee">
+                        <span class="icon">&#xf058;</span>
+                        <h2>Incarcare card elevi on-line</h2>
+                        Incarca gratuit cardul de elevi
+                    </div>
+                </a>
+                                
+                               
+                <div class="info-calatori">
+                                        <a href="https://www.ratbv.ro/tarife-trasee-urbane-si-metropolitane/" target="_blank">
+                        <h2 class="titlu-albastru">Tarife transport</h2>
+                    </a>
+                                        
+                     
+                                        <a href="https://www.ratbv.ro/uploads/documents/harta_retea_transport_mun_brasov_2021-f5f8.jpg">
+                        <h2 class="titlu-albastru">Harta trasee urbane</h2>
+                    </a>
+                     
+                                        <a href="https://www.ratbv.ro/harti-trasee-metropolitane/">
+                        <h2 class="titlu-albastru">Harti trasee metropolitane</h2>
+                    </a>
+                                        
+                </div>				
+<!--<div class="widget">					                     					
+<a href="http://www.brasovcity.ro/" target="_blank"><img src="/images/brasovcity-logo.jpg" height="65" width="200"></a></li>					
+<a href="http://www.metropolabrasov.ro/" target="_blank"><img src="/images/amb-logo.jpg" height="65" width="200"></a></li>					
+<a href="http://www.abmee.ro/" target="_blank"><img src="/images/abmee-logo.jpg" height="55" width="200"></a></li>					
+<a href="http://psp.ro/" target="_blank"><img src="/images/psp-logo.jpg" height="65" width="200"></a></li>					
+<a href="http://urtp.ro/pagini/index.php" target="_blank"><img src="/images/urtp-logo.jpg" height="55" width="200"></a></li>				
+</div>-->
+            </div>
+            <div class="box continut-pagina">
+                <h2 class="titlu-pagina">Trasee si orare</h2>
+                <div>
+<table border="0">
+<tbody>
+<tr valign="top">
+<td style="text-align: center;" align="center" valign="top"><img src="/uploads/images/panou_site.jpg" alt="" width="200" height="92" /></td>
+<td style="text-align: justify;"><span style="color: #333333; font-size: small;">Stimati pasageri,</span><span style="color: #333333; font-size: small;">Orele de trecere prin statii pot suferi unele modificari din cauza incidentelor de trafic sau a altor cauze neprevazute. <span style="color: #ff0000;">Panourile electronice din statii afișează ora sosirii &icirc;n funcție de pozițiile reale ale vehiculelor &icirc;n traseu si din acest motiv pot exista diferente intre orele afisate pe aceste panouri si orele afiselor de hartie sau cele de pe site.</span><br /></span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong style="color: #ff0000; font-size: small; line-height: 1.6em;"><span><a href="/uploads/images/Harta%20RATBV_update2024.jpg">Click - HARTĂ TRASEE BRASOV 2024</a></span></strong></p>
+<table style="width: 1246px; height: 728px;">
+<tbody align="center">
+<tr>
+<td colspan="3" align="center"><a href="https://www.ratbv.ro/afisaje/A1-dus.html" target="_blank"><img src="/uploads/images/LA1.jpg" alt="" width="426" height="80" /></a></td>
+</tr>
+<tr>
+<td><a href="https://www.ratbv.ro/afisaje/1-dus.html" target="_blank"><img src="/uploads/images/L1.jpg" alt="" width="140" height="80" /></a></td>
+<td><a href="https://www.ratbv.ro/afisaje/2-dus.html" target="_blank"><img src="/uploads/images/L2.jpg" alt="" width="140" height="80" /></a></td>
+<td><a href="https://www.ratbv.ro/afisaje/2b-dus.html" target="_blank"><img src="/uploads/images/L2b.jpg" alt="" width="140" height="80" /></a></td>
+</tr>
+<tr>
+<td><a href="https://www.ratbv.ro/afisaje/3-dus.html" target="_blank"><img src="/uploads/images/L3.jpg" alt="" width="140" height="80" /></a></td>
+<td><a href="https://www.ratbv.ro/afisaje/4-dus.html" target="_blank"><img src="/uploads/images/L4.jpg" alt="" width="140" height="80" /></a></td>
+<td><a href="https://www.ratbv.ro/afisaje/5-dus.html" target="_blank"><img src="/uploads/images/L5.jpg" alt="" width="140" height="80" /></a></td>
+</tr>
+<tr>
+<td><a href="https://www.ratbv.ro/afisaje/5m-dus.html" target="_blank"><img src="/uploads/images/L5M.jpg" alt="" width="140" height="80" /></a></td>
+<td><a href="https://www.ratbv.ro/afisaje/6-dus.html" target="_blank"><img src="/uploads/images/L6.jpg" alt="" width="140" height="80" /></a></td>
+<td><a href="https://www.ratbv.ro/afisaje/7-dus.html" target="_blank"><img src="/uploads/images/L7.jpg" alt="" width="140" height="80" /></a></td>
+</tr>
+<tr>
+<td><a href="https://www.ratbv.ro/afisaje/8-dus.html" target="_blank"><img src="/uploads/images/L8.jpg" alt="" width="140" height="80" /></a></td>
+<td><a href="https://www.ratbv.ro/afisaje/9-dus.html" target="_blank"><img src="/uploads/images/L9.jpg" alt="" width="140" height="80" /></a></td>
+<td><a href="https://www.ratbv.ro/afisaje/10-dus.html" target="_blank"><img src="/uploads/images/L10.jpg" alt="" width="140" height="80" /></a></td>
+</tr>
+<tr>
+<td><a href="https://www.ratbv.ro/afisaje/14-dus.html" target="_blank"><img src="/uploads/images/L14.jpg" alt="" width="140" height="80" /></a></td>
+<td><a href="https://www.ratbv.ro/afisaje/15-dus.html" target="_blank"><img src="/uploads/images/L15.jpg" alt="" width="140" height="80" /></a></td>
+<td><a href="https://www.ratbv.ro/afisaje/16-dus.html" target="_blank"><img src="/uploads/images/L16.jpg" alt="" width="140" height="80" /></a></td>
+</tr>
+<tr>
+<td><a href="https://www.ratbv.ro/afisaje/17-dus.html" target="_blank"><img src="/uploads/images/L17.jpg" alt="" width="140" height="80" /></a></td>
+<td><a href="https://www.ratbv.ro/afisaje/17b-dus.html" target="_blank"><img src="/uploads/images/L17B.jpg" alt="" width="140" height="80" /></a></td>
+<td><a href="https://www.ratbv.ro/afisaje/18-dus.html" target="_blank"><img src="/uploads/images/L18.jpg" alt="" width="140" height="80" /></a></td>
+</tr>
+<tr>
+<td><a href="https://www.ratbv.ro/afisaje/20-dus.html" target="_blank"><img src="/uploads/images/L20.jpg" alt="" width="140" height="80" /></a></td>
+<td>&nbsp;<a href="https://www.ratbv.ro/afisaje/21-dus.html" target="_blank"><img src="/uploads/images/L21.jpg" alt="" width="140" height="80" /></a></td>
+<td><a href="https://www.ratbv.ro/afisaje/22-dus.html">&nbsp;<img src="/uploads/images/L22.jpg" alt="" width="140" height="80" /></a></td>
+</tr>
+<tr>
+<td>&nbsp;<a href="https://www.ratbv.ro/afisaje/23-dus.html" target="_blank"><img src="/uploads/images/L23.jpg" alt="" width="140" height="80" /></a></td>
+<td><a href="https://www.ratbv.ro/afisaje/23b-dus.html" target="_blank"><img src="/uploads/images/L23B.jpg" alt="" width="140" height="80" /></a></td>
+<td><a href="https://www.ratbv.ro/afisaje/24-dus.html" target="_blank"><img src="/uploads/images/L24.jpg" alt="" width="140" height="80" /></a></td>
+</tr>
+<tr>
+<td><a href="/afisaje/25-dus.html"><img src="/uploads/images/L25.jpg" alt="" width="140" height="80" /></a></td>
+<td><a href="/afisaje/28-dus.html"><img src="/uploads/images/L28.jpg" alt="" width="140" height="80" /></a></td>
+<td>&nbsp;<a href="/afisaje/29-dus.html"><img src="/uploads/images/L29.jpg" alt="" width="140" height="80" /></a></td>
+</tr>
+<tr>
+<td><a href="/afisaje/31-dus.html"><img src="/uploads/images/L31.jpg" alt="" width="140" height="80" /></a></td>
+<td><a href="/afisaje/32-dus.html"><img src="/uploads/images/L32.jpg" alt="" width="140" height="80" /></a></td>
+<td><a href="/afisaje/33-dus.html"><img src="/uploads/images/L33.jpg" alt="" width="140" height="80" />&nbsp;</a></td>
+</tr>
+<tr>
+<td><a href="/afisaje/34-dus.html"><img src="/uploads/images/L34.jpg" alt="" width="140" height="80" /></a></td>
+<td><a href="/afisaje/34b-dus.html"><img src="/uploads/images/L34B.jpg" alt="" width="140" height="80" /></a></td>
+<td><a href="/afisaje/35-dus.html"><img src="/uploads/images/L35.jpg" alt="" width="140" height="80" /></a></td>
+</tr>
+<tr>
+<td><a href="/afisaje/36-dus.html"><img src="/uploads/images/L36.jpg" alt="" width="140" height="80" /></a></td>
+<td><a href="/afisaje/37-dus.html"><img src="/uploads/images/L37.jpg" alt="" width="140" height="80" /></a></td>
+<td><a href="/afisaje/40-dus.html"><img src="/uploads/images/L40.jpg" alt="" width="140" height="80" /></a></td>
+</tr>
+<tr>
+<td><a href="/afisaje/41-dus.html"><img src="/uploads/images/L41.jpg" alt="" width="140" height="80" /></a></td>
+<td><a href="/afisaje/42-dus.html"><img src="/uploads/images/L42.jpg" alt="" width="140" height="80" /></a></td>
+<td><a href="/afisaje/50-dus.html"><img src="/uploads/images/L50.jpg" alt="" width="140" height="80" /></a></td>
+</tr>
+<tr>
+<td><a href="/afisaje/52-dus.html"><img src="/uploads/images/L52.jpg" alt="" width="140" height="80" /></a></td>
+<td><a href="/afisaje/53-dus.html"><img src="/uploads/images/L53.jpg" alt="" width="140" height="80" /></a></td>
+<td><a href="/afisaje/54-dus.html"><img src="/uploads/images/L54.jpg" alt="" width="140" height="80" /></a></td>
+</tr>
+<tr><!--<td><a class="glow" href="https://www.ratbv.ro/uploads/images/Afis elevi feb2023.jpg" target="_blank"><div class="tooltip"><img src="/uploads/images/Elevi.jpg" height="80" width="140"></div></a></td>-->
+<td><a href="/afisaje/56-dus.html"><img src="/uploads/images/L56.jpg" alt="" width="140" height="80" /></a></td>
+<td><img src="/uploads/images/L60S.jpg" alt="" width="140" height="80" /></td>
+<td><img src="/uploads/images/L100S.jpg" alt="" width="140" height="80" /></td>
+</tr>
+<tr>
+<td colspan="3"><a href="/noutati/orare-actualizate-la-27022026-pentru-traseele-folosite-de-elevi_699/">&nbsp;&nbsp;<img src="/uploads/images/Elevi.jpg" alt="" width="426" height="80" /></a></td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<div id="metropolitan" class="abonare-newsletter">
+<h2 id="metropolitan" align="center">TRANSPORT METROPOLITAN</h2>
+</div>
+<table>
+<tbody align="center">
+<tr>
+<td style="padding-right: 3px;"><a href="https://www.ratbv.ro/afisaje/110-dus.html" target="_blank"><img src="/uploads/images/L110.jpg" alt="" width="140" height="80" /></a></td>
+<td style="padding-right: 3px;"><a href="https://www.ratbv.ro/afisaje/120-dus.html" target="_blank"><img src="/uploads/images/L120.jpg" alt="" width="140" height="80" /></a></td>
+<td style="padding-right: 3px;"><a href="https://www.ratbv.ro/afisaje/130-dus.html" target="_blank"><img src="/uploads/images/L130.jpg" alt="" width="140" height="80" /></a></td>
+</tr>
+<tr>
+<td style="padding-right: 3px;"><a href="https://www.ratbv.ro/afisaje/131-dus.html" target="_blank"><img src="/uploads/images/L131.jpg" alt="" width="140" height="80" /></a></td>
+<td style="padding-right: 3px;"><a href="https://www.ratbv.ro/afisaje/140-dus.html" target="_blank"><img src="/uploads/images/L140.jpg" alt="" width="140" height="80" /></a></td>
+<td style="padding-right: 3px;"><a href="https://www.ratbv.ro/afisaje/210-dus.html" target="_blank"><img src="/uploads/images/L210.jpg" alt="" width="140" height="80" /></a></td>
+</tr>
+<tr>
+<td style="padding-right: 3px;"><a href="https://www.ratbv.ro/afisaje/220-dus.html" target="_blank"><img src="/uploads/images/L220.jpg" alt="" width="140" height="80" /></a></td>
+<td style="padding-right: 3px;"><a href="https://www.ratbv.ro/afisaje/310-dus.html" target="_blank"><img src="/uploads/images/L310.jpg" alt="" width="140" height="80" /></a></td>
+<td style="padding-right: 3px;"><a href="https://www.ratbv.ro/afisaje/320-dus.html" target="_blank"><img src="/uploads/images/L320.jpg" alt="" width="140" height="80" /></a></td>
+</tr>
+<tr>
+<td style="padding-right: 3px;"><a href="https://www.ratbv.ro/afisaje/410-dus.html" target="_blank"><img src="/uploads/images/L410.jpg" alt="" width="140" height="80" /></a></td>
+<td style="padding-right: 3px;"><a href="https://www.ratbv.ro/afisaje/411-dus.html" target="_blank"><img src="/uploads/images/L411.jpg" alt="" width="140" height="80" /></a></td>
+<td style="padding-right: 3px;"><a href="https://www.ratbv.ro/afisaje/412-dus.html" target="_blank"><img src="/uploads/images/L412.jpg" alt="" width="140" height="80" /></a></td>
+</tr>
+<tr>
+<td style="padding-right: 3px;"><a href="https://www.ratbv.ro/afisaje/420-dus.html" target="_blank"><img src="/uploads/images/L420.jpg" alt="" width="140" height="80" /></a></td>
+<td style="padding-right: 3px;"><a href="https://www.ratbv.ro/afisaje/510-dus.html"><img src="/uploads/images/L510.jpg" alt="" width="140" height="100" /></a></td>
+<td style="padding-right: 3px;"><a href="https://www.ratbv.ro/afisaje/511-dus.html"><img src="/uploads/images/L511.jpg" alt="" width="140" height="80" /></a></td>
+</tr>
+<tr>
+<td style="padding-right: 3px;"><a href="https://www.ratbv.ro/afisaje/520-dus.html"><img src="/uploads/images/L520.jpg" alt="" width="140" height="80" /></a></td>
+<td style="padding-right: 3px;">&nbsp;<a href="https://www.ratbv.ro/afisaje/540-dus.html"><img src="/uploads/images/L540.jpg" alt="" width="140" height="80" /></a></td>
+<td style="padding-right: 3px;"><a href="https://www.ratbv.ro/afisaje/541-dus.html"><img src="/uploads/images/L541.jpg" alt="" width="140" height="100" /></a></td>
+</tr>
+<tr>
+<td style="padding-right: 3px;"><a href="https://www.ratbv.ro/afisaje/610-dus.html"><img src="/uploads/images/L610.jpg" alt="" width="140" height="80" /></a></td>
+<td style="padding-right: 3px;"><a href="https://www.ratbv.ro/afisaje/611-dus.html"><img src="/uploads/images/L611.jpg" alt="" width="140" height="80" /></a></td>
+<td style="padding-right: 3px;"><a href="https://www.ratbv.ro/afisaje/612-dus.html"><img src="/uploads/images/L612.jpg" alt="" width="140" height="80" /></a></td>
+</tr>
+<tr>
+<td style="padding-right: 3px;"><a href="https://www.ratbv.ro/afisaje/710-dus.html"><img src="/uploads/images/L710.jpg" alt="" width="140" height="80" /></a></td>
+<td style="padding-right: 3px;"><a href="https://www.ratbv.ro/afisaje/711-dus.html"><img src="/uploads/images/L711.jpg" alt="" width="140" height="80" /></a></td>
+<td style="padding-right: 3px;">&nbsp;<a href="https://www.ratbv.ro/afisaje/810-dus.html"><img src="/uploads/images/L810.jpg" alt="" width="140" height="80" /></a></td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+            </div>
+        </div>
+        <div class="clear"></div>
+                <div class="container carusel-stiri">
+            <div class="carusel">
+                                <div><a href=""><img src="/uploads/images/img_7867-5bf2.jpg"></a></div>
+                                <div><a href=""><img src="/uploads/images/img_7874-d8d4.jpg"></a></div>
+                                <div><a href=""><img src="/uploads/images/img_7877-5574.jpg"></a></div>
+                                <div><a href=""><img src="/uploads/images/img_7915-e7fb.jpg"></a></div>
+                                <div><a href=""><img src="/uploads/images/img_7923-f97a.jpg"></a></div>
+                                <div><a href=""><img src="/uploads/images/img_7927-e205.jpg"></a></div>
+                                <div><a href=""><img src="/uploads/images/img_7930-97ac.jpg"></a></div>
+                                <div><a href=""><img src="/uploads/images/img_7943-e7c4.jpg"></a></div>
+                                <div><a href=""><img src="/uploads/images/img_7944-71be.jpg"></a></div>
+                                <div><a href=""><img src="/uploads/images/img_7950-ce1e.jpg"></a></div>
+                                <div><a href=""><img src="/uploads/images/img_7957-8641.jpg"></a></div>
+                                <div><a href=""><img src="/uploads/images/img_7876-79e7.jpg"></a></div>
+                                <div><a href=""><img src="/uploads/images/img_7974-8437.jpg"></a></div>
+                                <div><a href=""><img src="/uploads/images/img_7977-3ca8.jpg"></a></div>
+                                <div><a href=""><img src="/uploads/images/img_7979-a974.jpg"></a></div>
+                                <div><a href=""><img src="/uploads/images/img_7981-579f.jpg"></a></div>
+                                <div><a href=""><img src="/uploads/images/img_8010-2ecb.jpg"></a></div>
+                                
+                
+                <script>
+                    
+                    $(document).ready(function(){
+                    	$('.carusel').slick({
+                    		infinite: true,
+                    		autoplay: true,
+                    		autoplaySpeed: 2000,
+                    		slidesToShow: 4,
+                    		slidesToScroll: 1
+                    	});
+                    });
+                </script>
+            </div>
+        </div>
+        <div class="clear"></div>
+
+            <div class="container footer">
+                <div class="meniu-footer cf">
+                    <ul>
+                                                                                    <li><a href="/" title="ACASA">ACASA</a></li>
+                                                                                                                <li>
+                                                                            <a href="/ratbv-sa/" title="RATBV S.A.">RATBV S.A.</a>
+                                                                                                    
+                                 </li>
+                                                                                                                <li>
+                                                                            <a href="/trasee-si-orare/" title="Trasee si orare">Trasee si orare</a>
+                                                                                                    
+                                 </li>
+                                                                                                                <li>
+                                                                            <a href="/tarife/" title="Tarife">Tarife</a>
+                                                                                                    
+                                 </li>
+                                                                                                                <li>
+                                                                            <a href="/informatii-utile/" title="Informatii utile">Informatii utile</a>
+                                                                                                    
+                                 </li>
+                                                                                                                <li>
+                                                                            <a href="/galerie-foto/" title="GALERIE FOTO">GALERIE FOTO</a>
+                                                                                                    
+                                 </li>
+                                                                                                                <li>
+                                                                            <a href="/cariere/" title="Cariere">Cariere</a>
+                                                                                                    
+                                 </li>
+                                                                                                                <li>
+                                                                            <a href="/guvernanta/" title="Guvernanta">Guvernanta</a>
+                                                                                                    
+                                 </li>
+                                                                        </ul>
+                </div>
+                <div class="copyright">
+                    Copyright © 2017 RATBV S.A.                    
+                </div>
+            </div>
+        </div>
+        <script>
+    document.addEventListener('contextmenu', 
+     event => event.preventDefault()
+);
+document.addEventListener("keydown", function (event){
+    if (event.ctrlKey){
+       event.preventDefault();
+    }
+    if(event.keyCode == 123){
+       event.preventDefault();
+    }
+});
+</script>
+
+        <script type="text/javascript" id="cookieinfo"
+        	src="js/cookieinfo.js"
+        	data-bg="#645862"
+        	data-fg="#FFFFFF"
+        	data-link="#F1D600"
+        	data-cookie="CookieInfoScript"
+        	data-text-align="left"
+               data-close-text="Sunt de acord">
+        </script>
+    </body>
+</html>
