@@ -197,7 +197,7 @@ import { RouterLink } from '@angular/router';
       .custom-map-container {
         border-radius: 20px;
         overflow: hidden;
-        height: 200px; /* Compact height to fit with the card */
+        height: 280px; /* Increased height for better visibility */
         background: #f8f9fa;
         display: flex;
         align-items: center;
@@ -212,47 +212,47 @@ import { RouterLink } from '@angular/router';
       }
 
       .info-card-section {
-        padding: 0.75rem 1rem;
+        padding: 0.5rem 1rem;
       }
 
       .zona-card {
         background: linear-gradient(135deg, #4285f4 0%, #2b6edb 100%);
-        border-radius: 28px;
-        padding: 1.5rem;
-        box-shadow: 0 12px 30px rgba(66, 133, 244, 0.25);
+        border-radius: 24px;
+        padding: 1rem; /* Reduced padding */
+        box-shadow: 0 10px 25px rgba(66, 133, 244, 0.2);
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        gap: 0.75rem; /* Reduced gap */
         color: #fff;
       }
 
       .zona-title {
-        font-size: 1.5rem;
-        font-weight: 900;
+        font-size: 1.3rem; /* Slightly smaller font */
+        font-weight: 800;
         margin: 0;
-        letter-spacing: -0.02em;
+        letter-spacing: -0.01em;
         color: #fff;
       }
 
       .sms-instruction {
         background: rgba(255, 255, 255, 0.15);
-        padding: 1rem;
-        border-radius: 20px;
+        padding: 0.75rem; /* More compact bubble */
+        border-radius: 16px;
         border: 1px solid rgba(255, 255, 255, 0.1);
       }
 
       .sms-instruction p {
         margin: 0;
-        font-size: 1rem;
+        font-size: 0.9rem; /* Slightly smaller text */
         font-weight: 600;
-        line-height: 1.4;
+        line-height: 1.3;
         color: #fff;
       }
 
       .card-actions {
         display: flex;
-        gap: 0.75rem;
-        margin-top: 0.5rem;
+        gap: 0.5rem; /* Tighter buttons */
+        margin-top: 0.25rem;
       }
 
       .black-btn {
@@ -260,12 +260,12 @@ import { RouterLink } from '@angular/router';
         background: #fff;
         color: #4285f4;
         border: none;
-        padding: 1rem;
+        padding: 0.85rem; /* More compact buttons */
         border-radius: 999px;
         font-weight: 800;
-        font-size: 1rem;
+        font-size: 0.95rem;
         cursor: pointer;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       }
 
       /* Original Content Styling */
