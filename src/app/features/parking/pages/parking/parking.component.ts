@@ -1,19 +1,21 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-parking',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   template: `
     <main class="parking-shell">
       <!-- 1. Header Fix (White & Clean) -->
       <header class="top-nav-white">
-        <h1 class="header-title">Zona metropolitana Brasov</h1>
-        <button class="back-arrow" routerLink="/dashboard">
+        <button class="back-pill" routerLink="/dashboard">
           <span class="material-icons">arrow_back</span>
+          <span class="back-text">Înapoi</span>
         </button>
+        <h1 class="header-title">Parcare Brasov</h1>
       </header>
 
       <div class="main-scroll-area">
@@ -28,6 +30,7 @@ import { RouterLink } from '@angular/router';
         <section class="info-card-section">
           <div class="zona-card">
             <h2 class="zona-title">Zona 0 - Centru Vechi</h2>
+            <p class="sms-note">Pentru plata te rugam trimite prin SMS numarul 1234 urmat de numarul de inmatriculare si numarul de ore</p>
             <div class="card-actions">
               <button class="black-btn" (click)="toggleTariffs()">Tarife</button>
               <button class="black-btn" (click)="sendNativeSms()">SMS</button>
@@ -51,27 +54,30 @@ import { RouterLink } from '@angular/router';
             </div>
             
             <div class="tariffs-list">
+              <!-- Zona 0 -->
               <div class="tariff-card zona-0">
                 <span class="tariff-zone">Zona 0</span>
                 <div class="tariff-details">
-                  <p>1h - 3.00 lei</p>
-                  <p>2h - 6.00 lei</p>
+                  <p>1h - 0.60 € + TVA</p>
+                  <p>24h - 3.00 € + TVA</p>
                 </div>
               </div>
 
+              <!-- Zona 1 -->
               <div class="tariff-card zona-1">
                 <span class="tariff-zone">Zona 1</span>
                 <div class="tariff-details">
-                  <p>1h - 2.00 lei</p>
-                  <p>2h - 4.00 lei</p>
+                  <p>1h - 0.40 € + TVA</p>
+                  <p>24h - 2.00 € + TVA</p>
                 </div>
               </div>
 
+              <!-- Zona 2 -->
               <div class="tariff-card zona-2">
                 <span class="tariff-zone">Zona 2</span>
                 <div class="tariff-details">
-                  <p>1h - 1.50 lei</p>
-                  <p>2h - 3.00 lei</p>
+                  <p>1h - 0.30 € + TVA</p>
+                  <p>24h - 1.50 € + TVA</p>
                 </div>
               </div>
             </div>
@@ -80,13 +86,25 @@ import { RouterLink } from '@angular/router';
         <!-- 4. Active Session (Full Version) -->
         <section class="section-full-height">
           <div class="parking-card active-session">
-            <div class="card-header">
-              <div class="status-dot-pulse"></div>
-              <span class="status-label">Sesiune Activă</span>
-            </div>
             <div class="card-body">
-              <p class="car-plate">BV 01 ABC</p>
-              <p class="location-text">Zona A - Centru Istoric</p>
+              <!-- Input State -->
+              <div class="plate-input-container" *ngIf="!isPlateSaved">
+                <label class="input-label">Introdu numărul de înmatriculare</label>
+                <div class="input-row">
+                  <input 
+                    type="text" 
+                    [(ngModel)]="tempPlate" 
+                    placeholder="ex: BV 01 ABC"
+                    class="plate-input-field"
+                  >
+                  <button class="save-plate-btn" (click)="savePlate()">Salvează</button>
+                </div>
+              </div>
+
+              <!-- Display State -->
+              <div class="plate-display-container" *ngIf="isPlateSaved" (click)="editPlate()">
+                <p class="car-plate">{{ carPlate }}</p>
+              </div>
             </div>
             <div class="timer-display">
               <span class="time-left">{{ timeLeft }}</span>
@@ -107,19 +125,6 @@ import { RouterLink } from '@angular/router';
 
         <!-- 5. ORIGINAL CONTENT FLOW (Scrollable) -->
         <div class="original-content-flow">
-          <!-- Zone Selection -->
-          <section class="section">
-            <div class="section-header">
-              <h3>Selectează Zona</h3>
-            </div>
-            <div class="zone-grid">
-              <div class="zone-pill active">Zona A</div>
-              <div class="zone-pill">Zona B</div>
-              <div class="zone-pill">Zona C</div>
-              <div class="zone-pill">Rezidențial</div>
-            </div>
-          </section>
-
           <!-- History -->
           <section class="section">
             <div class="section-header">
@@ -155,28 +160,51 @@ import { RouterLink } from '@angular/router';
 
       .top-nav-white {
         background: #fff;
-        padding: 0.75rem 1.5rem;
+        padding: 0.75rem 1rem;
         display: flex;
-        justify-content: center;
         align-items: center;
         position: relative;
         border-bottom: 1px solid #f0f0f0;
         z-index: 10;
+        min-height: 60px;
       }
 
       .header-title {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         font-weight: 800;
         margin: 0;
+        flex: 1;
+        text-align: center;
+        padding: 0 4rem; /* Padding to prevent overlap with the back button */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
-      .back-arrow {
+      .back-pill {
         position: absolute;
-        right: 1.5rem;
-        background: none;
-        border: none;
+        left: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        padding: 0.4rem 0.8rem;
+        border-radius: 999px;
         color: #1a1a1a;
         cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        transition: all 0.2s ease;
+      }
+
+      .back-pill:active {
+        transform: scale(0.95);
+        background: #f5f5f5;
+      }
+
+      .back-text {
+        font-weight: 700;
+        font-size: 0.9rem;
       }
 
       .main-scroll-area {
@@ -226,10 +254,18 @@ import { RouterLink } from '@angular/router';
       }
 
       .zona-title {
-        font-size: 1.25rem;
+        font-size: 1.2rem;
         font-weight: 800;
         margin: 0;
         color: #fff;
+      }
+
+      .sms-note {
+        font-size: 0.8rem;
+        line-height: 1.2;
+        margin: 0;
+        opacity: 0.9;
+        font-weight: 600;
       }
 
       .card-actions {
@@ -296,7 +332,58 @@ import { RouterLink } from '@angular/router';
         cursor: pointer;
       }
 
-      /* Original Content Styling */
+      /* Plate Input Styles */
+      .plate-input-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .input-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        opacity: 0.9;
+        letter-spacing: 0.05em;
+      }
+
+      .input-row {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .plate-input-field {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 12px;
+        padding: 0.75rem;
+        color: #fff;
+        font-weight: 800;
+        font-size: 1rem;
+        outline: none;
+      }
+
+      .plate-input-field::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .save-plate-btn {
+        background: #fff;
+        color: #4285f4;
+        border: none;
+        padding: 0 1rem;
+        border-radius: 12px;
+        font-weight: 800;
+        font-size: 0.85rem;
+        cursor: pointer;
+      }
+
+      .plate-display-container {
+        cursor: pointer;
+        margin-bottom: 0.5rem;
+      }
       .original-content-flow {
         padding: 1.5rem;
         display: flex;
@@ -564,12 +651,30 @@ export class ParkingComponent {
   showSms = false;
   showQuickAdd = false;
   timeLeft = '01:45:12';
+  
+  // Dynamic Car Plate State
+  carPlate = '';
+  isPlateSaved = false;
+  tempPlate = '';
+
+  savePlate() {
+    if (this.tempPlate.trim()) {
+      this.carPlate = this.tempPlate.toUpperCase();
+      this.isPlateSaved = true;
+    }
+  }
+
+  editPlate() {
+    this.isPlateSaved = false;
+    this.tempPlate = this.carPlate;
+  }
 
   sendNativeSms() {
-    const recipient = '7442';
-    const body = '1234 BV01ABC 1';
+    const recipient = '1234';
+    // Use the saved car plate or a placeholder if not set
+    const body = (this.carPlate || 'BV 01 ABC') + ' ';
     
-    // 1. Try to copy to clipboard immediately
+    // 1. Try to copy to clipboard immediately as backup
     try {
       const el = document.createElement('textarea');
       el.value = body;
@@ -577,13 +682,11 @@ export class ParkingComponent {
       el.select();
       document.execCommand('copy');
       document.body.removeChild(el);
-      console.log('Copied via execCommand');
     } catch (e) {
-      // Fallback to navigator.clipboard if execCommand fails
-      navigator.clipboard.writeText(body).catch(err => console.error('Clipboard failed', err));
+      navigator.clipboard.writeText(body).catch(() => {});
     }
 
-    // 2. Immediate redirect
+    // 2. Immediate redirect with platform-specific separator
     const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
     const separator = isIos ? '&' : '?';
     const smsUrl = `sms:${recipient}${separator}body=${encodeURIComponent(body)}`;
