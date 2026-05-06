@@ -157,19 +157,25 @@ import { FormsModule } from '@angular/forms';
 
       .top-nav-white {
         background: #fff;
-        padding: 0.75rem 1.5rem;
+        padding: 0.75rem 1rem;
         display: flex;
-        justify-content: center;
         align-items: center;
         position: relative;
         border-bottom: 1px solid #f0f0f0;
         z-index: 10;
+        min-height: 60px;
       }
 
       .header-title {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         font-weight: 800;
         margin: 0;
+        flex: 1;
+        text-align: center;
+        padding: 0 4rem; /* Padding to prevent overlap with the back button */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .back-pill {
