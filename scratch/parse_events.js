@@ -30,7 +30,7 @@ async function parseMarkdownEvents() {
       index++;
     }
 
-    const outputPath = path.join(process.cwd(), 'public', 'events.json');
+    const outputPath = path.join(process.cwd(), 'src', 'assets', 'events.json');
     fs.writeFileSync(outputPath, JSON.stringify(events, null, 2));
     console.log(`✅ Successfully parsed ${events.length} events and saved to public/events.json`);
   } catch (err) {

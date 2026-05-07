@@ -43,9 +43,9 @@ async function scrapeEvents() {
       }
     });
 
-    const outputPath = path.join(process.cwd(), 'public', 'events.json');
+    const outputPath = path.join(process.cwd(), 'src', 'assets', 'events.json');
     fs.writeFileSync(outputPath, JSON.stringify(events, null, 2));
-    console.log(`✅ Successfully scraped ${events.length} events and saved to public/events.json`);
+    console.log(`✅ Successfully scraped ${events.length} events and saved to src/assets/events.json`);
   } catch (err) {
     console.error('❌ Scraping failed:', err.message);
   }

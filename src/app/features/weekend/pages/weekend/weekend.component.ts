@@ -262,8 +262,8 @@ export class WeekendComponent {
   async fetchEvents() {
     try {
       this.isLoading.set(true);
-      // Using a relative path which is safer for both local and Vercel deployments
-      const response = await fetch('events.json');
+      // Moving to the traditional assets folder for maximum compatibility
+      const response = await fetch('assets/events.json');
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       this.recommendations.set(data);

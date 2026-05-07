@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 async function enrichEventsWithImages() {
-  const eventsPath = path.join(process.cwd(), 'public', 'events.json');
+  const eventsPath = path.join(process.cwd(), 'src', 'assets', 'events.json');
   if (!fs.existsSync(eventsPath)) {
     console.error('❌ events.json not found!');
     return;
