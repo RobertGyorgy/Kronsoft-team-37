@@ -43,7 +43,7 @@ declare const L: any;
               </button>
             </div>
 
-            <h2 class="zona-title">{{ PARKING_ZONES[selectedZoneIndex].name }}</h2>
+            <h2 class="zona-title">{{ detectedLocationName || PARKING_ZONES[selectedZoneIndex].name }}</h2>
             <div class="sms-preview-badge">
               <span class="preview-label">Mesaj SMS:</span>
               <span class="preview-text">{{ carPlate || 'BV 01 ABC' }} {{ selectedHours }}</span>
@@ -281,6 +281,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
   tempPlate = '';
   selectedHours = 1;
   selectedZoneIndex = 0; // Default to Zona 0
+  detectedLocationName = '';
   
   history: any[] = [
     { day: '05', month: 'MAI', plate: 'BV 01 ABC', zone: 'Zona 0 - Centru', amount: '1.20' }
@@ -294,31 +295,27 @@ export class ParkingComponent implements OnInit, OnDestroy {
   // --- GPS & Geofencing State ---
   isOutOfZone = false;
   
+  // High-precision Points of Interest (Real parking spots in Brasov)
+  private PARKING_POIS = [
+    { name: 'Piața Sfatului / Mureșenilor', zone: 0, lat: 45.6423, lng: 25.5888 },
+    { name: 'Primăria Brașov / Eroilor', zone: 0, lat: 45.6450, lng: 25.5930 },
+    { name: 'Nicolae Bălcescu / Castelului', zone: 0, lat: 45.6400, lng: 25.5920 },
+    { name: 'Parcare Spitalul Militar', zone: 0, lat: 45.6470, lng: 25.5900 },
+    { name: 'Bulevardul Victoriei (Centru Civic)', zone: 1, lat: 45.6540, lng: 25.6060 },
+    { name: 'Centrul Civic / AFI', zone: 1, lat: 45.6510, lng: 25.6080 },
+    { name: 'Calea București / Astra', zone: 1, lat: 45.6400, lng: 25.6200 },
+    { name: '13 Decembrie / Onix', zone: 1, lat: 45.6580, lng: 25.6010 },
+    { name: 'Gara Brașov', zone: 1, lat: 45.6620, lng: 25.6130 },
+    { name: 'Coresi Shopping Resort', zone: 1, lat: 45.6740, lng: 25.6180 },
+    { name: 'Parcare Bartolomeu', zone: 1, lat: 45.6580, lng: 25.5720 },
+    { name: 'Zona Industrială Vest', zone: 2, lat: 45.6800, lng: 25.5400 },
+    { name: 'Triaj / Hărmanului', zone: 2, lat: 45.6720, lng: 25.6550 }
+  ];
+
   public PARKING_ZONES = [
-    {
-      name: 'Zona 0 - Centru Vechi',
-      smsNumber: '1234',
-      tariff: 0.60,
-      polygon: [
-        [45.6370, 25.5830], [45.6370, 25.5980], [45.6480, 25.5980], [45.6480, 25.5830], [45.6370, 25.5830]
-      ]
-    },
-    {
-      name: 'Zona 1 - Tractorul / Astra',
-      smsNumber: '1235',
-      tariff: 0.40,
-      polygon: [
-        [45.6480, 25.5900], [45.6480, 25.6400], [45.6700, 25.6400], [45.6700, 25.5900], [45.6480, 25.5900]
-      ]
-    },
-    {
-      name: 'Zona 2 - Stupini / Triaj',
-      smsNumber: '1236',
-      tariff: 0.30,
-      polygon: [
-        [45.6700, 25.5500], [45.6700, 25.6600], [45.7100, 25.6600], [45.7100, 25.5500], [45.6700, 25.5500]
-      ]
-    }
+    { name: 'Zona 0 - Centru Vechi', smsNumber: '1234', tariff: 0.60 },
+    { name: 'Zona 1 - Inel Median', smsNumber: '1235', tariff: 0.40 },
+    { name: 'Zona 2 - Periferie', smsNumber: '1236', tariff: 0.30 }
   ];
 
   constructor(
@@ -352,27 +349,53 @@ export class ParkingComponent implements OnInit, OnDestroy {
   }
 
   private updateZoneByLocation(lat: number, lng: number) {
-    const detectedIndex = this.PARKING_ZONES.findIndex(z => this.isInside([lat, lng], z.polygon));
+    let nearestPoi = null;
+    let minDistance = Infinity;
 
-    if (detectedIndex !== -1) {
-      this.selectedZoneIndex = detectedIndex;
+    this.PARKING_POIS.forEach(poi => {
+      const dist = this.getDistance(lat, lng, poi.lat, poi.lng);
+      if (dist < minDistance) {
+        minDistance = dist;
+        nearestPoi = poi;
+      }
+    });
+
+    // If within 250m of a known parking POI, auto-select that zone
+    if (nearestPoi && minDistance < 250) {
+      this.selectedZoneIndex = nearestPoi.zone;
+      this.detectedLocationName = nearestPoi.name;
       this.isOutOfZone = false;
     } else {
+      // Out of known spots, but we don't disable anything
+      this.detectedLocationName = '';
       this.isOutOfZone = true;
     }
     
-    // Update map marker
+    // Update map marker (Red if out of known spots, but purely for visual location awareness)
     this.updateMarker(lat, lng, this.isOutOfZone ? '#ff4d4d' : '#4285f4');
     
-    if (this.map) this.map.setView([lat, lng], 15);
+    if (this.map) this.map.setView([lat, lng], 16);
     this.cdr.detectChanges();
+  }
+
+  private getDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const R = 6371e3; // Earth radius in meters
+    const φ1 = lat1 * Math.PI / 180;
+    const φ2 = lat2 * Math.PI / 180;
+    const Δφ = (lat2 - lat1) * Math.PI / 180;
+    const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c;
   }
 
   private updateMarker(lat: number, lng: number, color: string) {
     if (!this.map) return;
     if (this.marker) this.map.removeLayer(this.marker);
-    
-    const glow = color === '#ff4d4d' ? 'rgba(255, 77, 77, 0.4)' : 'rgba(66, 133, 244, 0.4)';
     
     const icon = L.divIcon({ 
       html: `<div style="
@@ -381,15 +404,13 @@ export class ParkingComponent implements OnInit, OnDestroy {
         height: 30px; 
         border-radius: 50%; 
         border: 4px solid white; 
-        box-shadow: 0 0 0 10px ${glow}, 0 6px 15px rgba(0,0,0,0.4); 
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
         display: flex; 
         align-items: center; 
         justify-content: center; 
         color: white; 
         font-weight: 900; 
         font-size: 16px;
-        position: relative;
-        z-index: 9999;
       ">P</div>`, 
       className: '', iconSize: [30, 30], iconAnchor: [15, 15] 
     });
@@ -398,27 +419,17 @@ export class ParkingComponent implements OnInit, OnDestroy {
   }
 
   private isInside(point: number[], vs: number[][]): boolean {
-    let x = point[0], y = point[1];
-    let inside = false;
-    for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
-      let xi = vs[i][0], yi = vs[i][1];
-      let xj = vs[j][0], yj = vs[j][1];
-      let intersect = ((yi > y) != (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
-      if (intersect) inside = !inside;
-    }
-    return inside;
+    return false; // Deprecated in favor of POI detection
   }
 
   private initParkingMap() {
     if (this.map) return;
-    // Centered on Strada Bolnoc area for current location demo
-    const initialLat = 45.6105;
-    const initialLng = 25.6444;
+    const initialLat = 45.6423;
+    const initialLng = 25.5888;
     
     this.map = L.map('parking-map', { zoomControl: false, attributionControl: false }).setView([initialLat, initialLng], 15);
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(this.map);
     
-    // Initial Marker (Red because Bolnoc is out of zone)
     this.updateMarker(initialLat, initialLng, '#ff4d4d');
   }
 
@@ -491,6 +502,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
 
   selectZoneManually(index: number) {
     this.selectedZoneIndex = index;
+    this.detectedLocationName = ''; // Clear detected name on manual override
     this.cdr.detectChanges();
   }
 
