@@ -333,7 +333,6 @@ export class ParkingComponent implements OnInit, OnDestroy {
 
   private startGpsTracking() {
     if (!navigator.geolocation) {
-      this.currentZoneName = 'GPS Indisponibil';
       return;
     }
 
@@ -344,7 +343,6 @@ export class ParkingComponent implements OnInit, OnDestroy {
       },
       (err) => {
         this.zone.run(() => {
-          this.currentZoneName = 'Permisiune Refuzată';
           this.isOutOfZone = true;
           this.cdr.detectChanges();
         });
