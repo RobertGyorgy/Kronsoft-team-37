@@ -1,8 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone, afterNextRender } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { interval, Subscription } from 'rxjs';
+
+declare const L: any;
 
 @Component({
   selector: 'app-parking',
@@ -20,21 +22,21 @@ import { interval, Subscription } from 'rxjs';
       </header>
 
       <div class="main-scroll-area">
-        <!-- 2. Map Section (Compact) -->
+        <!-- 2. Interactive Map Section -->
         <section class="hero-map-section">
           <div class="custom-map-container">
-            <img src="/images/neighborhood-map.png" alt="Hartă Zonare" class="neighborhood-img">
+            <div id="parking-map" style="height: 100%; width: 100%; z-index: 1;"></div>
           </div>
         </section>
 
         <!-- 3. Zona Info Card -->
         <section class="info-card-section">
-          <div class="zona-card">
-            <h2 class="zona-title">Zona 0 - Centru Vechi</h2>
+          <div class="zona-card" [class.out-of-zone]="isOutOfZone">
+            <h2 class="zona-title">{{ currentZoneName }}</h2>
             <div class="sms-preview-badge">
               <span class="preview-label">Mesaj SMS:</span>
               <span class="preview-text">{{ carPlate || 'BV 01 ABC' }} {{ selectedHours }}</span>
-              <span class="preview-to">la 1234</span>
+              <span class="preview-to">la {{ currentZoneSms }}</span>
             </div>
             
             <!-- Compact Stepper -->
@@ -175,11 +177,11 @@ import { interval, Subscription } from 'rxjs';
     .back-pill { position: absolute; left: 1rem; display: flex; align-items: center; gap: 0.4rem; background: #fff; border: 1px solid #e0e0e0; padding: 0.4rem 0.8rem; border-radius: 999px; color: #1a1a1a; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
     .back-text { font-weight: 700; font-size: 0.9rem; }
     .main-scroll-area { height: calc(100vh - 60px); overflow-y: auto; -webkit-overflow-scrolling: touch; }
-    .hero-map-section { padding: 0.5rem 1rem 0; height: 30vh; min-height: 200px; }
-    .custom-map-container { border-radius: 20px; overflow: hidden; height: 100%; background: #f8f9fa; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-    .neighborhood-img { width: 100%; height: 100%; object-fit: contain; }
+    .hero-map-section { padding: 0.5rem 1rem 0; }
+    .custom-map-container { border-radius: 20px; overflow: hidden; height: 250px; background: #f8f9fa; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; position: relative; }
     .info-card-section { padding: 0.5rem 1rem; }
-    .zona-card { background: linear-gradient(135deg, #4285f4 0%, #2b6edb 100%); border-radius: 20px; padding: 1rem; box-shadow: 0 10px 25px rgba(66,133,244,0.2); display: flex; flex-direction: column; gap: 0.5rem; color: #fff; }
+    .zona-card { background: linear-gradient(135deg, #4285f4 0%, #2b6edb 100%); border-radius: 20px; padding: 1rem; box-shadow: 0 10px 25px rgba(66,133,244,0.2); display: flex; flex-direction: column; gap: 0.5rem; color: #fff; transition: all 0.3s; }
+    .zona-card.out-of-zone { background: linear-gradient(135deg, #999 0%, #666 100%); opacity: 0.8; }
     .zona-title { font-size: 1.2rem; font-weight: 800; margin: 0; text-align: center; width: 100%; }
     .sms-preview-badge {
       background: rgba(255, 255, 255, 0.15);
@@ -260,13 +262,144 @@ export class ParkingComponent implements OnInit, OnDestroy {
     { day: '05', month: 'MAI', plate: 'BV 01 ABC', zone: 'Zona 0 - Centru', amount: '1.20' }
   ];
 
+  private map: any;
+  private marker: any;
   private timerSubscription: Subscription | undefined;
   private currentParkingSeconds = 0;
+
+  // --- GPS & Geofencing State ---
+  currentZoneName = 'Detectând locația...';
+  currentZoneSms = '1234';
+  isOutOfZone = false;
+  
+  private PARKING_ZONES = [
+    {
+      name: 'Zona 0 - Centru Vechi',
+      smsNumber: '1234',
+      polygon: [
+        [45.6370, 25.5830], [45.6370, 25.5980], [45.6480, 25.5980], [45.6480, 25.5830], [45.6370, 25.5830]
+      ]
+    },
+    {
+      name: 'Zona 1 - Tractorul / Astra',
+      smsNumber: '1235',
+      polygon: [
+        [45.6480, 25.5900], [45.6480, 25.6400], [45.6700, 25.6400], [45.6700, 25.5900], [45.6480, 25.5900]
+      ]
+    },
+    {
+      name: 'Zona 2 - Stupini / Triaj',
+      smsNumber: '1236',
+      polygon: [
+        [45.6700, 25.5500], [45.6700, 25.6600], [45.7100, 25.6600], [45.7100, 25.5500], [45.6700, 25.5500]
+      ]
+    }
+  ];
 
   constructor(
     private cdr: ChangeDetectorRef,
     private zone: NgZone
-  ) {}
+  ) {
+    afterNextRender(() => {
+      this.initParkingMap();
+      this.startGpsTracking();
+    });
+  }
+
+  private startGpsTracking() {
+    if (!navigator.geolocation) {
+      this.currentZoneName = 'GPS Indisponibil';
+      return;
+    }
+
+    navigator.geolocation.watchPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        this.zone.run(() => this.updateZoneByLocation(latitude, longitude));
+      },
+      (err) => {
+        this.zone.run(() => {
+          this.currentZoneName = 'Permisiune Refuzată';
+          this.isOutOfZone = true;
+          this.cdr.detectChanges();
+        });
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+  }
+
+  private updateZoneByLocation(lat: number, lng: number) {
+    let detectedZone = this.PARKING_ZONES.find(z => this.isInside([lat, lng], z.polygon));
+
+    if (detectedZone) {
+      this.currentZoneName = detectedZone.name;
+      this.currentZoneSms = detectedZone.smsNumber;
+      this.isOutOfZone = false;
+    } else {
+      this.currentZoneName = 'În afara zonei de taxare';
+      this.isOutOfZone = true;
+    }
+    
+    // Update map marker
+    this.updateMarker(lat, lng, this.isOutOfZone ? '#ff4d4d' : '#4285f4');
+    
+    if (this.map) this.map.setView([lat, lng], 15);
+    this.cdr.detectChanges();
+  }
+
+  private updateMarker(lat: number, lng: number, color: string) {
+    if (!this.map) return;
+    if (this.marker) this.map.removeLayer(this.marker);
+    
+    const glow = color === '#ff4d4d' ? 'rgba(255, 77, 77, 0.4)' : 'rgba(66, 133, 244, 0.4)';
+    
+    const icon = L.divIcon({ 
+      html: `<div style="
+        background: ${color}; 
+        width: 30px; 
+        height: 30px; 
+        border-radius: 50%; 
+        border: 4px solid white; 
+        box-shadow: 0 0 0 10px ${glow}, 0 6px 15px rgba(0,0,0,0.4); 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        color: white; 
+        font-weight: 900; 
+        font-size: 16px;
+        position: relative;
+        z-index: 9999;
+      ">P</div>`, 
+      className: '', iconSize: [30, 30], iconAnchor: [15, 15] 
+    });
+    
+    this.marker = L.marker([lat, lng], { icon: icon }).addTo(this.map);
+  }
+
+  private isInside(point: number[], vs: number[][]): boolean {
+    let x = point[0], y = point[1];
+    let inside = false;
+    for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+      let xi = vs[i][0], yi = vs[i][1];
+      let xj = vs[j][0], yj = vs[j][1];
+      let intersect = ((yi > y) != (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+      if (intersect) inside = !inside;
+    }
+    return inside;
+  }
+
+  private initParkingMap() {
+    if (this.map) return;
+    // Centered on Strada Bolnoc area for current location demo
+    const initialLat = 45.6105;
+    const initialLng = 25.6444;
+    
+    this.map = L.map('parking-map', { zoomControl: false, attributionControl: false }).setView([initialLat, initialLng], 15);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(this.map);
+    
+    // Initial Marker (Red because Bolnoc is out of zone)
+    this.updateMarker(initialLat, initialLng, '#ff4d4d');
+  }
 
   ngOnInit() {
     this.requestNotificationPermission();
