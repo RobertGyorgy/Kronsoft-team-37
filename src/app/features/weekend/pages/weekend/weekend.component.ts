@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal, computed, afterNextRender } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -44,63 +44,50 @@ interface Recommendation {
       </section>
 
       <div class="scroll-content">
-        @if (isLoading()) {
-          <div class="loading-state">
-            <div class="spinner"></div>
-            <p>Se încarcă evenimentele...</p>
-          </div>
-        } @else if (error()) {
-          <div class="error-state">
-            <span class="material-icons">cloud_off</span>
-            <p>{{ error() }}</p>
-            <button class="pill" (click)="fetchEvents()">Reîncearcă</button>
-          </div>
-        } @else {
-          <!-- Featured Recommendation -->
-          @if (featuredRec(); as rec) {
-            <section class="featured-card" (click)="openUrl(rec.url)">
-              <div class="card-image" [style.backgroundImage]="'url(' + rec.image + ')'">
-                <div class="card-overlay">
-                  <span class="badge">RECOMANDAT</span>
-                  <div class="card-info">
-                    <h2>{{ rec.title }}</h2>
-                    <div class="meta">
-                      <span><span class="material-icons">calendar_today</span> {{ rec.date }}</span>
-                      <span><span class="material-icons">place</span> {{ rec.location }}</span>
-                    </div>
+        <!-- Featured Recommendation -->
+        @if (featuredRec(); as rec) {
+          <section class="featured-card" (click)="openUrl(rec.url)">
+            <div class="card-image" [style.backgroundImage]="'url(' + rec.image + ')'">
+              <div class="card-overlay">
+                <span class="badge">RECOMANDAT</span>
+                <div class="card-info">
+                  <h2>{{ rec.title }}</h2>
+                  <div class="meta">
+                    <span><span class="material-icons">calendar_today</span> {{ rec.date }}</span>
+                    <span><span class="material-icons">place</span> {{ rec.location }}</span>
                   </div>
                 </div>
               </div>
-            </section>
-          }
+            </div>
+          </section>
+        }
 
-          <!-- Grid Recommendations -->
-          <section class="grid-section">
-            @for (rec of filteredRecs(); track rec.id) {
-              @if (!rec.featured || selectedCategory() !== 'Toate') {
-                <div class="rec-card" (click)="openUrl(rec.url)">
-                  <div class="rec-thumb" [style.backgroundImage]="'url(' + rec.image + ')'">
-                    <span class="cat-tag">{{ rec.category }}</span>
-                  </div>
-                  <div class="rec-body">
-                    <h3>{{ rec.title }}</h3>
-                    <p>{{ rec.description }}</p>
-                    <div class="rec-footer">
-                      <span class="time">{{ rec.time || rec.date }}</span>
-                      <button class="btn-sm">Detalii</button>
-                    </div>
+        <!-- Grid Recommendations -->
+        <section class="grid-section">
+          @for (rec of filteredRecs(); track rec.id) {
+            @if (!rec.featured || selectedCategory() !== 'Toate') {
+              <div class="rec-card" (click)="openUrl(rec.url)">
+                <div class="rec-thumb" [style.backgroundImage]="'url(' + rec.image + ')'">
+                  <span class="cat-tag">{{ rec.category }}</span>
+                </div>
+                <div class="rec-body">
+                  <h3>{{ rec.title }}</h3>
+                  <p>{{ rec.description }}</p>
+                  <div class="rec-footer">
+                    <span class="time">{{ rec.time || rec.date }}</span>
+                    <button class="btn-sm">Detalii</button>
                   </div>
                 </div>
-              }
+              </div>
             }
-          </section>
-
-          @if (filteredRecs().length === 0) {
-            <div class="empty-state">
-              <span class="material-icons">search_off</span>
-              <p>Nu am găsit recomandări în această categorie pentru acest weekend.</p>
-            </div>
           }
+        </section>
+
+        @if (filteredRecs().length === 0) {
+          <div class="empty-state">
+            <span class="material-icons">search_off</span>
+            <p>Nu am găsit recomandări în această categorie pentru acest weekend.</p>
+          </div>
         }
       </div>
     </main>
@@ -232,15 +219,6 @@ interface Recommendation {
       font-size: 0.8rem;
       cursor: pointer;
     }
-    .loading-state { padding: 5rem 2rem; text-align: center; color: #888; }
-    .spinner { 
-      width: 40px; height: 40px; border: 4px solid #eee; border-top-color: #1a1a1a; 
-      border-radius: 50%; margin: 0 auto 1rem; animation: spin 1s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .error-state { padding: 4rem 2rem; text-align: center; color: #ff4500; }
-    .error-state .material-icons { font-size: 3.5rem; margin-bottom: 1rem; opacity: 0.5; }
-    .error-state p { font-weight: 600; margin-bottom: 1.5rem; }
     .empty-state { padding: 4rem 2rem; text-align: center; color: #aaa; }
     .empty-state .material-icons { font-size: 3rem; margin-bottom: 1rem; }
   `],
@@ -249,43 +227,184 @@ interface Recommendation {
 export class WeekendComponent {
   categories = ['Toate', 'Evenimente', 'Natură', 'Food', 'Cultură'];
   selectedCategory = signal<string>('Toate');
-  recommendations = signal<Recommendation[]>([]);
-  isLoading = signal<boolean>(true);
-  error = signal<string | null>(null);
 
-  constructor() {
-    afterNextRender(() => {
-      this.fetchEvents();
-    });
-  }
-
-  async fetchEvents() {
-    try {
-      this.isLoading.set(true);
-      // Moving to the traditional assets folder for maximum compatibility
-      const response = await fetch('assets/events.json');
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      const data = await response.json();
-      this.recommendations.set(data);
-      this.error.set(null);
-    } catch (err: any) {
-      console.error('Failed to load events:', err);
-      this.error.set('Nu am putut încărca evenimentele. Te rugăm să verifici conexiunea la internet.');
-    } finally {
-      this.isLoading.set(false);
+  recommendations: Recommendation[] = [
+    {
+      "id": 0,
+      "title": "Passport to Eataly @ ARTIS Secret Garden",
+      "description": "Un eveniment recomandat de Zile și Nopți Brașov la Passport to Eataly @ ARTIS Secret Garden.",
+      "category": "Cultură",
+      "date": "Weekend acesta",
+      "location": "ARTIS Secret Garden",
+      "image": "https://zilesinopti.ro/wp-content/uploads/2026/04/1-Artis-Poza-01-Principala-event.webp",
+      "url": "https://zilesinopti.ro/evenimente/passport-to-eataly-artis-secret-garden/",
+      "featured": true
+    },
+    {
+      "id": 1,
+      "title": "Fii Stejar, Nu Broccoli. Conferință cu Andy Szekely @ K2 Alpin Resort, Poiana Brașov",
+      "description": "Un eveniment recomandat de Zile și Nopți Brașov la Fii Stejar, Nu Broccoli. Conferință cu Andy Szekely @ K2 Alpin Resort, Poiana Brașov.",
+      "category": "Evenimente",
+      "date": "Weekend acesta",
+      "location": "K2 Alpin Resort, Poiana Brașov",
+      "image": "https://zilesinopti.ro/wp-content/uploads/2026/05/1-header-Mabit-Takeit-3050_resized-copy.webp",
+      "url": "https://zilesinopti.ro/evenimente/conferinta-andy-szekely-k2-alpin-resort/",
+      "featured": false
+    },
+    {
+      "id": 2,
+      "title": "Brașov Heroes – cursa cu obstacole a comunității @ Lacul Noua",
+      "description": "Un eveniment recomandat de Zile și Nopți Brașov la Brașov Heroes – cursa cu obstacole a comunității @ Lacul Noua.",
+      "category": "Natură",
+      "date": "Weekend acesta",
+      "location": "Lacul Noua",
+      "image": "https://zilesinopti.ro/wp-content/uploads/2026/04/1-header-2.webp",
+      "url": "https://zilesinopti.ro/evenimente/brasov-heroes-cursa-lacul-noua/",
+      "featured": false
+    },
+    {
+      "id": 3,
+      "title": "Taxi @ O’Peter’s Irish Pub Brașov",
+      "description": "Un eveniment recomandat de Zile și Nopți Brașov la Taxi @ O’Peter’s Irish Pub Brașov.",
+      "category": "Evenimente",
+      "date": "Weekend acesta",
+      "location": "O’Peter’s Irish Pub Brașov",
+      "image": "https://zilesinopti.ro/wp-content/uploads/2026/02/637469479_1351354647031248_3205527353816572815_n.jpg",
+      "url": "https://zilesinopti.ro/evenimente/taxi-opeters-irish-pub-brasov-2/",
+      "featured": false
+    },
+    {
+      "id": 4,
+      "title": "Ne vedem în colț, la Modarom! @ Biblioteca Județeană George Barițiu Brașov",
+      "description": "Un eveniment recomandat de Zile și Nopți Brașov la Ne vedem în colț, la Modarom! @ Biblioteca Județeană George Barițiu Brașov.",
+      "category": "Cultură",
+      "date": "Weekend acesta",
+      "location": "Biblioteca Județeană George Barițiu Brașov",
+      "image": "https://zilesinopti.ro/wp-content/uploads/2026/04/1-Ne-vedem-in-colt-la-Modarom.jpg",
+      "url": "https://zilesinopti.ro/evenimente/ne-vedem-in-colt-la-modarom-brasov/",
+      "featured": false
+    },
+    {
+      "id": 5,
+      "title": "Aromânii, Limbă, Istorie, Cultură @ Biblioteca Județeană George Barițiu Brașov",
+      "description": "Un eveniment recomandat de Zile și Nopți Brașov la Aromânii, Limbă, Istorie, Cultură @ Biblioteca Județeană George Barițiu Brașov.",
+      "category": "Cultură",
+      "date": "Weekend acesta",
+      "location": "Biblioteca Județeană George Barițiu Brașov",
+      "image": "https://zilesinopti.ro/wp-content/uploads/2026/03/a-11.jpg",
+      "url": "https://zilesinopti.ro/evenimente/aromanii-limba-istorie-cultura-brasov/",
+      "featured": false
+    },
+    {
+      "id": 6,
+      "title": "Lumini și umbre – Ferdinand și Maria @ Casa Sfatului Brașov",
+      "description": "Un eveniment recomandat de Zile și Nopți Brașov la Lumini și umbre – Ferdinand și Maria @ Casa Sfatului Brașov.",
+      "category": "Evenimente",
+      "date": "Weekend acesta",
+      "location": "Casa Sfatului Brașov",
+      "image": "https://zilesinopti.ro/wp-content/uploads/2026/03/Lumini-si-umbre-–-Ferdinand-si-Maria-1024x683.jpg",
+      "url": "https://zilesinopti.ro/evenimente/lumini-si-umbre-ferdinand-si-maria/",
+      "featured": false
+    },
+    {
+      "id": 7,
+      "title": "Braşov@Acasă @ Muzeul „Casa Mureşenilor”",
+      "description": "Un eveniment recomandat de Zile și Nopți Brașov la Braşov@Acasă @ Muzeul „Casa Mureşenilor”.",
+      "category": "Cultură",
+      "date": "Weekend acesta",
+      "location": "Acasă",
+      "image": "https://zilesinopti.ro/wp-content/uploads/2026/04/Brasov@Acasa.jpg",
+      "url": "https://zilesinopti.ro/evenimente/brasovacasa-muzeul-casa-muresenilor/",
+      "featured": false
+    },
+    {
+      "id": 8,
+      "title": "Iriși albi @ Muzeul de Artă Brașov",
+      "description": "Un eveniment recomandat de Zile și Nopți Brașov la Iriși albi @ Muzeul de Artă Brașov.",
+      "category": "Cultură",
+      "date": "Weekend acesta",
+      "location": "Muzeul de Artă Brașov",
+      "image": "https://zilesinopti.ro/wp-content/uploads/2026/05/Irisi-albi.jpg",
+      "url": "https://zilesinopti.ro/evenimente/irisi-albi-muzeul-de-arta-brasov/",
+      "featured": false
+    },
+    {
+      "id": 9,
+      "title": "Lehmann vs Lehmann @ Olimpia – Muzeul Sportului și Turismului Montan",
+      "description": "Un eveniment recomandat de Zile și Nopți Brașov la Lehmann vs Lehmann @ Olimpia – Muzeul Sportului și Turismului Montan.",
+      "category": "Cultură",
+      "date": "Weekend acesta",
+      "location": "Olimpia – Muzeul Sportului și Turismului Montan",
+      "image": "https://zilesinopti.ro/wp-content/uploads/2025/12/600998908_1511397760990564_6280389940685789430_n.jpg",
+      "url": "https://zilesinopti.ro/evenimente/lehmann-vs-lehmann-olimpia-muzeul/",
+      "featured": false
+    },
+    {
+      "id": 10,
+      "title": "În căutarea naturii @ Muzeul de Artă Brașov",
+      "description": "Un eveniment recomandat de Zile și Nopți Brașov la În căutarea naturii @ Muzeul de Artă Brașov.",
+      "category": "Cultură",
+      "date": "Weekend acesta",
+      "location": "Muzeul de Artă Brașov",
+      "image": "https://zilesinopti.ro/wp-content/uploads/2026/04/In-cautarea-Naturii.jpg",
+      "url": "https://zilesinopti.ro/evenimente/in-cautarea-naturii-muzeul-arta-brasov/",
+      "featured": false
+    },
+    {
+      "id": 11,
+      "title": "Cel Mai Mare Târg de Locuri de Muncă @ Casa Armatei Brașov",
+      "description": "Un eveniment recomandat de Zile și Nopți Brașov la Cel Mai Mare Târg de Locuri de Muncă @ Casa Armatei Brașov.",
+      "category": "Evenimente",
+      "date": "Weekend acesta",
+      "location": "Casa Armatei Brașov",
+      "image": "https://zilesinopti.ro/wp-content/uploads/2026/04/Cel-Mai-Mare-Targ-de-Locuri-de-Munca.jpg",
+      "url": "https://zilesinopti.ro/evenimente/targ-de-locuri-de-muncai-brasov/",
+      "featured": false
+    },
+    {
+      "id": 12,
+      "title": "Intersecții plastice – Puncte de intersecție artistice @ Centrul Cultural German Braşov",
+      "description": "Un eveniment recomandat de Zile și Nopți Brașov la Intersecții plastice – Puncte de intersecție artistice @ Centrul Cultural German Braşov.",
+      "category": "Cultură",
+      "date": "Weekend acesta",
+      "location": "Centrul Cultural German Braşov",
+      "image": "https://zilesinopti.ro/wp-content/uploads/2026/05/Intersectii-plastice-–-Puncte-de-intersectie-artistice.jpg",
+      "url": "https://zilesinopti.ro/evenimente/intersectii-plastice-brasov/",
+      "featured": false
+    },
+    {
+      "id": 13,
+      "title": "Andreea Balcan – Norismos @ Galeria Europe Brașov",
+      "description": "Un eveniment recomandat de Zile și Nopți Brașov la Andreea Balcan – Norismos @ Galeria Europe Brașov.",
+      "category": "Evenimente",
+      "date": "Weekend acesta",
+      "location": "Galeria Europe Brașov",
+      "image": "https://zilesinopti.ro/wp-content/uploads/2026/05/Andreea-Balcan-Norismos.jpg",
+      "url": "https://zilesinopti.ro/evenimente/andreea-balcan-norismos-galeria-europe/",
+      "featured": false
+    },
+    {
+      "id": 14,
+      "title": "Recitalurile Operei Brașov – Seri muzicale în foaier @ Opera Braşov",
+      "description": "Un eveniment recomandat de Zile și Nopți Brașov la Recitalurile Operei Brașov – Seri muzicale în foaier @ Opera Braşov.",
+      "category": "Evenimente",
+      "date": "Weekend acesta",
+      "location": "Opera Braşov",
+      "image": "https://zilesinopti.ro/wp-content/uploads/2026/04/649323596_1318453416995226_4058012766617914018_n.jpg",
+      "url": "https://zilesinopti.ro/evenimente/recitalurile-operei-brasov/",
+      "featured": false
     }
-  }
+  ];
 
   featuredRec = computed(() => {
     if (this.selectedCategory() !== 'Toate') return null;
-    return this.recommendations().find(r => r.featured);
+    return this.recommendations.find(r => r.featured);
   });
 
   filteredRecs = computed(() => {
     const category = this.selectedCategory();
-    const recs = this.recommendations();
-    if (category === 'Toate') return recs;
-    return recs.filter(r => r.category === category);
+    if (category === 'Toate') return this.recommendations;
+    return this.recommendations.filter(r => r.category === category);
   });
 
   setCategory(category: string) {
