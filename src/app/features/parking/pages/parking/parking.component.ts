@@ -314,7 +314,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
 
   public PARKING_ZONES = [
     { name: 'Zona 0 - Centru Vechi', smsNumber: '1234', tariff: 0.60 },
-    { name: 'Zona 1 - Inel Median', smsNumber: '1235', tariff: 0.40 },
+    { name: 'Zona 1 - Centrul Civic', smsNumber: '1235', tariff: 0.40 },
     { name: 'Zona 2 - Periferie', smsNumber: '1236', tariff: 0.30 }
   ];
 
