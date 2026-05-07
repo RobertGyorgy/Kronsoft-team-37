@@ -31,12 +31,23 @@ declare const L: any;
 
         <!-- 3. Zona Info Card -->
         <section class="info-card-section">
-          <div class="zona-card" [class.out-of-zone]="isOutOfZone">
-            <h2 class="zona-title">{{ currentZoneName }}</h2>
+          <div class="zona-card">
+            <!-- Zone Selector Pills -->
+            <div class="zone-manual-selector">
+              <button 
+                *ngFor="let zone of PARKING_ZONES; let i = index" 
+                class="zone-pill" 
+                [class.active]="selectedZoneIndex === i"
+                (click)="selectZoneManually(i)">
+                Zona {{ i }}
+              </button>
+            </div>
+
+            <h2 class="zona-title">{{ PARKING_ZONES[selectedZoneIndex].name }}</h2>
             <div class="sms-preview-badge">
               <span class="preview-label">Mesaj SMS:</span>
               <span class="preview-text">{{ carPlate || 'BV 01 ABC' }} {{ selectedHours }}</span>
-              <span class="preview-to">la {{ currentZoneSms }}</span>
+              <span class="preview-to">la {{ PARKING_ZONES[selectedZoneIndex].smsNumber }}</span>
             </div>
             
             <!-- Compact Stepper -->
@@ -51,7 +62,7 @@ declare const L: any;
 
             <div class="card-actions">
               <button class="black-btn" (click)="toggleTariffs()">Tarife</button>
-              <button class="black-btn" (click)="sendNativeSms()">SMS</button>
+              <button class="black-btn" (click)="sendNativeSms()">Plătește SMS</button>
             </div>
           </div>
         </section>
@@ -181,7 +192,19 @@ declare const L: any;
     .custom-map-container { border-radius: 20px; overflow: hidden; height: 250px; background: #f8f9fa; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; position: relative; }
     .info-card-section { padding: 0.5rem 1rem; }
     .zona-card { background: linear-gradient(135deg, #4285f4 0%, #2b6edb 100%); border-radius: 20px; padding: 1rem; box-shadow: 0 10px 25px rgba(66,133,244,0.2); display: flex; flex-direction: column; gap: 0.5rem; color: #fff; transition: all 0.3s; }
-    .zona-card.out-of-zone { background: linear-gradient(135deg, #999 0%, #666 100%); opacity: 0.8; }
+    .zone-manual-selector { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+    .zone-pill { 
+      background: rgba(255,255,255,0.15); 
+      border: 1px solid rgba(255,255,255,0.2); 
+      color: #fff; 
+      padding: 0.4rem 1rem; 
+      border-radius: 999px; 
+      font-size: 0.75rem; 
+      font-weight: 800; 
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .zone-pill.active { background: #fff; color: #4285f4; border-color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
     .zona-title { font-size: 1.2rem; font-weight: 800; margin: 0; text-align: center; width: 100%; }
     .sms-preview-badge {
       background: rgba(255, 255, 255, 0.15);
@@ -257,6 +280,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
   isPlateSaved = false;
   tempPlate = '';
   selectedHours = 1;
+  selectedZoneIndex = 0; // Default to Zona 0
   
   history: any[] = [
     { day: '05', month: 'MAI', plate: 'BV 01 ABC', zone: 'Zona 0 - Centru', amount: '1.20' }
@@ -268,14 +292,13 @@ export class ParkingComponent implements OnInit, OnDestroy {
   private currentParkingSeconds = 0;
 
   // --- GPS & Geofencing State ---
-  currentZoneName = 'Detectând locația...';
-  currentZoneSms = '1234';
   isOutOfZone = false;
   
-  private PARKING_ZONES = [
+  public PARKING_ZONES = [
     {
       name: 'Zona 0 - Centru Vechi',
       smsNumber: '1234',
+      tariff: 0.60,
       polygon: [
         [45.6370, 25.5830], [45.6370, 25.5980], [45.6480, 25.5980], [45.6480, 25.5830], [45.6370, 25.5830]
       ]
@@ -283,6 +306,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
     {
       name: 'Zona 1 - Tractorul / Astra',
       smsNumber: '1235',
+      tariff: 0.40,
       polygon: [
         [45.6480, 25.5900], [45.6480, 25.6400], [45.6700, 25.6400], [45.6700, 25.5900], [45.6480, 25.5900]
       ]
@@ -290,6 +314,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
     {
       name: 'Zona 2 - Stupini / Triaj',
       smsNumber: '1236',
+      tariff: 0.30,
       polygon: [
         [45.6700, 25.5500], [45.6700, 25.6600], [45.7100, 25.6600], [45.7100, 25.5500], [45.6700, 25.5500]
       ]
@@ -329,14 +354,12 @@ export class ParkingComponent implements OnInit, OnDestroy {
   }
 
   private updateZoneByLocation(lat: number, lng: number) {
-    let detectedZone = this.PARKING_ZONES.find(z => this.isInside([lat, lng], z.polygon));
+    const detectedIndex = this.PARKING_ZONES.findIndex(z => this.isInside([lat, lng], z.polygon));
 
-    if (detectedZone) {
-      this.currentZoneName = detectedZone.name;
-      this.currentZoneSms = detectedZone.smsNumber;
+    if (detectedIndex !== -1) {
+      this.selectedZoneIndex = detectedIndex;
       this.isOutOfZone = false;
     } else {
-      this.currentZoneName = 'În afara zonei de taxare';
       this.isOutOfZone = true;
     }
     
@@ -468,8 +491,14 @@ export class ParkingComponent implements OnInit, OnDestroy {
   incrementHours() { if (this.selectedHours < 24) this.selectedHours++; }
   decrementHours() { if (this.selectedHours > 1) this.selectedHours--; }
 
+  selectZoneManually(index: number) {
+    this.selectedZoneIndex = index;
+    this.cdr.detectChanges();
+  }
+
   sendNativeSms() {
-    const recipient = '1234';
+    const zone = this.PARKING_ZONES[this.selectedZoneIndex];
+    const recipient = zone.smsNumber;
     const body = (this.carPlate || 'BV 01 ABC') + ' ' + this.selectedHours;
     
     // 0. Immediate confirmation notification for testing
@@ -539,13 +568,14 @@ export class ParkingComponent implements OnInit, OnDestroy {
   private addToHistory() {
     const now = new Date();
     const months = ['IAN', 'FEB', 'MAR', 'APR', 'MAI', 'IUN', 'IUL', 'AUG', 'SEP', 'OCT', 'NOI', 'DEC'];
+    const zone = this.PARKING_ZONES[this.selectedZoneIndex];
     
     const newEntry = {
       day: String(now.getDate()).padStart(2, '0'),
       month: months[now.getMonth()],
       plate: this.carPlate || 'BV 01 ABC',
-      zone: 'Zona 0 - Centru Vechi',
-      amount: (this.selectedHours * 0.6).toFixed(2)
+      zone: zone.name,
+      amount: (this.selectedHours * zone.tariff).toFixed(2)
     };
 
     this.history.unshift(newEntry);
