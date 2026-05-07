@@ -49,6 +49,12 @@ interface Recommendation {
             <div class="spinner"></div>
             <p>Se încarcă evenimentele...</p>
           </div>
+        } @else if (error()) {
+          <div class="error-state">
+            <span class="material-icons">cloud_off</span>
+            <p>{{ error() }}</p>
+            <button class="pill" (click)="fetchEvents()">Reîncearcă</button>
+          </div>
         } @else {
           <!-- Featured Recommendation -->
           @if (featuredRec(); as rec) {
@@ -232,6 +238,9 @@ interface Recommendation {
       border-radius: 50%; margin: 0 auto 1rem; animation: spin 1s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+    .error-state { padding: 4rem 2rem; text-align: center; color: #ff4500; }
+    .error-state .material-icons { font-size: 3.5rem; margin-bottom: 1rem; opacity: 0.5; }
+    .error-state p { font-weight: 600; margin-bottom: 1.5rem; }
     .empty-state { padding: 4rem 2rem; text-align: center; color: #aaa; }
     .empty-state .material-icons { font-size: 3rem; margin-bottom: 1rem; }
   `],
@@ -242,6 +251,7 @@ export class WeekendComponent {
   selectedCategory = signal<string>('Toate');
   recommendations = signal<Recommendation[]>([]);
   isLoading = signal<boolean>(true);
+  error = signal<string | null>(null);
 
   constructor() {
     afterNextRender(() => {
@@ -251,11 +261,16 @@ export class WeekendComponent {
 
   async fetchEvents() {
     try {
-      const response = await fetch('/events.json');
+      this.isLoading.set(true);
+      // Using a relative path which is safer for both local and Vercel deployments
+      const response = await fetch('events.json');
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       this.recommendations.set(data);
-    } catch (err) {
+      this.error.set(null);
+    } catch (err: any) {
       console.error('Failed to load events:', err);
+      this.error.set('Nu am putut încărca evenimentele. Te rugăm să verifici conexiunea la internet.');
     } finally {
       this.isLoading.set(false);
     }
