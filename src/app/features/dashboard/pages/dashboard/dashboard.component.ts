@@ -41,7 +41,7 @@ import { RouterLink } from '@angular/router';
           <span class="card-title">Evenimente Oraș</span>
         </div>
 
-        <div class="grid-card teal" (click)="onWeekendRecommendationsClick()">
+        <div class="grid-card teal" routerLink="/weekend">
           <span class="material-icons card-bg-icon">auto_awesome</span>
           <span class="card-title">Recomandări de Weekend</span>
         </div>

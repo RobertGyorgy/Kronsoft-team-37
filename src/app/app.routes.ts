@@ -34,6 +34,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/parking/pages/parking/parking.component').then((component) => component.ParkingComponent)
   },
   {
+    path: 'weekend',
+    loadComponent: () => import('./features/weekend/pages/weekend/weekend.component').then((component) => component.WeekendComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }
