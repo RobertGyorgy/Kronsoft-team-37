@@ -5,9 +5,8 @@ import { RouterLink } from '@angular/router';
 interface Category {
   id: string;
   name: string;
-  color: string;
+  image: string;
   textColor: string;
-  icon: string;
 }
 
 interface Recommendation {
@@ -36,18 +35,20 @@ interface Recommendation {
 
       @if (currentView() === 'menu') {
         <section class="page-header">
-          <h1 class="main-question">Ce fel de activități cauți?</h1>
+          <p class="eyebrow-accent">RECOMANDĂRI</p>
+          <h1 class="main-question">Ce descoperim azi?</h1>
         </section>
 
-        <div class="category-menu">
+        <div class="category-grid">
           @for (cat of categories; track cat.id) {
-            <button 
-              class="cat-button" 
-              [style.background]="cat.color"
-              [style.color]="cat.textColor"
+            <div 
+              class="cat-card" 
+              [style.backgroundImage]="'url(' + cat.image + ')'"
               (click)="selectCategory(cat)">
-              <span class="cat-name">{{ cat.name }}</span>
-            </button>
+              <div class="card-overlay">
+                <span class="cat-name">{{ cat.name }}</span>
+              </div>
+            </div>
           }
         </div>
       } @else {
@@ -80,7 +81,7 @@ interface Recommendation {
           @if (filteredRecs().length === 0) {
             <div class="empty-state">
               <span class="material-icons">upcoming</span>
-              <h3>Coming Soon</h3>
+              <h3>În curând...</h3>
               <p>Pregătim noi experiențe memorabile în Brașov. Revino curând!</p>
             </div>
           }
@@ -91,46 +92,73 @@ interface Recommendation {
   styles: [`
     .weekend-shell {
       height: 100vh;
-      background: #fdfdfd;
+      background: #fff;
       font-family: 'Outfit', sans-serif;
       display: flex;
       flex-direction: column;
       color: #1a1a1a;
       overflow: hidden;
-      position: relative;
     }
 
     .top-nav { padding: 1rem 1.25rem 0.5rem; z-index: 20; }
     .back-pill {
-      background: #fff;
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(10px);
       border: 1px solid #eee;
       padding: 0.5rem 1rem;
       border-radius: 999px;
       display: flex; align-items: center; gap: 0.5rem;
       color: #333; font-weight: 700; cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.03);
     }
 
-    .page-header { padding: 1.5rem 2rem 1rem; text-align: center; }
-    .page-header.compact { text-align: left; padding: 0.5rem 1.5rem 1rem; }
+    .page-header { padding: 1.5rem 1.5rem 1rem; text-align: left; }
+    .page-header.compact { padding: 0.5rem 1.5rem 1rem; }
     
-    .eyebrow { font-size: 0.8rem; font-weight: 800; color: #2bcbba; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.2rem; }
-    .main-question { font-size: 1.8rem; font-weight: 900; color: #2bcbba; line-height: 1.2; margin: 0; }
-    .category-title { font-size: 1.8rem; font-weight: 900; color: #1a1a1a; margin: 0; line-height: 1.1; }
+    .eyebrow-accent { font-size: 0.8rem; font-weight: 800; color: #2bcbba; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.2rem; }
+    .eyebrow { font-size: 0.8rem; font-weight: 800; color: #666; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.2rem; }
+    .main-question { font-size: 2.2rem; font-weight: 900; color: #1a1a1a; line-height: 1.1; margin: 0; letter-spacing: -0.04em; }
+    .category-title { font-size: 2rem; font-weight: 950; color: #1a1a1a; margin: 0; line-height: 1.1; letter-spacing: -0.03em; }
 
-    .category-menu {
-      flex: 1; display: flex; flex-direction: column; gap: 1rem; padding: 0 1.5rem;
-      overflow-y: auto; padding-bottom: 2rem;
+    .category-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 1rem;
+      padding: 0 1.25rem 2rem;
+      overflow-y: auto;
     }
 
-    .cat-button {
-      width: 100%; min-height: 65px; border: none; border-radius: 20px;
-      font-size: 1.2rem; font-weight: 800; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 6px 15px rgba(43, 203, 186, 0.15);
+    .cat-card {
+      position: relative;
+      border-radius: 24px;
+      background-size: cover;
+      background-position: center;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
     }
-    .cat-button:active { transform: scale(0.97); filter: brightness(0.95); }
+
+    .cat-card:active { transform: scale(0.95); }
+
+    .card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.8), transparent 60%);
+      display: flex;
+      align-items: flex-end;
+      padding: 1.25rem;
+    }
+
+    .cat-name {
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      line-height: 1.1;
+    }
 
     .recommendations-list {
       flex: 1; display: flex; flex-direction: column; gap: 1.5rem;
@@ -144,7 +172,7 @@ interface Recommendation {
     }
 
     .rec-image {
-      height: 160px; background-size: cover; background-position: center;
+      height: 180px; background-size: cover; background-position: center;
       display: flex; align-items: flex-end; padding: 1rem;
     }
     .image-overlay { width: 100%; }
@@ -154,20 +182,18 @@ interface Recommendation {
       font-weight: 800; color: #333; display: flex; align-items: center; gap: 0.3rem; width: fit-content;
     }
 
-    .rec-info { padding: 1rem; }
-    .rec-info h3 { font-size: 1.1rem; font-weight: 800; margin: 0 0 0.4rem; color: #1a1a1a; line-height: 1.2; }
-    .rec-info p { font-size: 0.85rem; color: #666; line-height: 1.4; margin-bottom: 1rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .rec-info { padding: 1.25rem; }
+    .rec-info h3 { font-size: 1.2rem; font-weight: 900; margin: 0 0 0.5rem; color: #1a1a1a; line-height: 1.2; }
+    .rec-info p { font-size: 0.9rem; color: #666; line-height: 1.5; margin-bottom: 1.25rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
     .rec-meta { display: flex; justify-content: space-between; align-items: center; }
-    .date-tag { font-size: 0.8rem; font-weight: 700; color: #2bcbba; }
+    .date-tag { font-size: 0.85rem; font-weight: 800; color: #2bcbba; }
     .btn-detalii {
-      background: #1a1a1a; color: #fff; border: none; padding: 0.5rem 1rem;
-      border-radius: 50px; font-size: 0.7rem; font-weight: 900;
+      background: #1a1a1a; color: #fff; border: none; padding: 0.6rem 1.2rem;
+      border-radius: 50px; font-size: 0.75rem; font-weight: 950; text-transform: uppercase;
     }
 
-    .empty-state {
-      padding: 4rem 2rem; text-align: center; color: #aaa;
-    }
+    .empty-state { padding: 4rem 2rem; text-align: center; color: #aaa; }
     .empty-state .material-icons { font-size: 4rem; margin-bottom: 1rem; opacity: 0.3; }
     .empty-state h3 { font-weight: 900; color: #333; margin-bottom: 0.5rem; }
   `],
@@ -177,15 +203,13 @@ export class WeekendComponent {
   currentView = signal<'menu' | 'list'>('menu');
   selectedCategory = signal<Category | null>(null);
 
-  // Using the Teal color from Dashboard #2bcbba
-  private dashboardTeal = '#2bcbba';
-
   categories: Category[] = [
-    { id: 'gastronomie', name: 'Gastronomie', color: this.dashboardTeal, textColor: '#fff', icon: 'restaurant' },
-    { id: 'natura', name: 'Natura', color: this.dashboardTeal, textColor: '#fff', icon: 'forest' },
-    { id: 'plimbare', name: 'Plimbare in oras', color: this.dashboardTeal, textColor: '#fff', icon: 'directions_walk' },
-    { id: 'cultura', name: 'Cultura(muzee+program teatru)', color: this.dashboardTeal, textColor: '#fff', icon: 'museum' },
-    { id: 'experiente', name: 'Experiente', color: this.dashboardTeal, textColor: '#fff', icon: 'auto_awesome' }
+    { id: 'gastronomie', name: 'Gastronomie', image: 'weekend_food_festival_1778148211581.png', textColor: '#fff' },
+    { id: 'natura', name: 'Natură', image: 'weekend_hiking_tampa_1778148190734.png', textColor: '#fff' },
+    { id: 'plimbare', name: 'Plimbare în oraș', image: 'brasov_old_town_walk_1778266893227.png', textColor: '#fff' },
+    { id: 'cultura', name: 'Cultură', image: 'brasov_museum_culture_1778266910836.png', textColor: '#fff' },
+    { id: 'experiente', name: 'Experiențe', image: 'brasov_mountain_experience_1778266926268.png', textColor: '#fff' },
+    { id: 'evenimente', name: 'Evenimente', image: 'weekend_concert_brasov_1778148167471.png', textColor: '#fff' }
   ];
 
   allRecommendations: Recommendation[] = [
@@ -228,6 +252,26 @@ export class WeekendComponent {
       location: "Muzeul de Artă Brașov",
       image: "https://zilesinopti.ro/wp-content/uploads/2026/05/Irisi-albi.jpg",
       url: "https://zilesinopti.ro/evenimente/irisi-albi-muzeul-de-arta-brasov/"
+    },
+    {
+      id: 4,
+      title: "Sunset Vibes on Postăvaru",
+      description: "O experiență de neuitat cu muzică și apus de soare pe munte.",
+      category: "experiente",
+      date: "Duminică, 18:00",
+      location: "Vârful Postăvaru",
+      image: "brasov_mountain_experience_1778266926268.png",
+      url: "https://zilesinopti.ro/evenimente/sunset-vibes-brasov/"
+    },
+    {
+      id: 5,
+      title: "Concert Live: Rock în Cetate",
+      description: "O seară plină de energie cu trupe locale în Cetatea Brașovului.",
+      category: "evenimente",
+      date: "Sâmbătă, 20:00",
+      location: "Cetatea Brașov",
+      image: "weekend_concert_brasov_1778148167471.png",
+      url: "https://zilesinopti.ro/evenimente/concert-rock-brasov/"
     }
   ];
 
