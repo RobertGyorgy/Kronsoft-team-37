@@ -6,7 +6,6 @@ interface Category {
   id: string;
   name: string;
   image: string;
-  textColor: string;
 }
 
 interface Recommendation {
@@ -35,8 +34,8 @@ interface Recommendation {
 
       @if (currentView() === 'menu') {
         <section class="page-header">
-          <p class="eyebrow-accent">RECOMANDĂRI REALE</p>
-          <h1 class="main-question">Ce descoperim azi?</h1>
+          <p class="eyebrow-accent">RECOMANDĂRI ACTUALIZATE</p>
+          <h1 class="main-question">Ce descoperim azi în Brașov?</h1>
         </section>
 
         <div class="category-grid">
@@ -53,26 +52,31 @@ interface Recommendation {
         </div>
       } @else {
         <section class="page-header compact">
-          <p class="eyebrow">Recomandări în Brașov</p>
+          <p class="eyebrow">AGENDA WEEKEND</p>
           <h1 class="category-title">{{ selectedCategory()?.name }}</h1>
         </section>
 
         <div class="recommendations-list">
           @for (rec of filteredRecs(); track rec.id) {
             <div class="rec-card-premium" (click)="openUrl(rec.url)">
-              <div class="rec-image" [style.backgroundImage]="'url(' + rec.image + ')'">
-                <div class="image-overlay">
-                  <span class="location-pill">
-                    <span class="material-icons">place</span> {{ rec.location }}
-                  </span>
-                </div>
+              <div class="rec-image-container">
+                <img [src]="rec.image" [alt]="rec.title" class="event-photo">
+                <div class="image-shade"></div>
+                <span class="location-pill">
+                  <span class="material-icons">place</span> {{ rec.location }}
+                </span>
               </div>
               <div class="rec-info">
-                <h3>{{ rec.title }}</h3>
-                <p>{{ rec.description }}</p>
-                <div class="rec-meta">
+                <div class="info-top">
+                  <h3>{{ rec.title }}</h3>
                   <span class="date-tag">{{ rec.date }}</span>
-                  <button class="btn-detalii">DETALII</button>
+                </div>
+                <p>{{ rec.description }}</p>
+                <div class="rec-footer">
+                  <button class="btn-detalii-premium">
+                    CITEȘTE MAI MULT
+                    <span class="material-icons">open_in_new</span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -81,8 +85,8 @@ interface Recommendation {
           @if (filteredRecs().length === 0) {
             <div class="empty-state">
               <span class="material-icons">upcoming</span>
-              <h3>În curând...</h3>
-              <p>Pregătim noi experiențe memorabile în Brașov. Revino curând!</p>
+              <h3>Pregătim noi evenimente</h3>
+              <p>Momentan nu am găsit evenimente active pentru această categorie. Revino curând!</p>
             </div>
           }
         </div>
@@ -92,7 +96,7 @@ interface Recommendation {
   styles: [`
     .weekend-shell {
       height: 100vh;
-      background: #fff;
+      background: #f8f9fa;
       font-family: 'Outfit', sans-serif;
       display: flex;
       flex-direction: column;
@@ -100,24 +104,26 @@ interface Recommendation {
       overflow: hidden;
     }
 
-    .top-nav { padding: 1rem 1.25rem 0.5rem; z-index: 20; }
+    .top-nav { padding: 1.25rem 1.5rem 0.5rem; z-index: 20; }
     .back-pill {
-      background: rgba(255,255,255,0.8);
-      backdrop-filter: blur(10px);
-      border: 1px solid #eee;
-      padding: 0.5rem 1rem;
+      background: #fff;
+      border: 1px solid rgba(0,0,0,0.05);
+      padding: 0.6rem 1.2rem;
       border-radius: 999px;
       display: flex; align-items: center; gap: 0.5rem;
-      color: #333; font-weight: 700; cursor: pointer;
+      color: #333; font-weight: 800; cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+      transition: all 0.2s ease;
     }
+    .back-pill:active { transform: scale(0.96); background: #f0f0f0; }
 
-    .page-header { padding: 1.5rem 1.5rem 1rem; text-align: left; }
+    .page-header { padding: 1.5rem 1.5rem 1.25rem; text-align: left; }
     .page-header.compact { padding: 0.5rem 1.5rem 1rem; }
     
-    .eyebrow-accent { font-size: 0.8rem; font-weight: 800; color: #2bcbba; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.2rem; }
-    .eyebrow { font-size: 0.8rem; font-weight: 800; color: #666; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.2rem; }
-    .main-question { font-size: 2.2rem; font-weight: 900; color: #1a1a1a; line-height: 1.1; margin: 0; letter-spacing: -0.04em; }
-    .category-title { font-size: 2rem; font-weight: 950; color: #1a1a1a; margin: 0; line-height: 1.1; letter-spacing: -0.03em; }
+    .eyebrow-accent { font-size: 0.75rem; font-weight: 900; color: #2bcbba; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 0.4rem; }
+    .eyebrow { font-size: 0.75rem; font-weight: 900; color: #888; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.4rem; }
+    .main-question { font-size: 2.4rem; font-weight: 900; color: #1a1a1a; line-height: 1; margin: 0; letter-spacing: -0.05em; }
+    .category-title { font-size: 2.2rem; font-weight: 950; color: #1a1a1a; margin: 0; line-height: 1; letter-spacing: -0.04em; }
 
     .category-grid {
       flex: 1;
@@ -125,78 +131,90 @@ interface Recommendation {
       grid-template-columns: repeat(2, 1fr);
       grid-template-rows: repeat(3, 1fr);
       gap: 1rem;
-      padding: 0 1.25rem 2rem;
+      padding: 0 1.5rem 2rem;
       overflow-y: auto;
     }
 
     .cat-card {
       position: relative;
-      border-radius: 24px;
+      border-radius: 28px;
       background-size: cover;
       background-position: center;
-      background-color: #f0f0f0;
       overflow: hidden;
       cursor: pointer;
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
-
-    .cat-card:active { transform: scale(0.95); }
+    .cat-card:active { transform: scale(0.94); }
 
     .card-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.8), transparent 60%);
+      background: linear-gradient(to top, rgba(0,0,0,0.85), transparent 70%);
       display: flex;
       align-items: flex-end;
-      padding: 1.25rem;
+      padding: 1.5rem;
     }
 
     .cat-name {
       color: #fff;
-      font-size: 1rem;
+      font-size: 1.1rem;
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 0.02em;
-      line-height: 1.1;
+      letter-spacing: 0.05em;
     }
 
     .recommendations-list {
-      flex: 1; display: flex; flex-direction: column; gap: 1.5rem;
-      padding: 0 1.25rem 2rem; overflow-y: auto;
+      flex: 1; display: flex; flex-direction: column; gap: 2rem;
+      padding: 0 1.5rem 2.5rem; overflow-y: auto;
     }
 
     .rec-card-premium {
-      background: #fff; border-radius: 24px; overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #f0f0f0;
+      background: #fff; border-radius: 32px; overflow: hidden;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.03);
       display: flex; flex-direction: column; cursor: pointer;
+      transition: transform 0.3s ease;
     }
+    .rec-card-premium:active { transform: scale(0.98); }
 
-    .rec-image {
-      height: 180px; background-size: cover; background-position: center;
-      display: flex; align-items: flex-end; padding: 1rem;
+    .rec-image-container {
+      position: relative; height: 220px; width: 100%; overflow: hidden;
     }
-    .image-overlay { width: 100%; }
+    .event-photo {
+      width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;
+    }
+    .image-shade {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.4));
+    }
     .location-pill {
-      background: rgba(255,255,255,0.9); backdrop-filter: blur(10px);
-      padding: 0.35rem 0.75rem; border-radius: 50px; font-size: 0.75rem;
-      font-weight: 800; color: #333; display: flex; align-items: center; gap: 0.3rem; width: fit-content;
+      position: absolute; bottom: 1.25rem; left: 1.25rem;
+      background: rgba(255,255,255,0.95); backdrop-filter: blur(15px);
+      padding: 0.5rem 1rem; border-radius: 50px; font-size: 0.8rem;
+      font-weight: 800; color: #1a1a1a; display: flex; align-items: center; gap: 0.4rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
 
-    .rec-info { padding: 1.25rem; }
-    .rec-info h3 { font-size: 1.1rem; font-weight: 900; margin: 0 0 0.5rem; color: #1a1a1a; line-height: 1.2; }
-    .rec-info p { font-size: 0.85rem; color: #666; line-height: 1.5; margin-bottom: 1.25rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-
-    .rec-meta { display: flex; justify-content: space-between; align-items: center; }
-    .date-tag { font-size: 0.85rem; font-weight: 800; color: #2bcbba; }
-    .btn-detalii {
-      background: #1a1a1a; color: #fff; border: none; padding: 0.6rem 1.2rem;
-      border-radius: 50px; font-size: 0.75rem; font-weight: 950; text-transform: uppercase;
+    .rec-info { padding: 1.5rem; }
+    .info-top { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
+    .rec-info h3 { font-size: 1.35rem; font-weight: 900; margin: 0; color: #1a1a1a; line-height: 1.2; letter-spacing: -0.02em; }
+    .date-tag { font-size: 0.9rem; font-weight: 800; color: #2bcbba; }
+    
+    .rec-info p { 
+      font-size: 0.95rem; color: #555; line-height: 1.6; margin: 0 0 1.5rem;
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; 
     }
 
-    .empty-state { padding: 4rem 2rem; text-align: center; color: #aaa; }
-    .empty-state .material-icons { font-size: 4rem; margin-bottom: 1rem; opacity: 0.3; }
-    .empty-state h3 { font-weight: 900; color: #333; margin-bottom: 0.5rem; }
+    .rec-footer { display: flex; justify-content: flex-start; }
+    .btn-detalii-premium {
+      background: #1a1a1a; color: #fff; border: none; padding: 0.8rem 1.5rem;
+      border-radius: 50px; font-size: 0.8rem; font-weight: 950; 
+      display: flex; align-items: center; gap: 0.6rem; letter-spacing: 0.05em;
+    }
+
+    .empty-state { padding: 5rem 2rem; text-align: center; color: #aaa; }
+    .empty-state .material-icons { font-size: 5rem; margin-bottom: 1.5rem; color: #eee; }
+    .empty-state h3 { font-weight: 900; color: #444; margin-bottom: 0.75rem; font-size: 1.4rem; }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -205,12 +223,12 @@ export class WeekendComponent {
   selectedCategory = signal<Category | null>(null);
 
   categories: Category[] = [
-    { id: 'gastronomie', name: 'Gastronomie', image: 'gastronomie.png', textColor: '#fff' },
-    { id: 'natura', name: 'Natură', image: 'natura.png', textColor: '#fff' },
-    { id: 'plimbare', name: 'Plimbare în oraș', image: 'plimbare.png', textColor: '#fff' },
-    { id: 'cultura', name: 'Cultură', image: 'cultura.png', textColor: '#fff' },
-    { id: 'experiente', name: 'Experiențe', image: 'experiente.png', textColor: '#fff' },
-    { id: 'evenimente', name: 'Evenimente', image: 'evenimente.png', textColor: '#fff' }
+    { id: 'gastronomie', name: 'Gastronomie', image: 'gastronomie.png' },
+    { id: 'natura', name: 'Natură', image: 'natura.png' },
+    { id: 'plimbare', name: 'Plimbare în oraș', image: 'plimbare.png' },
+    { id: 'cultura', name: 'Cultură', image: 'cultura.png' },
+    { id: 'experiente', name: 'Experiențe', image: 'experiente.png' },
+    { id: 'evenimente', name: 'Evenimente', image: 'evenimente.png' }
   ];
 
   allRecommendations: Recommendation[] = [
@@ -218,9 +236,9 @@ export class WeekendComponent {
     {
       id: 0,
       title: "Passport to Eataly @ ARTIS Secret Garden",
-      description: "O experiență gastronomică autentică italiană în inima Brașovului.",
+      description: "O experiență gastronomică autentică italiană în inima Brașovului. Savurează aromele Italiei într-un cadru de poveste.",
       category: "gastronomie",
-      date: "Sâmbătă & Duminică",
+      date: "Weekend-ul acesta",
       location: "ARTIS Secret Garden",
       image: "https://zilesinopti.ro/wp-content/uploads/2026/04/1-Artis-Poza-01-Principala-event.webp",
       url: "https://zilesinopti.ro/evenimente/passport-to-eataly-artis-secret-garden/"
@@ -228,41 +246,41 @@ export class WeekendComponent {
     {
       id: 1,
       title: "Transylvanian Food Market @ Piața Sf. Ioan",
-      description: "Produse locale autentice și specialități transilvănene proaspete.",
+      description: "Descoperă cei mai buni producători locali din Transilvania. Brânzeturi, mezeluri artizanale și delicii tradiționale.",
       category: "gastronomie",
-      date: "Duminică, 10:00",
+      date: "Duminică, 10:00 - 16:00",
       location: "Piața Sf. Ioan Brașov",
       image: "https://zilesinopti.ro/wp-content/uploads/2026/04/1-header-2.webp",
       url: "https://zilesinopti.ro/evenimente/transylvanian-food-market-piata-sf-ioan/"
     },
     {
       id: 2,
-      title: "DJ Night & Special Menu │ Friday",
-      description: "O seară cu ritmuri de Lau Maftei și un meniu special creat pentru tine.",
+      title: "DJ Night & Special Menu",
+      description: "Mixuri de Lau Maftei și un meniu gourmet creat special pentru serile de vineri în inima Brașovului.",
       category: "gastronomie",
-      date: "Vineri, 20:00",
+      date: "Vineri Seara",
       location: "Luther Brasserie & Lounge",
-      image: "https://zilesinopti.ro/wp-content/uploads/2026/05/1-Artis-Poza-01-Principala-event.webp",
+      image: "https://zilesinopti.ro/wp-content/uploads/2026/04/1-Ne-vedem-in-colt-la-Modarom.jpg",
       url: "https://zilesinopti.ro/evenimente/dj-night-lau-maftei-luther-brasserie/"
     },
 
     // --- NATURĂ ---
     {
       id: 10,
-      title: "Brașov Heroes – cursa cu obstacole",
-      description: "Cursa comunității la Lacul Noua. Sport, adrenalină și caritate în natură.",
+      title: "Brașov Heroes – Cursa Comunității",
+      description: "Cursa cu obstacole la Lacul Noua. Aleargă pentru o cauză nobilă și bucură-te de aerul curat de munte.",
       category: "natura",
       date: "Sâmbătă, 09:00",
-      location: "Lacul Noua",
+      location: "Parcul Noua",
       image: "https://zilesinopti.ro/wp-content/uploads/2026/04/1-header-2.webp",
       url: "https://zilesinopti.ro/evenimente/brasov-heroes-cursa-lacul-noua/"
     },
     {
       id: 11,
-      title: "În căutarea naturii @ Muzeul de Artă",
-      description: "O expoziție fascinantă care explorează legătura dintre artă și mediul înconjurător.",
+      title: "Expoziție: În Căutarea Naturii",
+      description: "O călătorie vizuală prin peisaje spectaculoase, explorând fragilitatea și frumusețea lumii înconjurătoare.",
       category: "natura",
-      date: "Tot weekend-ul",
+      date: "Permanent",
       location: "Muzeul de Artă Brașov",
       image: "https://zilesinopti.ro/wp-content/uploads/2026/04/In-cautarea-Naturii.jpg",
       url: "https://zilesinopti.ro/evenimente/in-cautarea-naturii-muzeul-arta-brasov/"
@@ -271,60 +289,40 @@ export class WeekendComponent {
     // --- PLIMBARE ÎN ORAȘ ---
     {
       id: 20,
-      title: "Ziua Europei @ Piața Sfatului",
-      description: "Sărbătorește diversitatea culturală în inima centrului istoric.",
+      title: "Ziua Europei în Centrul Istoric",
+      description: "Sărbătorește valorile europene cu activități în aer liber, muzică și o atmosferă vibrantă în Piața Sfatului.",
       category: "plimbare",
-      date: "Weekend acesta",
-      location: "Piața Sfatului Brașov",
+      date: "9 Mai 2026",
+      location: "Piața Sfatului",
       image: "https://zilesinopti.ro/wp-content/uploads/2026/04/1-Ne-vedem-in-colt-la-Modarom.jpg",
       url: "https://zilesinopti.ro/evenimente/ziua-europei-piata-sfatului-brasov/"
     },
     {
       id: 21,
-      title: "Braşov@Acasă @ Casa Mureşenilor",
-      description: "O expoziție dedicată istoriei locale și spiritului brașovean de altădată.",
+      title: "Braşov@Acasă: Istoria la Pas",
+      description: "O expoziție inedită care te invită să descoperi poveștile ascunse ale clădirilor și oamenilor din Brașov.",
       category: "plimbare",
-      date: "Zilnic, 10:00-18:00",
+      date: "Zilnic",
       location: "Muzeul Casa Mureşenilor",
       image: "https://zilesinopti.ro/wp-content/uploads/2026/04/Brasov@Acasa.jpg",
       url: "https://zilesinopti.ro/evenimente/brasovacasa-muzeul-casa-muresenilor/"
-    },
-    {
-      id: 22,
-      title: "Ne vedem în colț, la Modarom!",
-      description: "Punct de întâlnire iconic și povești despre Brașovul de ieri și de azi.",
-      category: "plimbare",
-      date: "Sâmbătă, 11:00",
-      location: "Biblioteca George Barițiu",
-      image: "https://zilesinopti.ro/wp-content/uploads/2026/04/1-Ne-vedem-in-colt-la-Modarom.jpg",
-      url: "https://zilesinopti.ro/evenimente/ne-vedem-in-colt-la-modarom-brasov/"
     },
 
     // --- CULTURĂ ---
     {
       id: 30,
-      title: "Festivalul de Teatru “DE-A RÂSU PLÂNSU”",
-      description: "Maraton de spectacole de comedie și dramă cu trupe naționale.",
+      title: "Festivalul de Teatru DE-A RÂSU PLÂNSU",
+      description: "Trei zile de spectacole care te vor purta prin toate stările, de la hohote de râs la momente de introspecție profundă.",
       category: "cultura",
-      date: "8-10 Mai 2026",
-      location: "Școala Populară de Arte",
-      image: "https://zilesinopti.ro/wp-content/uploads/2026/05/Irisi-albi.jpg",
+      date: "Weekend viitor",
+      location: "Reduta & Sică Alexandrescu",
+      image: "https://zilesinopti.ro/wp-content/uploads/2026/03/a-11.jpg",
       url: "https://zilesinopti.ro/evenimente/festivalul-de-teatru-de-a-rasu-plansu/"
     },
     {
       id: 31,
-      title: "Festivalul Filmului European @ Reduta",
-      description: "Cele mai bune producții cinematografice europene ale momentului.",
-      category: "cultura",
-      date: "Weekend acesta",
-      location: "Centrul Cultural Reduta",
-      image: "https://zilesinopti.ro/wp-content/uploads/2026/03/a-11.jpg",
-      url: "https://zilesinopti.ro/evenimente/festivalul-filmului-european-reduta/"
-    },
-    {
-      id: 32,
-      title: "O noapte furtunoasă @ Teatrul Sică",
-      description: "Capodopera lui I.L. Caragiale într-o montare modernă și plină de viață.",
+      title: "O Noapte Furtunoasă - Premieră",
+      description: "Vino să revezi comedia clasică a lui Caragiale într-o viziune regizorală proaspătă și surprinzătoare.",
       category: "cultura",
       date: "Sâmbătă, 19:00",
       location: "Teatrul Sică Alexandrescu",
@@ -332,88 +330,58 @@ export class WeekendComponent {
       url: "https://zilesinopti.ro/evenimente/o-noapte-furtunoasa-sica-alexandrescu/"
     },
     {
-      id: 33,
-      title: "Rățușca cea urâtă @ Teatrul Arlechino",
-      description: "Un spectacol magic pentru cei mici și bucurie pentru întreaga familie.",
+      id: 32,
+      title: "Iriși Albi @ Muzeul de Artă",
+      description: "O expoziție rară dedicată simbolismului florii de iris în arta plastică românească contemporană.",
       category: "cultura",
-      date: "Duminică, 11:00",
-      location: "Teatrul Arlechino Brașov",
+      date: "Tot Weekend-ul",
+      location: "Muzeul de Artă Brașov",
       image: "https://zilesinopti.ro/wp-content/uploads/2026/05/Irisi-albi.jpg",
-      url: "https://zilesinopti.ro/evenimente/ratusca-cea-urata-teatrul-arlechino/"
+      url: "https://zilesinopti.ro/evenimente/irisi-albi-muzeul-de-arta-brasov/"
     },
 
     // --- EXPERIENȚE ---
     {
       id: 40,
-      title: "Tango Meets Opera @ Cercul Militar",
-      description: "O fuziune spectaculoasă între pasiunea tangoului și eleganța operei.",
+      title: "Tango Meets Opera: O Seară Magică",
+      description: "Un spectacol hibrid unde vocea de operă se întâlnește cu mișcările pasionale ale tangoului argentinian.",
       category: "experiente",
-      date: "Sâmbătă, 20:00",
+      date: "Duminică Seara",
       location: "Cercul Militar Braşov",
-      image: "images/experiente.png",
+      image: "https://zilesinopti.ro/wp-content/uploads/2026/04/In-cautarea-Naturii.jpg",
       url: "https://zilesinopti.ro/evenimente/tango-meets-opera-cercul-militar-brasov/"
     },
     {
       id: 41,
-      title: "Conferință: Fii Stejar, Nu Broccoli",
-      description: "Conferință de dezvoltare personală cu Andy Szekely pentru o viață împlinită.",
+      title: "Talk & Listen: Comunitatea S.L.I.M",
+      description: "Dezbateri despre viitorul cultural al Brașovului într-un cadru relaxat, acompaniat de muzică bună și cafea.",
       category: "experiente",
-      date: "Sâmbătă, 10:00",
-      location: "K2 Alpin Resort Poiana",
-      image: "images/experiente.png",
-      url: "https://zilesinopti.ro/evenimente/conferinta-andy-szekely-k2-alpin-resort/"
-    },
-    {
-      id: 42,
-      title: "S.L.I.M Brașov – Talk & Listen #13",
-      description: "Seară de dialog, muzică și idei creative în inima librăriei.",
-      category: "experiente",
-      date: "Vineri, 18:30",
+      date: "Vineri, 18:00",
       location: "Cărturești Brașov",
-      image: "images/experiente.png",
+      image: "https://zilesinopti.ro/wp-content/uploads/2026/04/1-Ne-vedem-in-colt-la-Modarom.jpg",
       url: "https://zilesinopti.ro/evenimente/s-l-i-m-brasov-talk-listen-carturesti/"
     },
 
     // --- EVENIMENTE ---
     {
       id: 50,
-      title: "om la lună @ Rockstadt",
-      description: "Un concert plin de emoție și poezie rock în cel mai iubit club rock din oraș.",
+      title: "om la lună: Concert Live",
+      description: "Una dintre cele mai iubite trupe de indie-rock din România revine la Brașov pentru un concert plin de trăire.",
       category: "evenimente",
-      date: "Vineri, 21:00",
+      date: "Sâmbătă, 21:00",
       location: "Rockstadt Brașov",
-      image: "images/evenimente.png",
+      image: "https://zilesinopti.ro/wp-content/uploads/2024/09/om-la-luna.jpg",
       url: "https://zilesinopti.ro/evenimente/om-la-luna-rockstadt/"
     },
     {
       id: 51,
       title: "Popcorn Music Party @ Kruhnen",
-      description: "Cele mai mari hituri și o atmosferă incendiară în Kruhnen Musik Halle.",
+      description: "Ești gata pentru cea mai mare petrecere a weekend-ului? Hituri pe bandă rulantă și vibe de festival.",
       category: "evenimente",
-      date: "Sâmbătă, 23:00",
+      date: "Vineri & Sâmbătă",
       location: "Kruhnen Musik Halle",
-      image: "images/evenimente.png",
+      image: "https://zilesinopti.ro/wp-content/uploads/2026/04/Popcorn-Party.jpg",
       url: "https://zilesinopti.ro/evenimente/popcorn-music-party-kruhnen-musik-halle/"
-    },
-    {
-      id: 52,
-      title: "Goldmine Band & Andreea Ciuraru",
-      description: "Seară de muzică live de calitate într-un decor autentic irlandez.",
-      category: "evenimente",
-      date: "Sâmbătă, 20:30",
-      location: "O’Peter’s Irish Pub",
-      image: "images/evenimente.png",
-      url: "https://zilesinopti.ro/evenimente/goldmine-band-andreea-ciuraru-o-peter-s-irish-pub-brasov/"
-    },
-    {
-      id: 53,
-      title: "Dani Lupaș @ Amun Skybar",
-      description: "Ritmuri moderne și o vedere panoramică spectaculoasă asupra orașului.",
-      category: "evenimente",
-      date: "Vineri, 22:00",
-      location: "Amun Skybar Brașov",
-      image: "images/evenimente.png",
-      url: "https://zilesinopti.ro/evenimente/dani-lupas-amun-skybar/"
     }
   ];
 
