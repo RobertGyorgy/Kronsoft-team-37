@@ -86,26 +86,6 @@ interface Recommendation {
           }
         </div>
       }
-
-      <!-- Bottom Nav (Wireframe look but functional for dashboard) -->
-      <nav class="bottom-nav-wireframe">
-        <div class="nav-item" routerLink="/dashboard">
-          <span class="material-icons">home</span>
-          <span>Home</span>
-        </div>
-        <div class="nav-item">
-          <span class="material-icons">school</span>
-          <span>Guides</span>
-        </div>
-        <div class="nav-item">
-          <span class="material-icons">menu_book</span>
-          <span>Courses</span>
-        </div>
-        <div class="nav-item">
-          <span class="material-icons">groups</span>
-          <span>People</span>
-        </div>
-      </nav>
     </main>
   `,
   styles: [`
@@ -134,13 +114,13 @@ interface Recommendation {
     .page-header { padding: 1.5rem 2rem 1rem; text-align: center; }
     .page-header.compact { text-align: left; padding: 0.5rem 1.5rem 1rem; }
     
-    .eyebrow { font-size: 0.8rem; font-weight: 800; color: #ff8a65; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.2rem; }
-    .main-question { font-size: 1.8rem; font-weight: 900; color: #ff8a65; line-height: 1.2; margin: 0; }
+    .eyebrow { font-size: 0.8rem; font-weight: 800; color: #2bcbba; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.2rem; }
+    .main-question { font-size: 1.8rem; font-weight: 900; color: #2bcbba; line-height: 1.2; margin: 0; }
     .category-title { font-size: 1.8rem; font-weight: 900; color: #1a1a1a; margin: 0; line-height: 1.1; }
 
     .category-menu {
       flex: 1; display: flex; flex-direction: column; gap: 1rem; padding: 0 1.5rem;
-      overflow-y: auto; padding-bottom: 7rem;
+      overflow-y: auto; padding-bottom: 2rem;
     }
 
     .cat-button {
@@ -148,13 +128,13 @@ interface Recommendation {
       font-size: 1.2rem; font-weight: 800; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 6px 15px rgba(0,0,0,0.06);
+      box-shadow: 0 6px 15px rgba(43, 203, 186, 0.15);
     }
     .cat-button:active { transform: scale(0.97); filter: brightness(0.95); }
 
     .recommendations-list {
       flex: 1; display: flex; flex-direction: column; gap: 1.5rem;
-      padding: 0 1.25rem 7rem; overflow-y: auto;
+      padding: 0 1.25rem 2rem; overflow-y: auto;
     }
 
     .rec-card-premium {
@@ -179,7 +159,7 @@ interface Recommendation {
     .rec-info p { font-size: 0.85rem; color: #666; line-height: 1.4; margin-bottom: 1rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
     .rec-meta { display: flex; justify-content: space-between; align-items: center; }
-    .date-tag { font-size: 0.8rem; font-weight: 700; color: #ff8a65; }
+    .date-tag { font-size: 0.8rem; font-weight: 700; color: #2bcbba; }
     .btn-detalii {
       background: #1a1a1a; color: #fff; border: none; padding: 0.5rem 1rem;
       border-radius: 50px; font-size: 0.7rem; font-weight: 900;
@@ -190,16 +170,6 @@ interface Recommendation {
     }
     .empty-state .material-icons { font-size: 4rem; margin-bottom: 1rem; opacity: 0.3; }
     .empty-state h3 { font-weight: 900; color: #333; margin-bottom: 0.5rem; }
-
-    .bottom-nav-wireframe {
-      position: absolute; bottom: 1.2rem; left: 1.2rem; right: 1.2rem; height: 65px;
-      background: #ff8a65; border-radius: 20px; display: flex;
-      align-items: center; justify-content: space-around; color: #fff;
-      box-shadow: 0 10px 30px rgba(255,138,101,0.3); z-index: 30;
-    }
-    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 0.1rem; cursor: pointer; }
-    .nav-item span:not(.material-icons) { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; }
-    .nav-item .material-icons { font-size: 1.3rem; }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -207,12 +177,15 @@ export class WeekendComponent {
   currentView = signal<'menu' | 'list'>('menu');
   selectedCategory = signal<Category | null>(null);
 
+  // Using the Teal color from Dashboard #2bcbba
+  private dashboardTeal = '#2bcbba';
+
   categories: Category[] = [
-    { id: 'gastronomie', name: 'Gastronomie', color: '#ff8a65', textColor: '#fff', icon: 'restaurant' },
-    { id: 'natura', name: 'Natura', color: '#ffd54f', textColor: '#333', icon: 'forest' },
-    { id: 'plimbare', name: 'Plimbare in oras', color: '#ff8a65', textColor: '#fff', icon: 'directions_walk' },
-    { id: 'cultura', name: 'Cultura(muzee+program teatru)', color: '#ffd54f', textColor: '#333', icon: 'museum' },
-    { id: 'experiente', name: 'Experiente', color: '#ff8a65', textColor: '#fff', icon: 'auto_awesome' }
+    { id: 'gastronomie', name: 'Gastronomie', color: this.dashboardTeal, textColor: '#fff', icon: 'restaurant' },
+    { id: 'natura', name: 'Natura', color: this.dashboardTeal, textColor: '#fff', icon: 'forest' },
+    { id: 'plimbare', name: 'Plimbare in oras', color: this.dashboardTeal, textColor: '#fff', icon: 'directions_walk' },
+    { id: 'cultura', name: 'Cultura(muzee+program teatru)', color: this.dashboardTeal, textColor: '#fff', icon: 'museum' },
+    { id: 'experiente', name: 'Experiente', color: this.dashboardTeal, textColor: '#fff', icon: 'auto_awesome' }
   ];
 
   allRecommendations: Recommendation[] = [
@@ -272,7 +245,6 @@ export class WeekendComponent {
     if (this.currentView() === 'list') {
       this.currentView.set('menu');
     } else {
-      // In a real app we'd use Router.navigate(['/dashboard'])
       window.history.back();
     }
   }
