@@ -23,7 +23,7 @@ declare const L: any;
 
         <!-- 2. HARTA -->
         <section class="map-section-pill">
-          <div style="position: relative;"><div id="parking-map" class="map-container-pill"></div><button (click)="startGpsTracking()" style="position: absolute; bottom: 10px; right: 10px; z-index: 1000; background: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; cursor: pointer;">??</button></div>
+          <div id="parking-map" class="map-container-pill"></div>
         </section>
 
         <!-- 3. INPUT NUMAR (FUNDAL ALB) -->
@@ -160,30 +160,26 @@ declare const L: any;
     .hist-date { font-weight: 800; color: #4285f4; font-size: 0.75rem; }
     .hist-amount { font-weight: 900; color: #ff4d4d; font-size: 0.9rem; }
     .hist-details { font-size: 0.8rem; color: #666; font-weight: 600; }
-    .original-content-flow { padding: 1.5rem; display: flex; flex-direction: column; gap: 2rem; }
-    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
-    .section-header h3 { font-size: 1rem; font-weight: 800; margin: 0; }
-    .history-item { display: flex; align-items: center; gap: 1rem; background: #fff; padding: 0.5rem; border-radius: 16px; border: 1px solid #f0f0f0; }
-    .history-date { background: #f8f9fa; padding: 0.5rem; border-radius: 12px; display: flex; flex-direction: column; align-items: center; min-width: 50px; }
-    .history-date .day { font-size: 1.1rem; font-weight: 800; }
-    .history-date .month { font-size: 0.65rem; font-weight: 700; color: #666; }
-    .history-info { flex: 1; }
-    .history-info .plate { display: block; font-weight: 800; font-size: 1rem; }
-    .history-info .loc { font-size: 0.95rem; color: #666; }
-    .amount { font-weight: 800; color: #ff4d4d; }
+    
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 2rem; }
     .modal-card { background: #fff; border-radius: 24px; padding: 1.5rem; width: 100%; max-width: 360px; box-shadow: 0 15px 40px rgba(0,0,0,0.2); color: #333; }
-    .modal-card h3 { margin-top: 0; margin-bottom: 0.5rem; font-weight: 900; text-align: center; font-size: 1.2rem; }
-    .tarif-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #f0f0f0; font-weight: 700; color: #333; font-size: 0.9rem; }
-    .tariff-cards-container { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem; } .tariff-pill-card { padding: 1rem; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.1); } .z-label { font-weight: 900; font-size: 1.1rem; } .z-prices { text-align: right; display: flex; flex-direction: column; } .z-prices strong { font-size: 1rem; } .z-prices span { font-size: 0.75rem; opacity: 0.9; font-weight: 700; } .zona-0-bg { background: #ff4757; } .zona-1-bg { background: #ffa502; } .zona-2-bg { background: #2ed573; } .quick-extend-menu { position: absolute; bottom: 110%; left: 0; width: 100%; background: #fff; border-radius: 20px; padding: 0.5rem; box-shadow: 0 -5px 25px rgba(0,0,0,0.15); display: flex; gap: 0.5rem; z-index: 10; animation: popUp 0.3s cubic-bezier(0.4, 0, 0.2, 1); } .quick-opt { flex: 1; background: #f0f7ff; color: #4285f4; border: none; border-radius: 12px; padding: 0.6rem; font-weight: 900; font-size: 0.85rem; cursor: pointer; } @keyframes popUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } .btn-close-modal-blue { width: 100%; background: #4285f4; color: #fff; border: none; border-radius: 50px; padding: 0.8rem; font-weight: 900; font-size: 1rem; margin-top: 1rem; cursor: pointer; }
-    .zona-2 { background: #2ed573; }
-    .quick-add-menu { position: absolute; bottom: 120%; left: 0; width: 100%; background: #fff; border-radius: 20px; padding: 0.5rem; box-shadow: 0 -10px 25px rgba(0,0,0,0.15); display: flex; justify-content: space-around; gap: 0.5rem; animation: popUp 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 10; }
-    .quick-option { flex: 1; padding: 0.5rem; background: #f0f7ff; color: #4285f4; border-radius: 12px; font-weight: 800; text-align: center; font-size: 0.9rem; cursor: pointer; }
+    .modal-title { margin-top: 0; margin-bottom: 1rem; font-weight: 900; text-align: center; font-size: 1.25rem; color: #333; }
+    .tariff-cards-container { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem; }
+    .tariff-pill-card { padding: 1rem; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .z-label { font-weight: 900; font-size: 1.1rem; }
+    .z-prices { text-align: right; display: flex; flex-direction: column; }
+    .z-prices strong { font-size: 1rem; }
+    .z-prices span { font-size: 0.75rem; opacity: 0.9; font-weight: 700; }
+    .zona-0-bg { background: #ff4757; }
+    .zona-1-bg { background: #ffa502; }
+    .zona-2-bg { background: #2ed573; }
+    .quick-extend-menu { position: absolute; bottom: 110%; left: 0; width: 100%; background: #fff; border-radius: 20px; padding: 0.5rem; box-shadow: 0 -5px 25px rgba(0,0,0,0.15); display: flex; gap: 0.5rem; z-index: 10; animation: popUp 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .quick-opt { flex: 1; background: #f0f7ff; color: #4285f4; border: none; border-radius: 12px; padding: 0.6rem; font-weight: 900; font-size: 0.85rem; cursor: pointer; }
+    @keyframes popUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   `]
 })
 export class ParkingComponent implements OnInit, OnDestroy {
   showTariffs = false;
-  showSms = false;
   showQuickAdd = false;
   public timeLeft = '00:00:00';
   public parkingExpiry: number | null = null;
@@ -191,7 +187,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
   isPlateSaved = false;
   tempPlate = '';
   selectedHours = 1;
-  selectedZoneIndex = 0; // Default to Zona 0
+  selectedZoneIndex = 0;
   detectedLocationName = '';
   
   parkedCarLocationName = '';
@@ -205,11 +201,8 @@ export class ParkingComponent implements OnInit, OnDestroy {
   private marker: any;
   private timerSubscription: Subscription | undefined;
   public currentParkingSeconds = 0;
-
-  // --- GPS & Geofencing State ---
   isOutOfZone = false;
   
-  // High-precision Points of Interest (Real parking spots in Brasov)
   private PARKING_POIS = [
     { name: 'Piața Sfatului / Mureșenilor', zone: 0, lat: 45.6423, lng: 25.5888 },
     { name: 'Primăria Brașov / Eroilor', zone: 0, lat: 45.6450, lng: 25.5930 },
@@ -246,7 +239,6 @@ export class ParkingComponent implements OnInit, OnDestroy {
       this.startGpsTracking();
       this.loadPersistedData();
       
-      // Sync UI when returning from SMS app
       window.addEventListener('focus', () => {
         this.loadPersistedData();
         this.cdr.detectChanges();
@@ -257,14 +249,12 @@ export class ParkingComponent implements OnInit, OnDestroy {
   public startGpsTracking() {
     if (!navigator.geolocation) return;
 
-    // Immediate request to trigger permission prompt faster
     navigator.geolocation.getCurrentPosition(
       (pos) => this.zone.run(() => this.updateZoneByLocation(pos.coords.latitude, pos.coords.longitude)),
       (err) => console.warn('Initial GPS fail', err),
       { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
     );
 
-    // Continuous tracking with highest accuracy
     navigator.geolocation.watchPosition(
       (pos) => {
         const { latitude, longitude } = pos.coords;
@@ -284,7 +274,6 @@ export class ParkingComponent implements OnInit, OnDestroy {
     this.currentLat = lat;
     this.currentLng = lng;
 
-    // 1. Precise Check (POI snapping within 250m)
     let nearestPoi: any = null;
     let minDistance = Infinity;
 
@@ -301,14 +290,13 @@ export class ParkingComponent implements OnInit, OnDestroy {
       this.detectedLocationName = nearestPoi.name;
       this.isOutOfZone = false;
     } else {
-      // 2. Broad Check (Bounding Boxes)
       const detectedBoundIndex = this.ZONE_BOUNDS.findIndex(b => 
         lat >= b.minLat && lat <= b.maxLat && lng >= b.minLng && lng <= b.maxLng
       );
 
       if (detectedBoundIndex !== -1) {
         this.selectedZoneIndex = detectedBoundIndex;
-        this.detectedLocationName = ''; // Generic zone name will be used from PARKING_ZONES
+        this.detectedLocationName = '';
         this.isOutOfZone = false;
       } else {
         this.detectedLocationName = '';
@@ -316,9 +304,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
       }
     }
     
-    // Update map marker
     this.updateMarker(lat, lng, this.isOutOfZone ? '#ff4d4d' : '#4285f4');
-    
     if (this.map) this.map.setView([lat, lng], 16);
     this.cdr.detectChanges();
   }
@@ -327,18 +313,13 @@ export class ParkingComponent implements OnInit, OnDestroy {
   currentLng: number = 0;
 
   private getDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-    const R = 6371e3; // Earth radius in meters
+    const R = 6371e3;
     const φ1 = lat1 * Math.PI / 180;
     const φ2 = lat2 * Math.PI / 180;
     const Δφ = (lat2 - lat1) * Math.PI / 180;
     const Δλ = (lon2 - lon1) * Math.PI / 180;
-
-    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-              Math.cos(φ1) * Math.cos(φ2) *
-              Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-    return R * c;
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   }
 
   private updateMarker(lat: number, lng: number, color: string) {
@@ -346,38 +327,18 @@ export class ParkingComponent implements OnInit, OnDestroy {
     if (this.marker) this.map.removeLayer(this.marker);
     
     const icon = L.divIcon({ 
-      html: `<div style="
-        background: ${color}; 
-        width: 30px; 
-        height: 30px; 
-        border-radius: 50%; 
-        border: 4px solid white; 
-        box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
-        display: flex; 
-        align-items: center; 
-        justify-content: center; 
-        color: white; 
-        font-weight: 900; 
-        font-size: 16px;
-      ">P</div>`, 
+      html: `<div style="background: ${color}; width: 30px; height: 30px; border-radius: 50%; border: 4px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 16px;">P</div>`, 
       className: '', iconSize: [30, 30], iconAnchor: [15, 15] 
     });
-    
     this.marker = L.marker([lat, lng], { icon: icon }).addTo(this.map);
-  }
-
-  private isInside(point: number[], vs: number[][]): boolean {
-    return false; // Deprecated in favor of POI detection
   }
 
   private initParkingMap() {
     if (this.map) return;
     const initialLat = 45.6423;
     const initialLng = 25.5888;
-    
     this.map = L.map('parking-map', { zoomControl: false, attributionControl: false }).setView([initialLat, initialLng], 15);
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(this.map);
-    
     this.updateMarker(initialLat, initialLng, '#ff4d4d');
   }
 
@@ -388,30 +349,16 @@ export class ParkingComponent implements OnInit, OnDestroy {
 
   private loadPersistedData() {
     const savedPlate = localStorage.getItem('parked_plate');
-    if (savedPlate) {
-      this.carPlate = savedPlate;
-      this.tempPlate = savedPlate;
-      this.isPlateSaved = true;
-    }
-
+    if (savedPlate) { this.carPlate = savedPlate; this.tempPlate = savedPlate; this.isPlateSaved = true; }
     const savedHours = localStorage.getItem('parking_selected_hours');
     if (savedHours) this.selectedHours = parseInt(savedHours);
-
     const savedHistory = localStorage.getItem('parking_history');
     if (savedHistory) this.history = JSON.parse(savedHistory);
-
     const expiry = localStorage.getItem('parking_expiry');
     if (expiry) {
       const remainingSeconds = Math.floor((parseInt(expiry) - Date.now()) / 1000);
-      if (remainingSeconds > 0) {
-        this.resumeCountdown(remainingSeconds);
-      } else {
-        this.clearParkedData();
-      }
-    }
-
-    if ('Notification' in window && Notification.permission !== 'granted') {
-      Notification.requestPermission();
+      if (remainingSeconds > 0) this.resumeCountdown(remainingSeconds);
+      else this.clearParkedData();
     }
   }
 
@@ -419,124 +366,46 @@ export class ParkingComponent implements OnInit, OnDestroy {
     if (this.timerSubscription) this.timerSubscription.unsubscribe();
     this.currentParkingSeconds = seconds;
     this.timeLeft = this.formatTime(this.currentParkingSeconds);
-
     let notificationSent = false;
-
     this.timerSubscription = interval(1000).subscribe(() => {
       if (this.currentParkingSeconds > 0) {
         this.currentParkingSeconds--;
         this.timeLeft = this.formatTime(this.currentParkingSeconds);
-
-        if (this.currentParkingSeconds === 300 && !notificationSent) {
-          this.sendExpiryNotification('Timpul de parcare expiră în 5 minute!');
-          notificationSent = true;
-        }
-
-        if (this.currentParkingSeconds === 0) {
-          this.clearParkedData();
-          if (this.timerSubscription) this.timerSubscription.unsubscribe();
-        }
+        if (this.currentParkingSeconds === 300 && !notificationSent) { this.sendExpiryNotification('Timpul de parcare expiră în 5 minute!'); notificationSent = true; }
+        if (this.currentParkingSeconds === 0) { this.clearParkedData(); if (this.timerSubscription) this.timerSubscription.unsubscribe(); }
         this.cdr.detectChanges();
       }
     });
   }
 
-  stopSession() {
-    if (confirm('Ești sigur că vrei să oprești sesiunea de parcare?')) {
-      if (this.timerSubscription) this.timerSubscription.unsubscribe();
-      this.clearParkedData();
-      this.cdr.detectChanges();
-    }
-  }
+  ngOnDestroy() { if (this.timerSubscription) this.timerSubscription.unsubscribe(); }
 
-  ngOnDestroy() {
-    if (this.timerSubscription) this.timerSubscription.unsubscribe();
-  }
+  private requestNotificationPermission() { if ('Notification' in window) Notification.requestPermission(); }
+  private sendExpiryNotification(message: string) { if ('Notification' in window && Notification.permission === 'granted') new Notification('Smart City Brașov', { body: message }); }
 
-  private requestNotificationPermission() {
-    if ('Notification' in window) {
-      Notification.requestPermission();
-    }
-  }
-
-  private sendExpiryNotification(message: string) {
-    if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification('Smart City Brașov', {
-        body: message,
-        icon: 'favicon.ico'
-      });
-    }
-  }
-
-  savePlate() {
-    if (this.tempPlate.trim()) {
-      this.carPlate = this.tempPlate.toUpperCase();
-      this.isPlateSaved = true;
-      localStorage.setItem('parking_carPlate', this.carPlate);
-    }
-  }
-
-  editPlate() {
-    this.isPlateSaved = false;
-    this.tempPlate = this.carPlate;
-  }
-
-  incrementHours() { 
-    if (this.selectedHours < 24) this.selectedHours++; 
-    localStorage.setItem('parking_selected_hours', this.selectedHours.toString());
-  }
-  decrementHours() { 
-    if (this.selectedHours > 1) this.selectedHours--; 
-    localStorage.setItem('parking_selected_hours', this.selectedHours.toString());
-  }
-
-  selectZoneManually(index: number) {
-    this.selectedZoneIndex = index;
-    this.detectedLocationName = ''; // Clear detected name on manual override
-    this.cdr.detectChanges();
-  }
+  savePlate() { if (this.tempPlate.trim()) { this.carPlate = this.tempPlate.toUpperCase(); this.isPlateSaved = true; localStorage.setItem('parked_plate', this.carPlate); } }
+  incrementHours() { if (this.selectedHours < 24) this.selectedHours++; localStorage.setItem('parking_selected_hours', this.selectedHours.toString()); }
+  decrementHours() { if (this.selectedHours > 1) this.selectedHours--; localStorage.setItem('parking_selected_hours', this.selectedHours.toString()); }
 
   sendNativeSms() {
-    // Auto-save plate if user typed but didn't click save
-    if (!this.isPlateSaved && this.tempPlate.trim()) {
-      this.savePlate();
-    }
-
-    if (!this.carPlate) {
-      alert('Te rugăm să introduci numărul de înmatriculare!');
-      return;
-    }
-
+    if (!this.isPlateSaved && this.tempPlate.trim()) this.savePlate();
+    if (!this.carPlate) { alert('Te rugăm să introduci numărul de înmatriculare!'); return; }
     const recipient = '1234';
     const body = `${this.carPlate} ${this.selectedHours}`;
-    
-    // Save state before triggering SMS
     this.parkedCarLocationName = this.detectedLocationName || this.PARKING_ZONES[this.selectedZoneIndex].name;
     this.parkedCarZoneIndex = this.selectedZoneIndex;
     localStorage.setItem('parked_location_name', this.parkedCarLocationName);
     localStorage.setItem('parked_zone_index', this.parkedCarZoneIndex.toString());
     localStorage.setItem('parked_plate', this.carPlate);
-
-    // Force start timer
-    this.zone.run(() => {
-      this.startCountdown(this.selectedHours);
-      this.cdr.detectChanges();
-    });
-
+    this.startCountdown(this.selectedHours);
     this.addToHistory();
-
     const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const smsUrl = `sms:${recipient}${isIos ? '&' : '?'}body=${encodeURIComponent(body)}`;
-    
-    setTimeout(() => {
-      window.location.href = smsUrl;
-    }, 200);
+    window.location.href = `sms:${recipient}${isIos ? '&' : '?'}body=${encodeURIComponent(body)}`;
   }
 
   private startCountdown(hours: number) {
     const seconds = hours * 3600;
-    const expiryTimestamp = Date.now() + (seconds * 1000);
-    localStorage.setItem('parking_expiry', expiryTimestamp.toString());
+    localStorage.setItem('parking_expiry', (Date.now() + seconds * 1000).toString());
     this.resumeCountdown(seconds);
   }
 
@@ -547,50 +416,26 @@ export class ParkingComponent implements OnInit, OnDestroy {
     return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
   }
 
-  isExpiryWarning(): boolean {
-    if (this.timeLeft === '00:00:00') return false;
-    const [h, m] = this.timeLeft.split(':').map(Number);
-    return h === 0 && m < 5;
-  }
-
   private addToHistory() {
     const now = new Date();
     const months = ['IAN', 'FEB', 'MAR', 'APR', 'MAI', 'IUN', 'IUL', 'AUG', 'SEP', 'OCT', 'NOI', 'DEC'];
     const zone = this.PARKING_ZONES[this.selectedZoneIndex];
-    
-    const newEntry = {
-      day: String(now.getDate()).padStart(2, '0'),
-      month: months[now.getMonth()],
-      plate: this.carPlate,
-      zone: zone.name,
-      amount: (this.selectedHours * zone.tariff).toFixed(2) + '€'
-    };
-
+    const newEntry = { day: String(now.getDate()).padStart(2, '0'), month: months[now.getMonth()], plate: this.carPlate, zone: zone.name, amount: (this.selectedHours * zone.tariff).toFixed(2) + '€' };
     this.history.unshift(newEntry);
     if (this.history.length > 10) this.history.pop();
     localStorage.setItem('parking_history', JSON.stringify(this.history));
   }
 
   toggleTariffs() { this.showTariffs = !this.showTariffs; }
-  toggleQuickAdd() { this.showQuickAdd = !this.showQuickAdd; 
-  } scrollToHistory() { const el = document.getElementById('history-section'); if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }
+  toggleQuickAdd() { this.showQuickAdd = !this.showQuickAdd; }
+  scrollToHistory() { const el = document.getElementById('history-section'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
 
   extendTime(minutes: number) {
     const extraSeconds = minutes * 60;
     this.currentParkingSeconds += extraSeconds;
-    
-    // Save new expiry
-    const now = Date.now();
-    const expiryTimestamp = now + (this.currentParkingSeconds * 1000);
-    localStorage.setItem('parking_expiry', expiryTimestamp.toString());
-
-    // Trigger SMS
-    const recipient = '1234';
-    const body = `${this.carPlate} ${Math.ceil(minutes / 60)}`;
+    localStorage.setItem('parking_expiry', (Date.now() + this.currentParkingSeconds * 1000).toString());
     const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const smsUrl = `sms:${recipient}${isIos ? '&' : '?'}body=${encodeURIComponent(body)}`;
-    window.location.href = smsUrl;
-
+    window.location.href = `sms:1234${isIos ? '&' : '?'}body=${encodeURIComponent(this.carPlate + ' ' + Math.ceil(minutes / 60))}`;
     this.resumeCountdown(this.currentParkingSeconds);
     this.cdr.detectChanges();
   }
@@ -605,4 +450,3 @@ export class ParkingComponent implements OnInit, OnDestroy {
     localStorage.removeItem('parked_plate');
   }
 }
-
