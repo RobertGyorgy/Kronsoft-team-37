@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone, afterNextRender } from '@angular/core';
+﻿import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone, afterNextRender } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -16,22 +16,22 @@ declare const L: any;
         <!-- 1. HEADER -->
         <header class="page-header-pill">
           <button class="back-pill" [routerLink]="['/home']">
-            <span class="material-icons">arrow_back</span> Înapoi
+            <span class="material-icons">arrow_back</span> ÃŽnapoi
           </button>
-          <h1 class="page-title-pill">Parcare Brașov</h1>
+          <h1 class="page-title-pill">Parcare BraÈ™ov</h1>
         </header>
 
         <!-- 2. HARTA -->
         <section class="map-section-pill">
-          <div id="parking-map" class="map-container-pill"></div>
+          <div style="position: relative;"><div id="parking-map" class="map-container-pill"></div><button (click)="startGpsTracking()" style="position: absolute; bottom: 10px; right: 10px; z-index: 1000; background: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; cursor: pointer;">📍</button></div>
         </section>
 
         <!-- 3. INPUT NUMAR (FUNDAL ALB) -->
         <section class="plate-input-section">
-          <label class="plate-label">introdu numărul de înmatriculare</label>
+          <label class="plate-label">introdu numÄƒrul de Ã®nmatriculare</label>
           <div class="plate-row">
             <input type="text" [(ngModel)]="tempPlate" (ngModelChange)="tempPlate = $event.toUpperCase()" placeholder="BV 11 ABC" class="plate-input">
-            <button class="btn-save-solid" (click)="savePlate()">SALVEAZĂ</button>
+            <button class="btn-save-solid" (click)="savePlate()">SALVEAZÄ‚</button>
           </div>
         </section>
 
@@ -41,9 +41,9 @@ declare const L: any;
           
           <!-- Stepper Pill -->
           <div class="stepper-pill-container">
-            <span class="stepper-text-label">SELECTEAZĂ DURATA</span>
+            <span class="stepper-text-label">SELECTEAZÄ‚ DURATA</span>
             <div class="stepper-controls">
-              <button class="btn-step" (click)="decrementHours()">−</button>
+              <button class="btn-step" (click)="decrementHours()">âˆ’</button>
               <span class="step-val-text">{{ selectedHours }}h</span>
               <button class="btn-step" (click)="incrementHours()">+</button>
             </div>
@@ -57,7 +57,7 @@ declare const L: any;
 
           <!-- Timer Integrated -->
           <div class="timer-section-integrated">
-            <p class="timer-sub-label">TIMP RĂMAS</p>
+            <p class="timer-sub-label">TIMP RÄ‚MAS</p>
             <h3 class="timer-digits-white-tiny">{{ timeLeft }}</h3>
           </div>
 
@@ -71,7 +71,7 @@ declare const L: any;
 
             <!-- Extend Button Solid White -->
             <button class="btn-extend-solid-white" (click)="toggleQuickAdd()">
-              PRELUNGEȘTE TIMPUL
+              PRELUNGEÈ˜TE TIMPUL
             </button>
           </div>
         </section>
@@ -79,7 +79,7 @@ declare const L: any;
         <!-- 5. ISTORIC -->
         <section class="history-section-pill" id="history-section">
           <div class="section-header-pill">
-            <h3>Istoric plăți</h3>
+            <h3>Istoric plÄƒÈ›i</h3>
             <button class="vezi-tot-pill" (click)="scrollToHistory()">Vezi tot</button>
           </div>
           <div class="history-card" *ngFor="let item of history">
@@ -87,7 +87,7 @@ declare const L: any;
               <span class="hist-date">{{ item.day }} {{ item.month }}</span>
               <span class="hist-amount">{{ item.amount }}</span>
             </div>
-            <div class="hist-details">{{ item.plate }} • {{ item.zone }}</div>
+            <div class="hist-details">{{ item.plate }} â€¢ {{ item.zone }}</div>
           </div>
         </section>
 
@@ -98,18 +98,18 @@ declare const L: any;
             <div class="tariff-cards-container">
               <div class="tariff-pill-card zona-0-bg">
                 <span class="z-label">ZONA 0</span>
-                <div class="z-prices"><strong>0.60€/h</strong><span>3.00€/24h</span></div>
+                <div class="z-prices"><strong>0.60â‚¬/h</strong><span>3.00â‚¬/24h</span></div>
               </div>
               <div class="tariff-pill-card zona-1-bg">
                 <span class="z-label">ZONA 1</span>
-                <div class="z-prices"><strong>0.40€/h</strong><span>2.00€/24h</span></div>
+                <div class="z-prices"><strong>0.40â‚¬/h</strong><span>2.00â‚¬/24h</span></div>
               </div>
               <div class="tariff-pill-card zona-2-bg">
                 <span class="z-label">ZONA 2</span>
-                <div class="z-prices"><strong>0.30€/h</strong><span>1.50€/24h</span></div>
+                <div class="z-prices"><strong>0.30â‚¬/h</strong><span>1.50â‚¬/24h</span></div>
               </div>
             </div>
-            <button class="btn-extend-solid-white" (click)="toggleTariffs()" style="margin-top: 1rem;">ÎNCHIDE</button>
+            <button class="btn-extend-solid-white" (click)="toggleTariffs()" style="margin-top: 1rem;">ÃŽNCHIDE</button>
           </div>
         </div>
       </div>
@@ -211,19 +211,19 @@ export class ParkingComponent implements OnInit, OnDestroy {
   
   // High-precision Points of Interest (Real parking spots in Brasov)
   private PARKING_POIS = [
-    { name: 'Piața Sfatului / Mureșenilor', zone: 0, lat: 45.6423, lng: 25.5888 },
-    { name: 'Primăria Brașov / Eroilor', zone: 0, lat: 45.6450, lng: 25.5930 },
-    { name: 'Nicolae Bălcescu / Castelului', zone: 0, lat: 45.6400, lng: 25.5920 },
+    { name: 'PiaÈ›a Sfatului / MureÈ™enilor', zone: 0, lat: 45.6423, lng: 25.5888 },
+    { name: 'PrimÄƒria BraÈ™ov / Eroilor', zone: 0, lat: 45.6450, lng: 25.5930 },
+    { name: 'Nicolae BÄƒlcescu / Castelului', zone: 0, lat: 45.6400, lng: 25.5920 },
     { name: 'Parcare Spitalul Militar', zone: 0, lat: 45.6470, lng: 25.5900 },
     { name: 'Bulevardul Victoriei (Centru Civic)', zone: 1, lat: 45.6540, lng: 25.6060 },
     { name: 'Centrul Civic / AFI', zone: 1, lat: 45.6510, lng: 25.6080 },
-    { name: 'Calea București / Astra', zone: 1, lat: 45.6400, lng: 25.6200 },
+    { name: 'Calea BucureÈ™ti / Astra', zone: 1, lat: 45.6400, lng: 25.6200 },
     { name: '13 Decembrie / Onix', zone: 1, lat: 45.6580, lng: 25.6010 },
-    { name: 'Gara Brașov', zone: 1, lat: 45.6620, lng: 25.6130 },
+    { name: 'Gara BraÈ™ov', zone: 1, lat: 45.6620, lng: 25.6130 },
     { name: 'Coresi Shopping Resort', zone: 1, lat: 45.6740, lng: 25.6180 },
     { name: 'Parcare Bartolomeu', zone: 1, lat: 45.6580, lng: 25.5720 },
-    { name: 'Zona Industrială Vest', zone: 2, lat: 45.6800, lng: 25.5400 },
-    { name: 'Triaj / Hărmanului', zone: 2, lat: 45.6720, lng: 25.6550 }
+    { name: 'Zona IndustrialÄƒ Vest', zone: 2, lat: 45.6800, lng: 25.5400 },
+    { name: 'Triaj / HÄƒrmanului', zone: 2, lat: 45.6720, lng: 25.6550 }
   ];
 
   private ZONE_BOUNDS = [
@@ -322,14 +322,14 @@ export class ParkingComponent implements OnInit, OnDestroy {
 
   private getDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
     const R = 6371e3; // Earth radius in meters
-    const φ1 = lat1 * Math.PI / 180;
-    const φ2 = lat2 * Math.PI / 180;
-    const Δφ = (lat2 - lat1) * Math.PI / 180;
-    const Δλ = (lon2 - lon1) * Math.PI / 180;
+    const Ï†1 = lat1 * Math.PI / 180;
+    const Ï†2 = lat2 * Math.PI / 180;
+    const Î”Ï† = (lat2 - lat1) * Math.PI / 180;
+    const Î”Î» = (lon2 - lon1) * Math.PI / 180;
 
-    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-              Math.cos(φ1) * Math.cos(φ2) *
-              Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const a = Math.sin(Î”Ï† / 2) * Math.sin(Î”Ï† / 2) +
+              Math.cos(Ï†1) * Math.cos(Ï†2) *
+              Math.sin(Î”Î» / 2) * Math.sin(Î”Î» / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
     return R * c;
@@ -422,7 +422,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
         this.timeLeft = this.formatTime(this.currentParkingSeconds);
 
         if (this.currentParkingSeconds === 300 && !notificationSent) {
-          this.sendExpiryNotification('Timpul de parcare expiră în 5 minute!');
+          this.sendExpiryNotification('Timpul de parcare expirÄƒ Ã®n 5 minute!');
           notificationSent = true;
         }
 
@@ -436,7 +436,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
   }
 
   stopSession() {
-    if (confirm('Ești sigur că vrei să oprești sesiunea de parcare?')) {
+    if (confirm('EÈ™ti sigur cÄƒ vrei sÄƒ opreÈ™ti sesiunea de parcare?')) {
       if (this.timerSubscription) this.timerSubscription.unsubscribe();
       this.clearParkedData();
       this.cdr.detectChanges();
@@ -455,7 +455,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
 
   private sendExpiryNotification(message: string) {
     if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification('Smart City Brașov', {
+      new Notification('Smart City BraÈ™ov', {
         body: message,
         icon: 'favicon.ico'
       });
@@ -497,7 +497,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
     }
 
     if (!this.carPlate) {
-      alert('Te rugăm să introduci numărul de înmatriculare!');
+      alert('Te rugÄƒm sÄƒ introduci numÄƒrul de Ã®nmatriculare!');
       return;
     }
 
@@ -557,7 +557,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
       month: months[now.getMonth()],
       plate: this.carPlate,
       zone: zone.name,
-      amount: (this.selectedHours * zone.tariff).toFixed(2) + '€'
+      amount: (this.selectedHours * zone.tariff).toFixed(2) + 'â‚¬'
     };
 
     this.history.unshift(newEntry);
