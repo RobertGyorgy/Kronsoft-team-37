@@ -43,7 +43,7 @@ interface Recommendation {
           @for (cat of categories; track cat.id) {
             <div 
               class="cat-card" 
-              [style.backgroundImage]="'url(assets/images/' + cat.image + ')'"
+              [style.backgroundImage]="'url(images/' + cat.image + ')'"
               (click)="selectCategory(cat)">
               <div class="card-overlay">
                 <span class="cat-name">{{ cat.name }}</span>
@@ -261,7 +261,7 @@ export class WeekendComponent {
       category: "experiente",
       date: "Duminică, 18:00",
       location: "Vârful Postăvaru",
-      image: "assets/images/experiente.png",
+      image: "images/experiente.png",
       url: "https://zilesinopti.ro/evenimente/sunset-vibes-brasov/"
     },
     {
@@ -271,7 +271,7 @@ export class WeekendComponent {
       category: "evenimente",
       date: "Sâmbătă, 20:00",
       location: "Cetatea Brașov",
-      image: "assets/images/evenimente.png",
+      image: "images/evenimente.png",
       url: "https://zilesinopti.ro/evenimente/concert-rock-brasov/"
     }
   ];
