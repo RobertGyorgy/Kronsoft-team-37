@@ -34,7 +34,7 @@ interface Recommendation {
 
       @if (currentView() === 'menu') {
         <section class="page-header">
-          <p class="eyebrow-accent">RECOMANDĂRI ACTUALIZATE</p>
+          <p class="eyebrow-accent">RECOMANDĂRI SMART CITY</p>
           <h1 class="main-question">Ce descoperim azi în Brașov?</h1>
         </section>
 
@@ -253,16 +253,6 @@ export class WeekendComponent {
       image: "https://zilesinopti.ro/wp-content/uploads/2026/04/1-header-2.webp",
       url: "https://zilesinopti.ro/evenimente/transylvanian-food-market-piata-sf-ioan/"
     },
-    {
-      id: 2,
-      title: "DJ Night & Special Menu",
-      description: "Mixuri de Lau Maftei și un meniu gourmet creat special pentru serile de vineri în inima Brașovului.",
-      category: "gastronomie",
-      date: "Vineri Seara",
-      location: "Luther Brasserie & Lounge",
-      image: "https://zilesinopti.ro/wp-content/uploads/2026/04/1-Ne-vedem-in-colt-la-Modarom.jpg",
-      url: "https://zilesinopti.ro/evenimente/dj-night-lau-maftei-luther-brasserie/"
-    },
 
     // --- NATURĂ ---
     {
@@ -275,28 +265,8 @@ export class WeekendComponent {
       image: "https://zilesinopti.ro/wp-content/uploads/2026/04/1-header-2.webp",
       url: "https://zilesinopti.ro/evenimente/brasov-heroes-cursa-lacul-noua/"
     },
-    {
-      id: 11,
-      title: "Expoziție: În Căutarea Naturii",
-      description: "O călătorie vizuală prin peisaje spectaculoase, explorând fragilitatea și frumusețea lumii înconjurătoare.",
-      category: "natura",
-      date: "Permanent",
-      location: "Muzeul de Artă Brașov",
-      image: "https://zilesinopti.ro/wp-content/uploads/2026/04/In-cautarea-Naturii.jpg",
-      url: "https://zilesinopti.ro/evenimente/in-cautarea-naturii-muzeul-arta-brasov/"
-    },
 
     // --- PLIMBARE ÎN ORAȘ ---
-    {
-      id: 20,
-      title: "Ziua Europei în Centrul Istoric",
-      description: "Sărbătorește valorile europene cu activități în aer liber, muzică și o atmosferă vibrantă în Piața Sfatului.",
-      category: "plimbare",
-      date: "9 Mai 2026",
-      location: "Piața Sfatului",
-      image: "https://zilesinopti.ro/wp-content/uploads/2026/04/1-Ne-vedem-in-colt-la-Modarom.jpg",
-      url: "https://zilesinopti.ro/evenimente/ziua-europei-piata-sfatului-brasov/"
-    },
     {
       id: 21,
       title: "Braşov@Acasă: Istoria la Pas",
@@ -310,18 +280,8 @@ export class WeekendComponent {
 
     // --- CULTURĂ ---
     {
-      id: 30,
-      title: "Festivalul de Teatru DE-A RÂSU PLÂNSU",
-      description: "Trei zile de spectacole care te vor purta prin toate stările, de la hohote de râs la momente de introspecție profundă.",
-      category: "cultura",
-      date: "Weekend viitor",
-      location: "Reduta & Sică Alexandrescu",
-      image: "https://zilesinopti.ro/wp-content/uploads/2026/03/a-11.jpg",
-      url: "https://zilesinopti.ro/evenimente/festivalul-de-teatru-de-a-rasu-plansu/"
-    },
-    {
       id: 31,
-      title: "O Noapte Furtunoasă - Premieră",
+      title: "O Noapte Furtunoasă - Teatru Sică",
       description: "Vino să revezi comedia clasică a lui Caragiale într-o viziune regizorală proaspătă și surprinzătoare.",
       category: "cultura",
       date: "Sâmbătă, 19:00",
@@ -340,48 +300,48 @@ export class WeekendComponent {
       url: "https://zilesinopti.ro/evenimente/irisi-albi-muzeul-de-arta-brasov/"
     },
 
-    // --- EXPERIENȚE ---
+    // --- EXPERIENȚE (NOI) ---
     {
       id: 40,
-      title: "Tango Meets Opera: O Seară Magică",
-      description: "Un spectacol hibrid unde vocea de operă se întâlnește cu mișcările pasionale ale tangoului argentinian.",
+      title: "Zbor cu Parapanta @ Bunloc",
+      description: "Trăiește libertatea absolută! Decolează de pe Vârful Bunloc (1200m) și bucură-te de o panoramă incredibilă deasupra Brașovului.",
       category: "experiente",
-      date: "Duminică Seara",
-      location: "Cercul Militar Braşov",
-      image: "https://zilesinopti.ro/wp-content/uploads/2026/04/In-cautarea-Naturii.jpg",
-      url: "https://zilesinopti.ro/evenimente/tango-meets-opera-cercul-militar-brasov/"
+      date: "În funcție de meteo",
+      location: "Bunloc, Săcele",
+      image: "https://zilesinopti.ro/wp-content/uploads/2026/04/In-cautarea-Naturii.jpg", // Placeholder real looking
+      url: "https://parapantabrasov.ro"
     },
     {
       id: 41,
-      title: "Talk & Listen: Comunitatea S.L.I.M",
-      description: "Dezbateri despre viitorul cultural al Brașovului într-un cadru relaxat, acompaniat de muzică bună și cafea.",
+      title: "Aventura cu Balonul la Răsărit",
+      description: "O experiență magică și liniștită. Plutește deasupra cetăților medievale din Transilvania într-un zbor de neuitat la răsăritul soarelui.",
       category: "experiente",
-      date: "Vineri, 18:00",
-      location: "Cărturești Brașov",
-      image: "https://zilesinopti.ro/wp-content/uploads/2026/04/1-Ne-vedem-in-colt-la-Modarom.jpg",
-      url: "https://zilesinopti.ro/evenimente/s-l-i-m-brasov-talk-listen-carturesti/"
+      date: "Zilnic (Meteo dependent)",
+      location: "Zona Brașov - Transilvania",
+      image: "https://zilesinopti.ro/wp-content/uploads/2026/04/1-Artis-Poza-01-Principala-event.webp", // Placeholder
+      url: "https://extasy.ro/experienta/zbor-cu-balonul-cu-aer-cald-in-zona-brasovului"
+    },
+    {
+      id: 42,
+      title: "Tur VIP cu Elicopterul Airbus",
+      description: "Descoperă Brașovul și Castelul Bran de la înălțime într-un zbor privat de lux. O experiență exclusivistă cu un elicopter Airbus modern.",
+      category: "experiente",
+      date: "La cerere",
+      location: "Heliport Brașov",
+      image: "https://zilesinopti.ro/wp-content/uploads/2026/04/1-header-2.webp", // Placeholder
+      url: "https://experimenteaza.ro/zbor-cu-elicopterul"
     },
 
     // --- EVENIMENTE ---
     {
       id: 50,
       title: "om la lună: Concert Live",
-      description: "Una dintre cele mai iubite trupe de indie-rock din România revine la Brașov pentru un concert plin de trăire.",
+      description: "Una dintre cele mai iubite trupe de indie-rock din România revine la Brașov pentru un concert plin de trăire în clubul Rockstadt.",
       category: "evenimente",
       date: "Sâmbătă, 21:00",
       location: "Rockstadt Brașov",
       image: "https://zilesinopti.ro/wp-content/uploads/2024/09/om-la-luna.jpg",
       url: "https://zilesinopti.ro/evenimente/om-la-luna-rockstadt/"
-    },
-    {
-      id: 51,
-      title: "Popcorn Music Party @ Kruhnen",
-      description: "Ești gata pentru cea mai mare petrecere a weekend-ului? Hituri pe bandă rulantă și vibe de festival.",
-      category: "evenimente",
-      date: "Vineri & Sâmbătă",
-      location: "Kruhnen Musik Halle",
-      image: "https://zilesinopti.ro/wp-content/uploads/2026/04/Popcorn-Party.jpg",
-      url: "https://zilesinopti.ro/evenimente/popcorn-music-party-kruhnen-musik-halle/"
     }
   ];
 
