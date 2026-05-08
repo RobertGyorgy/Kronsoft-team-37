@@ -254,7 +254,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
     });
   }
 
-  private startGpsTracking() {
+  public startGpsTracking() {
     if (!navigator.geolocation) return;
 
     // Immediate request to trigger permission prompt faster
