@@ -43,7 +43,7 @@ interface Recommendation {
           @for (cat of categories; track cat.id) {
             <div 
               class="cat-card" 
-              [style.backgroundImage]="'url(' + cat.image + ')'"
+              [style.backgroundImage]="'url(assets/images/' + cat.image + ')'"
               (click)="selectCategory(cat)">
               <div class="card-overlay">
                 <span class="cat-name">{{ cat.name }}</span>
@@ -134,6 +134,7 @@ interface Recommendation {
       border-radius: 24px;
       background-size: cover;
       background-position: center;
+      background-color: #f0f0f0; /* Fallback */
       overflow: hidden;
       cursor: pointer;
       transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -204,12 +205,12 @@ export class WeekendComponent {
   selectedCategory = signal<Category | null>(null);
 
   categories: Category[] = [
-    { id: 'gastronomie', name: 'Gastronomie', image: 'weekend_food_festival_1778148211581.png', textColor: '#fff' },
-    { id: 'natura', name: 'Natură', image: 'weekend_hiking_tampa_1778148190734.png', textColor: '#fff' },
-    { id: 'plimbare', name: 'Plimbare în oraș', image: 'brasov_old_town_walk_1778266893227.png', textColor: '#fff' },
-    { id: 'cultura', name: 'Cultură', image: 'brasov_museum_culture_1778266910836.png', textColor: '#fff' },
-    { id: 'experiente', name: 'Experiențe', image: 'brasov_mountain_experience_1778266926268.png', textColor: '#fff' },
-    { id: 'evenimente', name: 'Evenimente', image: 'weekend_concert_brasov_1778148167471.png', textColor: '#fff' }
+    { id: 'gastronomie', name: 'Gastronomie', image: 'gastronomie.png', textColor: '#fff' },
+    { id: 'natura', name: 'Natură', image: 'natura.png', textColor: '#fff' },
+    { id: 'plimbare', name: 'Plimbare în oraș', image: 'plimbare.png', textColor: '#fff' },
+    { id: 'cultura', name: 'Cultură', image: 'cultura.png', textColor: '#fff' },
+    { id: 'experiente', name: 'Experiențe', image: 'experiente.png', textColor: '#fff' },
+    { id: 'evenimente', name: 'Evenimente', image: 'evenimente.png', textColor: '#fff' }
   ];
 
   allRecommendations: Recommendation[] = [
@@ -260,7 +261,7 @@ export class WeekendComponent {
       category: "experiente",
       date: "Duminică, 18:00",
       location: "Vârful Postăvaru",
-      image: "brasov_mountain_experience_1778266926268.png",
+      image: "assets/images/experiente.png",
       url: "https://zilesinopti.ro/evenimente/sunset-vibes-brasov/"
     },
     {
@@ -270,7 +271,7 @@ export class WeekendComponent {
       category: "evenimente",
       date: "Sâmbătă, 20:00",
       location: "Cetatea Brașov",
-      image: "weekend_concert_brasov_1778148167471.png",
+      image: "assets/images/evenimente.png",
       url: "https://zilesinopti.ro/evenimente/concert-rock-brasov/"
     }
   ];
