@@ -44,6 +44,10 @@ declare const L: any;
             </div>
 
             <h2 class="zona-title">{{ detectedLocationName || PARKING_ZONES[selectedZoneIndex].name }}</h2>
+            <p class="location-status" [class.detected]="!isOutOfZone">
+              <span class="material-icons">{{ isOutOfZone ? 'location_searching' : 'location_on' }}</span>
+              {{ isOutOfZone ? 'Selectează zona manual' : 'Locație detectată' }}
+            </p>
             <div class="sms-preview-badge">
               <span class="preview-label">Mesaj SMS:</span>
               <span class="preview-text">{{ carPlate || 'BV 01 ABC' }} {{ selectedHours }}</span>
@@ -206,6 +210,19 @@ declare const L: any;
     }
     .zone-pill.active { background: #fff; color: #4285f4; border-color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
     .zona-title { font-size: 1.2rem; font-weight: 800; margin: 0; text-align: center; width: 100%; }
+    .location-status { 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      gap: 0.3rem; 
+      font-size: 0.75rem; 
+      font-weight: 700; 
+      margin: -0.2rem 0 0.4rem; 
+      opacity: 0.8; 
+      color: rgba(255,255,255,0.9);
+    }
+    .location-status.detected { color: #fff; opacity: 1; }
+    .location-status .material-icons { font-size: 0.9rem; }
     .sms-preview-badge {
       background: rgba(255, 255, 255, 0.15);
       padding: 0.5rem 0.75rem;
