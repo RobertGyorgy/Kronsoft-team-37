@@ -10,69 +10,61 @@
     <h1 class="form-title">Scrie raportul</h1>
 
     <div class="report-form">
-      <!-- Numele problemei -->
       <div class="input-group">
         <label>Numele problemei</label>
-        <input 
-          type="text" 
-          placeholder="Nume" 
-          [(ngModel)]="formData.title">
+        <input type="text" placeholder="Nume" [(ngModel)]="formData.title">
       </div>
 
-      <!-- Adresa -->
       <div class="input-group">
         <label>Adresa</label>
-        <input 
-          type="text" 
-          placeholder="scrie adresa, cartierul, zona" 
-          [(ngModel)]="formData.address">
+        <input type="text" placeholder="scrie adresa, cartierul, zona" [(ngModel)]="formData.address">
       </div>
 
-      <!-- Descriere -->
       <div class="input-group">
         <label>Descriere</label>
-        <textarea 
-          placeholder="Descrie problema" 
-          rows="5"
-          [(ngModel)]="formData.description"></textarea>
+        <textarea placeholder="Descrie problema" rows="5" [(ngModel)]="formData.description"></textarea>
       </div>
 
-      <!-- Upload Button -->
       <button class="upload-btn" (click)="onUploadPhoto()">
         <span>Incarca una sau mai multe poze</span>
       </button>
 
-      <!-- Hidden Input for Camera/Gallery -->
-      <input 
-        type="file" 
-        id="cameraInput" 
-        style="display: none;" 
-        accept="image/*" 
-        capture="environment" 
-        multiple
-        (change)="onFileSelected($event)">
-
-      <!-- Photos Preview -->
       <div class="photos-preview">
         @for (photo of uploadedPhotos(); track photo) {
           <div class="photo-card">
             <img [src]="photo" alt="Upload preview">
           </div>
         }
-        
-        <!-- Placeholders if less than 2 -->
-        @if (uploadedPhotos().length < 1) {
-          <div class="photo-placeholder"></div>
-        }
-        @if (uploadedPhotos().length < 2) {
-          <div class="photo-placeholder"></div>
-        }
+        @if (uploadedPhotos().length < 1) { <div class="photo-placeholder"></div> }
+        @if (uploadedPhotos().length < 2) { <div class="photo-placeholder"></div> }
       </div>
 
-      <!-- Submit Button -->
       <button class="submit-btn" (click)="onSubmit()">
         Trimite
       </button>
     </div>
   </div>
+
+  <!-- Live Camera Overlay -->
+  @if (isCameraActive()) {
+    <div class="camera-overlay">
+      <div class="camera-header">
+        <button class="close-camera" (click)="stopCamera()">
+          <span class="material-icons">close</span>
+        </button>
+        <span>Cameră Live</span>
+      </div>
+      
+      <div class="video-wrapper">
+        <video #videoElement autoplay playsinline></video>
+        <canvas #canvasElement style="display: none;"></canvas>
+      </div>
+
+      <div class="camera-footer">
+        <button class="capture-btn" (click)="capturePhoto()">
+          <div class="inner-circle"></div>
+        </button>
+      </div>
+    </div>
+  }
 </main>
