@@ -68,6 +68,15 @@ declare const google: any;
                   placeholder="Unde mergem?">
               </div>
             </div>
+            
+            <div class="mode-toggle">
+              <button class="mode-btn" [class.active]="travelMode() === 'TRANSIT'" (click)="setTravelMode('TRANSIT')">
+                <span class="material-icons">directions_bus</span>
+              </button>
+              <button class="mode-btn" [class.active]="travelMode() === 'WALKING'" (click)="setTravelMode('WALKING')">
+                <span class="material-icons">directions_walk</span>
+              </button>
+            </div>
           </div>
 
           @if (predictions().length > 0) {
@@ -175,15 +184,19 @@ declare const google: any;
     
     /* Sticky Top Search */
     .top-search-bar { position: absolute; top: 1.5rem; left: 1.5rem; right: 1.5rem; z-index: 1000; }
-    .search-compact { background: #fff; border-radius: 20px; box-shadow: 0 12px 32px rgba(0,0,0,0.18); display: flex; align-items: center; padding: 1rem; gap: 1rem; border: 1px solid rgba(0,0,0,0.05); }
-    .icon-btn { background: transparent; border: none; color: #5f6368; padding: 0.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .search-compact { background: #fff; border-radius: 20px; box-shadow: 0 12px 32px rgba(0,0,0,0.18); display: flex; align-items: center; padding: 0.8rem 1.2rem; gap: 0.8rem; border: 1px solid rgba(0,0,0,0.05); }
     .search-inputs { flex: 1; display: flex; flex-direction: column; gap: 0.5rem; }
     .input-row { display: flex; align-items: center; gap: 1rem; }
     .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
     .dot.origin { border: 2px solid #4285f4; }
     .dot.dest { background: #ea4335; }
     .divider { height: 1px; background: #f1f3f4; margin-left: 2rem; }
-    input { border: none; outline: none; font-size: 1.05rem; font-weight: 700; color: #202124; padding: 0.4rem 0; width: 100%; background: transparent; }
+    input { border: none; outline: none; font-size: 1.05rem; font-weight: 700; color: #202124; padding: 0.2rem 0; width: 100%; background: transparent; }
+
+    .mode-toggle { display: flex; flex-direction: column; gap: 0.5rem; padding-left: 1rem; border-left: 1px solid #f1f3f4; }
+    .mode-btn { background: #f8f9fa; border: none; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #5f6368; transition: all 0.2s; }
+    .mode-btn.active { background: #e8f0fe; color: #1a73e8; }
+    .mode-btn .material-icons { font-size: 1.4rem; }
 
     .predictions-overlay { background: #fff; border-radius: 20px; margin-top: 0.8rem; box-shadow: 0 15px 40px rgba(0,0,0,0.2); overflow: hidden; }
     .prediction-item { width: 100%; display: flex; align-items: center; gap: 1.2rem; padding: 1.2rem 1.5rem; border: none; background: transparent; text-align: left; border-bottom: 1px solid #f1f3f4; }
@@ -221,10 +234,10 @@ declare const google: any;
     .step-time.end { margin-top: auto; padding-top: 1rem; color: #ea4335; }
 
     .indicator-col { width: 45px; display: flex; flex-direction: column; align-items: center; position: relative; }
-    .indicator-line { width: 6px; position: absolute; top: 0; bottom: 0; z-index: 1; background: #dadce0; border-radius: 3px; }
-    .indicator-line.dotted { background: transparent !important; border-left: 6px dotted #dadce0; width: 0; }
+    .indicator-line { width: 6px; position: absolute; top: 12px; bottom: -12px; z-index: 1; background: #dadce0; border-radius: 3px; }
+    .indicator-line.dotted { background: transparent !important; border-left: 6px dotted #dadce0; width: 0; border-radius: 0; }
     
-    .node { width: 16px; height: 16px; background: #fff; border: 4px solid #1a73e8; border-radius: 50%; z-index: 2; margin-top: 2px; display: flex; align-items: center; justify-content: center; }
+    .node { width: 16px; height: 16px; background: #fff; border: 4px solid #1a73e8; border-radius: 50%; z-index: 2; position: relative; display: flex; align-items: center; justify-content: center; }
     .node .material-icons { font-size: 1rem; display: none; }
     .node.dest-node { border-color: #ea4335 !important; background: #ea4335; color: #fff; width: 28px; height: 28px; }
     .node.dest-node .material-icons { display: block; font-size: 1.2rem; }
@@ -269,6 +282,7 @@ export class BusProgramComponent implements OnInit {
   userCoords = signal<any>(null);
   destination = signal<any>(null);
   currentRoute = signal<any>(null);
+  travelMode = signal<google.maps.TravelMode>(google.maps.TravelMode.TRANSIT);
   routeDuration = signal<string>('');
   predictions = signal<any[]>([]);
   activeSearchType = signal<'origin' | 'destination' | null>(null);
@@ -531,13 +545,18 @@ export class BusProgramComponent implements OnInit {
     }
   }
 
+  setTravelMode(mode: string) {
+    this.travelMode.set(mode as google.maps.TravelMode);
+    if (this.destination()) this.calculateRoute();
+  }
+
   calculateRoute() {
     if (!this.userCoords() || !this.destination()) return;
     this.isLoading.set(true);
     this.directionsService.route({
       origin: this.userCoords(),
       destination: this.destination().geometry.location,
-      travelMode: google.maps.TravelMode.TRANSIT,
+      travelMode: this.travelMode(),
       provideRouteAlternatives: true
     }, (response: any, status: string) => {
       this.isLoading.set(false);
