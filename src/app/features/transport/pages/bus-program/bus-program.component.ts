@@ -49,8 +49,9 @@ declare const google: any;
       } @else {
         <header class="top-search-bar" [@slideDown]>
           <div class="search-compact">
-            <button class="icon-btn" routerLink="/transport/bus">
+            <button class="unified-back-btn" routerLink="/transport/bus">
               <span class="material-icons">arrow_back</span>
+              <span>Înapoi</span>
             </button>
             <div class="search-inputs">
               <div class="input-row">
@@ -219,10 +220,10 @@ declare const google: any;
     </main>
   `,
   styles: [`
-    .bus-shell { height: 100vh; background: #fff; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+    .bus-shell { height: 100vh; width: 100%; overflow-x: hidden; background: #fff; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; position: relative; }
     
     /* Sticky Top Search */
-    .top-search-bar { position: absolute; top: 1.5rem; left: 1.5rem; right: 1.5rem; z-index: 1000; }
+    .top-search-bar { position: absolute; top: 0; left: 0; right: 0; padding: calc(var(--safe-top) + 1.2rem) 1.5rem 1rem; z-index: 1000; }
     .search-compact { background: #fff; border-radius: 20px; box-shadow: 0 12px 32px rgba(0,0,0,0.18); display: flex; align-items: center; padding: 0.6rem 1rem; gap: 0.6rem; border: 1px solid rgba(0,0,0,0.05); }
     .icon-btn { background: #f8f9fa; border: none; color: #5f6368; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .search-inputs { flex: 1; display: flex; flex-direction: column; gap: 0.4rem; }
@@ -252,7 +253,7 @@ declare const google: any;
     .p-sub { font-size: 0.8rem; color: #70757a; }
 
     /* Navigation Mode */
-    .nav-header { position: absolute; top: 0; left: 0; right: 0; background: #1a73e8; color: #fff; padding: 1.2rem 1.5rem; z-index: 1001; display: flex; align-items: center; gap: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    .nav-header { position: absolute; top: 0; left: 0; right: 0; background: #1a73e8; color: #fff; padding: calc(var(--safe-top) + 1.2rem) 1.5rem 1rem; z-index: 1001; display: flex; align-items: center; gap: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
     .nav-instruction { display: flex; align-items: center; gap: 1rem; flex: 1; }
     .nav-instruction .material-icons { font-size: 2.2rem; }
     .instruction-body { display: flex; flex-direction: column; }
@@ -318,7 +319,8 @@ export class BusProgramComponent implements OnInit {
   private userMarker: any;
   private directionsService: any;
   private directionsRenderer: any;
-  // private directionsRendererB: any;
+  private directionsRendererB: any;
+  private traversedPolyline: any;
   private autocompleteService: any;
   private placesService: any;
   private transitService = inject(TransitService);
@@ -345,6 +347,8 @@ export class BusProgramComponent implements OnInit {
   activeSearchType = signal<'origin' | 'destination' | 'waypoint' | null>(null);
 
   private watchId: number | null = null;
+  private lastRerouteTime = 0;
+  private REROUTE_THRESHOLD_METERS = 100;
 
   hasTransit = computed(() => {
     const route = this.currentRoute();
@@ -405,6 +409,11 @@ export class BusProgramComponent implements OnInit {
         this.userCoords.set(coords);
         this.updateUserMarker(coords);
         this.updateActiveStep(coords);
+        
+        if (this.isNavigating()) {
+          this.checkRerouting(coords);
+          this.updateTraversedPath(coords);
+        }
       }, (err) => console.error(err), { enableHighAccuracy: true });
     }
   }
@@ -516,6 +525,7 @@ export class BusProgramComponent implements OnInit {
       center: { lat: 45.6483, lng: 25.5891 },
       zoom: 13,
       disableDefaultUI: true,
+      gestureHandling: 'greedy',
       styles: this.getMapStyles()
     });
 
@@ -533,6 +543,14 @@ export class BusProgramComponent implements OnInit {
       polylineOptions: { strokeColor: '#8E24AA', strokeWeight: 6, strokeOpacity: 0.8 }
     });
     */
+
+    this.traversedPolyline = new google.maps.Polyline({
+      map: this.map,
+      strokeColor: '#BDC1C6',
+      strokeWeight: 6,
+      strokeOpacity: 0.6,
+      zIndex: 100
+    });
 
     this.autocompleteService = new google.maps.places.AutocompleteService();
     this.placesService = new google.maps.places.PlacesService(this.map);
@@ -649,7 +667,7 @@ export class BusProgramComponent implements OnInit {
       return;
     }
 
-    const waypoints = [];
+    const waypoints: any[] = [];
     if (hasWaypoint) {
       waypoints.push({
         location: this.waypoint().geometry.location,
@@ -662,8 +680,17 @@ export class BusProgramComponent implements OnInit {
       destination: this.destination().geometry.location,
       waypoints: waypoints,
       travelMode: this.travelMode(),
+      transitOptions: isTransit ? { departureTime: new Date(), routingPreference: google.maps.TransitRoutePreference.LESS_WALKING } : undefined,
       provideRouteAlternatives: true
     }, (response: any, status: string) => {
+      if (status === 'ZERO_RESULTS' && isTransit) {
+        // Fallback: Try searching for the next day
+        const tomorrow = new Date();
+        tomorrow.setHours(tomorrow.getHours() + 6);
+        this.retryRouteWithTime(waypoints, tomorrow);
+        return;
+      }
+      
       this.isLoading.set(false);
       if (status === 'OK') {
         let shortestRoute = response.routes[0];
@@ -694,30 +721,27 @@ export class BusProgramComponent implements OnInit {
     const waypoint = this.waypoint().geometry.location;
     const dest = this.destination().geometry.location;
 
+    const transitOpts = { departureTime: new Date(), routingPreference: google.maps.TransitRoutePreference.LESS_WALKING };
+
     // Route A: Origin -> Waypoint
     this.directionsService.route({
       origin,
       destination: waypoint,
-      travelMode: google.maps.TravelMode.TRANSIT
+      travelMode: google.maps.TravelMode.TRANSIT,
+      transitOptions: transitOpts
     }, (resA: any, statusA: string) => {
       if (statusA === 'OK') {
         // Route B: Waypoint -> Destination
         this.directionsService.route({
           origin: waypoint,
           destination: dest,
-          travelMode: google.maps.TravelMode.TRANSIT
+          travelMode: google.maps.TravelMode.TRANSIT,
+          transitOptions: transitOpts
         }, (resB: any, statusB: string) => {
           this.isLoading.set(false);
           if (statusB === 'OK') {
             const combined = this.mergeRoutes(resA, resB);
-            
-            // Draw Leg A in Blue, Leg B in Purple (Commented out)
-            // this.directionsRenderer.setDirections(resA);
-            // this.directionsRendererB.setDirections(resB);
-            
-            // Back to unified Blue
             this.directionsRenderer.setDirections(combined);
-            
             this.currentRoute.set(combined.routes[0]);
             const totalSec = combined.routes[0].legs.reduce((acc: number, leg: any) => acc + leg.duration.value, 0);
             this.routeDuration.set(this.formatSeconds(totalSec));
@@ -729,15 +753,39 @@ export class BusProgramComponent implements OnInit {
     });
   }
 
+  private retryRouteWithTime(waypoints: any[], time: Date) {
+    this.directionsService.route({
+      origin: this.userCoords(),
+      destination: this.destination().geometry.location,
+      waypoints: waypoints,
+      travelMode: google.maps.TravelMode.TRANSIT,
+      transitOptions: { departureTime: time, routingPreference: google.maps.TransitRoutePreference.LESS_WALKING }
+    }, (response: any, status: string) => {
+      this.isLoading.set(false);
+      if (status === 'OK') {
+        const route = response.routes[0];
+        this.directionsRenderer.setDirections(response);
+        this.currentRoute.set(route);
+        const totalSec = route.legs.reduce((acc: number, leg: any) => acc + leg.duration.value, 0);
+        this.routeDuration.set(this.formatSeconds(totalSec));
+      }
+    });
+  }
+
   private mergeRoutes(resA: any, resB: any): any {
     const routeA = resA.routes[0];
     const routeB = resB.routes[0];
     
-    // Create a synthesized route that merges both
+    // Stitch polylines together
+    const pathA = google.maps.geometry.encoding.decodePath(routeA.overview_polyline);
+    const pathB = google.maps.geometry.encoding.decodePath(routeB.overview_polyline);
+    const fullPath = [...pathA, ...pathB];
+    const mergedEncoded = google.maps.geometry.encoding.encodePath(fullPath);
+
     const mergedRoute = {
       ...routeA,
       legs: [...routeA.legs, ...routeB.legs],
-      overview_polyline: routeA.overview_polyline, // Simplified
+      overview_polyline: mergedEncoded,
       bounds: routeA.bounds.extend(routeB.bounds.getNorthEast()).extend(routeB.bounds.getSouthWest())
     };
 
@@ -745,6 +793,43 @@ export class BusProgramComponent implements OnInit {
       ...resA,
       routes: [mergedRoute]
     };
+  }
+
+  private checkRerouting(userPos: any) {
+    const route = this.currentRoute();
+    if (!route || Date.now() - this.lastRerouteTime < 10000) return;
+
+    const path = google.maps.geometry.encoding.decodePath(route.overview_polyline);
+    const onEdge = google.maps.geometry.poly.isLocationOnEdge(userPos, new google.maps.Polyline({ path }), 0.001); // ~100m tolerance
+
+    if (!onEdge) {
+      console.log('User deviated. Rerouting...');
+      this.lastRerouteTime = Date.now();
+      this.calculateRoute();
+    }
+  }
+
+  private updateTraversedPath(userPos: any) {
+    const route = this.currentRoute();
+    if (!route) return;
+
+    const fullPath = google.maps.geometry.encoding.decodePath(route.overview_polyline);
+    
+    // Find index of closest point on path
+    let closestIdx = 0;
+    let minDistance = Infinity;
+    
+    fullPath.forEach((pt: any, idx: number) => {
+      const dist = google.maps.geometry.spherical.computeDistanceBetween(userPos, pt);
+      if (dist < minDistance) {
+        minDistance = dist;
+        closestIdx = idx;
+      }
+    });
+
+    // Path from start to user's current progress
+    const traversedPath = fullPath.slice(0, closestIdx + 1);
+    this.traversedPolyline.setPath(traversedPath);
   }
 
   private formatSeconds(sec: number): string {

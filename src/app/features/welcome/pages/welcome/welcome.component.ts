@@ -44,13 +44,13 @@ import { RouterLink } from '@angular/router';
       .welcome-shell {
         height: 100dvh;
         width: 100%;
+        overflow-x: hidden;
         position: relative;
         display: flex;
         flex-direction: column;
         background: #000;
         font-family: 'Surgena', sans-serif;
         color: #fff;
-        overflow: hidden;
       }
 
       .hero-figure {

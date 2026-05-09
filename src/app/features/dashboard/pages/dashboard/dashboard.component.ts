@@ -63,12 +63,15 @@ import { RouterLink } from '@angular/router';
     `
       .dashboard-container {
         min-height: 100dvh;
+        width: 100%;
+        overflow-x: hidden;
         background: #f8f9fa;
-        padding: 1.5rem 1.25rem;
+        padding: calc(var(--safe-top) + 1.2rem) 1.25rem calc(var(--safe-bottom) + 1.5rem);
         font-family: 'Surgena', sans-serif;
         display: flex;
         flex-direction: column;
-        gap: 1.25rem; /* Balanced gap */
+        gap: 1.25rem;
+        position: relative;
       }
 
       .dashboard-header {

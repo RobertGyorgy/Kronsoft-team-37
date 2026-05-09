@@ -13,7 +13,7 @@ declare const google: any;
   template: `
     <div class="transport-container">
       <header class="top-nav">
-        <button class="back-pill" (click)="goBack()">
+        <button class="unified-back-btn" (click)="goBack()">
           <span class="material-icons">arrow_back</span>
           <span>Înapoi</span>
         </button>
@@ -80,11 +80,11 @@ declare const google: any;
                   <span class="dot active"></span>
                   <span>STAȚIE VERIFICATĂ • BRAȘOV SMART CITY</span>
                 </div>
+                <button class="navigate-btn" (click)="takeMeThere(activeStation())" style="margin-top: 1.25rem;">
+                  <span class="material-icons">near_me</span>
+                  <span>Duce-mă acolo</span>
+                </button>
               </div>
-              <button class="navigate-btn" (click)="takeMeThere(activeStation())">
-                <span class="material-icons">near_me</span>
-                <span>Duce-mă acolo</span>
-              </button>
             </header>
 
             <div class="available-lines">
@@ -184,8 +184,8 @@ declare const google: any;
     </div>
   `,
   styles: [`
-    .transport-container { background: #fcfcfc; min-height: 100vh; font-family: 'Outfit', sans-serif; color: #1a1a1a; }
-    .top-nav { position: sticky; top: 0; z-index: 1000; background: rgba(255,255,255,0.8); backdrop-filter: blur(20px); padding: 1rem 1.5rem; display: flex; flex-direction: column; gap: 1rem; border-bottom: 1px solid rgba(0,0,0,0.05); }
+    .transport-container { background: #fcfcfc; min-height: 100vh; width: 100%; overflow-x: hidden; font-family: 'Outfit', sans-serif; color: #1a1a1a; position: relative; }
+    .top-nav { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; background: rgba(255,255,255,0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: calc(var(--safe-top) + 1.2rem) 1.5rem 1rem; display: flex; flex-direction: column; gap: 1rem; border-bottom: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
     .back-pill { border: none; background: #fff; padding: 0.6rem 1.2rem; border-radius: 100px; display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #444; width: fit-content; box-shadow: 0 4px 12px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s; }
     .back-pill:active { transform: scale(0.95); }
     .search-pill { background: #f2f3f5; border-radius: 16px; padding: 0.6rem 1.2rem; display: flex; align-items: center; gap: 0.8rem; border: 2px solid transparent; transition: all 0.3s; }
@@ -193,7 +193,7 @@ declare const google: any;
     .search-ico { color: #999; font-size: 1.2rem; }
     .search-pill input { border: none; background: transparent; flex: 1; outline: none; font-size: 1rem; font-weight: 600; color: #1a1a1a; }
     .locate-btn { border: none; background: #fff; width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #ff4500; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    .search-overlay { position: fixed; inset: 0; top: 120px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); z-index: 900; overflow-y: auto; padding: 1.5rem; }
+    .search-overlay { position: fixed; inset: 0; top: calc(var(--safe-top) + 8.5rem); background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); z-index: 900; overflow-y: auto; padding: 1rem 1.5rem 2rem; }
     .results-container { display: flex; flex-direction: column; gap: 1rem; max-width: 600px; margin: 0 auto; }
     .result-card { background: #fff; border-radius: 20px; padding: 1.2rem; display: flex; align-items: center; gap: 1rem; border: 1px solid #f0f0f0; box-shadow: 0 4px 15px rgba(0,0,0,0.03); cursor: pointer; transition: all 0.2s; }
     .result-card:active { transform: scale(0.98); background: #fafafa; }
@@ -206,17 +206,17 @@ declare const google: any;
     .mini-line { font-size: 0.6rem; color: #fff; padding: 1px 5px; border-radius: 3px; font-weight: 900; min-width: 20px; text-align: center; }
     .chevron { color: #ccc; font-size: 1.2rem; }
 
-    .main-content { max-width: 800px; margin: 0 auto; padding-bottom: 4rem; }
-    .map-section { padding: 1.5rem; }
+    .main-content { max-width: 800px; margin: 0 auto; padding-top: calc(var(--safe-top) + 8.5rem); padding-bottom: 4rem; }
+    .map-section { padding: 1rem 1.5rem; }
     .map-canvas { height: 280px; background: #eee; border-radius: 28px; overflow: hidden; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
     .map-element { height: 100%; width: 100%; }
     .map-overlay-loader { position: absolute; inset: 0; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; z-index: 10; }
     .loader-ring { width: 30px; height: 30px; border: 3px solid #f0f0f0; border-top-color: #ff4500; border-radius: 50%; animation: spin 0.8s linear infinite; }
 
-    .station-viewer { padding: 0 1.5rem; }
-    .station-meta { margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
-    h1 { font-size: 2rem; font-weight: 900; letter-spacing: -0.03em; margin-bottom: 0.5rem; line-height: 1; flex: 1; }
-    .navigate-btn { background: #1a1a1a; color: #fff; border: none; padding: 0.8rem 1.2rem; border-radius: 16px; font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; gap: 0.6rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .station-viewer { padding: 0.5rem 1.5rem 0; }
+    .station-meta { margin-bottom: 2rem; display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+    h1 { font-size: 2rem; font-weight: 900; letter-spacing: -0.03em; margin-bottom: 0.25rem; line-height: 1.1; }
+    .navigate-btn { background: #1a1a1a; color: #fff; border: none; padding: 0.8rem 1.5rem; border-radius: 16px; font-weight: 800; font-size: 0.95rem; display: flex; align-items: center; gap: 0.6rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; justify-content: center; max-width: 280px; }
     .navigate-btn:active { transform: scale(0.95); background: #333; }
     .station-status { display: flex; align-items: center; gap: 0.5rem; font-size: 0.7rem; font-weight: 800; color: #999; text-transform: uppercase; letter-spacing: 0.05em; }
     .dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; }
@@ -307,6 +307,7 @@ export class BusSearchComponent implements OnInit, OnDestroy {
       center: { lat: 45.6483, lng: 25.5891 },
       zoom: 14,
       disableDefaultUI: true,
+      gestureHandling: 'greedy',
       styles: this.getMapStyles()
     });
     return true;

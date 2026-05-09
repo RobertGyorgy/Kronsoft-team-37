@@ -21,9 +21,10 @@
 }
 
 .auth-header {
-  padding: 1rem 1.5rem 0.5rem;
+  padding: calc(var(--safe-top) + 1.2rem) 1.5rem 1rem;
   display: flex;
   align-items: center;
+  gap: 1.5rem;
   view-transition-name: auth-header;
 }
 
