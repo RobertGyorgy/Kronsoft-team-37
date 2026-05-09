@@ -51,15 +51,15 @@
     padding: 1.1rem 1.25rem; font-size: 1rem; font-family: inherit;
     box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: all 0.2s;
     &::placeholder { color: #aaa; font-weight: 500; }
-    &:focus { outline: none; border-color: #ff8c61; box-shadow: 0 0 0 4px rgba(255, 140, 97, 0.1); }
+    &:focus { outline: none; border-color: #ff4757; box-shadow: 0 0 0 4px rgba(255, 71, 87, 0.1); }
   }
   textarea { resize: none; }
 }
 
 .upload-btn {
-  background: #ff8c61; color: #fff; border: none; padding: 1.2rem;
+  background: #ff4757; color: #fff; border: none; padding: 1.2rem;
   border-radius: 18px; font-size: 0.95rem; font-weight: 800; cursor: pointer;
-  box-shadow: 0 10px 20px rgba(255, 140, 97, 0.2); margin-top: 0.5rem;
+  box-shadow: 0 10px 20px rgba(255, 71, 87, 0.2); margin-top: 0.5rem;
   &:active { transform: scale(0.97); }
 }
 
@@ -78,9 +78,9 @@
 }
 
 .submit-btn {
-  background: #ff8c61; color: #fff; border: none; padding: 1.25rem;
+  background: #ff4757; color: #fff; border: none; padding: 1.25rem;
   border-radius: 18px; font-size: 1.1rem; font-weight: 900; cursor: pointer;
-  box-shadow: 0 12px 30px rgba(255, 140, 97, 0.25); margin-top: 1rem;
+  box-shadow: 0 12px 30px rgba(255, 71, 87, 0.25); margin-top: 1rem;
   &:active { transform: scale(0.96); opacity: 0.9; }
 }
 

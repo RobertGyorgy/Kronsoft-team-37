@@ -99,7 +99,7 @@
   }
 
   .primary-btn {
-    background: #ff7f50;
+    background: #ff4757;
     color: #fff;
     border: none;
     padding: 1rem 2rem;
@@ -108,7 +108,7 @@
     font-size: 0.95rem;
     width: 100%;
     max-width: 240px;
-    box-shadow: 0 8px 20px rgba(255, 127, 80, 0.25);
+    box-shadow: 0 8px 20px rgba(255, 71, 87, 0.25);
     cursor: pointer;
     transition: transform 0.2s;
 
@@ -207,7 +207,7 @@
       font-size: 0.7rem;
       font-weight: 800;
       
-      &[data-status="În lucru"] { background: #fff; color: #ff7f50; }
+      &[data-status="În lucru"] { background: #fff; color: #ff4757; }
       &[data-status="Rezolvat"] { background: #2bcbba; color: #fff; }
       &[data-status="Sesizat"] { background: #fff; color: #4285f4; }
     }
