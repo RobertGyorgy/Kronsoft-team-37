@@ -173,9 +173,7 @@ declare const google: any;
 
             <!-- Final Destination Node -->
             <div class="timeline-item final-arrival">
-              <div class="time-col">
-                <span class="step-time end">{{ getFinalArrivalTime() }}</span>
-              </div>
+              <div class="time-col"></div>
               <div class="indicator-col">
                 <div class="node dest-node">
                   <span class="material-icons">location_on</span>
@@ -184,6 +182,7 @@ declare const google: any;
               <div class="content-col">
                 <div class="step-header">
                   <span class="step-title dest-title">{{ destination()?.name || 'Destinație' }}</span>
+                  <span class="step-time arrival-time">{{ getFinalArrivalTime() }}</span>
                 </div>
               </div>
             </div>
@@ -261,6 +260,7 @@ declare const google: any;
     .content-col { flex: 1; padding-left: 1.2rem; padding-bottom: 2.5rem; }
     .timeline-item.final-arrival { min-height: 50px; }
     .timeline-item.final-arrival .content-col { padding-bottom: 1rem; }
+    .arrival-time { font-size: 1.1rem; font-weight: 800; color: #ea4335; margin-left: auto; }
     .step-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.3rem; }
     .line-badge { min-width: 32px; height: 20px; color: #fff; font-weight: 900; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; border-radius: 4px; padding: 0 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     .step-title { font-size: 1.1rem; font-weight: 800; color: #202124; line-height: 1.3; }
@@ -555,7 +555,7 @@ export class BusProgramComponent implements OnInit {
           strokeWeight: 2,
         },
         title: 'Locația ta',
-        zIndex: 1000
+        zIndex: 9999
       });
     }
   }
