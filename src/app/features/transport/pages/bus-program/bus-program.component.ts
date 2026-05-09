@@ -54,6 +54,7 @@ declare const google: any;
             </button>
             <div class="search-inputs">
               <div class="input-row">
+                <div class="drag-handle"><span class="material-icons">drag_indicator</span></div>
                 <span class="dot origin"></span>
                 <input #originInput type="text" 
                   (input)="onSearchInput($event, 'origin')"
@@ -64,19 +65,27 @@ declare const google: any;
               @if (showWaypoint()) {
                 <div class="divider"></div>
                 <div class="input-row" [@popIn]>
+                  <button class="reorder-btn" (click)="swapStops('origin', 'waypoint')">
+                    <span class="material-icons">swap_vert</span>
+                  </button>
                   <span class="dot waypoint"></span>
                   <input #waypointInput type="text" 
                     (input)="onSearchInput($event, 'waypoint')"
-                    placeholder="Adaugă oprire...">
+                    placeholder="Adaugă oprire..."
+                    [value]="waypoint()?.name || ''">
                 </div>
               }
 
               <div class="divider"></div>
               <div class="input-row">
+                <button class="reorder-btn" (click)="swapStops('waypoint', 'destination')">
+                  <span class="material-icons">swap_vert</span>
+                </button>
                 <span class="dot dest"></span>
                 <input #destInput type="text" 
                   (input)="onSearchInput($event, 'destination')"
-                  placeholder="Unde mergem?">
+                  placeholder="Unde mergem?"
+                  [value]="destination()?.name || ''">
               </div>
             </div>
             
@@ -144,7 +153,7 @@ declare const google: any;
           </div>
 
           <div class="timeline-scroll">
-            @for (step of currentRoute().legs[0].steps; track $index) {
+            @for (step of allSteps(); track $index) {
               <div class="timeline-item" [class.transit]="step.travel_mode === 'TRANSIT'">
                 <div class="time-col">
                   <span class="step-time">{{ getStepStartTime($index) }}</span>
@@ -215,7 +224,9 @@ declare const google: any;
     .search-compact { background: #fff; border-radius: 20px; box-shadow: 0 12px 32px rgba(0,0,0,0.18); display: flex; align-items: center; padding: 0.6rem 1rem; gap: 0.6rem; border: 1px solid rgba(0,0,0,0.05); }
     .icon-btn { background: #f8f9fa; border: none; color: #5f6368; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .search-inputs { flex: 1; display: flex; flex-direction: column; gap: 0.4rem; }
-    .input-row { display: flex; align-items: center; gap: 1rem; }
+    .input-row { display: flex; align-items: center; gap: 0.6rem; }
+    .drag-handle { color: #dadce0; margin-right: -0.2rem; display: flex; align-items: center; }
+    .reorder-btn { background: transparent; border: none; color: #1a73e8; cursor: pointer; padding: 0.2rem; display: flex; align-items: center; margin-right: -0.2rem; }
     .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
     .dot.origin { border: 2px solid #4285f4; }
     .dot.waypoint { border: 2px solid #fbbc04; }
@@ -321,6 +332,12 @@ export class BusProgramComponent implements OnInit {
   currentRoute = signal<any>(null);
   travelMode = signal<any>(google.maps.TravelMode.TRANSIT);
   routeDuration = signal<string>('');
+
+  allSteps = computed(() => {
+    const route = this.currentRoute();
+    if (!route) return [];
+    return route.legs.flatMap((leg: any) => leg.steps);
+  });
   predictions = signal<any[]>([]);
   activeSearchType = signal<'origin' | 'destination' | 'waypoint' | null>(null);
 
@@ -422,13 +439,9 @@ export class BusProgramComponent implements OnInit {
   getStepStartTime(idx: number): string {
     const now = new Date();
     let totalSeconds = 0;
-    const steps = this.currentRoute().legs[0].steps;
+    const steps = this.allSteps();
     for (let i = 0; i < idx; i++) {
       totalSeconds += steps[i].duration.value;
-      if (steps[i].travel_mode === 'TRANSIT') {
-        const arrivals = this.getStepArrivals(steps[i]);
-        if (arrivals.length > 0) totalSeconds += arrivals[0].wait * 60;
-      }
     }
     const time = new Date(now.getTime() + totalSeconds * 1000);
     return `${time.getHours().toString().padStart(2, '0')}:${time.getMinutes().toString().padStart(2, '0')}`;
@@ -437,21 +450,17 @@ export class BusProgramComponent implements OnInit {
   getStepEndTime(idx: number): string {
     const now = new Date();
     let totalSeconds = 0;
-    const steps = this.currentRoute().legs[0].steps;
+    const steps = this.allSteps();
     for (let i = 0; i <= idx; i++) {
       totalSeconds += steps[i].duration.value;
-      if (steps[i].travel_mode === 'TRANSIT') {
-        const arrivals = this.getStepArrivals(steps[i]);
-        if (arrivals.length > 0) totalSeconds += arrivals[0].wait * 60;
-      }
     }
     const time = new Date(now.getTime() + totalSeconds * 1000);
     return `${time.getHours().toString().padStart(2, '0')}:${time.getMinutes().toString().padStart(2, '0')}`;
   }
 
   getFinalArrivalTime(): string {
-    if (!this.currentRoute()) return '';
-    return this.getStepEndTime(this.currentRoute().legs[0].steps.length - 1);
+    if (!this.allSteps().length) return '';
+    return this.getStepEndTime(this.allSteps().length - 1);
   }
 
   getStepTitle(step: any, isLast: boolean = false): string {
@@ -485,7 +494,7 @@ export class BusProgramComponent implements OnInit {
     if (!step.transit || !this.transitService.isLoaded()) return [];
     
     let offset = 0;
-    const steps = this.currentRoute().legs[0].steps;
+    const steps = this.allSteps();
     for (const s of steps) {
       if (s === step) break;
       offset += s.duration.value;
