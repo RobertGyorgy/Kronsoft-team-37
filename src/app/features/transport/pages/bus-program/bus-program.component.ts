@@ -318,7 +318,8 @@ export class BusProgramComponent implements OnInit {
   private userMarker: any;
   private directionsService: any;
   private directionsRenderer: any;
-  // private directionsRendererB: any;
+  private directionsRendererB: any;
+  private traversedPolyline: any;
   private autocompleteService: any;
   private placesService: any;
   private transitService = inject(TransitService);
@@ -345,6 +346,8 @@ export class BusProgramComponent implements OnInit {
   activeSearchType = signal<'origin' | 'destination' | 'waypoint' | null>(null);
 
   private watchId: number | null = null;
+  private lastRerouteTime = 0;
+  private REROUTE_THRESHOLD_METERS = 100;
 
   hasTransit = computed(() => {
     const route = this.currentRoute();
@@ -405,6 +408,11 @@ export class BusProgramComponent implements OnInit {
         this.userCoords.set(coords);
         this.updateUserMarker(coords);
         this.updateActiveStep(coords);
+        
+        if (this.isNavigating()) {
+          this.checkRerouting(coords);
+          this.updateTraversedPath(coords);
+        }
       }, (err) => console.error(err), { enableHighAccuracy: true });
     }
   }
@@ -533,6 +541,14 @@ export class BusProgramComponent implements OnInit {
       polylineOptions: { strokeColor: '#8E24AA', strokeWeight: 6, strokeOpacity: 0.8 }
     });
     */
+
+    this.traversedPolyline = new google.maps.Polyline({
+      map: this.map,
+      strokeColor: '#BDC1C6',
+      strokeWeight: 6,
+      strokeOpacity: 0.6,
+      zIndex: 100
+    });
 
     this.autocompleteService = new google.maps.places.AutocompleteService();
     this.placesService = new google.maps.places.PlacesService(this.map);
@@ -733,11 +749,16 @@ export class BusProgramComponent implements OnInit {
     const routeA = resA.routes[0];
     const routeB = resB.routes[0];
     
-    // Create a synthesized route that merges both
+    // Stitch polylines together
+    const pathA = google.maps.geometry.encoding.decodePath(routeA.overview_polyline);
+    const pathB = google.maps.geometry.encoding.decodePath(routeB.overview_polyline);
+    const fullPath = [...pathA, ...pathB];
+    const mergedEncoded = google.maps.geometry.encoding.encodePath(fullPath);
+
     const mergedRoute = {
       ...routeA,
       legs: [...routeA.legs, ...routeB.legs],
-      overview_polyline: routeA.overview_polyline, // Simplified
+      overview_polyline: mergedEncoded,
       bounds: routeA.bounds.extend(routeB.bounds.getNorthEast()).extend(routeB.bounds.getSouthWest())
     };
 
@@ -745,6 +766,43 @@ export class BusProgramComponent implements OnInit {
       ...resA,
       routes: [mergedRoute]
     };
+  }
+
+  private checkRerouting(userPos: any) {
+    const route = this.currentRoute();
+    if (!route || Date.now() - this.lastRerouteTime < 10000) return;
+
+    const path = google.maps.geometry.encoding.decodePath(route.overview_polyline);
+    const onEdge = google.maps.geometry.poly.isLocationOnEdge(userPos, new google.maps.Polyline({ path }), 0.001); // ~100m tolerance
+
+    if (!onEdge) {
+      console.log('User deviated. Rerouting...');
+      this.lastRerouteTime = Date.now();
+      this.calculateRoute();
+    }
+  }
+
+  private updateTraversedPath(userPos: any) {
+    const route = this.currentRoute();
+    if (!route) return;
+
+    const fullPath = google.maps.geometry.encoding.decodePath(route.overview_polyline);
+    
+    // Find index of closest point on path
+    let closestIdx = 0;
+    let minDistance = Infinity;
+    
+    fullPath.forEach((pt: any, idx: number) => {
+      const dist = google.maps.geometry.spherical.computeDistanceBetween(userPos, pt);
+      if (dist < minDistance) {
+        minDistance = dist;
+        closestIdx = idx;
+      }
+    });
+
+    // Path from start to user's current progress
+    const traversedPath = fullPath.slice(0, closestIdx + 1);
+    this.traversedPolyline.setPath(traversedPath);
   }
 
   private formatSeconds(sec: number): string {
