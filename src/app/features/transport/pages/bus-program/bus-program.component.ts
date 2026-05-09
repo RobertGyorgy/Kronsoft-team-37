@@ -245,7 +245,7 @@ declare const google: any;
     .timeline-item { display: flex; min-height: 100px; }
     .time-col { width: 60px; display: flex; flex-direction: column; padding-bottom: 1.5rem; }
     .step-time { font-size: 0.95rem; font-weight: 800; color: #202124; }
-    .step-time.end { margin-top: auto; padding-top: 1rem; color: #ea4335; }
+    .step-time.end { color: #ea4335; }
 
     .indicator-col { width: 45px; display: flex; flex-direction: column; align-items: center; position: relative; }
     .indicator-line { width: 6px; position: absolute; top: 12px; bottom: -20px; z-index: 1; background: #dadce0; border-radius: 3px; }
@@ -450,7 +450,7 @@ export class BusProgramComponent implements OnInit {
     if (step.travel_mode === 'TRANSIT') return 'directions_bus';
     const instr = step.instructions.toLowerCase();
     if (instr.includes('destinație') || instr.includes('ajuns')) return 'location_on';
-    return 'directions_walk';
+    return 'radio_button_checked';
   }
 
   getPredictionIcon(p: any): string {
@@ -586,8 +586,14 @@ export class BusProgramComponent implements OnInit {
           position: this.destination().geometry.location,
           map: this.map,
           icon: {
-            url: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png'
-          }
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 10,
+            fillColor: '#EA4335',
+            fillOpacity: 1,
+            strokeColor: '#FFFFFF',
+            strokeWeight: 3,
+          },
+          zIndex: 1000
         });
       }
     });
