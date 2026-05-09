@@ -1,0 +1,68 @@
+<main class="form-container">
+  <!-- Header -->
+  <header class="top-bar">
+    <button class="back-btn" (click)="goBack()">
+      <span class="material-icons">arrow_back</span>
+    </button>
+  </header>
+
+  <div class="scroll-content">
+    <h1 class="form-title">Scrie raportul</h1>
+
+    <div class="report-form">
+      <!-- Numele problemei -->
+      <div class="input-group">
+        <label>Numele problemei</label>
+        <input 
+          type="text" 
+          placeholder="Nume" 
+          [(ngModel)]="formData.title">
+      </div>
+
+      <!-- Adresa -->
+      <div class="input-group">
+        <label>Adresa</label>
+        <input 
+          type="text" 
+          placeholder="scrie adresa, cartierul, zona" 
+          [(ngModel)]="formData.address">
+      </div>
+
+      <!-- Descriere -->
+      <div class="input-group">
+        <label>Descriere</label>
+        <textarea 
+          placeholder="Descrie problema" 
+          rows="5"
+          [(ngModel)]="formData.description"></textarea>
+      </div>
+
+      <!-- Upload Button -->
+      <button class="upload-btn" (click)="onUploadPhoto()">
+        <span>Incarca una sau mai multe poze</span>
+      </button>
+
+      <!-- Photos Preview -->
+      <div class="photos-preview">
+        @for (photo of uploadedPhotos(); track photo) {
+          <div class="photo-card">
+            <img [src]="photo" alt="Upload preview">
+          </div>
+        }
+        
+        <!-- Placeholders if less than 2 -->
+        @if (uploadedPhotos().length < 1) {
+          <div class="photo-placeholder"></div>
+        }
+        @if (uploadedPhotos().length < 2) {
+          <div class="photo-placeholder"></div>
+        }
+      </div>
+
+      <!-- Submit Button -->
+      <button class="submit-btn" (click)="onSubmit()">
+        Trimite
+      </button>
+    </div>
+  </div>
+</main>

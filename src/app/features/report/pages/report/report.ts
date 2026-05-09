@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 
 interface ReportIssue {
   id: number;
@@ -76,8 +76,9 @@ export class ReportComponent {
     window.history.back();
   }
 
+  constructor(private router: Router) {}
+
   onNewReport() {
-    console.log('Deschide camera pentru raportare nouă...');
-    // Aici s-ar deschide un dialog sau o pagină nouă de captură
+    this.router.navigate(['/report/form']);
   }
 }
