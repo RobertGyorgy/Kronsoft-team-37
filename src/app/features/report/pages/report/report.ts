@@ -6,7 +6,7 @@ import { ReportService } from '../../services/report';
 @Component({
   selector: 'app-report',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './report.html',
   styleUrl: './report.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

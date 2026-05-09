@@ -282,7 +282,7 @@ export class BusProgramComponent implements OnInit {
   userCoords = signal<any>(null);
   destination = signal<any>(null);
   currentRoute = signal<any>(null);
-  travelMode = signal<google.maps.TravelMode>(google.maps.TravelMode.TRANSIT);
+  travelMode = signal<any>(google.maps.TravelMode.TRANSIT);
   routeDuration = signal<string>('');
   predictions = signal<any[]>([]);
   activeSearchType = signal<'origin' | 'destination' | null>(null);
@@ -546,7 +546,7 @@ export class BusProgramComponent implements OnInit {
   }
 
   setTravelMode(mode: string) {
-    this.travelMode.set(mode as google.maps.TravelMode);
+    this.travelMode.set(mode);
     if (this.destination()) this.calculateRoute();
   }
 
