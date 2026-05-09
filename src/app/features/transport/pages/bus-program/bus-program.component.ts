@@ -254,6 +254,7 @@ export class BusProgramComponent implements OnInit {
   @ViewChild('originInput') originInput!: ElementRef;
 
   private map: any;
+  private userMarker: any;
   private directionsService: any;
   private directionsRenderer: any;
   private autocompleteService: any;
@@ -331,6 +332,7 @@ export class BusProgramComponent implements OnInit {
       this.watchId = navigator.geolocation.watchPosition((pos) => {
         const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
         this.userCoords.set(coords);
+        this.updateUserMarker(coords);
         this.updateActiveStep(coords);
       }, (err) => console.error(err), { enableHighAccuracy: true });
     }
@@ -496,11 +498,35 @@ export class BusProgramComponent implements OnInit {
       navigator.geolocation.getCurrentPosition((position) => {
         const pos = { lat: position.coords.latitude, lng: position.coords.longitude };
         this.userCoords.set(pos);
+        this.updateUserMarker(pos);
         this.map.setCenter(pos);
         const geocoder = new google.maps.Geocoder();
         geocoder.geocode({ location: pos }, (results: any) => {
           if (results && results[0]) this.userLocationName.set(results[0].formatted_address.split(',')[0]);
         });
+      });
+    }
+  }
+
+  private updateUserMarker(coords: any) {
+    if (!this.map) return;
+    
+    if (this.userMarker) {
+      this.userMarker.setPosition(coords);
+    } else {
+      this.userMarker = new google.maps.Marker({
+        position: coords,
+        map: this.map,
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 8,
+          fillColor: '#4285F4',
+          fillOpacity: 1,
+          strokeColor: '#FFFFFF',
+          strokeWeight: 2,
+        },
+        title: 'Locația ta',
+        zIndex: 1000
       });
     }
   }
