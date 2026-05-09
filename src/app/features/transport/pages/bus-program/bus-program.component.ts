@@ -60,6 +60,17 @@ declare const google: any;
                   placeholder="Locația ta" 
                   [value]="userLocationName()">
               </div>
+              
+              @if (showWaypoint()) {
+                <div class="divider"></div>
+                <div class="input-row" [@popIn]>
+                  <span class="dot waypoint"></span>
+                  <input #waypointInput type="text" 
+                    (input)="onSearchInput($event, 'waypoint')"
+                    placeholder="Adaugă oprire...">
+                </div>
+              }
+
               <div class="divider"></div>
               <div class="input-row">
                 <span class="dot dest"></span>
@@ -70,6 +81,10 @@ declare const google: any;
             </div>
             
             <div class="mode-toggle">
+              <button class="add-stop-btn" (click)="toggleWaypoint()" [class.active]="showWaypoint()">
+                <span class="material-icons">{{ showWaypoint() ? 'remove' : 'add' }}</span>
+              </button>
+              <div class="v-divider"></div>
               <button class="mode-btn" [class.active]="travelMode() === 'TRANSIT'" (click)="setTravelMode('TRANSIT')">
                 <span class="material-icons">directions_bus</span>
               </button>
@@ -203,11 +218,15 @@ declare const google: any;
     .input-row { display: flex; align-items: center; gap: 1rem; }
     .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
     .dot.origin { border: 2px solid #4285f4; }
+    .dot.waypoint { border: 2px solid #fbbc04; }
     .dot.dest { background: #ea4335; }
     .divider { height: 1px; background: #f1f3f4; margin-left: 2rem; }
     input { border: none; outline: none; font-size: 1.05rem; font-weight: 700; color: #202124; padding: 0.2rem 0; width: 100%; background: transparent; }
 
-    .mode-toggle { display: flex; flex-direction: column; gap: 0.5rem; padding-left: 1rem; border-left: 1px solid #f1f3f4; }
+    .mode-toggle { display: flex; flex-direction: column; gap: 0.4rem; padding-left: 1rem; border-left: 1px solid #f1f3f4; align-items: center; }
+    .add-stop-btn { background: transparent; border: none; color: #1a73e8; cursor: pointer; padding: 0.2rem; }
+    .add-stop-btn.active { color: #ea4335; }
+    .v-divider { width: 20px; height: 1px; background: #f1f3f4; margin: 0.2rem 0; }
     .mode-btn { background: #f8f9fa; border: none; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #5f6368; transition: all 0.2s; }
     .mode-btn.active { background: #e8f0fe; color: #1a73e8; }
     .mode-btn .material-icons { font-size: 1.4rem; }
@@ -280,6 +299,7 @@ export class BusProgramComponent implements OnInit {
   @ViewChild('mapContainer') mapContainer!: ElementRef;
   @ViewChild('destInput') destInput!: ElementRef;
   @ViewChild('originInput') originInput!: ElementRef;
+  @ViewChild('waypointInput') waypointInput!: ElementRef;
 
   private map: any;
   private userMarker: any;
@@ -292,9 +312,11 @@ export class BusProgramComponent implements OnInit {
 
   isLoading = signal(false);
   isNavigating = signal(false);
+  showWaypoint = signal(false);
   activeStep = signal<any>(null);
   userLocationName = signal('Locația ta');
   userCoords = signal<any>(null);
+  waypoint = signal<any>(null);
   destination = signal<any>(null);
   currentRoute = signal<any>(null);
   travelMode = signal<any>(google.maps.TravelMode.TRANSIT);
@@ -496,7 +518,7 @@ export class BusProgramComponent implements OnInit {
     this.placesService = new google.maps.places.PlacesService(this.map);
   }
 
-  onSearchInput(event: any, type: 'origin' | 'destination') {
+  onSearchInput(event: any, type: 'origin' | 'destination' | 'waypoint') {
     const query = event.target.value;
     this.activeSearchType.set(type);
     if (query.length < 3) { this.predictions.set([]); return; }
@@ -509,10 +531,14 @@ export class BusProgramComponent implements OnInit {
 
   selectPrediction(p: any) {
     this.placesService.getDetails({ placeId: p.place_id }, (place: any) => {
-      if (this.activeSearchType() === 'origin') {
+      const type = this.activeSearchType();
+      if (type === 'origin') {
         this.userCoords.set(place.geometry.location);
         this.userLocationName.set(place.name);
         this.originInput.nativeElement.value = place.name;
+      } else if (type === 'waypoint') {
+        this.waypoint.set(place);
+        this.waypointInput.nativeElement.value = place.name;
       } else {
         this.destination.set(place);
         this.destInput.nativeElement.value = place.name;
@@ -565,38 +591,66 @@ export class BusProgramComponent implements OnInit {
     if (this.destination()) this.calculateRoute();
   }
 
+  toggleWaypoint() {
+    this.showWaypoint.update(v => !v);
+    if (!this.showWaypoint()) {
+      this.waypoint.set(null);
+      this.calculateRoute();
+    }
+  }
+
   calculateRoute() {
     if (!this.userCoords() || !this.destination()) return;
     this.isLoading.set(true);
+
+    const waypoints = [];
+    if (this.showWaypoint() && this.waypoint()) {
+      waypoints.push({
+        location: this.waypoint().geometry.location,
+        stopover: true
+      });
+    }
+
     this.directionsService.route({
       origin: this.userCoords(),
       destination: this.destination().geometry.location,
+      waypoints: waypoints,
       travelMode: this.travelMode(),
       provideRouteAlternatives: true
     }, (response: any, status: string) => {
       this.isLoading.set(false);
       if (status === 'OK') {
-        this.directionsRenderer.setDirections(response);
-        const route = response.routes[0];
-        this.currentRoute.set(route);
-        this.routeDuration.set(route.legs[0].duration.text);
-        
-        // Add destination marker manually
-        new google.maps.Marker({
-          position: this.destination().geometry.location,
-          map: this.map,
-          icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 10,
-            fillColor: '#EA4335',
-            fillOpacity: 1,
-            strokeColor: '#FFFFFF',
-            strokeWeight: 3,
-          },
-          zIndex: 1000
+        // Pick the absolute shortest duration route
+        let shortestRoute = response.routes[0];
+        let minDuration = Infinity;
+
+        response.routes.forEach((r: any) => {
+          const totalDuration = r.legs.reduce((acc: number, leg: any) => acc + leg.duration.value, 0);
+          if (totalDuration < minDuration) {
+            minDuration = totalDuration;
+            shortestRoute = r;
+          }
         });
+
+        this.directionsRenderer.setDirections({ ...response, routes: [shortestRoute] });
+        this.currentRoute.set(shortestRoute);
+        
+        // Sum durations of all legs
+        const totalSec = shortestRoute.legs.reduce((acc: number, leg: any) => acc + leg.duration.value, 0);
+        this.routeDuration.set(this.formatSeconds(totalSec));
+
+        // Manual red dot marker logic (handled for all legs)
+        this.map.setCenter(this.userCoords());
       }
     });
+  }
+
+  private formatSeconds(sec: number): string {
+    const min = Math.round(sec / 60);
+    if (min < 60) return `${min} min`;
+    const h = Math.floor(min / 60);
+    const m = min % 60;
+    return `${h} h ${m} min`;
   }
 
   open24Pay() { window.location.href = 'https://www.24pay.ro/'; }
