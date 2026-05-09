@@ -11,56 +11,67 @@ import { RouterLink } from '@angular/router';
       <header class="top-nav">
         <button class="back-pill" routerLink="/transport/bus">
           <span class="material-icons">arrow_back</span>
-          Meniu
+          Înapoi
         </button>
       </header>
 
       <section class="page-header">
-        <p class="eyebrow">Planificator Călătorie</p>
+        <p class="eyebrow">Planificator Urban</p>
         <h1>Unde mergem?</h1>
       </section>
 
-      <!-- Map Planner UI (Compact) -->
-      <div class="map-planner-container">
-        <div class="planner-pill">
-          <div class="input-stack">
-            <div class="location-input">
-              <span class="dot dest"></span>
-              <input type="text" placeholder="Introdu destinația" />
-            </div>
+      <div class="planner-section">
+        <div class="planner-box">
+          <div class="input-group">
+            <span class="material-icons start-icon">my_location</span>
+            <input type="text" placeholder="Locația ta actuală" value="Locația mea" disabled />
           </div>
-          <button class="plan-btn">
+          <div class="divider">
+            <div class="line"></div>
+            <span class="material-icons">swap_vert</span>
+            <div class="line"></div>
+          </div>
+          <div class="input-group">
+            <span class="material-icons end-icon">place</span>
+            <input type="text" placeholder="Caută destinație..." />
+          </div>
+          <button class="action-btn">
+            Planifică Traseul
             <span class="material-icons">directions</span>
           </button>
         </div>
       </div>
 
       <div class="scroll-content">
-        <!-- Quick Action: Buy Ticket -->
-        <div class="main-action-container">
-          <a href="https://24pay.ro" target="_blank" class="buy-ticket-btn">
-            <span class="material-icons">confirmation_number</span>
-            Cumpără bilet (24pay)
+        <div class="ticket-cta">
+          <a href="https://24pay.ro" target="_blank" class="ticket-btn">
+            <div class="btn-info">
+              <span class="material-icons">confirmation_number</span>
+              <div class="text">
+                <span class="main">Cumpără Bilet</span>
+                <span class="sub">Direct prin 24pay</span>
+              </div>
+            </div>
+            <span class="material-icons">open_in_new</span>
           </a>
         </div>
 
-        <!-- High-Fidelity Map Mockup -->
-        <div class="maps-container">
-          <div class="map-overlay">
-            <img src="map-mockup.png" alt="Brașov Map" class="map-image" />
-            <div class="map-glass-overlay"></div>
-            
-            <!-- Simulated Nav Info Overlay -->
-            <div class="nav-card">
-              <div class="nav-icon">
-                <span class="material-icons">turn_right</span>
-              </div>
-              <div class="nav-text">
-                <span class="next-step">La 200m turnează la dreapta</span>
-                <span class="street-name">Bulevardul 15 Noiembrie</span>
-              </div>
-              <div class="eta-block">
-                <span class="time">12 min</span>
+        <div class="map-preview">
+          <div class="map-card">
+            <div class="map-placeholder">
+              <span class="material-icons">map</span>
+              <p>Harta se încarcă...</p>
+            </div>
+            <div class="nav-overlay">
+              <div class="nav-step">
+                <div class="step-icon">
+                  <span class="material-icons">turn_right</span>
+                </div>
+                <div class="step-details">
+                  <span class="instruction">Peste 300m turnează la dreapta</span>
+                  <span class="street">Bulevardul Eroilor</span>
+                </div>
+                <div class="eta">14 min</div>
               </div>
             </div>
           </div>
@@ -68,187 +79,162 @@ import { RouterLink } from '@angular/router';
       </div>
     </main>
   `,
-  styles: [
-    `
-      .bus-shell {
-        min-height: 100dvh;
-        background: #fcfcfc;
-        font-family: 'Surgena', sans-serif;
-        display: flex;
-        flex-direction: column;
-        color: #1a1a1a;
-      }
+  styles: [`
+    .bus-shell {
+      min-height: 100vh;
+      background: #fcfcfc;
+      font-family: 'Outfit', sans-serif;
+      color: #1a1a1a;
+      display: flex;
+      flex-direction: column;
+    }
 
-      .top-nav { padding: 1rem 1.5rem; }
-      .back-pill {
-        background: #fff;
-        border: 1px solid #eee;
-        padding: 0.5rem 1rem;
-        border-radius: 999px;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: #333;
-        font-weight: 700;
-        text-decoration: none;
-        font-size: 0.9rem;
-      }
+    .top-nav { padding: 1.5rem; }
+    .back-pill {
+      background: #fff;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 100px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #444;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      cursor: pointer;
+      font-family: inherit;
+    }
 
-      .page-header { padding: 0 1.5rem 0.75rem; }
-      .eyebrow { font-size: 0.9rem; color: #888; margin: 0; font-weight: 500; }
-      h1 { font-size: 2.25rem; font-weight: 800; margin: 0; color: #ff4500; letter-spacing: -0.03em; }
+    .page-header { padding: 0 1.5rem 1.5rem; }
+    .eyebrow { font-size: 0.9rem; font-weight: 700; color: #ff4500; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem; }
+    h1 { font-size: 2.2rem; font-weight: 900; margin: 0; letter-spacing: -0.04em; line-height: 1; }
 
-      .map-planner-container {
-        padding: 0 1.5rem;
-        margin-bottom: 1rem;
-      }
+    .planner-section { padding: 0 1.5rem; margin-bottom: 2rem; }
+    .planner-box {
+      background: #fff;
+      border-radius: 32px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+      border: 1px solid rgba(0,0,0,0.02);
+    }
+    
+    .input-group { display: flex; align-items: center; gap: 1rem; padding: 0.5rem 0; }
+    .input-group input { 
+      border: none; 
+      outline: none; 
+      font-family: inherit; 
+      font-size: 1rem; 
+      font-weight: 600; 
+      width: 100%; 
+      color: #1a1a1a;
+    }
+    .input-group input:disabled { background: transparent; color: #999; }
+    
+    .start-icon { color: #4285f4; }
+    .end-icon { color: #ff4500; }
+    
+    .divider { display: flex; align-items: center; gap: 1rem; padding: 0.2rem 0; }
+    .divider .line { flex: 1; height: 1px; background: #eee; }
+    .divider .material-icons { font-size: 1.2rem; color: #ccc; }
+    
+    .action-btn {
+      width: 100%;
+      background: #1a1a1a;
+      color: #fff;
+      border: none;
+      padding: 1.2rem;
+      border-radius: 20px;
+      font-weight: 800;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      margin-top: 1.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .action-btn:active { transform: scale(0.97); background: #333; }
 
-      .planner-pill {
-        background: #fff;
-        border: 1px solid #eee;
-        border-radius: 24px; /* Slightly tighter radius */
-        padding: 0.75rem 1rem; /* Much smaller padding */
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.04);
-      }
+    .scroll-content { padding: 0 1.5rem 3rem; display: flex; flex-direction: column; gap: 1.5rem; }
+    
+    .ticket-cta { width: 100%; }
+    .ticket-btn {
+      background: linear-gradient(135deg, #ff4500 0%, #ff6a00 100%);
+      padding: 1.2rem 1.5rem;
+      border-radius: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-decoration: none;
+      color: #fff;
+      box-shadow: 0 8px 25px rgba(255,69,0,0.2);
+    }
+    .btn-info { display: flex; align-items: center; gap: 1.2rem; }
+    .btn-info .material-icons { font-size: 2rem; }
+    .text { display: flex; flex-direction: column; }
+    .text .main { font-weight: 900; font-size: 1.1rem; }
+    .text .sub { font-size: 0.8rem; opacity: 0.8; font-weight: 500; }
 
-      .input-stack {
-        flex: 1;
-      }
+    .map-preview { flex: 1; }
+    .map-card {
+      height: 300px;
+      background: #f0f0f0;
+      border-radius: 32px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+    .map-placeholder {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #bbb;
+    }
+    .map-placeholder .material-icons { font-size: 3rem; margin-bottom: 0.5rem; }
+    .map-placeholder p { font-weight: 600; font-size: 0.9rem; }
 
-      .location-input {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-      }
-
-      .dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-      }
-      .dot.dest { background: #ff4500; box-shadow: 0 0 8px rgba(255, 69, 0, 0.4); }
-
-      input {
-        border: none;
-        outline: none;
-        font-size: 1rem;
-        font-family: inherit;
-        color: #333;
-        width: 100%;
-        background: transparent;
-      }
-
-      .plan-btn {
-        width: 2.75rem; /* Smaller button */
-        height: 2.75rem;
-        background: #ff4500;
-        border: none;
-        border-radius: 16px;
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        box-shadow: 0 4px 10px rgba(255, 69, 0, 0.2);
-      }
-      .plan-btn .material-icons { font-size: 1.25rem; }
-
-      .scroll-content { flex: 1; padding: 0 1.5rem 2rem; display: flex; flex-direction: column; gap: 1.25rem; }
-
-      .main-action-container { width: 100%; }
-
-      .buy-ticket-btn {
-        width: 100%;
-        background: #ff4500;
-        color: #fff;
-        text-decoration: none;
-        padding: 0.9rem;
-        border-radius: 999px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        font-weight: 800;
-        font-size: 0.95rem;
-        box-shadow: 0 8px 20px rgba(255, 69, 0, 0.1);
-      }
-      
-      /* Map Mockup Styles */
-      .maps-container {
-        flex: 1;
-        position: relative;
-        border-radius: 32px;
-        overflow: hidden;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        min-height: 350px;
-        background: #eee;
-      }
-
-      .map-overlay {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .map-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      .map-glass-overlay {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(to bottom, rgba(255,255,255,0) 60%, rgba(255,255,255,0.8));
-        pointer-events: none;
-      }
-
-      /* Navigation Card Mockup */
-      .nav-card {
-        position: absolute;
-        bottom: 1.5rem;
-        left: 1.5rem;
-        right: 1.5rem;
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(15px);
-        border-radius: 24px;
-        padding: 1.25rem;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        border: 1px solid rgba(255,255,255,0.5);
-      }
-
-      .nav-icon {
-        width: 3rem;
-        height: 3rem;
-        background: #4285f4;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #fff;
-      }
-
-      .nav-text { flex: 1; display: flex; flex-direction: column; }
-      .next-step { font-weight: 800; font-size: 0.95rem; color: #1a1a1a; }
-      .street-name { font-size: 0.8rem; color: #666; font-weight: 500; }
-
-      .eta-block {
-        background: #ff4500;
-        color: #fff;
-        padding: 0.5rem 0.8rem;
-        border-radius: 12px;
-        font-weight: 800;
-        font-size: 0.9rem;
-      }
-    `
-  ],
+    .nav-overlay {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      right: 1rem;
+    }
+    .nav-step {
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(10px);
+      padding: 1rem;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    .step-icon {
+      width: 42px;
+      height: 42px;
+      background: #4285f4;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+    .step-details { flex: 1; display: flex; flex-direction: column; }
+    .instruction { font-weight: 800; font-size: 0.9rem; color: #1a1a1a; }
+    .street { font-size: 0.75rem; color: #666; font-weight: 500; }
+    .eta {
+      background: #ff4500;
+      color: #fff;
+      padding: 0.4rem 0.6rem;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 0.8rem;
+    }
+  `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BusProgramComponent {}
