@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { ReportService } from '../../services/report';
 
 @Component({
   selector: 'app-report-form',
@@ -12,32 +13,31 @@ import { FormsModule } from '@angular/forms';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReportFormComponent {
+  private reportService = inject(ReportService);
+  private router = inject(Router);
+
   formData = {
     title: '',
     address: '',
-    description: ''
+    description: '',
+    category: 'Altele' // Default category
   };
 
   uploadedPhotos = signal<string[]>([]);
-
-  constructor(private router: Router) {}
 
   goBack() {
     window.history.back();
   }
 
   onUploadPhoto() {
-    // 1. Cerem permisiunea pentru cameră (explicit)
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices.getUserMedia({ video: true })
         .then((stream) => {
-          // Permisiune acordată - oprim stream-ul imediat (doar am verificat accesul)
           stream.getTracks().forEach(track => track.stop());
           this.triggerFilePicker();
         })
         .catch((err) => {
           console.warn('Permisiune cameră refuzată sau eroare:', err);
-          // Chiar dacă refuză camera live, permitem selectarea din galerie
           this.triggerFilePicker();
         });
     } else {
@@ -64,9 +64,23 @@ export class ReportFormComponent {
   }
 
   onSubmit() {
-    console.log('Trimitere raport:', this.formData);
-    // Aici s-ar face trimiterea către backend
-    alert('Raportul a fost trimis cu succes!');
+    if (!this.formData.title || !this.formData.address) {
+      alert('Te rugăm să completezi titlul și adresa!');
+      return;
+    }
+
+    // Salvăm raportul în serviciu
+    this.reportService.addReport({
+      title: this.formData.title,
+      location: this.formData.address,
+      description: this.formData.description,
+      category: this.formData.category,
+      image: this.uploadedPhotos().length > 0 
+        ? this.uploadedPhotos()[0] 
+        : 'https://images.unsplash.com/photo-1515162305285-0293e4767cc2?q=80&w=800' // Fallback
+    });
+
+    alert('Raportul a fost salvat și trimis cu succes!');
     this.router.navigate(['/report']);
   }
 }
