@@ -90,10 +90,12 @@ declare const google: any;
             </div>
             
             <div class="mode-toggle">
+              <!--
               <button class="add-stop-btn" (click)="toggleWaypoint()" [class.active]="showWaypoint()">
                 <span class="material-icons">{{ showWaypoint() ? 'remove' : 'add' }}</span>
               </button>
               <div class="v-divider"></div>
+              -->
               <button class="mode-btn" [class.active]="travelMode() === 'TRANSIT'" (click)="setTravelMode('TRANSIT')">
                 <span class="material-icons">directions_bus</span>
               </button>
@@ -316,6 +318,7 @@ export class BusProgramComponent implements OnInit {
   private userMarker: any;
   private directionsService: any;
   private directionsRenderer: any;
+  // private directionsRendererB: any;
   private autocompleteService: any;
   private placesService: any;
   private transitService = inject(TransitService);
@@ -323,7 +326,7 @@ export class BusProgramComponent implements OnInit {
 
   isLoading = signal(false);
   isNavigating = signal(false);
-  showWaypoint = signal(false);
+  showWaypoint = signal(false); // Forced false
   activeStep = signal<any>(null);
   userLocationName = signal('Locația ta');
   userCoords = signal<any>(null);
@@ -523,6 +526,14 @@ export class BusProgramComponent implements OnInit {
       polylineOptions: { strokeColor: '#1A73E8', strokeWeight: 6, strokeOpacity: 0.8 }
     });
 
+    /* 
+    this.directionsRendererB = new google.maps.DirectionsRenderer({
+      map: this.map,
+      suppressMarkers: true,
+      polylineOptions: { strokeColor: '#8E24AA', strokeWeight: 6, strokeOpacity: 0.8 }
+    });
+    */
+
     this.autocompleteService = new google.maps.places.AutocompleteService();
     this.placesService = new google.maps.places.PlacesService(this.map);
   }
@@ -600,6 +611,21 @@ export class BusProgramComponent implements OnInit {
     if (this.destination()) this.calculateRoute();
   }
 
+  swapStops(from: string, to: string) {
+    if (from === 'origin' && to === 'waypoint') {
+      const tempCoords = this.userCoords();
+      const tempName = this.userLocationName();
+      this.userCoords.set(this.waypoint()?.geometry?.location || null);
+      this.userLocationName.set(this.waypoint()?.name || 'Locația ta');
+      this.waypoint.set({ geometry: { location: tempCoords }, name: tempName });
+    } else if (from === 'waypoint' && to === 'destination') {
+      const temp = this.waypoint();
+      this.waypoint.set(this.destination());
+      this.destination.set(temp);
+    }
+    this.calculateRoute();
+  }
+
   toggleWaypoint() {
     this.showWaypoint.update(v => !v);
     if (!this.showWaypoint()) {
@@ -612,8 +638,19 @@ export class BusProgramComponent implements OnInit {
     if (!this.userCoords() || !this.destination()) return;
     this.isLoading.set(true);
 
+    const isTransit = this.travelMode() === google.maps.TravelMode.TRANSIT;
+    const hasWaypoint = this.showWaypoint() && this.waypoint();
+
+    // if (!hasWaypoint) this.directionsRendererB.setMap(null);
+    // else this.directionsRendererB.setMap(this.map);
+
+    if (isTransit && hasWaypoint) {
+      this.calculateTransitWithWaypoint();
+      return;
+    }
+
     const waypoints = [];
-    if (this.showWaypoint() && this.waypoint()) {
+    if (hasWaypoint) {
       waypoints.push({
         location: this.waypoint().geometry.location,
         stopover: true
@@ -629,7 +666,6 @@ export class BusProgramComponent implements OnInit {
     }, (response: any, status: string) => {
       this.isLoading.set(false);
       if (status === 'OK') {
-        // Pick the absolute shortest duration route
         let shortestRoute = response.routes[0];
         let minDuration = Infinity;
 
@@ -641,17 +677,74 @@ export class BusProgramComponent implements OnInit {
           }
         });
 
+        // For non-transit multi-stop, we use the merged renderer but standard route logic
         this.directionsRenderer.setDirections({ ...response, routes: [shortestRoute] });
-        this.currentRoute.set(shortestRoute);
+        // this.directionsRendererB.setMap(null); // Clear secondary for unified walking routes
         
-        // Sum durations of all legs
+        this.currentRoute.set(shortestRoute);
         const totalSec = shortestRoute.legs.reduce((acc: number, leg: any) => acc + leg.duration.value, 0);
         this.routeDuration.set(this.formatSeconds(totalSec));
-
-        // Manual red dot marker logic (handled for all legs)
         this.map.setCenter(this.userCoords());
       }
     });
+  }
+
+  private calculateTransitWithWaypoint() {
+    const origin = this.userCoords();
+    const waypoint = this.waypoint().geometry.location;
+    const dest = this.destination().geometry.location;
+
+    // Route A: Origin -> Waypoint
+    this.directionsService.route({
+      origin,
+      destination: waypoint,
+      travelMode: google.maps.TravelMode.TRANSIT
+    }, (resA: any, statusA: string) => {
+      if (statusA === 'OK') {
+        // Route B: Waypoint -> Destination
+        this.directionsService.route({
+          origin: waypoint,
+          destination: dest,
+          travelMode: google.maps.TravelMode.TRANSIT
+        }, (resB: any, statusB: string) => {
+          this.isLoading.set(false);
+          if (statusB === 'OK') {
+            const combined = this.mergeRoutes(resA, resB);
+            
+            // Draw Leg A in Blue, Leg B in Purple (Commented out)
+            // this.directionsRenderer.setDirections(resA);
+            // this.directionsRendererB.setDirections(resB);
+            
+            // Back to unified Blue
+            this.directionsRenderer.setDirections(combined);
+            
+            this.currentRoute.set(combined.routes[0]);
+            const totalSec = combined.routes[0].legs.reduce((acc: number, leg: any) => acc + leg.duration.value, 0);
+            this.routeDuration.set(this.formatSeconds(totalSec));
+          }
+        });
+      } else {
+        this.isLoading.set(false);
+      }
+    });
+  }
+
+  private mergeRoutes(resA: any, resB: any): any {
+    const routeA = resA.routes[0];
+    const routeB = resB.routes[0];
+    
+    // Create a synthesized route that merges both
+    const mergedRoute = {
+      ...routeA,
+      legs: [...routeA.legs, ...routeB.legs],
+      overview_polyline: routeA.overview_polyline, // Simplified
+      bounds: routeA.bounds.extend(routeB.bounds.getNorthEast()).extend(routeB.bounds.getSouthWest())
+    };
+
+    return {
+      ...resA,
+      routes: [mergedRoute]
+    };
   }
 
   private formatSeconds(sec: number): string {
