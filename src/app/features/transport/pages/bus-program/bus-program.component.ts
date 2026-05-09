@@ -129,19 +129,16 @@ declare const google: any;
           </div>
 
           <div class="timeline-scroll">
-            @for (step of currentRoute().legs[0].steps; track $index; let isLast = $last) {
-              <div class="timeline-item" [class.transit]="step.travel_mode === 'TRANSIT'" [class.final-step]="isLast">
+            @for (step of currentRoute().legs[0].steps; track $index) {
+              <div class="timeline-item" [class.transit]="step.travel_mode === 'TRANSIT'">
                 <div class="time-col">
                   <span class="step-time">{{ getStepStartTime($index) }}</span>
-                  @if (isLast) { <span class="step-time end">{{ getStepEndTime($index) }}</span> }
                 </div>
                 
                 <div class="indicator-col">
-                  @if (!isLast) {
-                    <div class="indicator-line" [class.dotted]="step.travel_mode === 'WALKING'" [style.background-color]="step.transit?.line?.color || '#DADCE0'"></div>
-                  }
-                  <div class="node" [class.dest-node]="isLast" [style.border-color]="isLast ? '#ea4335' : (step.transit?.line?.color || '#1A73E8')">
-                    <span class="material-icons">{{ getStepIcon(step, isLast) }}</span>
+                  <div class="indicator-line" [class.dotted]="step.travel_mode === 'WALKING'" [style.background-color]="step.transit?.line?.color || '#DADCE0'"></div>
+                  <div class="node" [style.border-color]="step.transit?.line?.color || '#1A73E8'">
+                    <span class="material-icons">{{ getStepIcon(step, false) }}</span>
                   </div>
                 </div>
 
@@ -151,7 +148,7 @@ declare const google: any;
                       @if (step.transit) {
                         <span class="line-badge" [style.background]="step.transit.line.color">{{ step.transit.line.short_name }}</span>
                       }
-                      <span class="step-title" [class.dest-title]="isLast">{{ getStepTitle(step, isLast) }}</span>
+                      <span class="step-title">{{ getStepTitle(step, false) }}</span>
                     </div>
                     
                     <div class="step-meta">
@@ -159,14 +156,13 @@ declare const google: any;
                     </div>
 
                     @if (step.transit) {
-                      <div class="arrival-preview">
-                        @if (getStepArrivals(step); as arrivals) {
-                          @for (a of arrivals; track a.time) {
-                            <div class="arr-row">
-                              <span class="arr-time">{{ a.time }}</span>
-                              <span class="arr-wait">Peste {{ a.wait }} min</span>
-                            </div>
-                          }
+                      <div class="arrival-preview" [@popIn]>
+                        @for (arr of getStepArrivals(step); track arr.time) {
+                          <div class="arr-row">
+                            <span class="material-icons">schedule</span>
+                            <span>{{ arr.time }}</span>
+                            <span class="arr-wait">Peste {{ arr.wait }} min</span>
+                          </div>
                         }
                       </div>
                     }
@@ -174,6 +170,23 @@ declare const google: any;
                 </div>
               </div>
             }
+
+            <!-- Final Destination Node -->
+            <div class="timeline-item final-arrival">
+              <div class="time-col">
+                <span class="step-time end">{{ getFinalArrivalTime() }}</span>
+              </div>
+              <div class="indicator-col">
+                <div class="node dest-node">
+                  <span class="material-icons">location_on</span>
+                </div>
+              </div>
+              <div class="content-col">
+                <div class="step-header">
+                  <span class="step-title dest-title">{{ destination()?.name || 'Destinație' }}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
       }
@@ -184,8 +197,9 @@ declare const google: any;
     
     /* Sticky Top Search */
     .top-search-bar { position: absolute; top: 1.5rem; left: 1.5rem; right: 1.5rem; z-index: 1000; }
-    .search-compact { background: #fff; border-radius: 20px; box-shadow: 0 12px 32px rgba(0,0,0,0.18); display: flex; align-items: center; padding: 0.8rem 1.2rem; gap: 0.8rem; border: 1px solid rgba(0,0,0,0.05); }
-    .search-inputs { flex: 1; display: flex; flex-direction: column; gap: 0.5rem; }
+    .search-compact { background: #fff; border-radius: 20px; box-shadow: 0 12px 32px rgba(0,0,0,0.18); display: flex; align-items: center; padding: 0.6rem 1rem; gap: 0.6rem; border: 1px solid rgba(0,0,0,0.05); }
+    .icon-btn { background: #f8f9fa; border: none; color: #5f6368; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .search-inputs { flex: 1; display: flex; flex-direction: column; gap: 0.4rem; }
     .input-row { display: flex; align-items: center; gap: 1rem; }
     .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
     .dot.origin { border: 2px solid #4285f4; }
@@ -234,18 +248,19 @@ declare const google: any;
     .step-time.end { margin-top: auto; padding-top: 1rem; color: #ea4335; }
 
     .indicator-col { width: 45px; display: flex; flex-direction: column; align-items: center; position: relative; }
-    .indicator-line { width: 6px; position: absolute; top: 12px; bottom: -12px; z-index: 1; background: #dadce0; border-radius: 3px; }
+    .indicator-line { width: 6px; position: absolute; top: 12px; bottom: -20px; z-index: 1; background: #dadce0; border-radius: 3px; }
     .indicator-line.dotted { background: transparent !important; border-left: 6px dotted #dadce0; width: 0; border-radius: 0; }
     
     .node { width: 16px; height: 16px; background: #fff; border: 4px solid #1a73e8; border-radius: 50%; z-index: 2; position: relative; display: flex; align-items: center; justify-content: center; }
-    .node .material-icons { font-size: 1rem; display: none; }
-    .node.dest-node { border-color: #ea4335 !important; background: #ea4335; color: #fff; width: 28px; height: 28px; }
-    .node.dest-node .material-icons { display: block; font-size: 1.2rem; }
+    .node.dest-node { border-color: #ea4335 !important; background: #ea4335; color: #fff; width: 32px; height: 32px; box-shadow: 0 4px 10px rgba(234,67,53,0.3); }
+    .node.dest-node .material-icons { display: block; font-size: 1.4rem; }
     
     .timeline-item.transit .node { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #fff; border-width: 2px; }
     .timeline-item.transit .node .material-icons { font-size: 1.1rem; }
 
     .content-col { flex: 1; padding-left: 1.2rem; padding-bottom: 2.5rem; }
+    .timeline-item.final-arrival { min-height: 50px; }
+    .timeline-item.final-arrival .content-col { padding-bottom: 1rem; }
     .step-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.3rem; }
     .line-badge { min-width: 32px; height: 20px; color: #fff; font-weight: 900; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; border-radius: 4px; padding: 0 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     .step-title { font-size: 1.1rem; font-weight: 800; color: #202124; line-height: 1.3; }
