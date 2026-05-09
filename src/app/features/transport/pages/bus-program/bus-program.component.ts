@@ -243,8 +243,8 @@ declare const google: any;
 
     .timeline-scroll { flex: 1; overflow-y: auto; padding: 2rem 1.5rem; }
     .timeline-item { display: flex; min-height: 100px; }
-    .time-col { width: 60px; display: flex; flex-direction: column; padding-bottom: 1.5rem; }
-    .step-time { font-size: 0.95rem; font-weight: 800; color: #202124; }
+    .time-col { width: 60px; display: flex; flex-direction: column; padding-bottom: 1.5rem; padding-top: 4px; }
+    .step-time { font-size: 0.95rem; font-weight: 800; color: #202124; line-height: 1.3; }
     .step-time.end { color: #ea4335; }
 
     .indicator-col { width: 45px; display: flex; flex-direction: column; align-items: center; position: relative; }
@@ -258,7 +258,7 @@ declare const google: any;
     .timeline-item.transit .node { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #fff; border-width: 2px; }
     .timeline-item.transit .node .material-icons { font-size: 1.1rem; }
 
-    .content-col { flex: 1; padding-left: 1.2rem; padding-bottom: 2.5rem; }
+    .content-col { flex: 1; padding-left: 1.2rem; padding-bottom: 2.5rem; padding-top: 4px; }
     .timeline-item.final-arrival { min-height: 50px; }
     .timeline-item.final-arrival .content-col { padding-bottom: 1rem; }
     .step-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.3rem; }
