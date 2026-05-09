@@ -27,14 +27,39 @@ export class ReportFormComponent {
   }
 
   onUploadPhoto() {
-    console.log('Deschide selectorul de poze...');
-    // Simulăm adăugarea unei poze
-    const demoPhotos = [
-      'https://images.unsplash.com/photo-1515162305285-0293e4767cc2?q=80&w=400',
-      'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?q=80&w=400'
-    ];
-    if (this.uploadedPhotos().length < 2) {
-      this.uploadedPhotos.update(photos => [...photos, demoPhotos[this.uploadedPhotos().length]]);
+    // 1. Cerem permisiunea pentru cameră (explicit)
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then((stream) => {
+          // Permisiune acordată - oprim stream-ul imediat (doar am verificat accesul)
+          stream.getTracks().forEach(track => track.stop());
+          this.triggerFilePicker();
+        })
+        .catch((err) => {
+          console.warn('Permisiune cameră refuzată sau eroare:', err);
+          // Chiar dacă refuză camera live, permitem selectarea din galerie
+          this.triggerFilePicker();
+        });
+    } else {
+      this.triggerFilePicker();
+    }
+  }
+
+  private triggerFilePicker() {
+    const fileInput = document.getElementById('cameraInput') as HTMLInputElement;
+    if (fileInput) fileInput.click();
+  }
+
+  onFileSelected(event: any) {
+    const files = event.target.files;
+    if (!files) return;
+
+    for (let i = 0; i < files.length; i++) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.uploadedPhotos.update(photos => [...photos, e.target.result]);
+      };
+      reader.readAsDataURL(files[i]);
     }
   }
 

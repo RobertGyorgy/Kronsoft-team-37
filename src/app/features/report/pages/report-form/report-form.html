@@ -42,6 +42,16 @@
         <span>Incarca una sau mai multe poze</span>
       </button>
 
+      <!-- Hidden Input for Camera/Gallery -->
+      <input 
+        type="file" 
+        id="cameraInput" 
+        style="display: none;" 
+        accept="image/*" 
+        capture="environment" 
+        multiple
+        (change)="onFileSelected($event)">
+
       <!-- Photos Preview -->
       <div class="photos-preview">
         @for (photo of uploadedPhotos(); track photo) {
