@@ -84,6 +84,91 @@
   &:active { transform: scale(0.96); opacity: 0.9; }
 }
 
+/* ACTION SHEET OVERLAY */
+.overlay-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(4px);
+  z-index: 1100;
+  display: flex;
+  align-items: flex-end;
+}
+
+.action-sheet {
+  width: 100%;
+  background: #fff;
+  border-radius: 32px 32px 0 0;
+  padding: 1.5rem 2rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
+
+  .drag-handle {
+    width: 40px;
+    height: 5px;
+    background: #eee;
+    border-radius: 10px;
+    margin: 0 auto;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    text-align: center;
+    color: #666;
+    margin: 0;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.action-option {
+  background: #f8f9fa;
+  border: 1px solid rgba(0,0,0,0.05);
+  padding: 1.25rem;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: #1a1a1a;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  .material-icons {
+    color: #ff4757;
+    font-size: 1.5rem;
+  }
+
+  &:active {
+    background: #ff4757;
+    color: #fff;
+    .material-icons { color: #fff; }
+  }
+}
+
+.cancel-btn {
+  background: none;
+  border: none;
+  color: #ff4757;
+  font-weight: 800;
+  font-size: 1rem;
+  padding: 1rem;
+  cursor: pointer;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
 /* CAMERA OVERLAY */
 .camera-overlay {
   position: absolute;

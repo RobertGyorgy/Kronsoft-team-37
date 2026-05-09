@@ -28,6 +28,7 @@ export class ReportFormComponent {
 
   uploadedPhotos = signal<string[]>([]);
   isCameraActive = signal<boolean>(false);
+  showActionSheet = signal<boolean>(false);
   stream: MediaStream | null = null;
 
   goBack() {
@@ -35,8 +36,42 @@ export class ReportFormComponent {
     window.history.back();
   }
 
-  onUploadPhoto() {
-    this.startCamera();
+  toggleActionSheet() {
+    this.showActionSheet.set(!this.showActionSheet());
+  }
+
+  async selectCamera() {
+    const agree = confirm('Sunteți de acord să utilizați camera pentru a fotografia incidentul?');
+    if (agree) {
+      this.showActionSheet.set(false);
+      this.startCamera();
+    }
+  }
+
+  async selectGallery() {
+    const agree = confirm('Sunteți de acord să oferiți acces la galeria foto a telefonului?');
+    if (agree) {
+      this.showActionSheet.set(false);
+      this.triggerFilePicker();
+    }
+  }
+
+  private triggerFilePicker() {
+    const fileInput = document.getElementById('galleryInput') as HTMLInputElement;
+    if (fileInput) fileInput.click();
+  }
+
+  onFileSelected(event: any) {
+    const files = event.target.files;
+    if (!files) return;
+
+    for (let i = 0; i < files.length; i++) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.uploadedPhotos.update(photos => [...photos, e.target.result]);
+      };
+      reader.readAsDataURL(files[i]);
+    }
   }
 
   async startCamera() {

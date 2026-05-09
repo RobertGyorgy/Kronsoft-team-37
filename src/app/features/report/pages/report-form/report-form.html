@@ -26,9 +26,18 @@
         <textarea placeholder="Descrie problema" rows="5" [(ngModel)]="formData.description"></textarea>
       </div>
 
-      <button class="upload-btn" (click)="onUploadPhoto()">
+      <button class="upload-btn" (click)="toggleActionSheet()">
         <span>Incarca una sau mai multe poze</span>
       </button>
+
+      <!-- Hidden Gallery Input -->
+      <input 
+        type="file" 
+        id="galleryInput" 
+        style="display: none;" 
+        accept="image/*" 
+        multiple
+        (change)="onFileSelected($event)">
 
       <div class="photos-preview">
         @for (photo of uploadedPhotos(); track photo) {
@@ -45,6 +54,27 @@
       </button>
     </div>
   </div>
+
+  <!-- Action Sheet Overlay -->
+  @if (showActionSheet()) {
+    <div class="overlay-backdrop" (click)="toggleActionSheet()">
+      <div class="action-sheet" (click)="$event.stopPropagation()">
+        <div class="drag-handle"></div>
+        <h3>Selectați sursa fotografiei</h3>
+        <div class="action-buttons">
+          <button class="action-option" (click)="selectCamera()">
+            <span class="material-icons">photo_camera</span>
+            <span>Fă fotografii</span>
+          </button>
+          <button class="action-option" (click)="selectGallery()">
+            <span class="material-icons">photo_library</span>
+            <span>Încarcă din telefon</span>
+          </button>
+        </div>
+        <button class="cancel-btn" (click)="toggleActionSheet()">Anulează</button>
+      </div>
+    </div>
+  }
 
   <!-- Live Camera Overlay -->
   @if (isCameraActive()) {
