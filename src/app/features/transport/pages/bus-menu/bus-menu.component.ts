@@ -43,8 +43,8 @@ import { RouterLink } from '@angular/router';
               <span class="material-icons">route</span>
             </div>
             <div class="text-wrap">
-              <span class="card-title">Linii & Orare</span>
-              <span class="card-sub">Vezi traseele RATBV complete</span>
+              <span class="card-title">Unde mergem?</span>
+              <span class="card-sub">Planifică-ți traseul prin oraș</span>
             </div>
           </div>
           <span class="material-icons arrow">arrow_forward</span>

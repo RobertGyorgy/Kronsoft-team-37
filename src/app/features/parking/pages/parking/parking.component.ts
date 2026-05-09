@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone, afterNextRender } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone, afterNextRender, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { interval, Subscription } from 'rxjs';
 
-declare const L: any;
+declare const google: any;
 
 @Component({
   selector: 'app-parking',
@@ -15,7 +15,7 @@ declare const L: any;
       <div class="main-scroll-area">
         <!-- 1. HEADER -->
         <header class="page-header-pill">
-          <button class="back-pill" [routerLink]="['/home']">
+          <button class="back-pill" [routerLink]="['/dashboard']">
             <span class="material-icons">arrow_back</span> Înapoi
           </button>
           <h1 class="page-title-pill">Parcare Brașov</h1>
@@ -23,10 +23,12 @@ declare const L: any;
 
         <!-- 2. HARTA -->
         <section class="map-section-pill">
-          <div id="parking-map" class="map-container-pill"></div>
+          <div class="map-canvas-wrap">
+            <div #mapContainer class="map-container-pill"></div>
+          </div>
         </section>
 
-        <!-- 3. INPUT NUMAR (FUNDAL ALB) -->
+        <!-- 3. INPUT NUMAR -->
         <section class="plate-input-section">
           <label class="plate-label">introdu numărul de înmatriculare</label>
           <div class="plate-row">
@@ -39,7 +41,6 @@ declare const L: any;
         <section class="main-parking-card">
           <h2 class="zone-name-header">{{ detectedLocationName || PARKING_ZONES[selectedZoneIndex].name }}</h2>
           
-          <!-- Stepper Pill -->
           <div class="stepper-pill-container">
             <span class="stepper-text-label">SELECTEAZĂ DURATA</span>
             <div class="stepper-controls">
@@ -49,27 +50,23 @@ declare const L: any;
             </div>
           </div>
 
-          <!-- Action Buttons Outline -->
           <div class="action-row-outline">
             <button class="btn-outline-white" (click)="toggleTariffs()">Tarife</button>
             <button class="btn-outline-white" (click)="sendNativeSms()">SMS</button>
           </div>
 
-          <!-- Timer Integrated -->
           <div class="timer-section-integrated">
             <p class="timer-sub-label">TIMP RĂMAS</p>
             <h3 class="timer-digits-white-tiny">{{ timeLeft }}</h3>
           </div>
 
           <div style="position: relative;">
-            <!-- Quick Extension Menu -->
             <div class="quick-extend-menu" *ngIf="showQuickAdd">
               <button class="quick-opt" (click)="extendTime(30)">+30m</button>
               <button class="quick-opt" (click)="extendTime(60)">+1h</button>
               <button class="quick-opt" (click)="extendTime(120)">+2h</button>
             </div>
 
-            <!-- Extend Button Solid White -->
             <button class="btn-extend-solid-white" (click)="toggleQuickAdd()">
               PRELUNGEȘTE TIMPUL
             </button>
@@ -91,7 +88,7 @@ declare const L: any;
           </div>
         </section>
 
-        <!-- 6. MODAL TARIFE (NEW BLUE DESIGN) -->
+        <!-- 6. MODAL TARIFE -->
         <div class="modal-overlay" *ngIf="showTariffs" (click)="toggleTariffs()">
           <div class="modal-card blue-theme-modal" (click)="$event.stopPropagation()">
             <h2 class="modal-title">Tarife Parcare</h2>
@@ -118,49 +115,39 @@ declare const L: any;
   styles: [`
     .parking-shell { height: 100vh; background: #fff; font-family: 'Outfit', sans-serif; color: #1a1a1a; overflow: hidden; }
     .main-scroll-area { height: 100vh; overflow-y: auto; padding-bottom: 2rem; }
-    
     .page-header-pill { display: flex; align-items: center; padding: 0.5rem; position: relative; }
     .back-pill { background: none; border: none; color: #333; font-weight: 800; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; }
     .page-title-pill { font-size: 1rem; font-weight: 900; color: #1a1a1a; position: absolute; left: 50%; transform: translateX(-50%); }
-
     .map-section-pill { padding: 0 1rem; margin-bottom: 0.5rem; }
-    .map-container-pill { height: 28vh; border-radius: 20px; overflow: hidden; border: 1px solid #eee; }
-
+    .map-canvas-wrap { height: 28vh; border-radius: 20px; overflow: hidden; border: 1px solid #eee; position: relative; }
+    .map-container-pill { height: 100%; width: 100%; }
     .plate-input-section { padding: 0 1.5rem; margin-bottom: 0.5rem; }
     .plate-label { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem; display: block; color: #333; }
     .plate-row { display: flex; gap: 0.75rem; align-items: center; }
     .plate-input { flex: 2; background: #f2f2f2; border: 1.5px solid #ddd; border-radius: 50px; padding: 0.5rem 1.25rem; font-weight: 700; font-size: 1rem; color: #333; outline: none; }
     .btn-save-solid { flex: 1.2; background: #4285f4; color: #fff; border: none; border-radius: 50px; padding: 0.5rem; font-weight: 900; font-size: 0.95rem; text-transform: uppercase; cursor: pointer; }
-
     .main-parking-card { background: #4285f4; border-radius: 30px; padding: 0.5rem; margin: 0 1rem 1rem; color: #fff; box-shadow: 0 10px 30px rgba(66,133,244,0.2); position: relative; }
     .zone-name-header { font-size: 1.25rem; font-weight: 900; text-align: center; margin-bottom: 0.5rem; color: #fff; }
-    
     .stepper-pill-container { background: rgba(255,255,255,0.85); border-radius: 50px; padding: 0.35rem 0.5rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; color: #333; }
     .stepper-text-label { font-size: 0.95rem; font-weight: 700; padding-left: 0.75rem; color: #555; }
     .stepper-controls { display: flex; align-items: center; gap: 0.75rem; }
     .btn-step { background: #e0e0e0; color: #666; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 1.4rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     .step-val-text { font-size: 1.1rem; font-weight: 900; min-width: 30px; text-align: center; color: #333; }
-
     .action-row-outline { display: flex; gap: 0.75rem; margin-bottom: 0.75rem; }
     .btn-outline-white { flex: 1; background: transparent; color: #fff; border: 2px solid #fff; border-radius: 50px; padding: 0.7rem; font-weight: 900; font-size: 1.1rem; cursor: pointer; }
-
     .timer-section-integrated { background: rgba(255, 255, 255, 0.2); border-radius: 24px; padding: 0.4rem; margin-bottom: 0.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .timer-digits-white-tiny { font-size: 2rem; font-weight: 900; color: #fff; line-height: 1; margin-bottom: 0; margin-top: -0.1rem; }
     .timer-sub-label { font-size: 0.75rem; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0; }
-
     .btn-extend-solid-white { width: 100%; background: #fff; color: #4285f4; border: none; border-radius: 50px; padding: 0.8rem; font-weight: 950; font-size: 1.1rem; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-
     .history-section-pill { padding: 0.5rem 0.75rem 2rem; }
     .section-header-pill { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
     .section-header-pill h3 { font-size: 1rem; font-weight: 900; color: #333; margin: 0; }
     .vezi-tot-pill { background: none; border: 1.2px solid #4285f4; color: #4285f4; font-weight: 800; font-size: 0.7rem; padding: 0.2rem 0.6rem; border-radius: 50px; cursor: pointer; }
-    
     .history-card { background: #fff; border-radius: 12px; padding: 0.5rem; border: 1px solid #f0f0f0; margin-bottom: 0.5rem; }
     .hist-header { display: flex; justify-content: space-between; margin-bottom: 0.2rem; }
     .hist-date { font-weight: 800; color: #4285f4; font-size: 0.75rem; }
     .hist-amount { font-weight: 900; color: #ff4d4d; font-size: 0.9rem; }
     .hist-details { font-size: 0.8rem; color: #666; font-weight: 600; }
-    
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 2rem; }
     .modal-card { background: #fff; border-radius: 24px; padding: 1.5rem; width: 100%; max-width: 360px; box-shadow: 0 15px 40px rgba(0,0,0,0.2); color: #333; }
     .modal-title { margin-top: 0; margin-bottom: 1rem; font-weight: 900; text-align: center; font-size: 1.25rem; color: #333; }
@@ -176,9 +163,12 @@ declare const L: any;
     .quick-extend-menu { position: absolute; bottom: 110%; left: 0; width: 100%; background: #fff; border-radius: 20px; padding: 0.5rem; box-shadow: 0 -5px 25px rgba(0,0,0,0.15); display: flex; gap: 0.5rem; z-index: 10; animation: popUp 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
     .quick-opt { flex: 1; background: #f0f7ff; color: #4285f4; border: none; border-radius: 12px; padding: 0.6rem; font-weight: 900; font-size: 0.85rem; cursor: pointer; }
     @keyframes popUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-  `]
+  `],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ParkingComponent implements OnInit, OnDestroy {
+  @ViewChild('mapContainer') mapContainer!: ElementRef;
+
   showTariffs = false;
   showQuickAdd = false;
   public timeLeft = '00:00:00';
@@ -235,7 +225,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
     private zone: NgZone
   ) {
     afterNextRender(() => {
-      this.initParkingMap();
+      this.initMap();
       this.startGpsTracking();
       this.loadPersistedData();
       
@@ -305,7 +295,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
     }
     
     this.updateMarker(lat, lng, this.isOutOfZone ? '#ff4d4d' : '#4285f4');
-    if (this.map) this.map.setView([lat, lng], 16);
+    if (this.map) this.map.setCenter({ lat, lng });
     this.cdr.detectChanges();
   }
 
@@ -324,22 +314,41 @@ export class ParkingComponent implements OnInit, OnDestroy {
 
   private updateMarker(lat: number, lng: number, color: string) {
     if (!this.map) return;
-    if (this.marker) this.map.removeLayer(this.marker);
+    if (this.marker) this.marker.setMap(null);
     
-    const icon = L.divIcon({ 
-      html: `<div style="background: ${color}; width: 30px; height: 30px; border-radius: 50%; border: 4px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 16px;">P</div>`, 
-      className: '', iconSize: [30, 30], iconAnchor: [15, 15] 
+    this.marker = new google.maps.Marker({
+      position: { lat, lng },
+      map: this.map,
+      icon: {
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: 12,
+        fillColor: color,
+        fillOpacity: 1,
+        strokeColor: '#ffffff',
+        strokeWeight: 4
+      },
+      label: {
+        text: 'P',
+        color: '#ffffff',
+        fontWeight: '900',
+        fontSize: '14px'
+      }
     });
-    this.marker = L.marker([lat, lng], { icon: icon }).addTo(this.map);
   }
 
-  private initParkingMap() {
+  private initMap() {
     if (this.map) return;
-    const initialLat = 45.6423;
-    const initialLng = 25.5888;
-    this.map = L.map('parking-map', { zoomControl: false, attributionControl: false }).setView([initialLat, initialLng], 15);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(this.map);
-    this.updateMarker(initialLat, initialLng, '#ff4d4d');
+    if (!this.mapContainer) return false;
+
+    this.map = new google.maps.Map(this.mapContainer.nativeElement, {
+      center: { lat: 45.6423, lng: 25.5888 },
+      zoom: 15,
+      disableDefaultUI: true,
+      styles: this.getMapStyles()
+    });
+    
+    this.updateMarker(45.6423, 25.5888, '#ff4d4d');
+    return true;
   }
 
   ngOnInit() {
@@ -448,5 +457,21 @@ export class ParkingComponent implements OnInit, OnDestroy {
     localStorage.removeItem('parked_zone_index');
     localStorage.removeItem('parked_location_name');
     localStorage.removeItem('parked_plate');
+  }
+
+  private getMapStyles() {
+    return [
+      { "featureType": "all", "elementType": "labels.text.fill", "stylers": [{ "color": "#7c93a3" }, { "lightness": "-10" }] },
+      { "featureType": "administrative.country", "elementType": "geometry", "stylers": [{ "visibility": "on" }] },
+      { "featureType": "landscape", "elementType": "geometry", "stylers": [{ "color": "#f5f5f5" }, { "lightness": 20 }] },
+      { "featureType": "poi", "elementType": "geometry", "stylers": [{ "color": "#f5f5f5" }, { "lightness": 21 }] },
+      { "featureType": "poi.park", "elementType": "geometry", "stylers": [{ "color": "#dedede" }, { "lightness": 21 }] },
+      { "featureType": "road.highway", "elementType": "geometry.fill", "stylers": [{ "color": "#ffffff" }, { "lightness": 17 }] },
+      { "featureType": "road.highway", "elementType": "geometry.stroke", "stylers": [{ "color": "#ffffff" }, { "lightness": 29 }, { "weight": 0.2 }] },
+      { "featureType": "road.arterial", "elementType": "geometry", "stylers": [{ "color": "#ffffff" }, { "lightness": 18 }] },
+      { "featureType": "road.local", "elementType": "geometry", "stylers": [{ "color": "#ffffff" }, { "lightness": 16 }] },
+      { "featureType": "transit", "elementType": "geometry", "stylers": [{ "color": "#f2f2f2" }, { "lightness": 19 }] },
+      { "featureType": "water", "elementType": "geometry", "stylers": [{ "color": "#e9e9e9" }, { "lightness": 17 }] }
+    ];
   }
 }
