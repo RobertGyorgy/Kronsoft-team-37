@@ -38,6 +38,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/weekend/pages/weekend/weekend.component').then((component) => component.WeekendComponent)
   },
   {
+    path: 'report',
+    loadComponent: () => import('./features/report/pages/report/report').then((component) => component.ReportComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

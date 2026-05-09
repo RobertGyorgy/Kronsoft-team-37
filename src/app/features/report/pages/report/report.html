@@ -1,0 +1,74 @@
+<main class="report-container">
+  <!-- Header -->
+  <header class="top-bar">
+    <div class="left">
+      <button class="back-btn" (click)="goBack()">
+        <span class="material-icons">arrow_back</span>
+      </button>
+      <h1 class="page-title">Raportează o neregulă</h1>
+    </div>
+    <div class="user-avatar">
+      <img src="https://i.pravatar.cc/150?u=ion" alt="User">
+    </div>
+  </header>
+
+  <div class="scroll-content">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-card">
+        <div class="hero-content">
+          <h2>Raportează o neregulă</h2>
+          <p>Trimite o poză și dă-ne mai multe detalii despre zona, locul și data în care ai descoperit o problemă, iar noi ne vom ocupa în cel mai scurt timp posibil să o rezolvăm.</p>
+          <button class="primary-btn" (click)="onNewReport()">
+            <span>Raportează o neregulă</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Others Reported Section -->
+    <section class="others-section">
+      <h3 class="section-title">Altele raportate</h3>
+      
+      <!-- Categories Chips -->
+      <div class="categories-scroll">
+        <div class="chips-container">
+          @for (cat of categories; track cat) {
+            <button 
+              class="chip" 
+              [class.active]="activeCategory() === cat"
+              (click)="setCategory(cat)">
+              {{ cat }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Reports Grid -->
+      <div class="reports-grid">
+        @for (report of filteredReports(); track report.id) {
+          <div class="report-card">
+            <div class="image-wrapper">
+              <img [src]="report.image" [alt]="report.title">
+              <div class="zone-badge">{{ report.location }}</div>
+              <div class="status-badge" [attr.data-status]="report.status">
+                {{ report.status }}
+              </div>
+            </div>
+            <div class="card-info">
+              <span class="category-label">{{ report.category }}</span>
+              <h4>{{ report.title }}</h4>
+            </div>
+          </div>
+        }
+        
+        @if (filteredReports().length === 0) {
+          <div class="empty-state">
+            <span class="material-icons">search_off</span>
+            <p>Nu există raportări în această categorie.</p>
+          </div>
+        }
+      </div>
+    </section>
+  </div>
+</main>

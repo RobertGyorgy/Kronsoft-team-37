@@ -26,7 +26,7 @@ import { RouterLink } from '@angular/router';
           <span class="card-title">Plătește Parcarea</span>
         </div>
 
-        <div class="grid-card red" (click)="onReportIssueClick()">
+        <div class="grid-card red" routerLink="/report">
           <span class="material-icons card-bg-icon">report_problem</span>
           <span class="card-title">Sesizează o Problemă</span>
         </div>
