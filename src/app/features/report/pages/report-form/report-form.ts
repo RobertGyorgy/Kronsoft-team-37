@@ -19,6 +19,8 @@ export class ReportFormComponent {
   @ViewChild('videoElement') videoElement!: ElementRef<HTMLVideoElement>;
   @ViewChild('canvasElement') canvasElement!: ElementRef<HTMLCanvasElement>;
 
+  categories = ['Infrastructură', 'Deșeuri', 'Graffiti', 'Clădiri', 'Iluminare', 'Spații verzi', 'Altele'];
+
   formData = {
     title: '',
     address: '',
