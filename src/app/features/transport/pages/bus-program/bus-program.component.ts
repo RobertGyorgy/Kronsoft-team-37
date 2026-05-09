@@ -322,7 +322,7 @@ export class BusProgramComponent implements OnInit {
   travelMode = signal<any>(google.maps.TravelMode.TRANSIT);
   routeDuration = signal<string>('');
   predictions = signal<any[]>([]);
-  activeSearchType = signal<'origin' | 'destination' | null>(null);
+  activeSearchType = signal<'origin' | 'destination' | 'waypoint' | null>(null);
 
   private watchId: number | null = null;
 
