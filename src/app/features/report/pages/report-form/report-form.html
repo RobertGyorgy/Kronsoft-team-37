@@ -26,6 +26,21 @@
         <textarea placeholder="Descrie problema" rows="5" [(ngModel)]="formData.description"></textarea>
       </div>
 
+      <div class="input-group">
+        <label>Categorie</label>
+        <div class="category-chips">
+          @for (cat of categories; track cat) {
+            <button 
+              type="button"
+              class="category-chip" 
+              [class.active]="formData.category === cat"
+              (click)="formData.category = cat">
+              {{ cat }}
+            </button>
+          }
+        </div>
+      </div>
+
       <button class="upload-btn" (click)="toggleActionSheet()">
         <span>Incarca una sau mai multe poze</span>
       </button>

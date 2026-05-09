@@ -10,57 +10,123 @@
 }
 
 .top-bar {
-  padding: 1.25rem 1.5rem 0.5rem;
+  padding: 0.75rem 1.25rem 0.5rem; /* Compact header */
+  background: #fff;
+  z-index: 100;
+
   .back-pill {
     background: #fff;
     border: 1px solid rgba(0,0,0,0.05);
-    padding: 0.5rem 1rem;
+    padding: 0.35rem 0.85rem;
     border-radius: 999px;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
     color: #333;
     font-weight: 800;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-    font-size: 0.85rem;
-    width: fit-content;
+    font-size: 0.75rem;
     
-    .material-icons { font-size: 1.1rem; }
-    &:active { transform: scale(0.96); background: #f0f0f0; }
+    .material-icons { font-size: 0.9rem; }
   }
 }
 
 .scroll-content {
-  flex: 1; overflow-y: auto; padding: 0 2rem 3rem;
-  -webkit-overflow-scrolling: touch;
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.5rem 1.25rem 1.5rem; /* Reduced top padding */
 }
 
 .form-title {
-  font-size: 2rem; font-weight: 800; text-align: center;
-  margin: 1rem 0 2.5rem; letter-spacing: -0.04em; color: #333;
+  font-size: 1.5rem;
+  font-weight: 850;
+  margin-bottom: 1rem; /* Tighter title gap */
+  letter-spacing: -0.04em;
+  color: #333;
 }
 
-.report-form { display: flex; flex-direction: column; gap: 1.5rem; }
+.report-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* Reduced gap between groups */
+}
 
 .input-group {
-  display: flex; flex-direction: column; gap: 0.6rem;
-  label { font-size: 0.95rem; font-weight: 700; color: #1a1a1a; padding-left: 0.25rem; }
-  input, textarea {
-    background: #fff; border: 1px solid rgba(0,0,0,0.05); border-radius: 16px;
-    padding: 1.1rem 1.25rem; font-size: 1rem; font-family: inherit;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: all 0.2s;
-    &::placeholder { color: #aaa; font-weight: 500; }
-    &:focus { outline: none; border-color: #ff4757; box-shadow: 0 0 0 4px rgba(255, 71, 87, 0.1); }
+  margin-bottom: 0.5rem; /* Reduced from 1.25rem */
+  
+  label {
+    display: block;
+    font-weight: 800;
+    margin-bottom: 0.25rem; /* Tighter label-to-input gap */
+    color: #1a1a1a;
+    font-size: 0.85rem;
+    padding-left: 0.1rem;
   }
-  textarea { resize: none; }
+
+  input, textarea {
+    width: 100%;
+    padding: 0.65rem 0.85rem; /* Tighter padding */
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    background: #fdfdfd;
+    transition: all 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: #ff4757;
+      background: #fff;
+      box-shadow: 0 3px 10px rgba(255, 71, 87, 0.04);
+    }
+  }
+
+  textarea {
+    min-height: 80px; /* More compact initial size */
+    resize: none;
+  }
+}
+
+.category-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.15rem;
+}
+
+.category-chip {
+  padding: 0.4rem 0.85rem; /* Smaller chips */
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: #fff;
+  font-weight: 700;
+  font-size: 0.75rem;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &.active {
+    background: #1a1a1a;
+    color: #fff;
+    border-color: #1a1a1a;
+  }
 }
 
 .upload-btn {
-  background: #ff4757; color: #fff; border: none; padding: 1.2rem;
-  border-radius: 18px; font-size: 0.95rem; font-weight: 800; cursor: pointer;
-  box-shadow: 0 10px 20px rgba(255, 71, 87, 0.2); margin-top: 0.5rem;
-  &:active { transform: scale(0.97); }
+  background: #f8f9fa;
+  border: 1.5px dashed rgba(0,0,0,0.1);
+  padding: 0.85rem;
+  border-radius: 14px;
+  color: #666;
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin: 0.25rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+
+  &:active { background: #f0f0f0; }
 }
 
 .photos-preview {
