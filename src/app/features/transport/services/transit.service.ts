@@ -77,7 +77,7 @@ export class TransitService {
             // but for a trip planner we usually care about the same journey day.
             if (diff < 0) diff += 1440; 
             
-            if (diff >= 0 && diff <= 180) {
+            if (diff >= 0 && diff <= 1440) {
               bestEtas.push({ time: `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`, wait: diff });
             }
           });

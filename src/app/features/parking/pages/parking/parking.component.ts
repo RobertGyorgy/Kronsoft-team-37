@@ -15,7 +15,7 @@ declare const google: any;
       <div class="main-scroll-area">
         <!-- 1. HEADER -->
         <header class="page-header-pill">
-          <button class="back-pill" [routerLink]="['/dashboard']">
+          <button class="unified-back-btn" [routerLink]="['/dashboard']">
             <span class="material-icons">arrow_back</span> Înapoi
           </button>
           <h1 class="page-title-pill">Parcare Brașov</h1>
@@ -113,9 +113,9 @@ declare const google: any;
     </main>
   `,
   styles: [`
-    .parking-shell { height: 100vh; background: #fff; font-family: 'Outfit', sans-serif; color: #1a1a1a; overflow: hidden; }
-    .main-scroll-area { height: 100vh; overflow-y: auto; padding-bottom: 2rem; }
-    .page-header-pill { display: flex; align-items: center; padding: 0.5rem; position: relative; }
+    .parking-shell { height: 100vh; width: 100%; overflow-x: hidden; background: #fff; font-family: 'Outfit', sans-serif; color: #1a1a1a; position: relative; }
+    .main-scroll-area { height: 100vh; width: 100%; overflow-x: hidden; overflow-y: auto; padding-bottom: 2rem; }
+    .page-header-pill { display: flex; align-items: center; padding: calc(var(--safe-top) + 1.2rem) 1.5rem 1rem; position: relative; }
     .back-pill { background: none; border: none; color: #333; font-weight: 800; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; }
     .page-title-pill { font-size: 1rem; font-weight: 900; color: #1a1a1a; position: absolute; left: 50%; transform: translateX(-50%); }
     .map-section-pill { padding: 0 1rem; margin-bottom: 0.5rem; }
@@ -344,6 +344,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
       center: { lat: 45.6423, lng: 25.5888 },
       zoom: 15,
       disableDefaultUI: true,
+      gestureHandling: 'greedy',
       styles: this.getMapStyles()
     });
     

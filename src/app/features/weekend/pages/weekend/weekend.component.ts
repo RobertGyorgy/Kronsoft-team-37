@@ -26,9 +26,9 @@ interface Recommendation {
   template: `
     <main class="weekend-shell">
       <header class="top-nav">
-        <button class="back-pill" (click)="goBack()">
+        <button class="unified-back-btn" (click)="goBack()">
           <span class="material-icons">arrow_back</span>
-          <span class="back-text">{{ currentView() === 'menu' ? 'Dashboard' : 'Categorii' }}</span>
+          <span>Înapoi</span>
         </button>
       </header>
 
@@ -96,15 +96,17 @@ interface Recommendation {
   styles: [`
     .weekend-shell {
       height: 100vh;
+      width: 100%;
+      overflow-x: hidden;
       background: #f8f9fa;
       font-family: 'Outfit', sans-serif;
       display: flex;
       flex-direction: column;
       color: #1a1a1a;
-      overflow: hidden;
+      position: relative;
     }
 
-    .top-nav { padding: 1.25rem 1.5rem 0.5rem; z-index: 20; }
+    .top-nav { padding: calc(var(--safe-top) + 1.2rem) 1.5rem 1rem; z-index: 20; }
     .back-pill {
       background: #fff;
       border: 1px solid rgba(0,0,0,0.05);
@@ -117,8 +119,8 @@ interface Recommendation {
     }
     .back-pill:active { transform: scale(0.96); background: #f0f0f0; }
 
-    .page-header { padding: 1.5rem 1.5rem 1.25rem; text-align: left; }
-    .page-header.compact { padding: 0.5rem 1.5rem 1rem; }
+    .page-header { padding: 0.5rem 1.5rem 1.25rem; text-align: left; }
+    .page-header.compact { padding: 0 1.5rem 1rem; }
     
     .eyebrow-accent { font-size: 0.75rem; font-weight: 900; color: #2bcbba; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 0.4rem; }
     .eyebrow { font-size: 0.75rem; font-weight: 900; color: #888; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.4rem; }

@@ -49,8 +49,9 @@ declare const google: any;
       } @else {
         <header class="top-search-bar" [@slideDown]>
           <div class="search-compact">
-            <button class="icon-btn" routerLink="/transport/bus">
+            <button class="unified-back-btn" routerLink="/transport/bus">
               <span class="material-icons">arrow_back</span>
+              <span>Înapoi</span>
             </button>
             <div class="search-inputs">
               <div class="input-row">
@@ -219,10 +220,10 @@ declare const google: any;
     </main>
   `,
   styles: [`
-    .bus-shell { height: 100vh; background: #fff; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+    .bus-shell { height: 100vh; width: 100%; overflow-x: hidden; background: #fff; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; position: relative; }
     
     /* Sticky Top Search */
-    .top-search-bar { position: absolute; top: 1.5rem; left: 1.5rem; right: 1.5rem; z-index: 1000; }
+    .top-search-bar { position: absolute; top: 0; left: 0; right: 0; padding: calc(var(--safe-top) + 1.2rem) 1.5rem 1rem; z-index: 1000; }
     .search-compact { background: #fff; border-radius: 20px; box-shadow: 0 12px 32px rgba(0,0,0,0.18); display: flex; align-items: center; padding: 0.6rem 1rem; gap: 0.6rem; border: 1px solid rgba(0,0,0,0.05); }
     .icon-btn { background: #f8f9fa; border: none; color: #5f6368; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .search-inputs { flex: 1; display: flex; flex-direction: column; gap: 0.4rem; }
@@ -252,7 +253,7 @@ declare const google: any;
     .p-sub { font-size: 0.8rem; color: #70757a; }
 
     /* Navigation Mode */
-    .nav-header { position: absolute; top: 0; left: 0; right: 0; background: #1a73e8; color: #fff; padding: 1.2rem 1.5rem; z-index: 1001; display: flex; align-items: center; gap: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    .nav-header { position: absolute; top: 0; left: 0; right: 0; background: #1a73e8; color: #fff; padding: calc(var(--safe-top) + 1.2rem) 1.5rem 1rem; z-index: 1001; display: flex; align-items: center; gap: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
     .nav-instruction { display: flex; align-items: center; gap: 1rem; flex: 1; }
     .nav-instruction .material-icons { font-size: 2.2rem; }
     .instruction-body { display: flex; flex-direction: column; }
@@ -524,6 +525,7 @@ export class BusProgramComponent implements OnInit {
       center: { lat: 45.6483, lng: 25.5891 },
       zoom: 13,
       disableDefaultUI: true,
+      gestureHandling: 'greedy',
       styles: this.getMapStyles()
     });
 
@@ -665,7 +667,7 @@ export class BusProgramComponent implements OnInit {
       return;
     }
 
-    const waypoints = [];
+    const waypoints: any[] = [];
     if (hasWaypoint) {
       waypoints.push({
         location: this.waypoint().geometry.location,
@@ -678,8 +680,17 @@ export class BusProgramComponent implements OnInit {
       destination: this.destination().geometry.location,
       waypoints: waypoints,
       travelMode: this.travelMode(),
+      transitOptions: isTransit ? { departureTime: new Date(), routingPreference: google.maps.TransitRoutePreference.LESS_WALKING } : undefined,
       provideRouteAlternatives: true
     }, (response: any, status: string) => {
+      if (status === 'ZERO_RESULTS' && isTransit) {
+        // Fallback: Try searching for the next day
+        const tomorrow = new Date();
+        tomorrow.setHours(tomorrow.getHours() + 6);
+        this.retryRouteWithTime(waypoints, tomorrow);
+        return;
+      }
+      
       this.isLoading.set(false);
       if (status === 'OK') {
         let shortestRoute = response.routes[0];
@@ -710,30 +721,27 @@ export class BusProgramComponent implements OnInit {
     const waypoint = this.waypoint().geometry.location;
     const dest = this.destination().geometry.location;
 
+    const transitOpts = { departureTime: new Date(), routingPreference: google.maps.TransitRoutePreference.LESS_WALKING };
+
     // Route A: Origin -> Waypoint
     this.directionsService.route({
       origin,
       destination: waypoint,
-      travelMode: google.maps.TravelMode.TRANSIT
+      travelMode: google.maps.TravelMode.TRANSIT,
+      transitOptions: transitOpts
     }, (resA: any, statusA: string) => {
       if (statusA === 'OK') {
         // Route B: Waypoint -> Destination
         this.directionsService.route({
           origin: waypoint,
           destination: dest,
-          travelMode: google.maps.TravelMode.TRANSIT
+          travelMode: google.maps.TravelMode.TRANSIT,
+          transitOptions: transitOpts
         }, (resB: any, statusB: string) => {
           this.isLoading.set(false);
           if (statusB === 'OK') {
             const combined = this.mergeRoutes(resA, resB);
-            
-            // Draw Leg A in Blue, Leg B in Purple (Commented out)
-            // this.directionsRenderer.setDirections(resA);
-            // this.directionsRendererB.setDirections(resB);
-            
-            // Back to unified Blue
             this.directionsRenderer.setDirections(combined);
-            
             this.currentRoute.set(combined.routes[0]);
             const totalSec = combined.routes[0].legs.reduce((acc: number, leg: any) => acc + leg.duration.value, 0);
             this.routeDuration.set(this.formatSeconds(totalSec));
@@ -741,6 +749,25 @@ export class BusProgramComponent implements OnInit {
         });
       } else {
         this.isLoading.set(false);
+      }
+    });
+  }
+
+  private retryRouteWithTime(waypoints: any[], time: Date) {
+    this.directionsService.route({
+      origin: this.userCoords(),
+      destination: this.destination().geometry.location,
+      waypoints: waypoints,
+      travelMode: google.maps.TravelMode.TRANSIT,
+      transitOptions: { departureTime: time, routingPreference: google.maps.TransitRoutePreference.LESS_WALKING }
+    }, (response: any, status: string) => {
+      this.isLoading.set(false);
+      if (status === 'OK') {
+        const route = response.routes[0];
+        this.directionsRenderer.setDirections(response);
+        this.currentRoute.set(route);
+        const totalSec = route.legs.reduce((acc: number, leg: any) => acc + leg.duration.value, 0);
+        this.routeDuration.set(this.formatSeconds(totalSec));
       }
     });
   }

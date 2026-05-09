@@ -1,17 +1,25 @@
 .report-container {
   height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
   background: #f8f9fa;
   display: flex;
   flex-direction: column;
   font-family: 'Outfit', sans-serif;
   color: #1a1a1a;
-  overflow: hidden;
+  position: relative;
 }
 
 .top-bar {
-  padding: 0.75rem 1.5rem 0.5rem; /* More compact header */
-  background: #fff;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: calc(var(--safe-top) + 1.2rem) 1.5rem 1rem;
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0,0,0,0.05) !important;
   z-index: 100;
 
   .header-content {
@@ -61,7 +69,7 @@
 .scroll-content {
   flex: 1;
   overflow-y: auto;
-  padding-bottom: 1.5rem;
+  padding: calc(var(--safe-top) + 6rem) 1.5rem 2rem;
   -webkit-overflow-scrolling: touch;
 }
 
