@@ -260,69 +260,89 @@ export class ParkingComponent implements OnInit, OnDestroy {
     );
   }
 
+  // PART 1 — Load real boundaries from OSM (cached in localStorage)
+  private zonePolygons: any[] = [];
+
+  private async loadZonePolygons(): Promise<any[]> {
+    const CACHE_KEY = 'bv_polygons_v1';
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (cached) return JSON.parse(cached);
+
+    const list = [
+      { q: 'Centrul+Vechi,Brasov,Romania', zone: 0 },
+      { q: 'Schei,Brasov,Romania', zone: 0 },
+      { q: 'Valea+Cetatii,Brasov,Romania', zone: 0 },
+      { q: 'Centrul+Nou,Brasov,Romania', zone: 1 },
+      { q: 'Astra,Brasov,Romania', zone: 1 },
+      { q: 'Florilor,Brasov,Romania', zone: 1 },
+      { q: 'Tractorul,Brasov,Romania', zone: 1 },
+      { q: 'Bartolomeu,Brasov,Romania', zone: 1 },
+      { q: 'Craiter,Brasov,Romania', zone: 1 },
+      { q: 'Stupini,Brasov,Romania', zone: 2 },
+      { q: 'Noua+Darste,Brasov,Romania', zone: 2 },
+      { q: 'Triaj,Brasov,Romania', zone: 2 },
+    ];
+
+    const results: any[] = [];
+    for (const item of list) {
+      try {
+        const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${item.q}&polygon_geojson=1&format=json&limit=1`);
+        const d = await r.json();
+        if (d[0]?.geojson) results.push({ zone: item.zone, label: decodeURIComponent(item.q.split(',')[0].replace(/\+/g, ' ')), geojson: d[0].geojson });
+        await new Promise(res => setTimeout(res, 300)); // respecta rate limit OSM
+      } catch (e) { console.warn('skip', item.q); }
+    }
+
+    localStorage.setItem(CACHE_KEY, JSON.stringify(results));
+    return results;
+  }
+
+  // PART 2 — Point-in-polygon detection
+  private getZoneForPoint(lat: number, lng: number, polygons: any[]): any {
+    for (const poly of polygons) {
+      const rings = poly.geojson.type === 'Polygon'
+        ? [poly.geojson.coordinates[0]]
+        : poly.geojson.coordinates.map((p: any) => p[0]); // MultiPolygon
+
+      for (const ring of rings) {
+        let inside = false;
+        for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+          const [lngI, latI] = ring[i]; // GeoJSON is [lng, lat]
+          const [lngJ, latJ] = ring[j];
+          if (((latI > lat) !== (latJ > lat)) &&
+              (lng < (lngJ - lngI) * (lat - latI) / (latJ - latI) + lngI)) {
+            inside = !inside;
+          }
+        }
+        if (inside) return { zone: poly.zone, label: poly.label };
+      }
+    }
+    return null;
+  }
+
+  // PART 3 — Zone detection called every GPS update
   private async updateZoneByLocation(lat: number, lng: number) {
     this.currentLat = lat;
     this.currentLng = lng;
 
-    const geocoder = new google.maps.Geocoder();
-    const { results } = await geocoder.geocode({ location: { lat, lng } });
+    const result = this.getZoneForPoint(lat, lng, this.zonePolygons);
+    const CODES = ['Cod 100A', 'Cod 101B', 'Cod 103C'];
 
-    if (results && results[0]) {
-      const components = results[0].address_components;
-
-      // Step 2 — Extrage cartierul din address_components (Extended fallback)
-      let suburb =
-        components.find((c: any) => c.types.includes('neighborhood'))?.long_name ||
-        components.find((c: any) => c.types.includes('sublocality_level_2'))?.long_name ||
-        components.find((c: any) => c.types.includes('sublocality_level_1'))?.long_name ||
-        components.find((c: any) => c.types.includes('sublocality'))?.long_name ||
-        null;
-
-      // Fallback: iterate ALL results, not just results[0]
-      if (!suburb || suburb === 'Brașov' || suburb === 'Brasov') {
-        for (const result of results) {
-          const comp = result.address_components;
-          const found = comp.find((c: any) =>
-            (c.types.includes('neighborhood') || c.types.includes('sublocality_level_1'))
-            && c.long_name !== 'Brașov'
-            && c.long_name !== 'Brasov'
-          );
-          if (found) { suburb = found.long_name; break; }
-        }
-      }
-
-      // If still no neighborhood from Google, fallback to Nominatim
-      if (!suburb || suburb === 'Brașov' || suburb === 'Brasov') {
-        try {
-          const nomRes = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
-          const nomData = await nomRes.json();
-          suburb = nomData.address.suburb || nomData.address.neighbourhood || nomData.address.quarter || 'Brașov';
-        } catch (e) { console.warn('Nominatim fallback failed'); }
-      }
-
-      const street =
-        components.find((c: any) => c.types.includes('route'))?.long_name || '';
-
-      const ZONE_MAP: any = {
-        'centrul vechi': 0, 'centrul istoric': 0, 'schei': 0, 'valea cetății': 0, 'poiana brașov': 0,
-        'centrul nou': 1, 'astra': 1, 'florilor': 1, 'tractorul': 1, 'bartolomeu': 1, 'craiter': 1, 'scriitori': 1, 'prund': 1, 'victoriei': 1, 'gara': 1,
-        'bartolomeu nord': 2, 'stupini': 2, 'triaj': 2, 'noua dârste': 2, 'noua': 2
-      };
-      
-      const zone = ZONE_MAP[suburb?.toLowerCase().trim()] ?? 1;
-
-      this.selectedZoneIndex = zone;
-      this.detectedLocationName = `ZONA ${zone} – ${suburb || 'Brașov'}`;
-      
-      this.updateMarker(lat, lng, zone);
-      
-      if (this.map) {
-        this.map.setCenter({ lat, lng });
-        this.map.setZoom(17);
-      }
-      this.cdr.detectChanges();
-      console.log(`DEBUG - Detectat: ${suburb}, Zona: ${zone}, Strada: ${street}`);
+    if (result) {
+      this.selectedZoneIndex = result.zone;
+      this.detectedLocationName = `ZONA ${result.zone} – ${result.label}`;
+      this.updateMarker(lat, lng, result.zone);
+      console.log(`DEBUG - OSM Match: ${result.label}, Zona: ${result.zone}, ${CODES[result.zone]}`);
+    } else {
+      this.detectedLocationName = 'ZONĂ NEIDENTIFICATĂ';
+      console.log(`DEBUG - No OSM polygon match for ${lat}, ${lng}`);
     }
+
+    if (this.map) {
+      this.map.setCenter({ lat, lng });
+      this.map.setZoom(17);
+    }
+    this.cdr.detectChanges();
   }
 
 
@@ -378,6 +398,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.requestNotificationPermission();
     this.loadPersistedData();
+    this.loadZonePolygons().then(p => this.zonePolygons = p);
   }
 
   private loadPersistedData() {
