@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brașov Parking - Surgical V3 (Geocoder Logic)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #f4f7f6; }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Outfit', sans-serif; background: var(--bg); overflow: hidden; }
+        #map { height: 55%; width: 100%; }
+        .ui-overlay { height: 45%; background: white; border-radius: 30px 30px 0 0; position: absolute; bottom: 0; width: 100%; box-shadow: 0 -15px 50px rgba(0,0,0,0.15); padding: 1.5rem; box-sizing: border-box; display: flex; flex-direction: column; }
+        .zone-card { width: 100%; padding: 1.5rem; border-radius: 24px; color: white; text-align: center; transition: all 0.3s ease; margin-bottom: 1rem; box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .zone-title { font-size: 1.8rem; font-weight: 900; margin: 0; }
+        .zone-code { font-size: 1.2rem; font-weight: 700; margin-top: 0.2rem; opacity: 0.9; }
+        .zone-street { font-size: 0.95rem; font-weight: 400; margin-top: 0.5rem; opacity: 0.8; }
+        .btn-pay { width: 100%; padding: 1.2rem; border-radius: 50px; border: none; background: #1a1a1a; color: white; font-size: 1.1rem; font-weight: 900; text-transform: uppercase; cursor: pointer; margin-top: auto; }
+        .loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+
+    <div id="loading" class="loading-screen">
+        <h2>Se inițializează GIS...</h2>
+    </div>
+
+    <div id="map"></div>
+
+    <div class="ui-overlay">
+        <div id="zoneCard" class="zone-card" style="background: #747d8c;">
+            <p class="zone-title" id="zoneTitle">Localizare...</p>
+            <p class="zone-code" id="zoneCode">--</p>
+            <p class="zone-street" id="zoneStreet">Se caută adresa...</p>
+        </div>
+        <button class="btn-pay" id="payBtn">Plătește Parcare</button>
+    </div>
+
+    <script>
+        // Google Maps Loader
+        (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Re-referencing library %s.",[...r]):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
+            key: "AIzaSyCdiZP6qlfDFgJPstq94TyVBuTLgPB81xY",
+            v: "weekly"
+        });
+
+        const ZONE_MAP = {
+            'centrul vechi': 0, 'centrul istoric': 0, 'schei': 0, 'valea cetății': 0, 'poiana brașov': 0,
+            'centrul nou': 1, 'astra': 1, 'florilor': 1, 'tractorul': 1, 'bartolomeu': 1, 'craiter': 1, 'scriitori': 1, 'prund': 1, 'gara': 1,
+            'bartolomeu nord': 2, 'stupini': 2, 'triaj': 2, 'noua dârste': 2, 'noua': 2
+        };
+
+        const CODES = { 0: 'Cod 100A', 1: 'Cod 101B', 2: 'Cod 103C' };
+        const PIN_COLORS = { 0: '#e74c3c', 1: '#f39c12', 2: '#27ae60' };
+
+        let map, marker, geocoder, AdvancedMarkerElement;
+
+        async function initApp() {
+            const { Map } = await google.maps.importLibrary("maps");
+            const { Geocoder } = await google.maps.importLibrary("geocoding");
+            const { AdvancedMarkerElement: AM } = await google.maps.importLibrary("marker");
+            
+            geocoder = new Geocoder();
+            AdvancedMarkerElement = AM;
+
+            map = new Map(document.getElementById("map"), {
+                center: { lat: 45.6427, lng: 25.5887 },
+                zoom: 16,
+                mapId: "SMART_CITY_MAP_ID",
+                disableDefaultUI: true
+            });
+
+            document.getElementById('loading').style.display = 'none';
+
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(updateLocation, (e) => console.error(e), { enableHighAccuracy: true });
+            }
+        }
+
+        async function updateLocation(pos) {
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+
+            try {
+                const response = await geocoder.geocode({ location: { lat, lng } });
+                if (response.results[0]) {
+                    const components = response.results[0].address_components;
+
+                    // Step 2 — Extrage cartierul din address_components
+                    const suburb =
+                        components.find(c => c.types.includes('neighborhood'))?.long_name ||
+                        components.find(c => c.types.includes('sublocality_level_1'))?.long_name ||
+                        components.find(c => c.types.includes('sublocality'))?.long_name ||
+                        null;
+
+                    const street =
+                        components.find(c => c.types.includes('route'))?.long_name || '';
+
+                    // Step 3 — Mapează cartierul la zona corectă
+                    const zone = ZONE_MAP[suburb?.toLowerCase().trim()] ?? 1; // Default to Zone 1 if unknown in city bounds
+
+                    // Step 4 — Afișează dinamic
+                    updateUI(zone, suburb || "Brașov", street);
+
+                    // Step 5 — Pin dinamic
+                    updateMarker(lat, lng, zone);
+                    
+                    map.setCenter({ lat, lng });
+                    console.log(`DEBUG - Detectat: ${suburb}, Zona: ${zone}, Stradă: ${street}`);
+                }
+            } catch (e) { console.error("Geocoding failed", e); }
+        }
+
+        function updateUI(zone, suburb, street) {
+            const card = document.getElementById('zoneCard');
+            card.style.background = PIN_COLORS[zone];
+            document.getElementById('zoneTitle').textContent = `ZONA ${zone} – ${suburb}`;
+            document.getElementById('zoneCode').textContent = CODES[zone];
+            document.getElementById('zoneStreet').textContent = street;
+        }
+
+        function updateMarker(lat, lng, zone) {
+            if (marker) marker.map = null;
+            
+            marker = new AdvancedMarkerElement({
+                map,
+                position: { lat, lng },
+                content: Object.assign(document.createElement('div'), {
+                    innerHTML: `Z${zone}`,
+                    style: `background:${PIN_COLORS[zone]};color:white;font-weight:700;
+                            padding:5px 10px;border-radius:20px;border:2px solid white;
+                            box-shadow:0 2px 8px rgba(0,0,0,0.3);font-size:13px`
+                })
+            });
+        }
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>

@@ -260,44 +260,71 @@ export class ParkingComponent implements OnInit, OnDestroy {
     );
   }
 
-  private updateZoneByLocation(lat: number, lng: number) {
+  private async updateZoneByLocation(lat: number, lng: number) {
     this.currentLat = lat;
     this.currentLng = lng;
 
-    let nearestPoi: any = null;
-    let minDistance = Infinity;
+    const geocoder = new google.maps.Geocoder();
+    const { results } = await geocoder.geocode({ location: { lat, lng } });
 
-    this.PARKING_POIS.forEach(poi => {
-      const dist = this.getDistance(lat, lng, poi.lat, poi.lng);
-      if (dist < minDistance) {
-        minDistance = dist;
-        nearestPoi = poi;
+    if (results && results[0]) {
+      const components = results[0].address_components;
+
+      // Step 2 — Extrage cartierul din address_components (Extended fallback)
+      let suburb =
+        components.find((c: any) => c.types.includes('neighborhood'))?.long_name ||
+        components.find((c: any) => c.types.includes('sublocality_level_2'))?.long_name ||
+        components.find((c: any) => c.types.includes('sublocality_level_1'))?.long_name ||
+        components.find((c: any) => c.types.includes('sublocality'))?.long_name ||
+        null;
+
+      // Fallback: iterate ALL results, not just results[0]
+      if (!suburb || suburb === 'Brașov' || suburb === 'Brasov') {
+        for (const result of results) {
+          const comp = result.address_components;
+          const found = comp.find((c: any) =>
+            (c.types.includes('neighborhood') || c.types.includes('sublocality_level_1'))
+            && c.long_name !== 'Brașov'
+            && c.long_name !== 'Brasov'
+          );
+          if (found) { suburb = found.long_name; break; }
+        }
       }
-    });
 
-    if (nearestPoi && minDistance < 250) {
-      this.selectedZoneIndex = nearestPoi.zone;
-      this.detectedLocationName = nearestPoi.name;
-      this.isOutOfZone = false;
-    } else {
-      const detectedBoundIndex = this.ZONE_BOUNDS.findIndex(b => 
-        lat >= b.minLat && lat <= b.maxLat && lng >= b.minLng && lng <= b.maxLng
-      );
-
-      if (detectedBoundIndex !== -1) {
-        this.selectedZoneIndex = detectedBoundIndex;
-        this.detectedLocationName = '';
-        this.isOutOfZone = false;
-      } else {
-        this.detectedLocationName = '';
-        this.isOutOfZone = true;
+      // If still no neighborhood from Google, fallback to Nominatim
+      if (!suburb || suburb === 'Brașov' || suburb === 'Brasov') {
+        try {
+          const nomRes = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
+          const nomData = await nomRes.json();
+          suburb = nomData.address.suburb || nomData.address.neighbourhood || nomData.address.quarter || 'Brașov';
+        } catch (e) { console.warn('Nominatim fallback failed'); }
       }
+
+      const street =
+        components.find((c: any) => c.types.includes('route'))?.long_name || '';
+
+      const ZONE_MAP: any = {
+        'centrul vechi': 0, 'centrul istoric': 0, 'schei': 0, 'valea cetății': 0, 'poiana brașov': 0,
+        'centrul nou': 1, 'astra': 1, 'florilor': 1, 'tractorul': 1, 'bartolomeu': 1, 'craiter': 1, 'scriitori': 1, 'prund': 1, 'victoriei': 1, 'gara': 1,
+        'bartolomeu nord': 2, 'stupini': 2, 'triaj': 2, 'noua dârste': 2, 'noua': 2
+      };
+      
+      const zone = ZONE_MAP[suburb?.toLowerCase().trim()] ?? 1;
+
+      this.selectedZoneIndex = zone;
+      this.detectedLocationName = `ZONA ${zone} – ${suburb || 'Brașov'}`;
+      
+      this.updateMarker(lat, lng, zone);
+      
+      if (this.map) {
+        this.map.setCenter({ lat, lng });
+        this.map.setZoom(17);
+      }
+      this.cdr.detectChanges();
+      console.log(`DEBUG - Detectat: ${suburb}, Zona: ${zone}, Strada: ${street}`);
     }
-    
-    this.updateMarker(lat, lng, this.isOutOfZone ? '#ff4d4d' : '#4285f4');
-    if (this.map) this.map.setCenter({ lat, lng });
-    this.cdr.detectChanges();
   }
+
 
   currentLat: number = 0;
   currentLng: number = 0;
@@ -312,27 +339,22 @@ export class ParkingComponent implements OnInit, OnDestroy {
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   }
 
-  private updateMarker(lat: number, lng: number, color: string) {
+  private async updateMarker(lat: number, lng: number, zone: number) {
     if (!this.map) return;
-    if (this.marker) this.marker.setMap(null);
+    if (this.marker) this.marker.map = null;
     
-    this.marker = new google.maps.Marker({
-      position: { lat, lng },
+    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker") as any;
+    const PIN_COLORS: any = { 0: '#e74c3c', 1: '#f39c12', 2: '#27ae60' };
+    
+    this.marker = new AdvancedMarkerElement({
       map: this.map,
-      icon: {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: 12,
-        fillColor: color,
-        fillOpacity: 1,
-        strokeColor: '#ffffff',
-        strokeWeight: 4
-      },
-      label: {
-        text: 'P',
-        color: '#ffffff',
-        fontWeight: '900',
-        fontSize: '14px'
-      }
+      position: { lat, lng },
+      content: Object.assign(document.createElement('div'), {
+        innerHTML: `Z${zone}`,
+        style: `background:${PIN_COLORS[zone] || '#747d8c'};color:white;font-weight:700;
+                padding:5px 10px;border-radius:20px;border:2px solid white;
+                box-shadow:0 2px 8px rgba(0,0,0,0.3);font-size:13px`
+      })
     });
   }
 
@@ -343,12 +365,13 @@ export class ParkingComponent implements OnInit, OnDestroy {
     this.map = new google.maps.Map(this.mapContainer.nativeElement, {
       center: { lat: 45.6423, lng: 25.5888 },
       zoom: 15,
+      mapId: 'SMART_CITY_MAP_ID', // Necesar pentru Advanced Markers
       disableDefaultUI: true,
       gestureHandling: 'greedy',
       styles: this.getMapStyles()
     });
     
-    this.updateMarker(45.6423, 25.5888, '#ff4d4d');
+    this.updateMarker(45.6423, 25.5888, 0);
     return true;
   }
 
