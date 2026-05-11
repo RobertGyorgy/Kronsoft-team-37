@@ -2,13 +2,13 @@ import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
-interface Trail {
+interface Recommendation {
   id: number;
   name: string;
+  category: 'Restaurant' | 'Natură' | 'Cafenea' | 'Obiectiv';
   description: string;
-  difficulty: 'Ușor' | 'Mediu' | 'Dificil';
-  duration: string;
   distance: string;
+  rating: number;
   image: string;
 }
 
@@ -17,113 +17,113 @@ interface Trail {
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-    <main class="trails-shell">
-      <header class="page-header-pill">
-        <button class="unified-back-btn" (click)="goBack()">
+    <main class="weekend-shell">
+      <header class="top-nav-teal">
+        <button class="back-btn-teal" (click)="goBack()">
           <span class="material-icons">arrow_back</span> Înapoi
         </button>
-        <h1 class="page-title-pill">Recomandări</h1>
+        <h1 class="page-title">Recomandări Brașov</h1>
       </header>
 
-      <div class="scroll-content">
-        <section class="intro-section">
-          <p class="eyebrow-accent">NATURĂ & TRASSEE</p>
-          <h2 class="main-headline">Unde ne plimbăm în weekend?</h2>
-          <p class="sub-headline">Descoperă cele mai frumoase trasee din jurul Brașovului, accesibile tot timpul anului.</p>
-        </section>
-
-        <div class="trails-list">
-          @for (trail of trails; track trail.id) {
-            <div class="trail-card-premium">
-              <div class="trail-image-wrap">
-                <img [src]="'assets/images/' + trail.image" [alt]="trail.name" class="trail-img">
-                <div class="trail-overlay"></div>
-                <div class="difficulty-tag" [ngClass]="trail.difficulty.toLowerCase()">
-                  {{ trail.difficulty }}
-                </div>
-              </div>
-              <div class="trail-details">
-                <div class="trail-meta">
-                  <span><span class="material-icons">timer</span> {{ trail.duration }}</span>
-                  <span><span class="material-icons">trending_up</span> {{ trail.distance }}</span>
-                </div>
-                <h3 class="trail-title">{{ trail.name }}</h3>
-                <p class="trail-desc">{{ trail.description }}</p>
-                <button class="btn-trail-action">
-                  VEZI TRASEUL PE HARTĂ
-                  <span class="material-icons">map</span>
-                </button>
+      <div class="grid-container">
+        @for (item of items; track item.id) {
+          <div class="rec-grid-card">
+            <div class="card-image-wrap">
+              <img [src]="item.image" [alt]="item.name" class="card-img">
+              <span class="cat-badge" [ngClass]="item.category.toLowerCase()">
+                {{ item.category }}
+              </span>
+              <div class="rating-badge">
+                <span class="material-icons star-icon">star</span>
+                <span>{{ item.rating }}</span>
               </div>
             </div>
-          }
-        </div>
+            
+            <div class="card-info">
+              <h3 class="item-name">{{ item.name }}</h3>
+              <p class="item-desc">{{ item.description }}</p>
+              <div class="card-footer">
+                <span class="distance-text">
+                  <span class="material-icons">near_me</span> {{ item.distance }}
+                </span>
+                <button class="details-link">DETALII</button>
+              </div>
+            </div>
+          </div>
+        }
       </div>
     </main>
   `,
   styles: [`
-    .trails-shell { height: 100vh; width: 100%; overflow: hidden; background: #fdfdfd; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; }
-    .scroll-content { flex: 1; overflow-y: auto; padding-bottom: 3rem; }
-    .page-header-pill { display: flex; align-items: center; padding: calc(var(--safe-top) + 1.2rem) 1.5rem 1rem; position: relative; }
-    .unified-back-btn { background: none; border: none; color: #333; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; }
-    .page-title-pill { font-size: 1.1rem; font-weight: 900; position: absolute; left: 50%; transform: translateX(-50%); margin: 0; }
+    .weekend-shell { height: 100vh; width: 100%; overflow: hidden; background: #f4fafb; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; }
     
-    .intro-section { padding: 1.5rem; }
-    .eyebrow-accent { font-size: 0.8rem; font-weight: 900; color: #2ed573; letter-spacing: 0.15em; margin-bottom: 0.5rem; }
-    .main-headline { font-size: 2.6rem; font-weight: 900; line-height: 1.1; margin: 0 0 0.75rem; letter-spacing: -0.04em; }
-    .sub-headline { color: #666; line-height: 1.5; font-size: 1.05rem; }
+    .top-nav-teal { padding: calc(var(--safe-top) + 1.2rem) 1.5rem 1.25rem; background: #2bcbba; display: flex; align-items: center; justify-content: space-between; color: #fff; box-shadow: 0 4px 20px rgba(43, 203, 186, 0.2); }
+    .back-btn-teal { background: rgba(255,255,255,0.2); border: none; color: #fff; padding: 0.5rem 1rem; border-radius: 50px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; }
+    .page-title { font-size: 1.2rem; font-weight: 900; margin: 0; }
 
-    .trails-list { padding: 0 1.5rem 2rem; display: flex; flex-direction: column; gap: 2rem; }
-    .trail-card-premium { background: #fff; border-radius: 40px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.06); border: 1px solid #f0f0f0; }
-    .trail-image-wrap { position: relative; height: 240px; }
-    .trail-img { width: 100%; height: 100%; object-fit: cover; }
-    .trail-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.3)); }
-    
-    .difficulty-tag { position: absolute; top: 1.25rem; left: 1.25rem; padding: 0.5rem 1rem; border-radius: 50px; font-size: 0.75rem; font-weight: 900; color: #fff; }
-    .difficulty-tag.ușor { background: #2ed573; }
-    .difficulty-tag.mediu { background: #ffa502; }
-    .difficulty-tag.dificil { background: #ff4757; }
+    .grid-container { 
+      flex: 1; 
+      overflow-y: auto; 
+      padding: 1.25rem; 
+      display: grid; 
+      grid-template-columns: repeat(2, 1fr); 
+      gap: 1.25rem;
+      padding-bottom: 3rem;
+    }
 
-    .trail-details { padding: 1.5rem; }
-    .trail-meta { display: flex; gap: 1.5rem; margin-bottom: 1rem; color: #888; font-size: 0.85rem; font-weight: 700; }
-    .trail-meta span { display: flex; align-items: center; gap: 0.4rem; }
-    .trail-meta .material-icons { font-size: 1.1rem; color: #2ed573; }
+    .rec-grid-card {
+      background: #fff;
+      border-radius: 28px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+      transition: transform 0.2s;
+    }
+    .rec-grid-card:active { transform: scale(0.96); }
+
+    .card-image-wrap { position: relative; height: 140px; }
+    .card-img { width: 100%; height: 100%; object-fit: cover; }
     
-    .trail-title { font-size: 1.5rem; font-weight: 900; margin: 0 0 0.75rem; color: #1a1a1a; letter-spacing: -0.02em; }
-    .trail-desc { font-size: 0.95rem; color: #555; line-height: 1.6; margin-bottom: 1.5rem; }
+    .cat-badge {
+      position: absolute; top: 0.75rem; left: 0.75rem;
+      font-size: 0.6rem; font-weight: 900; text-transform: uppercase;
+      padding: 0.35rem 0.6rem; border-radius: 50px; color: #fff;
+      letter-spacing: 0.05em;
+    }
+    .cat-badge.restaurant { background: #ff4757; }
+    .cat-badge.natură { background: #2ed573; }
+    .cat-badge.cafenea { background: #ffa502; }
+    .cat-badge.obiectiv { background: #4285f4; }
+
+    .rating-badge {
+      position: absolute; bottom: 0.75rem; right: 0.75rem;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+      color: #fff; padding: 0.25rem 0.6rem; border-radius: 50px;
+      display: flex; align-items: center; gap: 0.2rem; font-size: 0.75rem; font-weight: 800;
+    }
+    .star-icon { font-size: 0.9rem; color: #f1c40f; }
+
+    .card-info { padding: 1rem; flex: 1; display: flex; flex-direction: column; }
+    .item-name { font-size: 1rem; font-weight: 900; margin: 0 0 0.4rem; color: #1a1a1a; line-height: 1.2; }
+    .item-desc { font-size: 0.8rem; color: #666; line-height: 1.4; margin: 0 0 1rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; flex: 1; }
+
+    .card-footer { display: flex; align-items: center; justify-content: space-between; }
+    .distance-text { font-size: 0.7rem; font-weight: 800; color: #2bcbba; display: flex; align-items: center; gap: 0.2rem; }
+    .distance-text .material-icons { font-size: 0.9rem; }
     
-    .btn-trail-action { width: 100%; background: #f0f7f4; color: #2ed573; border: none; padding: 1rem; border-radius: 50px; font-size: 0.85rem; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 0.6rem; cursor: pointer; }
+    .details-link { background: none; border: none; color: #2bcbba; font-size: 0.7rem; font-weight: 950; cursor: pointer; padding: 0; }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WeekendComponent {
-  trails: Trail[] = [
-    {
-      id: 1,
-      name: "Tâmpa - Drumul Serpentinelor",
-      description: "Cel mai popular traseu din Brașov. O plimbare relaxantă prin pădure care culminează cu o panoramă de vis asupra centrului istoric.",
-      difficulty: "Ușor",
-      duration: "1h 15m",
-      distance: "400m dif. niv.",
-      image: "trail_tampa.png"
-    },
-    {
-      id: 2,
-      name: "Pietrele lui Solomon",
-      description: "O zonă legendară ideală pentru plimbări ușoare, picnic și relaxare lângă râu. Pereții de calcar sunt spectaculoși.",
-      difficulty: "Ușor",
-      duration: "45m",
-      distance: "Traseu Plat",
-      image: "trail_solomon.png"
-    },
-    {
-      id: 3,
-      name: "Drumul Vechi spre Poiana Brașov",
-      description: "Un traseu istoric lat și bine întreținut, perfect pentru o plimbare mai lungă sau mountain biking prin pădurea de pini.",
-      difficulty: "Mediu",
-      duration: "2h 30m",
-      distance: "8km (dus-întors)",
-      image: "trail_poiana.png"
-    }
+  items: Recommendation[] = [
+    { id: 1, name: "Traseu Tâmpa", category: "Natură", description: "Drumul serpentinelor către vârful Tâmpa. Panoramă superbă deasupra Brașovului.", distance: "1.2 km", rating: 4.9, image: "assets/images/trail_tampa.png" },
+    { id: 2, name: "Biserica Neagră", category: "Obiectiv", description: "Cel mai mare edificiu sacru în stil gotic din sud-estul Europei. Un simbol al orașului.", distance: "0.4 km", rating: 4.8, image: "assets/images/culture_v2.png" },
+    { id: 3, name: "Restaurant Sergiana", category: "Restaurant", description: "Bucătărie tradițională transilvăneană într-o atmosferă autentică de cramă.", distance: "0.6 km", rating: 4.7, image: "assets/images/gastronomy_v2.png" },
+    { id: 4, name: "Cafenea Tipografia", category: "Cafenea", description: "Concept store și cafenea cu cafea de specialitate și atmosferă artistică.", distance: "0.5 km", rating: 4.9, image: "assets/images/experiente.png" },
+    { id: 5, name: "Pietrele lui Solomon", category: "Natură", description: "Zonă naturală deosebită la marginea orașului, ideală pentru relaxare și picnic.", distance: "3.5 km", rating: 4.6, image: "assets/images/trail_solomon.png" },
+    { id: 6, name: "Poiana Brașov", category: "Natură", description: "Cea mai renumită stațiune montană, situată la poalele Masivului Postăvarul.", distance: "12 km", rating: 4.9, image: "assets/images/trail_poiana.png" }
   ];
 
   goBack() { window.history.back(); }
