@@ -69,7 +69,7 @@ import { gsap } from 'gsap';
     </main>
   `,
   styles: [`
-    .bus-shell { min-height: 100vh; background: #fff; font-family: 'Outfit', sans-serif; color: #1a1a1a; display: flex; flex-direction: column; overflow-x: hidden; }
+    .bus-shell { height: 100dvh; background: #fff; font-family: 'Outfit', sans-serif; color: #1a1a1a; display: flex; flex-direction: column; overflow-x: hidden; overflow-y: auto; -webkit-overflow-scrolling: touch; }
     
     .top-nav { padding: calc(var(--safe-top) + 1.5rem) 1.5rem 1rem; }
     .minimal-back-btn { background: none; border: none; padding: 0.5rem; display: flex; align-items: center; color: #1a1a1a; cursor: pointer; }

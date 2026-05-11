@@ -205,7 +205,7 @@ declare const google: any;
     </div>
   `,
   styles: [`
-    .transport-container { min-height: 100vh; background: #fff; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; color: #1a1a1a; overflow-x: hidden; }
+    .transport-container { height: 100dvh; background: #fff; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; color: #1a1a1a; overflow: hidden; }
     
     .top-nav { position: absolute; top: 0; left: 0; right: 0; padding: calc(var(--safe-top) + 1rem) 1.25rem; z-index: 1000; transition: all 0.4s ease; }
     .nav-row.pill-header { display: flex; align-items: center; background: #fff; border-radius: 999px; box-shadow: 0 10px 40px rgba(0,0,0,0.12); border: 1px solid rgba(0,0,0,0.05); padding: 0.25rem 0.5rem 0.25rem 0.75rem; max-width: 600px; margin: 0 auto; }
