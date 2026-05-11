@@ -75,9 +75,10 @@ import { gsap } from 'gsap';
   styles: [
     `
       .dashboard-container {
-        min-height: 100dvh;
+        height: 100dvh;
         width: 100%;
         overflow-x: hidden;
+        overflow-y: auto;
         background: #ffffff;
         padding: calc(var(--safe-top) + 1.5rem) 1.25rem calc(var(--safe-bottom) + 1.5rem);
         font-family: 'Outfit', sans-serif;
@@ -85,6 +86,7 @@ import { gsap } from 'gsap';
         flex-direction: column;
         gap: 2rem;
         position: relative;
+        -webkit-overflow-scrolling: touch;
       }
 
       .dashboard-header {
