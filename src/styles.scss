@@ -1,39 +1,4 @@
 
-@font-face {
-  font-family: 'Surgena';
-  src: url('/fonts/Web-PS/Surgena-Light.woff2') format('woff2');
-  font-weight: 300;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Surgena';
-  src: url('/fonts/Web-PS/Surgena-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Surgena';
-  src: url('/fonts/Web-PS/Surgena-Medium.woff2') format('woff2');
-  font-weight: 500;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Surgena';
-  src: url('/fonts/Web-PS/Surgena-SemiBold.woff2') format('woff2');
-  font-weight: 600;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Surgena';
-  src: url('/fonts/Web-PS/Surgena-Bold.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-}
-
 html {
 	color-scheme: light;
 }
@@ -57,7 +22,7 @@ body {
 
 body {
 	margin: 0;
-	font-family: 'Surgena', Inter, system-ui, sans-serif;
+	font-family: 'Outfit', Inter, system-ui, sans-serif;
 	background: #ffffff;
   color: #1a1a1b;
   -webkit-font-smoothing: antialiased;
@@ -106,6 +71,17 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+a,
+button,
+input {
+	font: inherit;
+}
+
+input,
+textarea,
+select {
+	background-color: transparent !important;
+}
 a,
 button,
 input {

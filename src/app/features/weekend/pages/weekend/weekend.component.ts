@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 
 interface Category {
   id: string;
@@ -22,7 +21,7 @@ interface Recommendation {
 @Component({
   selector: 'app-weekend',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   template: `
     <main class="weekend-shell">
       <header class="top-nav">

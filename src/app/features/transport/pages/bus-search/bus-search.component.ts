@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, signal, OnDestroy, PLATFORM_ID, inject, OnInit, afterNextRender, ViewEncapsulation, DestroyRef, ElementRef, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, OnDestroy, PLATFORM_ID, inject, OnInit, afterNextRender, ViewEncapsulation, DestroyRef, ElementRef, ViewChild, computed } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { TransitService } from '../../services/transit.service';
+import { gsap } from 'gsap';
 
 declare const google: any;
 
@@ -11,22 +12,23 @@ declare const google: any;
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="transport-container">
-      <header class="top-nav">
-        <button class="unified-back-btn" (click)="goBack()">
-          <span class="material-icons">arrow_back</span>
-          <span>Înapoi</span>
-        </button>
-        <div class="search-wrap">
+    <div class="transport-container" #container 
+         [class.minimized-state]="isMinimized() && activeStation()"
+         [class.active-station-state]="activeStation()">
+      <header class="top-nav" [class.active-search]="searchTerm().length > 0">
+        <div class="nav-row pill-header">
+          <button class="minimal-back-btn" (click)="goBack()">
+            <span class="material-icons">arrow_back_ios_new</span>
+          </button>
           <div class="search-pill">
             <span class="material-icons search-ico">search</span>
             <input 
               type="text" 
-              placeholder="Caută stație..." 
+              placeholder="Search station..." 
               (input)="onSearch($any($event.target).value)"
               [value]="searchTerm()"
             />
-            <button class="locate-btn" (click)="findNearbyStation()" title="Stații apropiate">
+            <button class="minimal-locate" (click)="findNearbyStation()" title="Nearby">
               <span class="material-icons">my_location</span>
             </button>
           </div>
@@ -71,76 +73,95 @@ declare const google: any;
           </div>
         </section>
 
-        <section class="station-viewer">
+        <section class="station-viewer" #viewer 
+                 [class.minimized]="isMinimized()" 
+                 (scroll)="onViewerScroll($event)"
+                 (touchstart)="onTouchStart($event)"
+                 (touchmove)="onTouchMove($event)">
           @if (activeStation()) {
+            <div class="drag-handle-container" (click)="handleDragClick()">
+              <div class="drag-handle"></div>
+            </div>
+            
             <header class="station-meta">
               <div class="meta-left">
-                <h1>{{ activeStation()?.name }}</h1>
-                <div class="station-status">
-                  <span class="dot active"></span>
-                  <span>STAȚIE VERIFICATĂ • BRAȘOV SMART CITY</span>
+                <h1 class="bold-header">
+                  @for (word of splitByWord(activeStation()?.name || ''); track $index) {
+                    <span class="word">
+                      @for (char of word.split(''); track $index) {
+                        <span class="char">{{ char }}</span>
+                      }
+                      <span class="char">&nbsp;</span>
+                    </span>
+                  }
+                </h1>
+                
+                <div class="quick-actions">
+                  <button class="primary-bold-btn" (click)="takeMeThere(activeStation())">
+                    <span class="material-icons">near_me</span>
+                    <span>Take me there</span>
+                  </button>
                 </div>
-                <button class="navigate-btn" (click)="takeMeThere(activeStation())" style="margin-top: 1.25rem;">
-                  <span class="material-icons">near_me</span>
-                  <span>Duce-mă acolo</span>
-                </button>
               </div>
             </header>
 
-            <div class="available-lines">
-              <div class="list-label">Linii în stație</div>
+            <div class="section-block">
+              <div class="block-label">Lines at this station</div>
               <div class="line-scroller">
                 @for (line of activeStation()!.lineDetails || []; track line.name) {
-                  <button class="line-pill-btn" [style.background]="line.color" [style.color]="line.textColor" (click)="openTimetable(line)">
+                  <button class="line-pill-bold" [style.background]="line.color" [style.color]="line.textColor" (click)="openTimetable(line)">
                     {{ line.name }}
                   </button>
                 }
               </div>
             </div>
 
-            <div class="arrivals-list">
-              <div class="list-label">Sosiri Următoare</div>
-              @for (arr of activeStation()?.arrivals?.slice(0, displayLimit()) || []; track arr.line + arr.eta) {
-                <div class="arrival-card" (click)="openTimetable(arr)">
-                  <div class="line-identity" [style.background]="arr.color" [style.color]="arr.textColor">
-                    {{ arr.shortLine }}
-                  </div>
-                  <div class="arrival-info">
-                    <span class="dest">{{ arr.target }}</span>
-                    <div class="status-wrap">
-                      <span class="live-pulse"></span>
-                      <span class="status-text">LIVE • Programat la {{ arr.scheduledTime }}</span>
+            <div class="section-block">
+              <div class="block-label">Upcoming Arrivals</div>
+              <div class="arrivals-list">
+                @for (arr of activeStation()?.arrivals?.slice(0, displayLimit()) || []; track arr.line + arr.eta) {
+                  <div class="arrival-card-bold" (click)="openTimetable(arr)">
+                    <div class="line-tag" [style.background]="arr.color" [style.color]="arr.textColor">
+                      {{ arr.shortLine }}
+                    </div>
+                    <div class="arrival-main">
+                      <span class="arrival-dest">{{ arr.target }}</span>
+                      <span class="arrival-meta">Scheduled at {{ arr.scheduledTime }}</span>
+                    </div>
+                    <div class="arrival-eta">
+                      <span class="eta-val">{{ arr.eta }}</span>
+                      <span class="eta-min">MIN</span>
                     </div>
                   </div>
-                  <div class="eta-wrap">
-                    <span class="eta-num">{{ arr.eta }}</span>
-                    <span class="eta-unit">min</span>
+                }
+
+                @if (activeStation()?.arrivals?.length > displayLimit()) {
+                  <button class="minimal-more-btn" (click)="showMore()">
+                    <span>Load more</span>
+                    <span class="material-icons">expand_more</span>
+                  </button>
+                }
+
+                @if (!isFetchingLines() && activeStation()?.arrivals?.length === 0) {
+                  <div class="empty-state">
+                    <span class="material-icons">event_busy</span>
+                    <p>No upcoming arrivals found.</p>
                   </div>
-                </div>
-              }
-
-              @if (activeStation()?.arrivals?.length > displayLimit()) {
-                <button class="view-more-btn" (click)="showMore()">
-                  <span>Vezi mai multe</span>
-                  <span class="material-icons">expand_more</span>
-                </button>
-              }
-
-              @if (!isFetchingLines() && activeStation()?.arrivals?.length === 0) {
-                <div class="empty-arrivals">
-                  <span class="material-icons">event_busy</span>
-                  <p>Nu sunt sosiri programate în următoarea oră.</p>
-                </div>
-              }
+                }
+              </div>
             </div>
           } @else if (!isLoading()) {
-            <div class="hero-empty">
-              <span class="material-icons">explore</span>
-              <h2>Transport Public Brașov</h2>
-              <p>Caută o stație sau folosește locația pentru a vedea sosirile în timp real.</p>
-              <button class="hero-locate" (click)="findNearbyStation()">
+            <div class="hero-welcome">
+              <h1 class="bold-header">
+                <span *ngFor="let word of splitByWord('Brașov Transit')" class="word">
+                  <span *ngFor="let char of word.split('')" class="char">{{ char }}</span>
+                  <span class="char">&nbsp;</span>
+                </span>
+              </h1>
+              <p class="hero-subtext">Search for a station or find one nearby to see real-time schedules.</p>
+              <button class="primary-bold-btn" (click)="findNearbyStation()">
                 <span class="material-icons">my_location</span>
-                Vezi stații apropiate
+                <span>Find nearby stations</span>
               </button>
             </div>
           }
@@ -150,29 +171,29 @@ declare const google: any;
       <!-- Timetable Modal -->
       @if (viewingTimetable()) {
         <div class="modal-backdrop" (click)="closeTimetable()">
-          <div class="modal-sheet" (click)="$event.stopPropagation()">
-            <header class="sheet-header" [style.background]="viewingTimetable()!.color" [style.color]="viewingTimetable()!.textColor">
-              <div class="sheet-info">
-                <span class="sheet-line">{{ viewingTimetable()!.name }}</span>
-                <span class="sheet-dest">către {{ viewingTimetable()!.target }}</span>
+          <div class="modal-sheet-premium" (click)="$event.stopPropagation()">
+            <header class="sheet-head" [style.background]="viewingTimetable()!.color" [style.color]="viewingTimetable()!.textColor">
+              <div class="sheet-title-wrap">
+                <span class="sheet-line-num">{{ viewingTimetable()!.name }}</span>
+                <span class="sheet-destination">to {{ viewingTimetable()!.target }}</span>
               </div>
-              <button class="sheet-close" (click)="closeTimetable()">
+              <button class="sheet-exit" (click)="closeTimetable()">
                 <span class="material-icons">close</span>
               </button>
             </header>
             
-            <div class="sheet-content">
-              <div class="day-tabs">
+            <div class="sheet-body">
+              <div class="day-pills">
                 @for (service of getServiceKeys(viewingTimetable()!.timetable); track service) {
-                  <button [class.on]="selectedService() === service" (click)="selectedService.set(service)">
-                    {{ service === 'Mo-Fr' ? 'Luni-Vineri' : (service === 'Sa-Su' ? 'Sâmbătă-Duminică' : service) }}
+                  <button [class.active]="selectedService() === service" (click)="selectedService.set(service)">
+                    {{ service === 'Mo-Fr' ? 'Weekdays' : (service === 'Sa-Su' ? 'Weekend' : service) }}
                   </button>
                 }
               </div>
 
-              <div class="times-flex">
+              <div class="timetable-grid">
                 @for (time of viewingTimetable()!.timetable[selectedService()]; track time) {
-                  <div class="time-item" [class.highlight]="isNextTime(time)">
+                  <div class="time-slot" [class.is-next]="isNextTime(time)">
                     {{ time }}
                   </div>
                 }
@@ -184,86 +205,106 @@ declare const google: any;
     </div>
   `,
   styles: [`
-    .transport-container { background: #fcfcfc; min-height: 100vh; width: 100%; overflow-x: hidden; font-family: 'Outfit', sans-serif; color: #1a1a1a; position: relative; }
-    .top-nav { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; background: rgba(255,255,255,0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: calc(var(--safe-top) + 1.2rem) 1.5rem 1rem; display: flex; flex-direction: column; gap: 1rem; border-bottom: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
-    .back-pill { border: none; background: #fff; padding: 0.6rem 1.2rem; border-radius: 100px; display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #444; width: fit-content; box-shadow: 0 4px 12px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s; }
-    .back-pill:active { transform: scale(0.95); }
-    .search-pill { background: #f2f3f5; border-radius: 16px; padding: 0.6rem 1.2rem; display: flex; align-items: center; gap: 0.8rem; border: 2px solid transparent; transition: all 0.3s; }
-    .search-pill:focus-within { background: #fff; border-color: #ff4500; box-shadow: 0 10px 20px rgba(255,69,0,0.1); }
-    .search-ico { color: #999; font-size: 1.2rem; }
-    .search-pill input { border: none; background: transparent; flex: 1; outline: none; font-size: 1rem; font-weight: 600; color: #1a1a1a; }
-    .locate-btn { border: none; background: #fff; width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #ff4500; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    .search-overlay { position: fixed; inset: 0; top: calc(var(--safe-top) + 8.5rem); background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); z-index: 900; overflow-y: auto; padding: 1rem 1.5rem 2rem; }
-    .results-container { display: flex; flex-direction: column; gap: 1rem; max-width: 600px; margin: 0 auto; }
-    .result-card { background: #fff; border-radius: 20px; padding: 1.2rem; display: flex; align-items: center; gap: 1rem; border: 1px solid #f0f0f0; box-shadow: 0 4px 15px rgba(0,0,0,0.03); cursor: pointer; transition: all 0.2s; }
-    .result-card:active { transform: scale(0.98); background: #fafafa; }
-    .res-icon { width: 44px; height: 44px; background: #fff5f2; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: #ff4500; }
-    .res-body { flex: 1; display: flex; flex-direction: column; gap: 0.2rem; }
-    .res-name-row { display: flex; align-items: center; gap: 0.6rem; }
-    .res-name { font-weight: 800; font-size: 1.05rem; }
-    .hub-chip { font-size: 0.6rem; font-weight: 900; background: #ff4500; color: #fff; padding: 2px 6px; border-radius: 4px; }
-    .res-lines { display: flex; flex-wrap: wrap; gap: 4px; }
-    .mini-line { font-size: 0.6rem; color: #fff; padding: 1px 5px; border-radius: 3px; font-weight: 900; min-width: 20px; text-align: center; }
-    .chevron { color: #ccc; font-size: 1.2rem; }
+    .transport-container { min-height: 100vh; background: #fff; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; color: #1a1a1a; overflow-x: hidden; }
+    
+    .top-nav { position: absolute; top: 0; left: 0; right: 0; padding: calc(var(--safe-top) + 1rem) 1.25rem; z-index: 1000; transition: all 0.4s ease; }
+    .nav-row.pill-header { display: flex; align-items: center; background: #fff; border-radius: 999px; box-shadow: 0 10px 40px rgba(0,0,0,0.12); border: 1px solid rgba(0,0,0,0.05); padding: 0.25rem 0.5rem 0.25rem 0.75rem; max-width: 600px; margin: 0 auto; }
+    
+    .minimal-back-btn { background: transparent; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #1a1a1a; cursor: pointer; transition: background 0.2s; }
+    .minimal-back-btn:active { background: #f5f5f5; }
+    .search-pill { flex: 1; display: flex; align-items: center; background: transparent; padding: 0 0.5rem; border-radius: 0; box-shadow: none; border: none; }
+    .search-pill input { border: none; background: transparent; flex: 1; padding: 0.8rem 0; outline: none; font-size: 1rem; font-weight: 700; color: #1a1a1a; }
+    .search-ico { color: #ccc; margin-right: 0.5rem; font-size: 1.2rem; }
+    .minimal-locate { background: #f5f5f5; border: none; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #1a1a1a; cursor: pointer; }
 
-    .main-content { max-width: 800px; margin: 0 auto; padding-top: calc(var(--safe-top) + 8.5rem); padding-bottom: 4rem; }
-    .map-section { padding: 1rem 1.5rem; }
-    .map-canvas { height: 280px; background: #eee; border-radius: 28px; overflow: hidden; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
-    .map-element { height: 100%; width: 100%; }
-    .map-overlay-loader { position: absolute; inset: 0; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; z-index: 10; }
-    .loader-ring { width: 30px; height: 30px; border: 3px solid #f0f0f0; border-top-color: #ff4500; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    .search-overlay { position: absolute; top: calc(var(--safe-top) + 5rem); left: 1.25rem; right: 1.25rem; background: #fff; border-radius: 28px; z-index: 1001; box-shadow: 0 20px 50px rgba(0,0,0,0.15); max-height: 60vh; overflow-y: auto; padding: 1rem; border: 1px solid rgba(0,0,0,0.05); }
+    .result-card { display: flex; align-items: center; gap: 1rem; padding: 1.2rem; border-radius: 20px; transition: all 0.2s; cursor: pointer; }
+    .result-card:active { background: #f9f9f9; transform: scale(0.98); }
+    .res-icon { width: 48px; height: 48px; background: #f5f5f5; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: #1a1a1a; }
+    .res-body { flex: 1; display: flex; flex-direction: column; gap: 0.25rem; }
+    .res-name { font-weight: 800; font-size: 1.1rem; color: #1a1a1a; }
+    .hub-chip { font-size: 0.6rem; font-weight: 900; background: #1a1a1a; color: #fff; padding: 2px 6px; border-radius: 4px; margin-left: 0.5rem; vertical-align: middle; }
+    .res-lines { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 0.4rem; }
+    .mini-line { font-size: 0.7rem; font-weight: 900; color: #fff; padding: 2px 8px; border-radius: 6px; margin-right: 4px; }
+    .main-content { flex: 1; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    .map-section { height: 100vh; width: 100%; flex-shrink: 0; transition: height 0.7s cubic-bezier(0.2, 0.8, 0.2, 1); position: relative; z-index: 1; }
+    .active-station-state .map-section { height: 45vh; }
+    .minimized-state .map-section { height: 75vh; }
+    .map-canvas { width: 100%; height: 100%; }
+    .map-element { width: 100%; height: 100%; }
+    
+    .map-overlay-loader { position: absolute; inset: 0; background: rgba(255,255,255,0.4); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 5; }
+    .loader-ring { width: 32px; height: 32px; border: 3px solid #eee; border-top-color: #1a1a1a; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    
+    .station-viewer { position: absolute; bottom: 0; left: 0; right: 0; height: 70vh; background: #fff; border-radius: 44px 44px 0 0; z-index: 10; padding: 0 1.5rem 2rem; box-shadow: 0 -25px 60px rgba(0,0,0,0.12); transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1); overflow-y: auto; scroll-behavior: smooth; transform: translateY(0); }
+    .minimized-state .station-viewer { transform: translateY(calc(70vh - 250px)); overflow-y: hidden; }
 
-    .station-viewer { padding: 0.5rem 1.5rem 0; }
-    .station-meta { margin-bottom: 2rem; display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; }
-    h1 { font-size: 2rem; font-weight: 900; letter-spacing: -0.03em; margin-bottom: 0.25rem; line-height: 1.1; }
-    .navigate-btn { background: #1a1a1a; color: #fff; border: none; padding: 0.8rem 1.5rem; border-radius: 16px; font-weight: 800; font-size: 0.95rem; display: flex; align-items: center; gap: 0.6rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; justify-content: center; max-width: 280px; }
-    .navigate-btn:active { transform: scale(0.95); background: #333; }
-    .station-status { display: flex; align-items: center; gap: 0.5rem; font-size: 0.7rem; font-weight: 800; color: #999; text-transform: uppercase; letter-spacing: 0.05em; }
-    .dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; }
-    .dot.active { background: #2ecc71; box-shadow: 0 0 8px rgba(46,204,113,0.5); }
+    
+    .drag-handle-container { padding: 1.25rem 0 1rem; display: flex; justify-content: center; cursor: pointer; position: sticky; top: 0; background: #fff; z-index: 10; margin: 0 -1.5rem; }
+    .drag-handle { width: 44px; height: 5px; background: #f0f0f0; border-radius: 3px; transition: background 0.3s; }
+    .drag-handle-container:active .drag-handle { background: #e0e0e0; }
 
-    .list-label { font-size: 0.8rem; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1.2rem; }
-    .arrivals-list { margin-bottom: 2.5rem; }
-    .arrival-card { background: #fff; border-radius: 24px; padding: 1rem; display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; border: 1px solid #f2f2f2; box-shadow: 0 4px 12px rgba(0,0,0,0.02); transition: transform 0.2s; }
-    .arrival-card:active { transform: scale(0.98); }
-    .line-identity { width: 50px; height: 50px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.2rem; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-    .arrival-info { flex: 1; display: flex; flex-direction: column; gap: 0.2rem; }
-    .dest { font-weight: 800; font-size: 1.1rem; color: #1a1a1a; line-height: 1.2; }
-    .status-wrap { display: flex; align-items: center; gap: 0.5rem; }
-    .live-pulse { width: 6px; height: 6px; background: #2ecc71; border-radius: 50%; animation: pulse-live 1.5s infinite; }
-    .status-text { font-size: 0.7rem; font-weight: 700; color: #999; }
-    .eta-wrap { text-align: right; display: flex; flex-direction: column; line-height: 1; }
-    .eta-num { font-size: 1.6rem; font-weight: 900; color: #ff4500; }
-    .eta-unit { font-size: 0.7rem; font-weight: 800; color: #ff4500; text-transform: uppercase; }
-    .line-scroller { display: flex; gap: 0.6rem; overflow-x: auto; padding-bottom: 1rem; scrollbar-width: none; }
-    .line-pill-btn { border: none; padding: 0.6rem 1.2rem; border-radius: 14px; font-weight: 800; font-size: 0.9rem; white-space: nowrap; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; }
-    .view-more-btn { width: 100%; background: transparent; border: 1px solid #eee; padding: 1rem; border-radius: 18px; display: flex; align-items: center; justify-content: center; gap: 0.8rem; color: #888; font-weight: 700; margin-top: 1rem; cursor: pointer; }
-    .hero-empty { text-align: center; padding: 4rem 2rem; }
-    .hero-locate { background: #ff4500; color: #fff; border: none; padding: 1rem 1.5rem; border-radius: 18px; font-weight: 800; display: flex; align-items: center; gap: 0.8rem; margin: 0 auto; box-shadow: 0 8px 20px rgba(255,69,0,0.3); cursor: pointer; }
-    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); z-index: 2000; display: flex; align-items: flex-end; }
-    .modal-sheet { background: #fff; width: 100%; border-radius: 32px 32px 0 0; max-height: 85vh; overflow-y: auto; animation: slide-up 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
-    .sheet-header { padding: 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; }
-    .sheet-line { font-size: 2.2rem; font-weight: 900; line-height: 1; }
-    .sheet-dest { display: block; font-size: 1rem; font-weight: 700; opacity: 0.9; margin-top: 0.4rem; }
-    .sheet-close { background: rgba(255,255,255,0.2); border: none; width: 44px; height: 44px; border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-    .sheet-content { padding: 2rem; }
-    .day-tabs { display: flex; background: #f0f0f0; padding: 4px; border-radius: 14px; margin-bottom: 2rem; }
-    .day-tabs button { flex: 1; border: none; background: transparent; padding: 0.8rem; border-radius: 10px; font-weight: 700; color: #888; cursor: pointer; }
-    .day-tabs button.on { background: #fff; color: #1a1a1a; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-    .times-flex { display: flex; flex-wrap: wrap; gap: 0.8rem; }
-    .time-item { background: #f8f8f8; padding: 0.8rem 1.2rem; border-radius: 14px; font-weight: 700; font-size: 1.1rem; color: #444; border: 1px solid #eee; }
-    .time-item.highlight { background: #ff4500; color: #fff; border-color: #ff4500; box-shadow: 0 6px 15px rgba(255,69,0,0.3); transform: scale(1.1); }
-    @keyframes slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
-    @keyframes pulse-live { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(2); opacity: 0; } 100% { transform: scale(1); opacity: 0; } }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .station-meta { margin-bottom: 2rem; }
+    .bold-header { font-size: 3rem; font-weight: 800; letter-spacing: -0.06em; line-height: 0.85; margin: 0 0 1rem; transition: font-size 0.3s; }
+    .minimized .bold-header { font-size: 2.2rem; }
+    .word { display: inline-block; white-space: nowrap; }
+    .char { display: inline-block; }
+    
+    .primary-bold-btn { background: #1a1a1a; color: #fff; border: none; width: 100%; padding: 1.2rem; border-radius: 20px; font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem; letter-spacing: 0.02em; cursor: pointer; }
+    .primary-bold-btn:active { transform: scale(0.97); transition: transform 0.2s; }
+
+    .section-block { margin-bottom: 2.5rem; }
+    .block-label { font-size: 0.8rem; font-weight: 900; color: #bbb; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 1.25rem; padding-left: 0.5rem; }
+    
+    .line-scroller { display: flex; gap: 0.75rem; overflow-x: auto; padding-bottom: 0.5rem; scrollbar-width: none; }
+    .line-scroller::-webkit-scrollbar { display: none; }
+    .line-pill-bold { flex-shrink: 0; padding: 0.8rem 1.5rem; border-radius: 14px; border: none; font-weight: 900; font-size: 1.1rem; cursor: pointer; box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
+
+    .arrivals-list { display: flex; flex-direction: column; gap: 1rem; }
+    .arrival-card-bold { display: flex; align-items: center; gap: 1.25rem; background: #fafafa; padding: 1.25rem; border-radius: 24px; transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); cursor: pointer; border: 1px solid rgba(0,0,0,0.03); }
+    .arrival-card-bold.animated { transform: none !important; opacity: 1 !important; }
+    .arrival-card-bold:active { transform: scale(0.96); background: #f0f0f0; }
+    
+    .line-tag { width: 54px; height: 54px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.2rem; color: #fff; flex-shrink: 0; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+    .arrival-main { flex: 1; display: flex; flex-direction: column; gap: 0.2rem; }
+    .arrival-dest { font-weight: 800; font-size: 1.1rem; color: #1a1a1a; letter-spacing: -0.02em; }
+    .arrival-meta { font-size: 0.85rem; color: #999; font-weight: 600; }
+    .arrival-eta { text-align: right; display: flex; flex-direction: column; align-items: flex-end; }
+    .eta-val { font-size: 1.6rem; font-weight: 950; color: #1a1a1a; line-height: 1; letter-spacing: -0.05em; }
+    .eta-min { font-size: 0.7rem; font-weight: 900; color: #bbb; letter-spacing: 0.1em; }
+
+    .minimal-more-btn { width: 100%; background: #fff; border: 2px solid #f0f0f0; padding: 1rem; border-radius: 24px; font-weight: 800; color: #1a1a1a; margin-top: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+    
+    .hero-welcome { text-align: center; padding: 3rem 1rem; display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
+    .hero-subtext { color: #666; font-size: 1.1rem; line-height: 1.5; font-weight: 500; margin: 0; }
+
+    .modal-sheet-premium { background: #fff; width: 100%; border-radius: 40px 40px 0 0; max-height: 85vh; overflow-y: auto; box-shadow: 0 -20px 60px rgba(0,0,0,0.1); }
+    .sheet-head { padding: 2.5rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+    .sheet-line-num { font-size: 3rem; font-weight: 800; line-height: 1; letter-spacing: -0.04em; }
+    .sheet-destination { display: block; font-size: 1.1rem; font-weight: 700; opacity: 0.9; margin-top: 0.5rem; }
+    .sheet-exit { background: rgba(0,0,0,0.1); border: none; width: 44px; height: 44px; border-radius: 50%; color: inherit; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .sheet-body { padding: 2.5rem 2rem; }
+    .day-pills { display: flex; background: #f5f5f5; padding: 6px; border-radius: 18px; margin-bottom: 2.5rem; }
+    .day-pills button { flex: 1; border: none; background: transparent; padding: 0.9rem; border-radius: 14px; font-weight: 800; color: #999; cursor: pointer; }
+    .day-pills button.active { background: #fff; color: #1a1a1a; box-shadow: 0 6px 15px rgba(0,0,0,0.05); }
+    .timetable-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 0.75rem; }
+    .time-slot { background: #fafafa; padding: 1rem; border-radius: 16px; font-weight: 700; font-size: 1.1rem; text-align: center; border: 1px solid #f0f0f0; }
+    .time-slot.is-next { background: #1a1a1a; color: #fff; border-color: #1a1a1a; transform: scale(1.05); }
+
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    @media (max-width: 480px) {
+      .bold-header { font-size: 2.4rem; }
+      .primary-bold-btn { width: 100%; }
+    }
   `],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BusSearchComponent implements OnInit, OnDestroy {
   @ViewChild('mapContainer') mapContainer!: ElementRef;
-  public Object = Object;
-  private http = inject(HttpClient);
+  @ViewChild('viewer') viewer!: ElementRef;
+  
+  private transitService = inject(TransitService);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
   
@@ -278,34 +319,145 @@ export class BusSearchComponent implements OnInit, OnDestroy {
   public allStations: any[] = [];
   activeStation = signal<any | null>(null);
   searchResults = signal<any[]>([]);
-  public smartStops = signal<any[]>([]);
+  public smartStops = computed(() => this.transitService.smartStops());
 
   viewingTimetable = signal<any | null>(null);
   selectedService = signal<string>('Mo-Fr');
 
+  isMinimized = signal<boolean>(false);
+
+  private locationTimeout: any;
+
   constructor() {
     afterNextRender(() => {
-      this.initTimeout = setTimeout(() => {
-        if (this.initMap()) {
-          this.loadTransitDatabase();
-          setTimeout(() => this.findNearbyStation(true), 500);
-        }
-      }, 100);
+      this.isLoading.set(true);
+      
+      // Start finding location early
+      const earlyLoc = new Promise((resolve) => {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+          () => resolve(null),
+          { timeout: 2000 }
+        );
+      });
+
+      earlyLoc.then((coords: any) => {
+        this.initMap(coords);
+        this.transitService.loadData().then(() => {
+          this.fetchPopularHubs();
+          
+          this.locationTimeout = setTimeout(() => {
+            if (!this.activeStation() && !this.searchTerm()) {
+              if (this.allStations.length > 0) this.selectStation(this.allStations[0]);
+              else this.isLoading.set(false);
+            }
+          }, 5000);
+
+          this.findNearbyStation(true);
+        });
+      });
     });
   }
 
   ngOnInit() {}
   ngOnDestroy() {
     if (this.initTimeout) clearTimeout(this.initTimeout);
+    if (this.locationTimeout) clearTimeout(this.locationTimeout);
   }
 
-  private initMap(): boolean {
+  splitByWord(text: string): string[] {
+    return text ? text.split(' ') : [];
+  }
+
+  private entranceTl?: gsap.core.Timeline;
+
+  private animateEntrance() {
+    if (!this.viewer?.nativeElement) return;
+    
+    const container = this.viewer.nativeElement;
+    const chars = container.querySelectorAll('.char');
+    const cards = container.querySelectorAll('.arrival-card-bold');
+    const linePills = container.querySelectorAll('.line-pill-bold');
+    const labels = container.querySelectorAll('.block-label');
+    const actionBtns = container.querySelectorAll('.primary-bold-btn');
+    const dragHandle = container.querySelectorAll('.drag-handle-container');
+
+    if (chars.length === 0 && cards.length === 0) return;
+
+    // Kill any existing animation to prevent "refresh" glitches
+    if (this.entranceTl) this.entranceTl.kill();
+    gsap.killTweensOf([chars, cards, linePills, labels, actionBtns, dragHandle]);
+
+    this.entranceTl = gsap.timeline({ defaults: { ease: 'power4.out', duration: 0.8 } });
+    
+    this.entranceTl.fromTo(chars, 
+      { y: 20, opacity: 0 },
+      { y: 0, opacity: 1, stagger: 0.015 }
+    )
+    .fromTo([dragHandle, actionBtns, labels, linePills],
+      { y: 15, opacity: 0 },
+      { y: 0, opacity: 1, stagger: 0.04 },
+      '-=0.65'
+    )
+    .fromTo(cards,
+      { y: 25, opacity: 0 },
+      { 
+        y: 0, 
+        opacity: 1, 
+        stagger: 0.06,
+        onComplete: () => {
+          cards.forEach((el: any) => el.classList.add('animated'));
+        }
+      },
+      '-=0.6'
+    );
+  }
+
+  private touchStartY = 0;
+  
+  onTouchStart(event: TouchEvent) {
+    this.touchStartY = event.touches[0].clientY;
+  }
+
+  onTouchMove(event: TouchEvent) {
+    const touchY = event.touches[0].clientY;
+    const deltaY = touchY - this.touchStartY;
+    const el = this.viewer?.nativeElement;
+    
+    // Pull down at top to minimize
+    if (el && el.scrollTop <= 0 && deltaY > 60 && !this.isMinimized()) {
+      this.isMinimized.set(true);
+    } 
+    // Pull up anywhere or scroll up to expand
+    else if (el && deltaY < -60 && this.isMinimized()) {
+      this.isMinimized.set(false);
+    }
+  }
+
+  onViewerScroll(event: Event) {
+    const el = event.target as HTMLElement;
+    // If user scrolls up (meaning moving content down) while minimized, expand
+    if (el.scrollTop < -10 && this.isMinimized()) {
+      this.isMinimized.set(false);
+    }
+    // If user scrolls down inside content, ensure expanded
+    if (el.scrollTop > 20 && this.isMinimized()) {
+      this.isMinimized.set(false);
+    }
+  }
+
+  handleDragClick() {
+    this.isMinimized.set(!this.isMinimized());
+  }
+
+  private initMap(initialCoords?: { lat: number, lng: number }): boolean {
     if (this.map) return true;
     if (!this.mapContainer) return false;
 
+    const center = initialCoords || { lat: 45.6483, lng: 25.5891 };
     this.map = new google.maps.Map(this.mapContainer.nativeElement, {
-      center: { lat: 45.6483, lng: 25.5891 },
-      zoom: 14,
+      center: center,
+      zoom: initialCoords ? 16 : 14,
       disableDefaultUI: true,
       gestureHandling: 'greedy',
       styles: this.getMapStyles()
@@ -314,16 +466,11 @@ export class BusSearchComponent implements OnInit, OnDestroy {
   }
 
   private loadTransitDatabase() {
-    const timestamp = new Date().getTime();
-    this.http.get<any[]>(`/gtfs_transit_data.json?v=${timestamp}`)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (data) => {
-          this.smartStops.set(data);
-          this.fetchPopularHubs();
-        },
-        error: (err) => console.error('Failed to load GTFS transit database', err)
-      });
+    this.transitService.loadData().then(() => {
+      this.fetchPopularHubs();
+      // Initial entrance for hero
+      setTimeout(() => this.animateEntrance(), 200);
+    });
   }
 
   private normalizeText(value: string): string {
@@ -356,7 +503,6 @@ export class BusSearchComponent implements OnInit, OnDestroy {
       }
     });
     this.allStations = hubs.sort((a, b) => b.lineCount - a.lineCount);
-    if (!this.activeStation()) this.selectStation(this.allStations[0]);
   }
 
   onSearch(query: string) {
@@ -484,7 +630,7 @@ export class BusSearchComponent implements OnInit, OnDestroy {
         icon: {
           path: google.maps.SymbolPath.CIRCLE,
           scale: 7,
-          fillColor: '#ff4500',
+          fillColor: '#1a1a1a',
           fillOpacity: 1,
           strokeColor: '#ffffff',
           strokeWeight: 2
@@ -495,10 +641,14 @@ export class BusSearchComponent implements OnInit, OnDestroy {
     });
 
     if (platforms.length === 1) {
-      this.map.setCenter({ lat: platforms[0].lat, lng: platforms[0].lon });
-      this.map.setZoom(17);
+      const pos = { lat: platforms[0].lat, lng: platforms[0].lon };
+      this.map.setCenter(pos);
+      this.map.setZoom(18);
+      // Use a smaller pan offset to keep marker visible above the station viewer
+      setTimeout(() => this.map.panBy(0, 150), 100);
     } else {
-      this.map.fitBounds(bounds);
+      // Hub with multiple platforms - use more reasonable padding
+      this.map.fitBounds(bounds, { bottom: 160, top: 80, left: 30, right: 30 });
     }
   }
 
@@ -510,40 +660,60 @@ export class BusSearchComponent implements OnInit, OnDestroy {
     return ['Mo-Fr', 'TE:Mo-Fr'];
   }
 
-  private fetchRealtimeArrivals(stationLines: any) {
+  private async fetchRealtimeArrivals(stationLines: any) {
     if (!stationLines) { this.isLoading.set(false); this.isFetchingLines.set(false); return; }
     this.isFetchingLines.set(true);
+    
     const arrivals: any[] = [];
-    const now = new Date();
-    const curH = now.getHours();
-    const curM = now.getMinutes();
-    const currentServiceIds = this.getCurrentServiceIds();
+    const stationName = this.activeStation()?.name || '';
+    
+    // Create an array of promises for parallel fetching
+    const fetchPromises = Object.keys(stationLines).map(async (lineKey) => {
+      const lineData = stationLines[lineKey];
+      const shortLine = lineData.name || lineKey.split('_')[0];
+      
+      // Fallback to static timetable calculation
+      const now = new Date();
+      const curH = now.getHours();
+      const curM = now.getMinutes();
+      const currentServiceIds = this.getCurrentServiceIds();
+      
+      let bestEta = Infinity;
+      let scheduledTime = '';
+      
+      currentServiceIds.forEach(serviceId => {
+        const scheduleArray = lineData.timetable[serviceId];
+        if (!scheduleArray) return;
+        for (const timeStr of scheduleArray) {
+          const [hStr, mStr] = timeStr.split(':');
+          let hour = parseInt(hStr, 10);
+          const min = parseInt(mStr, 10);
+          if (hour >= 24) hour -= 24;
+          let diff = (hour * 60 + min) - (curH * 60 + curM);
+          if (diff < 0) diff += 1440;
+          if (diff < bestEta) { 
+            bestEta = diff; 
+            scheduledTime = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`; 
+          }
+        }
+      });
 
-    Object.keys(stationLines).forEach(lineKey => {
-       const lineData = stationLines[lineKey];
-       let bestEta = Infinity;
-       let scheduledTime = '';
-       currentServiceIds.forEach(serviceId => {
-         const scheduleArray = lineData.timetable[serviceId];
-         if (!scheduleArray) return;
-         for (const timeStr of scheduleArray) {
-             const [hStr, mStr] = timeStr.split(':');
-             let hour = parseInt(hStr, 10);
-             const min = parseInt(mStr, 10);
-             if (hour >= 24) hour -= 24;
-             let diff = (hour * 60 + min) - (curH * 60 + curM);
-             if (diff < 0) diff += 1440;
-             if (diff < bestEta) { bestEta = diff; scheduledTime = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`; }
-         }
-       });
-       if (bestEta !== Infinity) {
-          arrivals.push({
-             line: lineKey, shortLine: lineData.name || lineKey.split('_')[0],
-             target: lineData.target, eta: bestEta.toString(), scheduledTime,
-             color: lineData.color, textColor: lineData.textColor, timetable: lineData.timetable
-          });
-       }
+      if (bestEta !== Infinity) {
+        arrivals.push({
+          line: lineKey, 
+          shortLine: shortLine,
+          target: lineData.target, 
+          eta: bestEta.toString(), 
+          scheduledTime,
+          color: lineData.color, 
+          textColor: lineData.textColor, 
+          timetable: lineData.timetable,
+          isLive: false
+        });
+      }
     });
+
+    await Promise.all(fetchPromises);
     this.finalizeArrivals(arrivals);
   }
 
@@ -551,7 +721,7 @@ export class BusSearchComponent implements OnInit, OnDestroy {
     this.activeStation.update(s => {
       if (!s) return s;
       const lineGroups = new Map<string, any[]>();
-      arrivals.forEach(arr => {
+      arrivals.forEach((arr: any) => {
         if (!lineGroups.has(arr.shortLine)) lineGroups.set(arr.shortLine, []);
         lineGroups.get(arr.shortLine)!.push(arr);
       });
@@ -559,7 +729,7 @@ export class BusSearchComponent implements OnInit, OnDestroy {
       let processedArrivals = Array.from(lineGroups.values()).map(group => {
         group.sort((a,b) => parseInt(a.eta) - parseInt(b.eta));
         const earliest = group[0];
-        const outbound = group.find(a => this.normalizeText(a.target) !== stationName);
+        const outbound = group.find((a: any) => this.normalizeText(a.target) !== stationName);
         return (outbound && this.normalizeText(earliest.target) === stationName) ? { ...earliest, target: outbound.target } : earliest;
       });
       processedArrivals.sort((a,b) => parseInt(a.eta) - parseInt(b.eta));
@@ -567,7 +737,12 @@ export class BusSearchComponent implements OnInit, OnDestroy {
     });
     this.isFetchingLines.set(false);
     this.isLoading.set(false);
+
+    // Call animation after arrivals are processed
+    // Delay animation slightly more to avoid flicker during data bind
+    setTimeout(() => this.animateEntrance(), 150);
   }
+
 
   displayLimit = signal(15);
   showMore() { this.displayLimit.update(v => v + 15); }
@@ -575,18 +750,31 @@ export class BusSearchComponent implements OnInit, OnDestroy {
   findNearbyStation(auto: boolean = false) {
     if (!navigator.geolocation) return;
     if (!auto) this.isLoading.set(true);
-    navigator.geolocation.getCurrentPosition((pos) => {
-      const userLat = pos.coords.latitude;
-      const userLon = pos.coords.longitude;
-      let closest: any = null;
-      let minDist = Infinity;
-      this.smartStops().forEach(stop => {
-        const dist = this.calculateDistance(userLat, userLon, stop.lat, stop.lon);
-        if (dist < minDist) { minDist = dist; closest = stop; }
-      });
-      if (closest) this.selectStation(closest);
-      else if (!auto) this.isLoading.set(false);
-    }, () => { if (!auto) this.isLoading.set(false); }, { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 });
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        if (this.locationTimeout) clearTimeout(this.locationTimeout);
+        const userLat = pos.coords.latitude;
+        const userLon = pos.coords.longitude;
+        let closest: any = null;
+        let minDist = Infinity;
+        
+        this.smartStops().forEach((stop: any) => {
+          const dist = this.calculateDistance(userLat, userLon, stop.lat, stop.lon);
+          if (dist < minDist) {
+            minDist = dist;
+            closest = stop;
+          }
+        });
+
+        if (closest) this.selectStation(closest);
+        else if (!auto) this.isLoading.set(false);
+      },
+      () => {
+        if (!auto) this.isLoading.set(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
   }
 
   private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -629,3 +817,4 @@ export class BusSearchComponent implements OnInit, OnDestroy {
 
   goBack() { this.router.navigate(['/transport/bus']); }
 }
+

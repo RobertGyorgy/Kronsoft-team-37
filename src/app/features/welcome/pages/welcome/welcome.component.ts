@@ -49,7 +49,7 @@ import { RouterLink } from '@angular/router';
         display: flex;
         flex-direction: column;
         background: #000;
-        font-family: 'Surgena', sans-serif;
+        font-family: 'Outfit', sans-serif;
         color: #fff;
       }
 
