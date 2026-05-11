@@ -56,10 +56,10 @@ declare const google: any;
               </div>
 
               <div class="mode-toggle">
-                <button [class.active]="travelMode() === 'TRANSIT'" (click)="setTravelMode('TRANSIT')">
+                <button [class.active]="travelMode() === 'TRANSIT'" (click)="setTravelMode('TRANSIT')" title="Transport public">
                   <span class="material-icons">directions_bus</span>
                 </button>
-                <button [class.active]="travelMode() === 'WALKING'" (click)="setTravelMode('WALKING')">
+                <button [class.active]="travelMode() === 'WALKING'" (click)="setTravelMode('WALKING')" title="Mers pe jos">
                   <span class="material-icons">directions_walk</span>
                 </button>
               </div>
@@ -186,11 +186,11 @@ declare const google: any;
     </main>
   `,
   styles: [`
-    .bus-shell { height: 100vh; width: 100%; overflow: hidden; background: #fff; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; position: relative; color: #1a1a1a }
+    .bus-shell { height: 100dvh; width: 100%; overflow: hidden; background: #fff; font-family: 'Outfit', sans-serif; color: #1a1a1a; display: flex; flex-direction: column; position: relative; padding-bottom: var(--safe-bottom); }
     .top-nav-modern { position: absolute; top: 0; left: 0; right: 0; padding: calc(var(--safe-top) + 1rem) 1rem; z-index: 1000; transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
     .nav-active .top-nav-modern { transform: translateY(-120%); }
-    .nav-card { background: #fff; border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.05); padding: 0.5rem; }
-    .nav-controls { display: flex; align-items: center; gap: 0.5rem; }
+    .nav-card { background: #fff; border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.05); padding: 0.75rem; width: 100%; }
+    .nav-controls { display: flex; align-items: stretch; gap: 0.75rem; }
     .icon-btn { background: #f8f9fa; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #5f6368; cursor: pointer; }
     .search-fields { flex: 1; display: flex; flex-direction: column; }
     .search-field { display: flex; align-items: center; gap: 0.75rem; padding: 0.4rem 0.5rem; }
@@ -199,9 +199,10 @@ declare const google: any;
     .marker { width: 8px; height: 8px; border-radius: 50%; }
     .marker.origin { border: 2px solid #4285f4; }
     .marker.dest { background: #ea4335; }
-    .mode-toggle { display: flex; background: #f1f3f4; border-radius: 12px; padding: 3px; }
-    .mode-toggle button { border: none; background: transparent; padding: 6px 12px; border-radius: 10px; color: #5f6368; display: flex; align-items: center; cursor: pointer; transition: all 0.2s; }
-    .mode-toggle button.active { background: #fff; color: #1a73e8; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .mode-toggle { display: flex; flex-direction: column; background: #f1f3f4; border-radius: 12px; padding: 2px; gap: 2px; align-self: stretch; justify-content: center; }
+    .mode-toggle button { border: none; background: transparent; padding: 0; width: 36px; height: 36px; border-radius: 10px; color: #5f6368; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+    .mode-toggle button.active { background: #fff; color: #1a73e8; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+    .mode-toggle button .material-icons { font-size: 1.2rem; }
     .predictions-overlay { background: #fff; border-radius: 16px; margin-top: 0.5rem; box-shadow: 0 12px 40px rgba(0,0,0,0.15); overflow: hidden; }
     .prediction-item { width: 100%; display: flex; align-items: center; gap: 1rem; padding: 1rem 1.25rem; border: none; background: transparent; text-align: left; border-bottom: 1px solid #f1f3f4; }
     .prediction-item .material-icons { color: #70757a; }
@@ -221,7 +222,7 @@ declare const google: any;
     .map-core { width: 100%; height: 100%; }
     .loading-shimmer { position: absolute; inset: 0; background: rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; z-index: 10; }
     .spinner { width: 32px; height: 32px; border: 3px solid #f1f3f4; border-top-color: #1a73e8; border-radius: 50%; animation: spin 0.8s linear infinite; }
-    .route-panel { position: absolute; bottom: 0; left: 0; right: 0; height: 75vh; background: #fff; display: flex; flex-direction: column; overflow-y: auto; border-radius: 28px 28px 0 0; z-index: 10; box-shadow: 0 -8px 24px rgba(0,0,0,0.08); transform: translateY(100%); }
+    .route-panel { position: absolute; bottom: 0; left: 0; right: 0; height: 75vh; background: #fff; display: flex; flex-direction: column; overflow-y: auto; border-radius: 28px 28px 0 0; z-index: 10; box-shadow: 0 -8px 24px rgba(0,0,0,0.08); transform: translateY(100%); padding-bottom: var(--safe-bottom); }
     .panel-header { position: sticky; top: 0; z-index: 20; background: #fff; padding-bottom: 0.5rem; border-bottom: 1px solid #f1f3f4; }
     .drag-bar-box { padding: 0.75rem 0 0.5rem; display: flex; justify-content: center; cursor: pointer; }
     .drag-bar { width: 36px; height: 4px; background: #dadce0; border-radius: 2px; }
