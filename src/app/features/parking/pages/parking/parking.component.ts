@@ -192,7 +192,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
   // 1. Centrele cartierelor (Date furnizate de utilizator)
   private readonly NEIGHBORHOOD_CENTERS = [
     { name: 'Centrul Vechi', zone: 0, lat: 45.6427, lng: 25.5887 },
-    { name: 'Schei', zone: 0, lat: 45.6360, lng: 25.5830 },
+    { name: 'Schei', zone: 1, lat: 45.6360, lng: 25.5830 },
     { name: 'Valea Cetății', zone: 0, lat: 45.6300, lng: 25.5980 },
     { name: 'Poiana Brașov', zone: 0, lat: 45.5990, lng: 25.5570 },
     
