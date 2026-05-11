@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, signal, inject, ViewChild, ElementRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject, ViewChild, ElementRef, afterNextRender } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ReportService } from '../../services/report';
+import { gsap } from 'gsap';
 
 @Component({
   selector: 'app-report-form',
@@ -16,10 +17,12 @@ export class ReportFormComponent {
   private reportService = inject(ReportService);
   private router = inject(Router);
 
+  @ViewChild('container') container!: ElementRef;
   @ViewChild('videoElement') videoElement!: ElementRef<HTMLVideoElement>;
   @ViewChild('canvasElement') canvasElement!: ElementRef<HTMLCanvasElement>;
 
   categories = ['Infrastructură', 'Deșeuri', 'Graffiti', 'Clădiri', 'Iluminare', 'Spații verzi', 'Altele'];
+  now = new Date();
 
   formData = {
     title: '',
@@ -31,7 +34,55 @@ export class ReportFormComponent {
   uploadedPhotos = signal<string[]>([]);
   isCameraActive = signal<boolean>(false);
   showActionSheet = signal<boolean>(false);
+  isPreviewMode = signal<boolean>(false);
   stream: MediaStream | null = null;
+
+  constructor() {
+    afterNextRender(() => {
+      this.animateEntrance();
+    });
+  }
+
+  splitByWord(text: string): string[] {
+    return text ? text.split(' ') : [];
+  }
+
+  getRomanianDate(): string {
+    const months = [
+      'Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie',
+      'Iulie', 'August', 'Septembrie', 'Octombrie', 'Noiembrie', 'Decembrie'
+    ];
+    const day = this.now.getDate();
+    const month = months[this.now.getMonth()];
+    const year = this.now.getFullYear();
+    return `${day} ${month} ${year}`;
+  }
+
+  private animateEntrance() {
+    if (!this.container?.nativeElement) return;
+    const container = this.container.nativeElement;
+    
+    const chars = container.querySelectorAll('.char');
+    const inputs = container.querySelectorAll('.input-group');
+    const photos = container.querySelector('.photos-list-container');
+    const submit = container.querySelector('.submit-btn-premium');
+
+    gsap.set(chars, { y: 30, opacity: 0 });
+    gsap.set(inputs, { y: 20, opacity: 0 });
+    
+    const tl = gsap.timeline({ defaults: { ease: 'power2.out', duration: 0.8 } });
+    
+    tl.to(chars, {
+      y: 0,
+      opacity: 1,
+      stagger: 0.02,
+    })
+    .to(inputs, {
+      y: 0,
+      opacity: 1,
+      stagger: 0.1
+    }, '-=0.5');
+  }
 
   goBack() {
     this.stopCamera();
@@ -40,22 +91,24 @@ export class ReportFormComponent {
 
   toggleActionSheet() {
     this.showActionSheet.set(!this.showActionSheet());
+    if (this.showActionSheet()) {
+      setTimeout(() => {
+        gsap.fromTo('.action-sheet', 
+          { y: '100%' }, 
+          { y: '0%', duration: 0.5, ease: 'power3.out' }
+        );
+      }, 0);
+    }
   }
 
   async selectCamera() {
-    const agree = confirm('Sunteți de acord să utilizați camera pentru a fotografia incidentul?');
-    if (agree) {
-      this.showActionSheet.set(false);
-      this.startCamera();
-    }
+    this.showActionSheet.set(false);
+    this.startCamera();
   }
 
   async selectGallery() {
-    const agree = confirm('Sunteți de acord să oferiți acces la galeria foto a telefonului?');
-    if (agree) {
-      this.showActionSheet.set(false);
-      this.triggerFilePicker();
-    }
+    this.showActionSheet.set(false);
+    this.triggerFilePicker();
   }
 
   private triggerFilePicker() {
@@ -65,15 +118,21 @@ export class ReportFormComponent {
 
   onFileSelected(event: any) {
     const files = event.target.files;
-    if (!files) return;
+    if (!files || files.length === 0) return;
 
-    for (let i = 0; i < files.length; i++) {
+    // Process each file
+    Array.from(files as FileList).forEach(file => {
       const reader = new FileReader();
       reader.onload = (e: any) => {
-        this.uploadedPhotos.update(photos => [...photos, e.target.result]);
+        const base64Data = e.target.result;
+        this.uploadedPhotos.update(photos => [...photos, base64Data]);
       };
-      reader.readAsDataURL(files[i]);
-    }
+      reader.onerror = (err) => console.error('FileReader error:', err);
+      reader.readAsDataURL(file);
+    });
+
+    // Reset input so the same file can be selected again
+    event.target.value = '';
   }
 
   async startCamera() {
@@ -124,7 +183,20 @@ export class ReportFormComponent {
       alert('Te rugăm să completezi titlul și adresa!');
       return;
     }
+    this.isPreviewMode.set(true);
+    setTimeout(() => {
+      gsap.fromTo('.pdf-preview-container', 
+        { y: 50, opacity: 0 }, 
+        { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }
+      );
+    }, 0);
+  }
 
+  cancelPreview() {
+    this.isPreviewMode.set(false);
+  }
+
+  confirmSubmit() {
     this.reportService.addReport({
       title: this.formData.title,
       location: this.formData.address,
@@ -135,7 +207,6 @@ export class ReportFormComponent {
         : 'https://images.unsplash.com/photo-1515162305285-0293e4767cc2?q=80&w=800'
     });
 
-    alert('Raportul a fost salvat cu succes!');
     this.router.navigate(['/report']);
   }
 }

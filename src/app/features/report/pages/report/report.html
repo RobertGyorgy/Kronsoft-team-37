@@ -1,4 +1,4 @@
-<main class="report-container">
+<main class="report-container" #container>
   <!-- Header -->
   <header class="top-bar">
     <div class="header-content">
@@ -6,7 +6,12 @@
         <span class="material-icons">arrow_back</span>
         <span>Înapoi</span>
       </button>
-      <h1 class="page-title">Raportează o neregulă</h1>
+      <h1 class="page-title">
+        <span *ngFor="let word of splitByWord('Raportează o neregulă')" class="word">
+          <span *ngFor="let char of word.split('')" class="char">{{ char }}</span>
+          <span class="char">&nbsp;</span>
+        </span>
+      </h1>
     </div>
   </header>
 
@@ -15,10 +20,11 @@
     <section class="hero-section">
       <div class="hero-card">
         <div class="hero-content">
-          <h2>Sesizare incidente urbane</h2>
-          <p>Vă rugăm să transmiteți o fotografie și detaliile aferente incidentului identificat. Serviciile publice vor analiza sesizarea dumneavoastră și vor interveni pentru soluționare în cel mai scurt timp.</p>
-          <button class="primary-btn" (click)="onNewReport()">
-            <span>Inițiază sesizare</span>
+          <h2>Contribuie la un oraș mai bun</h2>
+          <p>Trimite o fotografie și detaliile incidentului. Analizăm rapid orice problemă și intervenim pentru remediere.</p>
+          <button class="primary-btn-premium" (click)="onNewReport()">
+            <span>Raportează un incident</span>
+            <span class="material-icons">east</span>
           </button>
         </div>
       </div>
@@ -26,7 +32,7 @@
 
     <!-- Others Reported Section -->
     <section class="others-section">
-      <h3 class="section-title">Altele raportate</h3>
+      <h3 class="section-title">Sesizări recente</h3>
       
       <!-- Categories Chips -->
       <div class="categories-scroll">
@@ -49,12 +55,15 @@
             <div class="image-wrapper">
               <img [src]="report.image" [alt]="report.title">
               <div class="zone-badge">{{ report.location }}</div>
-              <div class="status-badge" [attr.data-status]="report.status">
+              <div class="status-overlay" [attr.data-status]="report.status">
                 {{ report.status }}
               </div>
             </div>
             <div class="card-info">
-              <span class="category-label">{{ report.category }}</span>
+              <div class="card-meta">
+                <span class="category-tag">{{ report.category }}</span>
+                <span class="date-tag">{{ report.date }}</span>
+              </div>
               <h4>{{ report.title }}</h4>
             </div>
           </div>
@@ -62,8 +71,8 @@
         
         @if (filteredReports().length === 0) {
           <div class="empty-state">
-            <span class="material-icons">search_off</span>
-            <p>Nu există raportări în această categorie.</p>
+            <span class="material-icons">sentiment_dissatisfied</span>
+            <p>Momentan nu există raportări în această categorie.</p>
           </div>
         }
       </div>

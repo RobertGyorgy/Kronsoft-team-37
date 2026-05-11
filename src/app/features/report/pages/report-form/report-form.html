@@ -1,4 +1,4 @@
-<main class="form-container">
+<main class="form-container" #container>
   <!-- Header -->
   <header class="top-bar">
     <button class="unified-back-btn" (click)="goBack()">
@@ -8,42 +8,71 @@
   </header>
 
   <div class="scroll-content">
-    <h1 class="form-title">Scrie raportul</h1>
+    <h1 class="form-title">
+      <span *ngFor="let word of splitByWord('Scrie raportul')" class="word">
+        <span *ngFor="let char of word.split('')" class="char">{{ char }}</span>
+        <span class="char">&nbsp;</span>
+      </span>
+    </h1>
 
     <div class="report-form">
       <div class="input-group">
-        <label>Numele problemei</label>
-        <input type="text" placeholder="Nume" [(ngModel)]="formData.title">
+        <label>Titlu incident</label>
+        <div class="input-wrapper">
+          <span class="material-icons field-icon">edit</span>
+          <input type="text" placeholder="Ex: Groapă în carosabil" [(ngModel)]="formData.title">
+        </div>
       </div>
 
       <div class="input-group">
-        <label>Adresa</label>
-        <input type="text" placeholder="scrie adresa, cartierul, zona" [(ngModel)]="formData.address">
-      </div>
-
-      <div class="input-group">
-        <label>Descriere</label>
-        <textarea placeholder="Descrie problema" rows="5" [(ngModel)]="formData.description"></textarea>
+        <label>Adresă / Locație</label>
+        <div class="input-wrapper">
+          <span class="material-icons field-icon">location_on</span>
+          <input type="text" placeholder="Ex: Str. Lungă nr. 10" [(ngModel)]="formData.address">
+        </div>
       </div>
 
       <div class="input-group">
         <label>Categorie</label>
-        <div class="category-chips">
-          @for (cat of categories; track cat) {
-            <button 
-              type="button"
-              class="category-chip" 
-              [class.active]="formData.category === cat"
-              (click)="formData.category = cat">
-              {{ cat }}
-            </button>
-          }
+        <div class="category-scroll">
+          <div class="chips-row">
+            @for (cat of categories; track cat) {
+              <button 
+                type="button"
+                class="category-chip" 
+                [class.active]="formData.category === cat"
+                (click)="formData.category = cat">
+                {{ cat }}
+              </button>
+            }
+          </div>
         </div>
       </div>
 
-      <button class="upload-btn" (click)="toggleActionSheet()">
-        <span>Incarca una sau mai multe poze</span>
-      </button>
+      <div class="input-group">
+        <label>Descriere detalii</label>
+        <div class="textarea-wrapper">
+          <textarea placeholder="Scrie..." rows="4" [(ngModel)]="formData.description"></textarea>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Adaugă fotografii</label>
+        <button class="add-photo-btn-premium" (click)="toggleActionSheet()">
+          <span class="material-icons">add_a_photo</span>
+          <span>Selectează imagini</span>
+        </button>
+        
+        <div class="photos-list-container" [hidden]="uploadedPhotos().length === 0">
+          <div class="photos-grid-compact">
+            @for (photo of uploadedPhotos(); track photo) {
+              <div class="photo-card-compact animated">
+                <img [src]="photo" alt="Upload preview" class="debug-img">
+              </div>
+            }
+          </div>
+        </div>
+      </div>
 
       <!-- Hidden Gallery Input -->
       <input 
@@ -54,39 +83,108 @@
         multiple
         (change)="onFileSelected($event)">
 
-      <div class="photos-preview">
-        @for (photo of uploadedPhotos(); track photo) {
-          <div class="photo-card">
-            <img [src]="photo" alt="Upload preview">
-          </div>
-        }
-        @if (uploadedPhotos().length < 1) { <div class="photo-placeholder"></div> }
-        @if (uploadedPhotos().length < 2) { <div class="photo-placeholder"></div> }
-      </div>
-
-      <button class="submit-btn" (click)="onSubmit()">
-        Trimite
-      </button>
     </div>
   </div>
+
+  <!-- Fixed Footer Action -->
+  <footer class="form-footer-action">
+    <button class="submit-btn-premium" (click)="onSubmit()">
+      <span class="material-icons">send</span>
+      <span>Trimite</span>
+    </button>
+  </footer>
+
+<!-- Automatic Document Preview Overlay -->
+@if (isPreviewMode()) {
+  <div class="pdf-overlay">
+    <div class="pdf-container doc-style">
+      <header class="doc-header">
+        <div class="doc-header-left">
+          <div class="stema-box">
+            <img src="assets/images/stema_brasov_2024.png" 
+                 class="doc-stema-mini" 
+                 alt="Stema Brașov"
+                 #stemaRef
+                 (error)="stemaRef.style.display='none'; stemaFallback.style.display='block'">
+            <span class="material-icons stema-placeholder" #stemaFallback style="display: none;">account_balance</span>
+          </div>
+          <div class="doc-logo-v2">SmartCity <span>Brașov</span></div>
+        </div>
+        <div class="doc-ref-v2">Nr Raport: #{{ now | date:'yyMMdd' }}-{{ formData.category | uppercase }}</div>
+      </header>
+
+      <div class="pdf-content doc-content">
+        <div class="doc-paper">
+          <div class="doc-body">
+            <div class="doc-date-line">{{ getRomanianDate() }}</div>
+            
+            <div class="doc-subject">
+              RAPORT SESIZARE: {{ formData.title | uppercase }}
+            </div>
+
+          <div class="doc-body">
+            <p>Subsemnatul, prin intermediul platformei SmartCity, semnalizez un incident de tip <strong>{{ formData.category }}</strong> identificat în zona <strong>{{ formData.address }}</strong>.</p>
+            
+            <div class="doc-description-box">
+              {{ formData.description || 'Nu au fost furnizate detalii suplimentare în scris.' }}
+            </div>
+
+            @if (uploadedPhotos().length > 0) {
+              <div class="doc-attachments">
+                <p class="attachment-label">FOTOGRAFII ÎNCĂRCATE ({{ uploadedPhotos().length }})</p>
+                <div class="doc-photos-grid">
+                  @for (photo of uploadedPhotos(); track photo) {
+                    <img [src]="photo" class="doc-img" decoding="async">
+                  }
+                </div>
+              </div>
+            }
+          </div>
+
+          <footer class="doc-footer">
+            <p>Document generat automat de sistemul de raportare urbană.</p>
+          </footer>
+        </div>
+      </div>
+
+      <footer class="pdf-actions doc-actions">
+        <button class="edit-btn" (click)="cancelPreview()">
+          <span>Revizuiește</span>
+        </button>
+        <button class="confirm-btn" (click)="confirmSubmit()">
+          <span>Confirmă și Trimite</span>
+        </button>
+      </footer>
+    </div>
+  </div>
+}
 
   <!-- Action Sheet Overlay -->
   @if (showActionSheet()) {
     <div class="overlay-backdrop" (click)="toggleActionSheet()">
       <div class="action-sheet" (click)="$event.stopPropagation()">
         <div class="drag-handle"></div>
-        <h3>Selectați sursa fotografiei</h3>
+        <div class="sheet-header">
+          <h3>Sursă fotografie</h3>
+          <p>Alege cum vrei să adaugi imaginile</p>
+        </div>
         <div class="action-buttons">
           <button class="action-option" (click)="selectCamera()">
-            <span class="material-icons">photo_camera</span>
-            <span>Fă fotografii</span>
+            <div class="opt-icon camera"><span class="material-icons">photo_camera</span></div>
+            <div class="opt-text">
+              <span class="opt-title">Fă fotografii</span>
+              <span class="opt-sub">Deschide camera foto</span>
+            </div>
           </button>
           <button class="action-option" (click)="selectGallery()">
-            <span class="material-icons">photo_library</span>
-            <span>Încarcă din telefon</span>
+            <div class="opt-icon gallery"><span class="material-icons">photo_library</span></div>
+            <div class="opt-text">
+              <span class="opt-title">Încarcă din telefon</span>
+              <span class="opt-sub">Accesează galeria media</span>
+            </div>
           </button>
         </div>
-        <button class="cancel-btn" (click)="toggleActionSheet()">Anulează</button>
+        <button class="cancel-btn" (click)="toggleActionSheet()">Închide</button>
       </div>
     </div>
   }
@@ -98,18 +196,25 @@
         <button class="close-camera" (click)="stopCamera()">
           <span class="material-icons">close</span>
         </button>
-        <span>Cameră Live</span>
+        <span class="cam-title">Documentare Foto</span>
       </div>
       
       <div class="video-wrapper">
         <video #videoElement autoplay playsinline></video>
         <canvas #canvasElement style="display: none;"></canvas>
+        <div class="camera-focus-ring"></div>
       </div>
 
       <div class="camera-footer">
+        <div class="gallery-preview-mini">
+          @if (uploadedPhotos().length > 0) {
+            <img [src]="uploadedPhotos()[uploadedPhotos().length - 1]" alt="Preview">
+          }
+        </div>
         <button class="capture-btn" (click)="capturePhoto()">
           <div class="inner-circle"></div>
         </button>
+        <button class="done-btn" (click)="stopCamera()">GATA</button>
       </div>
     </div>
   }
