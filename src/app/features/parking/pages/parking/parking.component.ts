@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { interval, Subscription } from 'rxjs';
+import { gsap } from 'gsap';
 
 declare const google: any;
 
@@ -11,160 +12,182 @@ declare const google: any;
   standalone: true,
   imports: [CommonModule, RouterLink, FormsModule],
   template: `
-    <main class="parking-shell">
-      <div class="main-scroll-area">
-        <!-- 1. HEADER -->
-        <header class="page-header-pill">
-          <button class="unified-back-btn" [routerLink]="['/dashboard']">
-            <span class="material-icons">arrow_back</span> Înapoi
-          </button>
-          <h1 class="page-title-pill">Parcare Brașov</h1>
-        </header>
+    <main class="parking-glass-shell">
+      <div #mapContainer class="map-bg"></div>
+      <div class="map-overlay-vignette"></div>
 
-        <!-- 2. HARTA -->
-        <section class="map-section-pill">
-          <div class="map-canvas-wrap">
-            <div #mapContainer class="map-container-pill"></div>
-          </div>
-        </section>
-
-        <!-- 3. INPUT NUMAR -->
-        <section class="plate-input-section">
-          <label class="plate-label">introdu numărul de înmatriculare</label>
-          <div class="plate-row">
-            <input type="text" [(ngModel)]="tempPlate" (ngModelChange)="tempPlate = $event.toUpperCase()" placeholder="BV 11 ABC" class="plate-input">
-            <button class="btn-save-solid" (click)="savePlate()">SALVEAZĂ</button>
-          </div>
-        </section>
-
-        <!-- 4. MARELE CARD ALBASTRU -->
-        <section class="main-parking-card">
-          <h2 class="zone-name-header">{{ detectedLocationName || PARKING_ZONES[selectedZoneIndex].name }}</h2>
-          <p class="detected-street-label" *ngIf="currentStreet">{{ currentStreet }}</p>
-          
-          <div class="stepper-pill-container">
-            <span class="stepper-text-label">SELECTEAZĂ DURATA</span>
-            <div class="stepper-controls">
-              <button class="btn-step" (click)="decrementHours()">−</button>
-              <span class="step-val-text">{{ selectedHours }}h</span>
-              <button class="btn-step" (click)="incrementHours()">+</button>
+      <!-- TOP STATUS HUB -->
+      <header class="top-status-hub">
+        <div class="glass-status-card">
+          <div class="status-top-row">
+            <button class="minimal-back-circle" routerLink="/dashboard">
+              <span class="material-icons">arrow_back</span>
+            </button>
+            <div class="timer-main-display">
+              <span class="timer-sub">TIMP RĂMAS</span>
+              <h1 class="timer-digits">{{ timeLeft }}</h1>
             </div>
-          </div>
-
-          <div class="action-row-outline">
-            <button class="btn-outline-white" (click)="toggleTariffs()">Tarife</button>
-            <button class="btn-outline-white" (click)="sendNativeSms()">SMS</button>
-          </div>
-
-          <div class="timer-section-integrated">
-            <p class="timer-sub-label">TIMP RĂMAS</p>
-            <h3 class="timer-digits-white-tiny">{{ timeLeft }}</h3>
-          </div>
-
-          <div style="position: relative;">
-            <div class="quick-extend-menu" *ngIf="showQuickAdd">
-              <button class="quick-opt" (click)="extendTime(30)">+30m</button>
-              <button class="quick-opt" (click)="extendTime(60)">+1h</button>
-              <button class="quick-opt" (click)="extendTime(120)">+2h</button>
-            </div>
-
-            <button class="btn-extend-solid-white" (click)="toggleQuickAdd()">
-              PRELUNGEȘTE TIMPUL
+            <button class="minimal-back-circle" (click)="showHistory = true">
+              <span class="material-icons">history</span>
             </button>
           </div>
-        </section>
-
-        <!-- 5. ISTORIC -->
-        <section class="history-section-pill" id="history-section">
-          <div class="section-header-pill">
-            <h3>Istoric plăți</h3>
-            <button class="vezi-tot-pill" (click)="scrollToHistory()">Vezi tot</button>
-          </div>
-          <div class="history-card" *ngFor="let item of history">
-            <div class="hist-header">
-              <span class="hist-date">{{ item.day }} {{ item.month }}</span>
-              <span class="hist-amount">{{ item.amount }}</span>
+          
+          <div class="status-bottom-row" [class.outside]="isOutsideZones">
+            <div class="zone-pill" [class]="isOutsideZones ? 'z-none' : 'z-' + selectedZoneIndex" (click)="cycleZone()" style="cursor: pointer;">
+              {{ isOutsideZones ? 'FĂRĂ ZONĂ' : (currentNeighborhood || 'DETECȚIE...') }}
             </div>
-            <div class="hist-details">{{ item.plate }} • {{ item.zone }}</div>
-          </div>
-        </section>
-
-        <!-- 6. MODAL TARIFE -->
-        <div class="modal-overlay" *ngIf="showTariffs" (click)="toggleTariffs()">
-          <div class="modal-card blue-theme-modal" (click)="$event.stopPropagation()">
-            <h2 class="modal-title">Tarife Parcare</h2>
-            <div class="tariff-cards-container">
-              <div class="tariff-pill-card zona-0-bg">
-                <span class="z-label">ZONA 0</span>
-                <div class="z-prices"><strong>0.60€/h</strong><span>3.00€/24h</span></div>
-              </div>
-              <div class="tariff-pill-card zona-1-bg">
-                <span class="z-label">ZONA 1</span>
-                <div class="z-prices"><strong>0.40€/h</strong><span>2.00€/24h</span></div>
-              </div>
-              <div class="tariff-pill-card zona-2-bg">
-                <span class="z-label">ZONA 2</span>
-                <div class="z-prices"><strong>0.30€/h</strong><span>1.50€/24h</span></div>
-              </div>
-            </div>
-            <button class="btn-extend-solid-white" (click)="toggleTariffs()" style="margin-top: 1rem;">ÎNCHIDE</button>
+            <span class="street-label-minimal">{{ isOutsideZones ? 'Ești în afara zonelor de parcare' : (currentStreet || 'Localizare parcare...') }}</span>
           </div>
         </div>
-      </div>
+      </header>
+
+      <!-- SIDE RAIL -->
+      <aside class="compact-side-rail">
+        <button class="glass-round-btn" (click)="toggleTariffs()">
+          <span class="material-icons">payments</span>
+        </button>
+        <button class="glass-round-btn" (click)="initMap()">
+          <span class="material-icons">my_location</span>
+        </button>
+      </aside>
+
+      <!-- BOTTOM ACTION DOCK -->
+      <section class="action-dock-container">
+        <div class="glass-action-card">
+          <div class="dock-input-row">
+            <div class="input-pill-modern">
+              <span class="material-icons">directions_car</span>
+              <input type="text" [(ngModel)]="tempPlate" (ngModelChange)="tempPlate = $event.toUpperCase()" placeholder="Număr înmatriculare" class="plate-input-field">
+              <button class="pill-check-btn" (click)="savePlate()" [class.active]="isPlateSaved">
+                <span class="material-icons">{{ isPlateSaved ? 'check_circle' : 'save' }}</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="dock-controls-row">
+            <div class="stepper-pill-glass">
+              <button class="round-step" (click)="decrementHours()">−</button>
+              <span class="hour-val">{{ selectedHours }}h</span>
+              <button class="round-step" (click)="incrementHours()">+</button>
+            </div>
+            <button class="pay-button-solid" (click)="sendNativeSms()">
+              <span>PLĂTEȘTE</span>
+              <span class="material-icons">send</span>
+            </button>
+          </div>
+
+          <div class="dock-extension-drawer" [class.open]="showQuickAdd">
+            <div class="quick-pills">
+              <button (click)="extendTime(30)">+30m</button>
+              <button (click)="extendTime(60)">+1h</button>
+              <button (click)="extendTime(120)">+2h</button>
+            </div>
+          </div>
+          <button class="drawer-trigger" (click)="toggleQuickAdd()">
+            <span class="material-icons">{{ showQuickAdd ? 'expand_less' : 'more_horiz' }}</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- OVERLAYS -->
+      @if (showHistory) {
+        <div class="overlay-blur" (click)="showHistory = false">
+          <div class="glass-drawer-sheet" (click)="$event.stopPropagation()">
+            <header class="sheet-top"><h2>Istoric Plăți</h2><button (click)="showHistory = false" class="close-round"><span class="material-icons">close</span></button></header>
+            <div class="sheet-scrollable">
+              @for (item of history; track $index) {
+                <div class="glass-history-row">
+                  <div class="h-date-box"><strong>{{ item.day }}</strong><small>{{ item.month }}</small></div>
+                  <div class="h-main-info"><span class="h-plate-txt">{{ item.plate }}</span><span class="h-zone-txt">{{ item.zone }}</span></div>
+                  <span class="h-amount-txt">{{ item.amount }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+
+      @if (showTariffs) {
+        <div class="overlay-blur" (click)="toggleTariffs()">
+          <div class="glass-drawer-sheet" (click)="$event.stopPropagation()">
+            <header class="sheet-top"><h2>Tarife Parcare</h2><button (click)="toggleTariffs()" class="close-round"><span class="material-icons">close</span></button></header>
+            <div class="tariff-list-glass">
+              @for (zone of PARKING_ZONES; track $index) {
+                <div class="glass-t-item" [class]="'gt-zone-' + $index">
+                  <div class="gt-name-group"><span class="gt-title">{{ zone.name.split(' - ')[0] }}</span><span class="gt-desc">{{ zone.name.split(' - ')[1] }}</span></div>
+                  <div class="gt-price-group"><span class="gt-main-price">{{ zone.tariff.toFixed(2) }}€/h</span><span class="gt-sub-price">24h: {{ (zone.tariff * 5).toFixed(2) }}€</span></div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
     </main>
   `,
   styles: [`
-    .parking-shell { height: 100vh; width: 100%; overflow-x: hidden; background: #fff; font-family: 'Outfit', sans-serif; color: #1a1a1a; position: relative; }
-    .main-scroll-area { height: 100vh; width: 100%; overflow-x: hidden; overflow-y: auto; padding-bottom: 2rem; }
-    .page-header-pill { display: flex; align-items: center; padding: calc(var(--safe-top) + 1.2rem) 1.5rem 1rem; position: relative; }
-    .unified-back-btn { background: none; border: none; color: #333; font-weight: 800; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; }
-    .page-title-pill { font-size: 1rem; font-weight: 900; color: #1a1a1a; position: absolute; left: 50%; transform: translateX(-50%); }
-    .map-section-pill { padding: 0 1rem; margin-bottom: 0.5rem; }
-    .map-canvas-wrap { height: 28vh; border-radius: 20px; overflow: hidden; border: 1px solid #eee; position: relative; }
-    .map-container-pill { height: 100%; width: 100%; }
-    .plate-input-section { padding: 0 1.5rem; margin-bottom: 0.5rem; }
-    .plate-label { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem; display: block; color: #333; }
-    .plate-row { display: flex; gap: 0.75rem; align-items: center; }
-    .plate-input { flex: 2; background: #f2f2f2; border: 1.5px solid #ddd; border-radius: 50px; padding: 0.5rem 1.25rem; font-weight: 700; font-size: 1rem; color: #333; outline: none; }
-    .btn-save-solid { flex: 1.2; background: #4285f4; color: #fff; border: none; border-radius: 50px; padding: 0.5rem; font-weight: 900; font-size: 0.95rem; text-transform: uppercase; cursor: pointer; }
-    .main-parking-card { background: #4285f4; border-radius: 30px; padding: 1rem; margin: 0 1rem 1rem; color: #fff; box-shadow: 0 10px 30px rgba(66,133,244,0.2); position: relative; }
-    .zone-name-header { font-size: 1.25rem; font-weight: 900; text-align: center; margin-bottom: 0.2rem; color: #fff; }
-    .detected-street-label { font-size: 0.85rem; font-weight: 600; text-align: center; margin-bottom: 0.75rem; opacity: 0.9; }
-    .stepper-pill-container { background: rgba(255,255,255,0.85); border-radius: 50px; padding: 0.35rem 0.5rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; color: #333; }
-    .stepper-text-label { font-size: 0.95rem; font-weight: 700; padding-left: 0.75rem; color: #555; }
-    .stepper-controls { display: flex; align-items: center; gap: 0.75rem; }
-    .btn-step { background: #e0e0e0; color: #666; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 1.4rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .step-val-text { font-size: 1.1rem; font-weight: 900; min-width: 30px; text-align: center; color: #333; }
-    .action-row-outline { display: flex; gap: 0.75rem; margin-bottom: 0.75rem; }
-    .btn-outline-white { flex: 1; background: transparent; color: #fff; border: 2px solid #fff; border-radius: 50px; padding: 0.7rem; font-weight: 900; font-size: 1.1rem; cursor: pointer; }
-    .timer-section-integrated { background: rgba(255, 255, 255, 0.2); border-radius: 24px; padding: 0.4rem; margin-bottom: 0.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    .timer-digits-white-tiny { font-size: 2rem; font-weight: 900; color: #fff; line-height: 1; margin-bottom: 0; margin-top: -0.1rem; }
-    .timer-sub-label { font-size: 0.75rem; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0; }
-    .btn-extend-solid-white { width: 100%; background: #fff; color: #4285f4; border: none; border-radius: 50px; padding: 0.8rem; font-weight: 950; font-size: 1.1rem; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-    .history-section-pill { padding: 0.5rem 0.75rem 2rem; }
-    .section-header-pill { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
-    .section-header-pill h3 { font-size: 1rem; font-weight: 900; color: #333; margin: 0; }
-    .vezi-tot-pill { background: none; border: 1.2px solid #4285f4; color: #4285f4; font-weight: 800; font-size: 0.7rem; padding: 0.2rem 0.6rem; border-radius: 50px; cursor: pointer; }
-    .history-card { background: #fff; border-radius: 12px; padding: 0.5rem; border: 1px solid #f0f0f0; margin-bottom: 0.5rem; }
-    .hist-header { display: flex; justify-content: space-between; margin-bottom: 0.2rem; }
-    .hist-date { font-weight: 800; color: #4285f4; font-size: 0.75rem; }
-    .hist-amount { font-weight: 900; color: #ff4d4d; font-size: 0.9rem; }
-    .hist-details { font-size: 0.8rem; color: #666; font-weight: 600; }
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 2rem; }
-    .modal-card { background: #fff; border-radius: 24px; padding: 1.5rem; width: 100%; max-width: 360px; box-shadow: 0 15px 40px rgba(0,0,0,0.2); color: #333; }
-    .modal-title { margin-top: 0; margin-bottom: 1rem; font-weight: 900; text-align: center; font-size: 1.25rem; color: #333; }
-    .tariff-cards-container { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem; }
-    .tariff-pill-card { padding: 1rem; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-    .z-label { font-weight: 900; font-size: 1.1rem; }
-    .z-prices { text-align: right; display: flex; flex-direction: column; }
-    .z-prices strong { font-size: 1rem; }
-    .z-prices span { font-size: 0.75rem; opacity: 0.9; font-weight: 700; }
-    .zona-0-bg { background: #ff4757; }
-    .zona-1-bg { background: #ffa502; }
-    .zona-2-bg { background: #2ed573; }
-    .quick-extend-menu { position: absolute; bottom: 110%; left: 0; width: 100%; background: #fff; border-radius: 20px; padding: 0.5rem; box-shadow: 0 -5px 25px rgba(0,0,0,0.15); display: flex; gap: 0.5rem; z-index: 10; animation: popUp 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-    .quick-opt { flex: 1; background: #f0f7ff; color: #4285f4; border: none; border-radius: 12px; padding: 0.6rem; font-weight: 900; font-size: 0.85rem; cursor: pointer; }
-    @keyframes popUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .parking-glass-shell { height: 100dvh; width: 100%; overflow: hidden; position: relative; font-family: 'Outfit', sans-serif; background: #000; }
+    .map-bg { position: absolute; inset: 0; z-index: 1; }
+    .map-overlay-vignette { position: absolute; inset: 0; background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.15) 100%); z-index: 2; pointer-events: none; }
+    .top-status-hub { position: absolute; top: calc(var(--safe-top) + 0.75rem); left: 1rem; right: 1rem; z-index: 100; }
+    .glass-status-card { background: rgba(255,255,255,0.75); backdrop-filter: blur(25px); border-radius: 32px; border: 1px solid rgba(255,255,255,0.4); padding: 1.25rem; box-shadow: 0 15px 45px rgba(0,0,0,0.12); display: flex; flex-direction: column; gap: 1rem; }
+    .status-top-row { display: flex; align-items: center; justify-content: space-between; }
+    .minimal-back-circle { width: 44px; height: 44px; border-radius: 50%; background: #fff; border: none; display: flex; align-items: center; justify-content: center; color: #1a1a1a; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .timer-main-display { text-align: center; flex: 1; }
+    .timer-sub { font-size: 0.65rem; font-weight: 900; color: #888; letter-spacing: 0.15em; display: block; margin-bottom: 0.2rem; }
+    .timer-digits { font-size: 3.2rem; font-weight: 950; color: #1a1a1a; margin: 0; line-height: 0.9; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; }
+    .status-bottom-row { display: flex; align-items: center; gap: 0.75rem; background: rgba(0,0,0,0.03); padding: 0.5rem; border-radius: 16px; transition: all 0.3s; }
+    .status-bottom-row.outside { background: rgba(116, 125, 140, 0.1); }
+    .zone-pill { padding: 4px 10px; border-radius: 8px; font-weight: 950; font-size: 0.65rem; color: #fff; text-transform: uppercase; transition: all 0.3s; }
+    .z-0 { background: #ea4335; }
+    .z-1 { background: #fb8c00; }
+    .z-2 { background: #34a853; }
+    .z-none { background: #747d8c; }
+    .street-label-minimal { font-size: 0.9rem; font-weight: 800; color: #1a1a1a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .compact-side-rail { position: absolute; right: 1rem; top: 60%; transform: translateY(-50%); z-index: 10; display: flex; flex-direction: column; gap: 0.75rem; }
+    .glass-round-btn { width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,0.75); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: center; color: #1a1a1a; cursor: pointer; box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
+    .action-dock-container { position: absolute; bottom: calc(var(--safe-bottom) + 1rem); left: 1rem; right: 1rem; z-index: 100; }
+    .glass-action-card { background: rgba(255,255,255,0.8); backdrop-filter: blur(30px); border-radius: 36px; border: 1px solid rgba(255,255,255,0.4); padding: 1.5rem; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; gap: 1.25rem; position: relative; }
+    .dock-input-row { width: 100%; }
+    .input-pill-modern { background: rgba(0,0,0,0.04); border-radius: 999px; height: 56px; display: flex; align-items: center; padding: 0 0.5rem 0 1.25rem; gap: 0.75rem; border: 1px solid rgba(0,0,0,0.02); }
+    .input-pill-modern .material-icons { color: #888; font-size: 1.2rem; }
+    .plate-input-field { flex: 1; border: none; background: transparent; outline: none; font-weight: 800; font-size: 1.1rem; color: #1a1a1a; width: 100%; }
+    .pill-check-btn { width: 44px; height: 44px; border-radius: 50%; background: #fff; border: none; color: #ccc; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: all 0.3s; }
+    .pill-check-btn.active { background: #1a1a1a; color: #fff; }
+    .dock-controls-row { display: flex; gap: 0.75rem; }
+    .stepper-pill-glass { flex: 1; height: 56px; background: rgba(0,0,0,0.04); border-radius: 28px; display: flex; align-items: center; justify-content: space-between; padding: 0 0.5rem; }
+    .round-step { width: 44px; height: 44px; border-radius: 50%; background: #fff; border: none; font-size: 1.4rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    .hour-val { font-size: 1.2rem; font-weight: 950; color: #1a1a1a; min-width: 35px; text-align: center; }
+    .pay-button-solid { flex: 1.4; height: 56px; background: #1a1a1a; border-radius: 28px; border: none; color: #fff; font-weight: 950; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.15); white-space: nowrap; }
+    .dock-extension-drawer { max-height: 0; overflow: hidden; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+    .dock-extension-drawer.open { max-height: 60px; margin-top: -0.25rem; }
+    .quick-pills { display: flex; gap: 0.5rem; }
+    .quick-pills button { flex: 1; height: 48px; border-radius: 18px; background: #fff; border: 1px solid rgba(0,0,0,0.05); font-weight: 900; color: #1a1a1a; cursor: pointer; white-space: nowrap; }
+    .drawer-trigger { width: 40px; height: 20px; background: none; border: none; color: #bbb; position: absolute; bottom: 0.25rem; left: 50%; transform: translateX(-50%); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .overlay-blur { position: fixed; inset: 0; background: rgba(0,0,0,0.25); backdrop-filter: blur(15px); z-index: 2000; display: flex; align-items: flex-end; }
+    .glass-drawer-sheet { width: 100%; background: rgba(255,255,255,0.85); backdrop-filter: blur(30px); border-radius: 40px 40px 0 0; padding: 2.5rem 1.5rem; box-shadow: 0 -20px 60px rgba(0,0,0,0.1); }
+    .sheet-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    .sheet-top h2 { font-size: 1.8rem; font-weight: 950; margin: 0; letter-spacing: -0.04em; }
+    .close-round { width: 44px; height: 44px; border-radius: 50%; background: #f5f5f5; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .sheet-scrollable { display: flex; flex-direction: column; gap: 0.75rem; max-height: 60vh; overflow-y: auto; }
+    .glass-history-row { padding: 1.25rem; background: rgba(0,0,0,0.03); border-radius: 24px; display: flex; align-items: center; gap: 1rem; border: 1px solid rgba(0,0,0,0.02); }
+    .h-date-box { background: #fff; padding: 0.5rem; border-radius: 12px; min-width: 46px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.04); }
+    .h-date-box strong { display: block; font-size: 1.1rem; font-weight: 950; line-height: 1; }
+    .h-date-box small { font-size: 0.6rem; font-weight: 800; color: #4285f4; text-transform: uppercase; }
+    .h-main-info { flex: 1; display: flex; flex-direction: column; }
+    .h-plate-txt { font-weight: 800; font-size: 1.1rem; color: #1a1a1a; }
+    .h-zone-txt { font-size: 0.75rem; font-weight: 600; color: #888; }
+    .h-amount-txt { font-weight: 950; font-size: 1.2rem; color: #1a1a1a; }
+    .tariff-list-glass { display: flex; flex-direction: column; gap: 1rem; }
+    .glass-t-item { padding: 1.5rem; border-radius: 28px; display: flex; justify-content: space-between; align-items: center; color: #fff; }
+    .gt-zone-0 { background: #ea4335; box-shadow: 0 10px 25px rgba(234,67,53,0.3); }
+    .gt-zone-1 { background: #fb8c00; box-shadow: 0 10px 25px rgba(251,140,0,0.3); }
+    .gt-zone-2 { background: #34a853; box-shadow: 0 10px 25px rgba(52,168,83,0.3); }
+    .gt-name-group { display: flex; flex-direction: column; }
+    .gt-title { font-size: 1.5rem; font-weight: 950; }
+    .gt-desc { font-size: 0.8rem; font-weight: 800; opacity: 0.8; }
+    .gt-price-group { text-align: right; }
+    .gt-main-price { font-size: 1.6rem; font-weight: 950; display: block; line-height: 1; }
+    .gt-sub-price { font-size: 0.8rem; font-weight: 800; opacity: 0.8; }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -173,14 +196,16 @@ export class ParkingComponent implements OnInit, OnDestroy {
 
   showTariffs = false;
   showQuickAdd = false;
+  showHistory = false;
+  isOutsideZones = false;
   public timeLeft = '00:00:00';
   carPlate = '';
   isPlateSaved = false;
   tempPlate = '';
   selectedHours = 1;
   selectedZoneIndex = 0;
-  detectedLocationName = '';
   currentStreet = '';
+  currentNeighborhood = '';
   
   history: any[] = [];
   private map: any;
@@ -188,84 +213,91 @@ export class ParkingComponent implements OnInit, OnDestroy {
   private timerSubscription: Subscription | undefined;
   public currentParkingSeconds = 0;
 
-  // 1. Centrele cartierelor (Date furnizate de utilizator)
-  private readonly NEIGHBORHOOD_CENTERS = [
-    { name: 'Centrul Vechi', zone: 0, lat: 45.6427, lng: 25.5887 },
-    { name: 'Schei', zone: 1, lat: 45.6360, lng: 25.5830 },
-    { name: 'Valea Cetății', zone: 0, lat: 45.6300, lng: 25.5980 },
-    { name: 'Poiana Brașov', zone: 0, lat: 45.5990, lng: 25.5570 },
-    
-    { name: 'Centrul Nou', zone: 1, lat: 45.6534, lng: 25.6086 },
-    { name: 'Astra', zone: 1, lat: 45.6410, lng: 25.6350 },
-    { name: 'Florilor', zone: 1, lat: 45.6650, lng: 25.6290 },
-    { name: 'Tractorul', zone: 1, lat: 45.6720, lng: 25.6100 },
-    { name: 'Bartolomeu', zone: 1, lat: 45.6560, lng: 25.5700 },
-    { name: 'Craiter', zone: 1, lat: 45.6600, lng: 25.6020 },
-    { name: 'Răcădau', zone: 1, lat: 45.6350, lng: 25.6050 },
-    { name: 'Gării', zone: 1, lat: 45.6590, lng: 25.5970 },
-    { name: 'Prund', zone: 1, lat: 45.6450, lng: 25.5860 },
-    
-    { name: 'Bartolomeu Nord', zone: 2, lat: 45.6750, lng: 25.5580 },
-    { name: 'Triaj', zone: 2, lat: 45.6670, lng: 25.5490 },
-    { name: 'Stupini', zone: 2, lat: 45.6810, lng: 25.6250 },
-    { name: 'Noua-Dârste', zone: 2, lat: 45.6230, lng: 25.6430 }
-  ];
-
   public PARKING_ZONES = [
     { name: 'Zona 0 - Centru Vechi', smsNumber: '1234', tariff: 0.60 },
     { name: 'Zona 1 - Centrul Civic', smsNumber: '1234', tariff: 0.40 },
     { name: 'Zona 2 - Periferie', smsNumber: '1234', tariff: 0.30 }
   ];
 
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private zone: NgZone
-  ) {
+  private polygonObjects: any[] = [];
+
+  constructor(private cdr: ChangeDetectorRef, private zone: NgZone) {
     afterNextRender(() => {
       this.initMap();
+      this.loadHDNeighborhoods();
       this.startGpsTracking();
       this.loadPersistedData();
+      this.animateEntrance();
     });
   }
 
-  // Formula Haversine pentru calcul distanță
-  private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-    const R = 6371;
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-              Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  private animateEntrance() {
+    gsap.from('.glass-status-card', { y: -100, opacity: 0, duration: 1, ease: 'power3.out' });
+    gsap.from('.glass-action-card', { y: 150, opacity: 0, duration: 1, delay: 0.3, ease: 'power3.out' });
+    gsap.from('.glass-round-btn', { x: 50, opacity: 0, stagger: 0.1, duration: 0.6, delay: 0.6, ease: 'power2.out' });
   }
 
-  private async updateZoneByLocation(lat: number, lng: number) {
-    let nearest = this.NEIGHBORHOOD_CENTERS[0];
-    let minDistance = Infinity;
+  private async loadHDNeighborhoods() {
+    try {
+      const response = await fetch('brasov_neighborhoods.json');
+      const data = await response.json();
+      const ZONE_COLORS: any = { 0: '#ea4335', 1: '#fb8c00', 2: '#34a853' };
 
-    for (const center of this.NEIGHBORHOOD_CENTERS) {
-      const dist = this.calculateDistance(lat, lng, center.lat, center.lng);
-      if (dist < minDistance) {
-        minDistance = dist;
-        nearest = center;
+      this.polygonObjects = data.map((nb: any) => {
+        const poly = new google.maps.Polygon({
+          paths: nb.path,
+          strokeColor: ZONE_COLORS[nb.zone],
+          strokeOpacity: 0.6,
+          strokeWeight: 1,
+          fillColor: ZONE_COLORS[nb.zone],
+          fillOpacity: 0.1,
+          map: this.map
+        });
+        return { poly, name: nb.name, zone: nb.zone };
+      });
+      this.cdr.detectChanges();
+    } catch (e) {
+      console.error('Failed to load HD neighborhoods', e);
+    }
+  }
+
+  private updateZoneByLocation(lat: number, lng: number) {
+    if (!google.maps.geometry) return;
+    const userPos = new google.maps.LatLng(lat, lng);
+    let foundNeighborhood = null;
+
+    for (const obj of this.polygonObjects) {
+      if (google.maps.geometry.poly.containsLocation(userPos, obj.poly)) {
+        foundNeighborhood = obj;
+        break;
       }
     }
 
-    this.selectedZoneIndex = nearest.zone;
-    this.detectedLocationName = `ZONA ${nearest.zone} – ${nearest.name}`;
-    
-    // Reverse Geocoding via Google pentru numele străzii
-    try {
-      const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${(window as any).GOOGLE_MAPS_API_KEY}`);
-      const data = await response.json();
-      if (data.results && data.results[0]) {
-        this.currentStreet = data.results[0].address_components.find((c: any) => c.types.includes('route'))?.long_name || '';
+    this.zone.run(() => {
+      if (foundNeighborhood) {
+        this.isOutsideZones = false;
+        this.selectedZoneIndex = foundNeighborhood.zone;
+        this.currentNeighborhood = foundNeighborhood.name.toUpperCase();
+      } else {
+        this.isOutsideZones = true;
+        this.currentNeighborhood = '';
       }
-    } catch (e) { console.error('Geocoding error', e); }
+      this.cdr.detectChanges();
+    });
 
-    this.updateMarker(lat, lng, nearest.zone);
+    // Geocoding for Street Name
+    const geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ location: { lat, lng } }, (results: any, status: any) => {
+      if (status === 'OK' && results && results[0]) {
+        this.zone.run(() => {
+          this.currentStreet = results[0].address_components.find((c: any) => c.types.includes('route'))?.long_name || '';
+          this.cdr.detectChanges();
+        });
+      }
+    });
+
+    this.updateMarker(lat, lng, this.selectedZoneIndex);
     if (this.map) this.map.setCenter({ lat, lng });
-    this.cdr.detectChanges();
   }
 
   private startGpsTracking() {
@@ -281,22 +313,22 @@ export class ParkingComponent implements OnInit, OnDestroy {
     if (!this.map) return;
     if (this.marker) this.marker.map = null;
     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker") as any;
-    const PIN_COLORS: any = { 0: '#e74c3c', 1: '#f39c12', 2: '#27ae60' };
+    const PIN_COLORS: any = { 0: '#ea4335', 1: '#fb8c00', 2: '#34a853' };
     this.marker = new AdvancedMarkerElement({
       map: this.map,
       position: { lat, lng },
       content: Object.assign(document.createElement('div'), {
-        innerHTML: `Z${zone}`,
-        style: `background:${PIN_COLORS[zone] || '#747d8c'};color:white;font-weight:700;padding:5px 10px;border-radius:20px;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);font-size:13px`
+        innerHTML: `P`,
+        style: `background:${this.isOutsideZones ? '#747d8c' : PIN_COLORS[zone]};color:white;font-weight:900;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:3px solid white;box-shadow:0 8px 24px rgba(0,0,0,0.3);font-size:16px`
       })
     });
   }
 
-  private initMap() {
+  public initMap() {
     if (this.map || !this.mapContainer) return;
     this.map = new google.maps.Map(this.mapContainer.nativeElement, {
       center: { lat: 45.6423, lng: 25.5888 },
-      zoom: 15,
+      zoom: 14,
       mapId: 'SMART_CITY_MAP_ID',
       disableDefaultUI: true,
       gestureHandling: 'greedy',
@@ -304,11 +336,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit() {
-    this.requestNotificationPermission();
-    this.loadPersistedData();
-  }
-
+  ngOnInit() { this.loadPersistedData(); }
   ngOnDestroy() { if (this.timerSubscription) this.timerSubscription.unsubscribe(); }
 
   private loadPersistedData() {
@@ -346,8 +374,8 @@ export class ParkingComponent implements OnInit, OnDestroy {
   }
 
   savePlate() { if (this.tempPlate.trim()) { this.carPlate = this.tempPlate.toUpperCase(); this.isPlateSaved = true; localStorage.setItem('parked_plate', this.carPlate); } }
-  incrementHours() { if (this.selectedHours < 24) this.selectedHours++; localStorage.setItem('parking_selected_hours', this.selectedHours.toString()); }
-  decrementHours() { if (this.selectedHours > 1) this.selectedHours--; localStorage.setItem('parking_selected_hours', this.selectedHours.toString()); }
+  incrementHours() { if (this.selectedHours < 24) this.selectedHours++; }
+  decrementHours() { if (this.selectedHours > 1) this.selectedHours--; }
 
   sendNativeSms() {
     if (!this.isPlateSaved && this.tempPlate.trim()) this.savePlate();
@@ -377,7 +405,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
 
   toggleTariffs() { this.showTariffs = !this.showTariffs; }
   toggleQuickAdd() { this.showQuickAdd = !this.showQuickAdd; }
-  scrollToHistory() { const el = document.getElementById('history-section'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  scrollToHistory() { this.showHistory = true; }
 
   extendTime(minutes: number) {
     this.currentParkingSeconds += minutes * 60;
@@ -393,13 +421,12 @@ export class ParkingComponent implements OnInit, OnDestroy {
     localStorage.removeItem('parking_expiry');
   }
 
-  private requestNotificationPermission() { if ('Notification' in window) Notification.requestPermission(); }
-
   private getMapStyles() {
-    return [
-      { "featureType": "all", "elementType": "labels.text.fill", "stylers": [{ "color": "#7c93a3" }, { "lightness": "-10" }] },
-      { "featureType": "landscape", "elementType": "geometry", "stylers": [{ "color": "#f5f5f5" }] },
-      { "featureType": "water", "elementType": "geometry", "stylers": [{ "color": "#e9e9e9" }] }
-    ];
+    return [{ "featureType": "all", "elementType": "labels.text.fill", "stylers": [{ "color": "#7c93a3" }, { "lightness": "-10" }] }, { "featureType": "landscape", "elementType": "geometry", "stylers": [{ "color": "#f5f5f5" }] }, { "featureType": "water", "elementType": "geometry", "stylers": [{ "color": "#e9e9e9" }] }];
+  }
+
+  public cycleZone() {
+    this.selectedZoneIndex = (this.selectedZoneIndex + 1) % 3;
+    this.cdr.detectChanges();
   }
 }
