@@ -36,7 +36,7 @@ import { RouterLink } from '@angular/router';
           <span class="card-title">Servicii Primărie</span>
         </div>
 
-        <div class="grid-card purple" routerLink="/weekend">
+        <div class="grid-card purple" routerLink="/events">
           <span class="material-icons card-bg-icon">event</span>
           <span class="card-title">Evenimente Oraș</span>
         </div>

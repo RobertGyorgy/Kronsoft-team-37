@@ -30,10 +30,10 @@ declare const google: any;
 
         <!-- 3. INPUT NUMAR -->
         <section class="plate-input-section">
-          <label class="plate-label">introdu numărul de înmatriculare</label>
+          <label class="plate-label">Introdu numărul de înmatriculare</label>
           <div class="plate-row">
             <input type="text" [(ngModel)]="tempPlate" (ngModelChange)="tempPlate = $event.toUpperCase()" placeholder="BV 11 ABC" class="plate-input">
-            <button class="btn-save-solid" (click)="savePlate()">SALVEAZĂ</button>
+            <button class="btn-save-solid" (click)="savePlate()">Salvează</button>
           </div>
         </section>
 
@@ -43,7 +43,7 @@ declare const google: any;
           <p class="detected-street-label" *ngIf="currentStreet">{{ currentStreet }}</p>
           
           <div class="stepper-pill-container">
-            <span class="stepper-text-label">SELECTEAZĂ DURATA</span>
+            <span class="stepper-text-label">Selectează durata</span>
             <div class="stepper-controls">
               <button class="btn-step" (click)="decrementHours()">−</button>
               <span class="step-val-text">{{ selectedHours }}h</span>
@@ -57,15 +57,18 @@ declare const google: any;
           </div>
 
           <div class="timer-section-integrated">
-            <p class="timer-sub-label">TIMP RĂMAS</p>
+            <p class="timer-sub-label">
+              <span class="material-icons" style="font-size: 0.8rem; vertical-align: middle; margin-right: 4px;">schedule</span>
+              Timp rămas
+            </p>
             <h3 class="timer-digits-white-tiny">{{ timeLeft }}</h3>
           </div>
 
-          <div style="position: relative;">
+          <div style="position: relative;" *ngIf="currentParkingSeconds > 0">
             <div class="quick-extend-menu" *ngIf="showQuickAdd">
-              <button class="quick-opt" (click)="extendTime(30)">+30m</button>
               <button class="quick-opt" (click)="extendTime(60)">+1h</button>
               <button class="quick-opt" (click)="extendTime(120)">+2h</button>
+              <button class="quick-opt" (click)="extendTime(180)">+3h</button>
             </div>
 
             <button class="btn-extend-solid-white" (click)="toggleQuickAdd()">
@@ -123,15 +126,15 @@ declare const google: any;
     .map-canvas-wrap { height: 28vh; border-radius: 20px; overflow: hidden; border: 1px solid #eee; position: relative; }
     .map-container-pill { height: 100%; width: 100%; }
     .plate-input-section { padding: 0 1.5rem; margin-bottom: 0.5rem; }
-    .plate-label { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem; display: block; color: #333; }
+    .plate-label { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem; display: block; color: #000; }
     .plate-row { display: flex; gap: 0.75rem; align-items: center; }
     .plate-input { flex: 2; background: #f2f2f2; border: 1.5px solid #ddd; border-radius: 50px; padding: 0.5rem 1.25rem; font-weight: 700; font-size: 1rem; color: #333; outline: none; }
-    .btn-save-solid { flex: 1.2; background: #4285f4; color: #fff; border: none; border-radius: 50px; padding: 0.5rem; font-weight: 900; font-size: 0.95rem; text-transform: uppercase; cursor: pointer; }
+    .btn-save-solid { flex: 1.2; background: #4285f4; color: #fff; border: none; border-radius: 50px; padding: 0.5rem; font-weight: 800; font-size: 0.85rem; cursor: pointer; }
     .main-parking-card { background: #4285f4; border-radius: 30px; padding: 1rem; margin: 0 1rem 1rem; color: #fff; box-shadow: 0 10px 30px rgba(66,133,244,0.2); position: relative; }
     .zone-name-header { font-size: 1.25rem; font-weight: 900; text-align: center; margin-bottom: 0.2rem; color: #fff; }
     .detected-street-label { font-size: 0.85rem; font-weight: 600; text-align: center; margin-bottom: 0.75rem; opacity: 0.9; }
     .stepper-pill-container { background: rgba(255,255,255,0.85); border-radius: 50px; padding: 0.35rem 0.5rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; color: #333; }
-    .stepper-text-label { font-size: 0.95rem; font-weight: 700; padding-left: 0.75rem; color: #555; }
+    .stepper-text-label { font-size: 0.85rem; font-weight: 700; padding-left: 0.75rem; color: #555; }
     .stepper-controls { display: flex; align-items: center; gap: 0.75rem; }
     .btn-step { background: #e0e0e0; color: #666; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 1.4rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     .step-val-text { font-size: 1.1rem; font-weight: 900; min-width: 30px; text-align: center; color: #333; }
@@ -139,7 +142,7 @@ declare const google: any;
     .btn-outline-white { flex: 1; background: transparent; color: #fff; border: 2px solid #fff; border-radius: 50px; padding: 0.7rem; font-weight: 900; font-size: 1.1rem; cursor: pointer; }
     .timer-section-integrated { background: rgba(255, 255, 255, 0.2); border-radius: 24px; padding: 0.4rem; margin-bottom: 0.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .timer-digits-white-tiny { font-size: 2rem; font-weight: 900; color: #fff; line-height: 1; margin-bottom: 0; margin-top: -0.1rem; }
-    .timer-sub-label { font-size: 0.75rem; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0; }
+    .timer-sub-label { font-size: 0.75rem; font-weight: 700; color: #fff; display: flex; align-items: center; margin-bottom: 0; }
     .btn-extend-solid-white { width: 100%; background: #fff; color: #4285f4; border: none; border-radius: 50px; padding: 0.8rem; font-weight: 950; font-size: 1.1rem; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
     .history-section-pill { padding: 0.5rem 0.75rem 2rem; }
     .section-header-pill { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
@@ -324,6 +327,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
       const remainingSeconds = Math.floor((parseInt(expiry) - Date.now()) / 1000);
       if (remainingSeconds > 0) this.resumeCountdown(remainingSeconds);
     }
+    this.updatePreviewTimer();
   }
 
   private resumeCountdown(seconds: number) {
@@ -346,9 +350,32 @@ export class ParkingComponent implements OnInit, OnDestroy {
     return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
   }
 
-  savePlate() { if (this.tempPlate.trim()) { this.carPlate = this.tempPlate.toUpperCase(); this.isPlateSaved = true; localStorage.setItem('parked_plate', this.carPlate); } }
-  incrementHours() { if (this.selectedHours < 24) this.selectedHours++; localStorage.setItem('parking_selected_hours', this.selectedHours.toString()); }
-  decrementHours() { if (this.selectedHours > 1) this.selectedHours--; localStorage.setItem('parking_selected_hours', this.selectedHours.toString()); }
+  savePlate() { 
+    if (this.tempPlate.trim()) { 
+      this.carPlate = this.tempPlate.toUpperCase(); 
+      this.isPlateSaved = true; 
+      localStorage.setItem('parked_plate', this.carPlate); 
+    } 
+  }
+
+  incrementHours() { 
+    if (this.selectedHours < 24) this.selectedHours++; 
+    this.updatePreviewTimer();
+    localStorage.setItem('parking_selected_hours', this.selectedHours.toString()); 
+  }
+
+  decrementHours() { 
+    if (this.selectedHours > 1) this.selectedHours--; 
+    this.updatePreviewTimer();
+    localStorage.setItem('parking_selected_hours', this.selectedHours.toString()); 
+  }
+
+  private updatePreviewTimer() {
+    if (this.currentParkingSeconds <= 0) {
+      this.timeLeft = this.formatTime(this.selectedHours * 3600);
+      this.cdr.detectChanges();
+    }
+  }
 
   sendNativeSms() {
     if (!this.isPlateSaved && this.tempPlate.trim()) this.savePlate();
@@ -386,6 +413,8 @@ export class ParkingComponent implements OnInit, OnDestroy {
     const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
     window.location.href = `sms:1234${isIos ? '&' : '?'}body=${encodeURIComponent(this.carPlate + ' ' + Math.ceil(minutes / 60))}`;
     this.resumeCountdown(this.currentParkingSeconds);
+    this.showQuickAdd = false; // Închide meniul automat
+    this.cdr.detectChanges();
   }
 
   clearParkedData() {

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head><title>Brașov Polygons via Overpass</title></head>
+<body>
+<h2>🎯 Fetching via Overpass Turbo API (different from Nominatim!)</h2>
+<pre id="log" style="font-size:13px"></pre>
+<button onclick="navigator.clipboard.writeText(document.getElementById('output').value).then(()=>alert('Copied!'))" style="font-size:16px;padding:10px 20px;cursor:pointer">📋 COPY JSON</button>
+<br><br>
+<textarea id="output" rows="20" cols="120" style="font-size:11px"></textarea>
+<script>
+const log = document.getElementById('log');
+const output = document.getElementById('output');
+function L(msg) { log.textContent += msg + '\n'; }
+
+const ZONE_MAP = {
+  'centrul vechi': 0, 'centrul istoric': 0, 'centru vechi': 0,
+  'schei': 0, 'scheii brașovului': 0, 'șchei': 0,
+  'valea cetății': 0, 'valea cetatii': 0,
+  'centrul nou': 1, 'centru nou': 1, 'centrul civic': 1,
+  'astra': 1,
+  'florilor': 1,
+  'tractorul': 1,
+  'bartolomeu': 1,
+  'craiter': 1, 'blumăna': 1,
+  'scriitori': 1, 'scriitorilor': 1, 'prund': 1,
+  'stupini': 2,
+  'noua': 2, 'dârste': 2, 'noua-dârste': 2, 'darste': 2,
+  'triaj': 2,
+};
+
+// Query ALL neighbourhoods and suburbs in Brașov at once
+const query = `
+[out:json][timeout:60];
+area["name"="Brașov"]["admin_level"~"4|6"]->.city;
+(
+  way["place"~"neighbourhood|suburb|quarter"](area.city);
+  relation["place"~"neighbourhood|suburb|quarter"](area.city);
+  way["boundary"="administrative"]["admin_level"~"9|10|11"](area.city);
+  relation["boundary"="administrative"]["admin_level"~"9|10|11"](area.city);
+);
+out geom;
+`;
+
+async function fetchOverpass() {
+  L('Sending query to Overpass API...');
+  L('(This may take 10-30 seconds)\n');
+  
+  try {
+    const res = await fetch('https://overpass-api.de/api/interpreter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `data=${encodeURIComponent(query)}`
+    });
+    
+    const text = await res.text();
+    
+    if (text.startsWith('<')) {
+      L('❌ Overpass returned HTML error. Server might be busy. Try again in 1 minute.');
+      return;
+    }
+    
+    const data = JSON.parse(text);
+    L(`Got ${data.elements.length} elements from Overpass!\n`);
+    
+    const results = [];
+    
+    for (const el of data.elements) {
+      const name = el.tags?.name;
+      if (!name) continue;
+      
+      const key = name.toLowerCase().trim();
+      const zone = ZONE_MAP[key];
+      
+      if (zone === undefined) {
+        L(`  ⚪ Skipped: "${name}" (not in our zone map)`);
+        continue;
+      }
+      
+      let geojson = null;
+      
+      if (el.type === 'way' && el.geometry) {
+        const coords = el.geometry.map(p => [p.lon, p.lat]);
+        if (coords.length > 2) {
+          // Close the ring if not already closed
+          const first = coords[0];
+          const last = coords[coords.length - 1];
+          if (first[0] !== last[0] || first[1] !== last[1]) coords.push([...first]);
+          geojson = { type: 'Polygon', coordinates: [coords] };
+        }
+      } else if (el.type === 'relation' && el.members) {
+        const outerWays = el.members.filter(m => m.role === 'outer' && m.geometry);
+        if (outerWays.length > 0) {
+          const coords = outerWays.flatMap(w => w.geometry.map(p => [p.lon, p.lat]));
+          const first = coords[0];
+          const last = coords[coords.length - 1];
+          if (first[0] !== last[0] || first[1] !== last[1]) coords.push([...first]);
+          geojson = { type: 'Polygon', coordinates: [coords] };
+        }
+      }
+      
+      if (geojson) {
+        results.push({ zone, label: name, geojson });
+        L(`  ✅ ${name} → Zone ${zone} — Polygon with ${geojson.coordinates[0].length} points`);
+      } else {
+        L(`  ⚠️ ${name} → Found but no polygon geometry`);
+      }
+    }
+    
+    L(`\n${'='.repeat(50)}`);
+    L(`RESULT: ${results.length} polygons captured`);
+    L(`Labels: ${results.map(r => `Z${r.zone}:${r.label}`).join(', ')}`);
+    
+    // Check what's missing
+    const needed = ['Centrul Vechi', 'Schei', 'Valea Cetății', 'Centrul Nou', 'Astra', 
+                     'Florilor', 'Tractorul', 'Bartolomeu', 'Craiter', 'Scriitori',
+                     'Stupini', 'Noua-Dârste', 'Triaj'];
+    const foundLabels = results.map(r => r.label.toLowerCase());
+    const missing = needed.filter(n => !results.find(r => 
+      r.label.toLowerCase().includes(n.toLowerCase().split('-')[0]) || 
+      n.toLowerCase().includes(r.label.toLowerCase())
+    ));
+    if (missing.length) L(`\nMISSING: ${missing.join(', ')}`);
+    else L(`\n🎉 ALL NEIGHBORHOODS FOUND!`);
+    
+    L(`\nCopy the JSON and paste it!`);
+    output.value = JSON.stringify(results);
+    
+  } catch (e) {
+    L(`❌ Fetch failed: ${e.message}`);
+    L(`Try refreshing the page in 30 seconds.`);
+  }
+}
+
+fetchOverpass();
+</script>
+</body>
+</html>
