@@ -222,7 +222,7 @@ declare const google: any;
     .map-core { width: 100%; height: 100%; }
     .loading-shimmer { position: absolute; inset: 0; background: rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; z-index: 10; }
     .spinner { width: 32px; height: 32px; border: 3px solid #f1f3f4; border-top-color: #1a73e8; border-radius: 50%; animation: spin 0.8s linear infinite; }
-    .route-panel { position: absolute; bottom: 0; left: 0; right: 0; height: 75vh; background: #fff; display: flex; flex-direction: column; overflow-y: auto; border-radius: 28px 28px 0 0; z-index: 10; box-shadow: 0 -8px 24px rgba(0,0,0,0.08); transform: translateY(100%); padding-bottom: var(--safe-bottom); }
+    .route-panel { position: absolute; top: 0; left: 0; right: 0; height: 100dvh; background: #fff; display: flex; flex-direction: column; overflow-y: auto; border-radius: 28px 28px 0 0; z-index: 10; box-shadow: 0 -12px 40px rgba(0,0,0,0.12); transform: translateY(100%); padding-bottom: calc(var(--safe-bottom) + 5rem); -webkit-overflow-scrolling: touch; }
     .panel-header { position: sticky; top: 0; z-index: 20; background: #fff; padding-bottom: 0.5rem; border-bottom: 1px solid #f1f3f4; }
     .drag-bar-box { padding: 0.75rem 0 0.5rem; display: flex; justify-content: center; cursor: pointer; }
     .drag-bar { width: 36px; height: 4px; background: #dadce0; border-radius: 2px; }
@@ -323,11 +323,12 @@ export class BusProgramComponent implements OnInit {
         const el = this.routePanel?.nativeElement || document.querySelector('.route-panel');
         if (!route || !el) return;
         
-        const panelHeight = el.offsetHeight;
-        // Calculate targetY to stay below the top-nav
         const topNavEl = this.topNav?.nativeElement;
         const topNavHeight = topNavEl ? topNavEl.offsetHeight : 120;
-        const targetY = minimized ? (panelHeight - 140) : (topNavHeight + 10);
+        
+        // Use full viewport height for calculations
+        const vh = window.innerHeight;
+        const targetY = minimized ? (vh - 140) : (topNavHeight + 10);
         
         gsap.to(el, {
           y: targetY,
