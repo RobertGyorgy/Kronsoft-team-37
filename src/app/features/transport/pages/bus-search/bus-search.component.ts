@@ -643,12 +643,17 @@ export class BusSearchComponent implements OnInit, OnDestroy {
     if (platforms.length === 1) {
       const pos = { lat: platforms[0].lat, lng: platforms[0].lon };
       this.map.setCenter(pos);
-      this.map.setZoom(18);
-      // Use a smaller pan offset to keep marker visible above the station viewer
-      setTimeout(() => this.map.panBy(0, 150), 100);
+      this.map.setZoom(17);
+      // Pushing it down just a bit to clear the search bar, but not too much since the dock is tall
+      setTimeout(() => this.map.panBy(0, -70), 150);
     } else {
-      // Hub with multiple platforms - use more reasonable padding
-      this.map.fitBounds(bounds, { bottom: 160, top: 80, left: 30, right: 30 });
+      // For hubs, use padding that accounts for the search bar and the visible part of the dock
+      this.map.fitBounds(bounds, { 
+        bottom: 120, 
+        top: 100,
+        left: 50, 
+        right: 50 
+      });
     }
   }
 
