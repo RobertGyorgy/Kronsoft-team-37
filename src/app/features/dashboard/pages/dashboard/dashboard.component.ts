@@ -1,25 +1,38 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { gsap } from 'gsap';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-    <main class="dashboard-container">
-      <!-- Header Section -->
+    <main class="dashboard-container" #container>
+      <!-- Premium Header Section -->
       <header class="dashboard-header">
-        <h1 class="user-greeting">Salut, Ion Popescu!</h1>
+        <div class="greeting-wrapper">
+          <h1 class="hello-text line-mask">
+            <span *ngFor="let word of helloWords" class="word">
+              <span *ngFor="let char of word.split('')" class="char">{{ char }}</span>
+              <span class="char">&nbsp;</span>
+            </span>
+          </h1>
+          <h2 class="interest-text line-mask">
+            <span *ngFor="let word of interestWords" class="word">
+              <span *ngFor="let char of word.split('')" class="char">{{ char }}</span>
+              <span class="char">&nbsp;</span>
+            </span>
+          </h2>
+        </div>
       </header>
 
       <!-- Interaction Grid (2x3) -->
-      <section class="interaction-grid">
+      <section class="interaction-grid" #grid>
         <div class="grid-card orange" routerLink="/transport/bus">
           <span class="material-icons card-bg-icon">directions_bus</span>
           <span class="card-title">Program Autobuze</span>
         </div>
-        <!-- ... (cards stay the same) -->
 
         <div class="grid-card blue" routerLink="/parking">
           <span class="material-icons card-bg-icon">local_parking</span>
@@ -48,7 +61,7 @@ import { RouterLink } from '@angular/router';
       </section>
 
       <!-- Footer Action -->
-      <footer class="dashboard-footer">
+      <footer class="dashboard-footer" #footer>
         <button class="icon-btn footer-btn" aria-label="Settings">
           <span class="material-icons">settings</span>
         </button>
@@ -65,76 +78,110 @@ import { RouterLink } from '@angular/router';
         min-height: 100dvh;
         width: 100%;
         overflow-x: hidden;
-        background: #f8f9fa;
-        padding: calc(var(--safe-top) + 1.2rem) 1.25rem calc(var(--safe-bottom) + 1.5rem);
-        font-family: 'Surgena', sans-serif;
+        background: #ffffff;
+        padding: calc(var(--safe-top) + 1.5rem) 1.25rem calc(var(--safe-bottom) + 1.5rem);
+        font-family: 'Outfit', sans-serif;
         display: flex;
         flex-direction: column;
-        gap: 1.25rem;
+        gap: 2rem;
         position: relative;
       }
 
       .dashboard-header {
         display: flex;
+        flex-direction: column;
         justify-content: flex-start;
-        align-items: center;
+        padding-top: 1rem;
       }
 
-      .user-greeting {
-        font-size: 1.75rem;
+      .greeting-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .line-mask {
+        overflow: visible;
+        display: block;
+        margin: 0;
+      }
+
+      .hello-text {
+        font-size: 3.2rem;
         font-weight: 800;
         color: #1a1a1a;
-        margin: 0;
-        letter-spacing: -0.03em;
+        letter-spacing: -0.05em;
+        line-height: 1;
+      }
+
+      .interest-text {
+        font-size: 1.35rem;
+        font-weight: 500;
+        color: #666;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+        max-width: 100%; /* Allow full width for better wrapping */
+      }
+
+      .word {
+        display: inline-block;
+        white-space: nowrap; /* Keep letters together */
+      }
+
+      .char {
+        display: inline-block;
+        opacity: 0;
       }
 
       /* Grid Layout */
       .interaction-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        grid-auto-rows: 1fr; /* Make rows equal height and dynamic */
-        gap: 1.25rem;
-        flex: 1; /* Stretch to fill available space */
+        gap: 1rem;
+        flex: 1;
       }
 
       .grid-card {
         position: relative;
         border-radius: 28px;
-        padding: 1.25rem;
+        padding: 1.5rem;
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
         align-items: flex-start;
         overflow: hidden;
         cursor: pointer;
-        transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
         border: none;
-        min-height: 120px; /* Minimum safety height */
+        min-height: 130px;
+        opacity: 0;
+      }
+      
+      .grid-card.animated {
+        transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.3s ease;
       }
 
       .grid-card:active {
-        transform: scale(0.95);
+        transform: scale(0.96);
       }
 
-      /* Full card icon background */
       .card-bg-icon {
         position: absolute;
         top: 10%;
         right: -5%;
-        font-size: 5rem !important; /* Large icon */
-        opacity: 0.15; /* Subtle background effect */
+        font-size: 5rem !important;
+        opacity: 0.15;
         color: #fff;
         transform: rotate(-10deg);
         pointer-events: none;
       }
 
       .card-title {
-        font-size: 1rem;
+        font-size: 1.1rem;
         font-weight: 800;
         color: #fff;
         line-height: 1.1;
         z-index: 2;
-        max-width: 90%;
+        letter-spacing: -0.01em;
       }
 
       /* Card Themes */
@@ -149,8 +196,9 @@ import { RouterLink } from '@angular/router';
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 1rem;
-        padding-bottom: 1rem;
+        gap: 1.25rem;
+        margin-top: 1.5rem;
+        opacity: 0;
       }
 
       .footer-btn {
@@ -164,7 +212,6 @@ import { RouterLink } from '@angular/router';
         justify-content: center;
         color: #666;
         cursor: pointer;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
       }
 
       .logout-link {
@@ -175,35 +222,84 @@ import { RouterLink } from '@angular/router';
         justify-content: center;
         gap: 0.6rem;
         text-decoration: none;
-        color: #ff4500;
+        color: #1a1a1a;
         font-weight: 700;
         font-size: 1rem;
-        padding: 1rem 1.5rem;
+        padding: 1.1rem 1.5rem;
         border-radius: 999px;
-        background: #fff;
-        border: 1px solid #eee;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        background: #f5f5f5;
       }
 
       @media (min-width: 600px) {
         .interaction-grid {
-          max-width: 500px;
+          grid-template-columns: repeat(3, 1fr);
+          max-width: 800px;
           margin: 0 auto;
         }
+        .hello-text { font-size: 5.5rem; }
+        .interest-text { font-size: 2.2rem; }
       }
     `
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DashboardComponent {
+export class DashboardComponent implements AfterViewInit {
+  @ViewChild('container') container!: ElementRef;
+  @ViewChild('grid') grid!: ElementRef;
+  @ViewChild('footer') footer!: ElementRef;
+
+  helloWords = 'Hello, Ion'.split(' ');
+  interestWords = 'What are you interested in today?'.split(' ');
+
+  ngAfterViewInit() {
+    const tl = gsap.timeline({ 
+      defaults: { ease: 'power2.out', duration: 0.8 } 
+    });
+
+    // Initial state setup
+    gsap.set('.char', { y: 30 });
+    gsap.set('.grid-card', { y: 40 });
+    gsap.set(this.footer.nativeElement, { y: 20 });
+
+    // 1. Hello Heading Reveal
+    tl.to('.hello-text .char', {
+      y: 0,
+      opacity: 1,
+      stagger: 0.02,
+    })
+    
+    // 2. Interest Text & Cards
+    .to('.interest-text .char', {
+      y: 0,
+      opacity: 1,
+      stagger: 0.008,
+    }, '-=0.5')
+    
+    .to('.grid-card', {
+      y: 0,
+      opacity: 1,
+      stagger: 0.04,
+      duration: 0.8,
+      onComplete: () => {
+        document.querySelectorAll('.grid-card').forEach(el => el.classList.add('animated'));
+      }
+    }, '-=0.6')
+    
+    // 3. Footer
+    .to(this.footer.nativeElement, {
+      y: 0,
+      opacity: 1,
+    }, '-=0.5');
+  }
+
   onTownHallClick() { 
     window.open('https://www.brasovcity.ro', '_blank');
   }
-  onWeekendRecommendationsClick() {
-    console.log('Opening Weekend Recommendations...');
-  }
-  onBusScheduleClick() { console.log('Navigating to Bus Schedule...'); }
-  onPayParkingClick() { console.log('Navigating to Parking Payment...'); }
-  onReportIssueClick() { console.log('Opening Issue Reporting...'); }
+  
   onCityEventsClick() { console.log('Opening City Events...'); }
 }
+
+
+
+
+

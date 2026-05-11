@@ -27,20 +27,35 @@ export class TransitService {
     const data = this.smartStops();
     if (!data || data.length === 0) return [];
 
-    const normalize = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+    const normalize = (s: string) => s ? s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim() : '';
     const targetName = normalize(stopName);
-    const cleanLine = lineName.toString().replace(/[^0-9A-Z]/gi, '').toLowerCase();
+    const cleanLine = (lineName || '').toString().replace(/[^0-9A-Z]/gi, '').toLowerCase();
 
     // 1. Find the station
-    let station = data.find(s => normalize(s.name) === targetName || normalize(s.displayName || '').includes(targetName));
+    let station = data.find(s => 
+      normalize(s.name) === targetName || 
+      normalize(s.displayName || '') === targetName ||
+      targetName.includes(normalize(s.name)) ||
+      normalize(s.name).includes(targetName)
+    );
     
+    if (!station) {
+      // Check platforms
+      data.forEach(s => {
+        if (s.allPlatforms) {
+          const found = s.allPlatforms.find((p: any) => normalize(p.name) === targetName || targetName.includes(normalize(p.name)));
+          if (found) station = found;
+        }
+      });
+    }
+
     if (!station) {
       station = data.reduce((prev, curr) => {
         const dPrev = this.calculateDistance(coords.lat, coords.lng, prev.lat, prev.lon);
         const dCurr = this.calculateDistance(coords.lat, coords.lng, curr.lat, curr.lon);
         return (dCurr < dPrev) ? curr : prev;
       });
-      if (this.calculateDistance(coords.lat, coords.lng, station.lat, station.lon) > 150) {
+      if (this.calculateDistance(coords.lat, coords.lng, station.lat, station.lon) > 300) {
         station = null;
       }
     }
@@ -73,12 +88,14 @@ export class TransitService {
             if (h >= 24) h -= 24;
             
             let diff = (h * 60 + m) - (refH * 60 + refM);
-            // If the bus is in the past relative to our arrival, it might be the 'next' day if it's very close to midnight, 
-            // but for a trip planner we usually care about the same journey day.
-            if (diff < 0) diff += 1440; 
+            // Handling wraps around midnight
+            if (diff < -120) diff += 1440; 
             
             if (diff >= 0 && diff <= 1440) {
-              bestEtas.push({ time: `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`, wait: diff });
+              bestEtas.push({ 
+                time: `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`, 
+                wait: diff 
+              });
             }
           });
         });

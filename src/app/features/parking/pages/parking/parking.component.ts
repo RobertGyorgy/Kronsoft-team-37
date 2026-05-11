@@ -174,7 +174,6 @@ export class ParkingComponent implements OnInit, OnDestroy {
   showTariffs = false;
   showQuickAdd = false;
   public timeLeft = '00:00:00';
-  public parkingExpiry: number | null = null;
   carPlate = '';
   isPlateSaved = false;
   tempPlate = '';
