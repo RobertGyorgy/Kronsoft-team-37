@@ -17,7 +17,6 @@ import { gsap } from 'gsap';
 
       <section class="welcome-hero" #hero>
         <div class="greeting-block">
-          <p class="greeting-label">Mobilitate Urbană</p>
           <h1 class="bold-header">
             <span *ngFor="let word of splitByWord('Brașov Transit')" class="word">
               <span *ngFor="let char of word.split('')" class="char">{{ char }}</span>
@@ -75,8 +74,7 @@ import { gsap } from 'gsap';
     .minimal-back-btn { background: none; border: none; padding: 0.5rem; display: flex; align-items: center; color: #1a1a1a; cursor: pointer; }
 
     .welcome-hero { padding: 1rem 2.5rem 3rem; }
-    .greeting-label { font-size: 0.85rem; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.75rem; }
-    .bold-header { font-size: 4.5rem; font-weight: 800; letter-spacing: -0.06em; line-height: 0.85; margin: 0; }
+    .bold-header { font-size: 3.5rem; font-weight: 800; letter-spacing: -0.06em; line-height: 0.9; margin: 0; white-space: nowrap; display: flex; flex-wrap: nowrap; }
     .word { display: inline-block; white-space: nowrap; }
     .char { display: inline-block; opacity: 0; }
 

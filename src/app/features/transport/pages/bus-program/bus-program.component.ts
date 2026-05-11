@@ -39,7 +39,7 @@ declare const google: any;
         <header class="top-nav-modern" #topNav>
           <div class="nav-card">
             <div class="nav-controls">
-              <button class="icon-btn" routerLink="/transport/bus">
+              <button class="minimal-back-btn" routerLink="/transport/bus">
                 <span class="material-icons">arrow_back</span>
               </button>
               
@@ -190,8 +190,8 @@ declare const google: any;
     .top-nav-modern { position: absolute; top: 0; left: 0; right: 0; padding: calc(var(--safe-top) + 1rem) 1rem; z-index: 1000; transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
     .nav-active .top-nav-modern { transform: translateY(-120%); }
     .nav-card { background: #fff; border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.05); padding: 0.75rem; width: 100%; }
-    .nav-controls { display: flex; align-items: stretch; gap: 0.75rem; }
-    .icon-btn { background: #f8f9fa; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #5f6368; cursor: pointer; }
+    .nav-controls { display: flex; align-items: stretch; gap: 0.5rem; }
+    .minimal-back-btn { background: transparent; border: none; width: 40px; display: flex; align-items: center; justify-content: center; color: #1a1a1a; cursor: pointer; border-right: 1px solid #f1f3f4; margin-right: 0.25rem; }
     .search-fields { flex: 1; display: flex; flex-direction: column; }
     .search-field { display: flex; align-items: center; gap: 0.75rem; padding: 0.4rem 0.5rem; }
     .search-field input { border: none; background: transparent; flex: 1; outline: none; font-size: 0.95rem; font-weight: 600; color: #202124; }
@@ -264,10 +264,11 @@ declare const google: any;
 })
 export class BusProgramComponent implements OnInit {
   @ViewChild('mapContainer') mapContainer!: ElementRef;
+  @ViewChild('topNav') topNav!: ElementRef;
   @ViewChild('destInput') destInput!: ElementRef;
   @ViewChild('originInput') originInput!: ElementRef;
   @ViewChild('waypointInput') waypointInput!: ElementRef;
-  @ViewChild('details') detailsContainer!: ElementRef;
+  @ViewChild('details') routePanel!: ElementRef;
 
   private map: any;
   private userMarker: any;
@@ -319,11 +320,14 @@ export class BusProgramComponent implements OnInit {
       const minimized = this.isMinimized();
       
       setTimeout(() => {
-        const el = this.detailsContainer?.nativeElement || document.querySelector('.route-panel');
+        const el = this.routePanel?.nativeElement || document.querySelector('.route-panel');
         if (!route || !el) return;
         
         const panelHeight = el.offsetHeight;
-        const targetY = minimized ? (panelHeight - 120) : 0;
+        // Calculate targetY to stay below the top-nav
+        const topNavEl = this.topNav?.nativeElement;
+        const topNavHeight = topNavEl ? topNavEl.offsetHeight : 120;
+        const targetY = minimized ? (panelHeight - 140) : (topNavHeight + 10);
         
         gsap.to(el, {
           y: targetY,
@@ -344,7 +348,7 @@ export class BusProgramComponent implements OnInit {
   onTouchMove(event: TouchEvent) {
     const touchY = event.touches[0].clientY;
     const deltaY = touchY - this.touchStartY;
-    const el = this.detailsContainer?.nativeElement;
+    const el = this.routePanel?.nativeElement;
     
     if (el && el.scrollTop <= 0 && deltaY > 60 && !this.isMinimized()) {
       this.isMinimized.set(true);
