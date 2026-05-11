@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brașov Parking - GIS Surgical Fix V2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --z0: #ff4757; --z1: #ffa502; --z2: #2ed573; --bg: #f8f9fa; }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Outfit', sans-serif; background: var(--bg); overflow: hidden; }
+        #map { height: 60%; width: 100%; }
+        .ui-overlay { height: 40%; background: white; border-radius: 30px 30px 0 0; position: absolute; bottom: 0; width: 100%; box-shadow: 0 -10px 40px rgba(0,0,0,0.1); padding: 1.5rem; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; }
+        .zone-card { width: 100%; padding: 1.5rem; border-radius: 24px; color: white; text-align: center; transition: all 0.4s ease; margin-bottom: 1rem; }
+        .zone-number { font-size: 2.2rem; font-weight: 900; margin: 0; line-height: 1; }
+        .zone-desc { font-size: 1.1rem; font-weight: 700; margin-top: 0.5rem; text-transform: uppercase; }
+        .street-name { font-size: 0.9rem; font-weight: 400; opacity: 0.9; margin-top: 0.25rem; }
+        .btn-pay { width: 100%; padding: 1.2rem; border-radius: 50px; border: none; background: #1a1a1a; color: white; font-size: 1.1rem; font-weight: 900; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .marker-label { background: white; padding: 4px 10px; border-radius: 10px; font-weight: 950; font-size: 14px; border: 3px solid; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #1a1a1a; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin-bottom: 1rem; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="loading" class="loading-overlay">
+        <div class="spinner"></div>
+        <h2 style="margin:0">Se încarcă poligoanele OSM...</h2>
+        <p id="loadingStatus">Sincronizare cu baza de date Brașov</p>
+    </div>
+
+    <div id="map"></div>
+
+    <div class="ui-overlay">
+        <div id="zoneCard" class="zone-card" style="background: #ccc;">
+            <p class="zone-number" id="zoneNum">ZONA --</p>
+            <p class="zone-desc" id="zoneName">Detectare...</p>
+            <p class="street-name" id="streetName">Se verifică locația GIS...</p>
+        </div>
+        <button class="btn-pay" id="payBtn">Plătește prin SMS</button>
+    </div>
+
+    <script>
+        // Google Maps Loader
+        (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Re-referencing library %s.",[...r]):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
+            key: "AIzaSyCdiZP6qlfDFgJPstq94TyVBuTLgPB81xY",
+            v: "weekly"
+        });
+
+        const NEIGHBORHOODS = {
+            0: ["Centrul Vechi", "Poiana Brașov", "Valea Cetății"],
+            1: ["Centrul Nou", "Astra", "Florilor", "Tractorul", "Schei", "Bartolomeu", "Scriitori", "Craiter", "Bulevardul Victoriei"],
+            2: ["Bartolomeu Nord", "Noua", "Triaj", "Stupini"]
+        };
+
+        const ZONE_CONFIG = {
+            0: { label: "Centru Vechi", code: "100A", color: "#ff4757" },
+            1: { label: "Cartier / Centru Nou", code: "101B", color: "#ffa502" },
+            2: { label: "Periferie / Cartier", code: "103C", color: "#2ed573" }
+        };
+
+        let map, marker, AdvancedMarkerElement;
+        const geojsonPolygons = { 0: [], 1: [], 2: [] };
+
+        async function initApp() {
+            try {
+                // 1. Fetch Polygons from Nominatim at runtime
+                await fetchAllPolygons();
+                
+                const { Map } = await google.maps.importLibrary("maps");
+                const { AdvancedMarkerElement: AM } = await google.maps.importLibrary("marker");
+                AdvancedMarkerElement = AM;
+
+                map = new Map(document.getElementById("map"), {
+                    center: { lat: 45.6427, lng: 25.5887 },
+                    zoom: 15,
+                    mapId: "SMART_CITY_MAP_ID",
+                    disableDefaultUI: true
+                });
+
+                document.getElementById('loading').style.display = 'none';
+
+                if (navigator.geolocation) {
+                    navigator.geolocation.watchPosition(updatePosition, (e) => alert("GPS Error: " + e.message), { enableHighAccuracy: true });
+                }
+            } catch (err) {
+                console.error("Initialization failed:", err);
+                alert("Eroare la încărcarea datelor GIS. Verifică conexiunea.");
+            }
+        }
+
+        async function fetchAllPolygons() {
+            const statusEl = document.getElementById('loadingStatus');
+            for (let z = 0; z <= 2; z++) {
+                for (const area of NEIGHBORHOODS[z]) {
+                    statusEl.innerText = `Se încarcă: ${area}...`;
+                    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(area)},Brasov,Romania&polygon_geojson=1&format=json`;
+                    try {
+                        const response = await fetch(url);
+                        const data = await response.json();
+                        if (data && data[0] && data[0].geojson) {
+                            geojsonPolygons[z].push(data[0].geojson);
+                        }
+                    } catch (e) { console.warn(`Failed to fetch ${area}`); }
+                }
+            }
+        }
+
+        async function updatePosition(pos) {
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+
+            // 1. Detect Zone
+            const zoneNum = detectZone(lat, lng);
+            
+            // 2. Reverse Geocode (Dynamic Cartier)
+            const streetData = await reverseGeocode(lat, lng);
+            
+            console.log(`DEBUG - Detected Zone: ${zoneNum !== null ? zoneNum : 'NONE'}, Reverse Geocode: ${streetData}`);
+
+            // 3. UI Update
+            updateUI(zoneNum, streetData);
+
+            // 4. Map Update
+            updateMarker(lat, lng, zoneNum);
+            
+            map.setCenter({ lat, lng });
+        }
+
+        function detectZone(lat, lng) {
+            for (let z = 0; z <= 2; z++) {
+                for (const geo of geojsonPolygons[z]) {
+                    if (isPointInGeoJSON(lat, lng, geo)) return z;
+                }
+            }
+            return null; // ZONA NEIDENTIFICATĂ
+        }
+
+        function isPointInGeoJSON(lat, lng, geo) {
+            if (geo.type === "Polygon") return isPointInPolyArr(lat, lng, geo.coordinates[0]);
+            if (geo.type === "MultiPolygon") {
+                return geo.coordinates.some(poly => isPointInPolyArr(lat, lng, poly[0]));
+            }
+            return false;
+        }
+
+        function isPointInPolyArr(lat, lng, coords) {
+            let inside = false;
+            // Nominatim returns [lng, lat]
+            for (let i = 0, j = coords.length - 1; i < coords.length; j = i++) {
+                let xi = coords[i][1], yi = coords[i][0];
+                let xj = coords[j][1], yj = coords[j][0];
+                let intersect = ((yi > lng) !== (yj > lng)) && (lat < (xj - xi) * (lng - yi) / (yj - yi) + xi);
+                if (intersect) inside = !inside;
+            }
+            return inside;
+        }
+
+        async function reverseGeocode(lat, lng) {
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
+                const data = await res.json();
+                const a = data.address;
+                return a.suburb || a.neighbourhood || a.road || "Locație necunoscută";
+            } catch (e) { return "Eroare geocoding"; }
+        }
+
+        function updateUI(zoneNum, street) {
+            const card = document.getElementById('zoneCard');
+            const numEl = document.getElementById('zoneNum');
+            const nameEl = document.getElementById('zoneName');
+            const streetEl = document.getElementById('streetName');
+            const payBtn = document.getElementById('payBtn');
+
+            if (zoneNum === null) {
+                card.style.background = "#747d8c";
+                numEl.innerText = "ZONA NEIDENTIFICATĂ";
+                nameEl.innerText = "Te afli în afara zonelor de plată";
+                streetEl.innerText = `📍 ${street}`;
+                payBtn.style.display = "none";
+            } else {
+                const conf = ZONE_CONFIG[zoneNum];
+                card.style.background = conf.color;
+                numEl.innerText = `ZONA ${zoneNum}`;
+                nameEl.innerText = conf.label;
+                streetEl.innerText = `ZONA ${zoneNum} – ${street}`;
+                payBtn.innerText = `Trimite SMS (Cod ${conf.code})`;
+                payBtn.style.display = "block";
+            }
+        }
+
+        function updateMarker(lat, lng, zoneNum) {
+            if (marker) marker.map = null;
+            if (zoneNum === null) return;
+
+            const color = ZONE_CONFIG[zoneNum].color;
+            const content = document.createElement("div");
+            content.className = "marker-label";
+            content.style.borderColor = color;
+            content.style.color = color;
+            content.innerText = `Z${zoneNum}`;
+
+            marker = new AdvancedMarkerElement({
+                map: map,
+                position: { lat, lng },
+                content: content
+            });
+        }
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>

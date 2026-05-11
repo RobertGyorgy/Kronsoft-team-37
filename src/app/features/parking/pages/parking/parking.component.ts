@@ -40,6 +40,7 @@ declare const google: any;
         <!-- 4. MARELE CARD ALBASTRU -->
         <section class="main-parking-card">
           <h2 class="zone-name-header">{{ detectedLocationName || PARKING_ZONES[selectedZoneIndex].name }}</h2>
+          <p class="detected-street-label" *ngIf="currentStreet">{{ currentStreet }}</p>
           
           <div class="stepper-pill-container">
             <span class="stepper-text-label">SELECTEAZĂ DURATA</span>
@@ -116,7 +117,7 @@ declare const google: any;
     .parking-shell { height: 100vh; width: 100%; overflow-x: hidden; background: #fff; font-family: 'Outfit', sans-serif; color: #1a1a1a; position: relative; }
     .main-scroll-area { height: 100vh; width: 100%; overflow-x: hidden; overflow-y: auto; padding-bottom: 2rem; }
     .page-header-pill { display: flex; align-items: center; padding: calc(var(--safe-top) + 1.2rem) 1.5rem 1rem; position: relative; }
-    .back-pill { background: none; border: none; color: #333; font-weight: 800; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; }
+    .unified-back-btn { background: none; border: none; color: #333; font-weight: 800; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; }
     .page-title-pill { font-size: 1rem; font-weight: 900; color: #1a1a1a; position: absolute; left: 50%; transform: translateX(-50%); }
     .map-section-pill { padding: 0 1rem; margin-bottom: 0.5rem; }
     .map-canvas-wrap { height: 28vh; border-radius: 20px; overflow: hidden; border: 1px solid #eee; position: relative; }
@@ -126,8 +127,9 @@ declare const google: any;
     .plate-row { display: flex; gap: 0.75rem; align-items: center; }
     .plate-input { flex: 2; background: #f2f2f2; border: 1.5px solid #ddd; border-radius: 50px; padding: 0.5rem 1.25rem; font-weight: 700; font-size: 1rem; color: #333; outline: none; }
     .btn-save-solid { flex: 1.2; background: #4285f4; color: #fff; border: none; border-radius: 50px; padding: 0.5rem; font-weight: 900; font-size: 0.95rem; text-transform: uppercase; cursor: pointer; }
-    .main-parking-card { background: #4285f4; border-radius: 30px; padding: 0.5rem; margin: 0 1rem 1rem; color: #fff; box-shadow: 0 10px 30px rgba(66,133,244,0.2); position: relative; }
-    .zone-name-header { font-size: 1.25rem; font-weight: 900; text-align: center; margin-bottom: 0.5rem; color: #fff; }
+    .main-parking-card { background: #4285f4; border-radius: 30px; padding: 1rem; margin: 0 1rem 1rem; color: #fff; box-shadow: 0 10px 30px rgba(66,133,244,0.2); position: relative; }
+    .zone-name-header { font-size: 1.25rem; font-weight: 900; text-align: center; margin-bottom: 0.2rem; color: #fff; }
+    .detected-street-label { font-size: 0.85rem; font-weight: 600; text-align: center; margin-bottom: 0.75rem; opacity: 0.9; }
     .stepper-pill-container { background: rgba(255,255,255,0.85); border-radius: 50px; padding: 0.35rem 0.5rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; color: #333; }
     .stepper-text-label { font-size: 0.95rem; font-weight: 700; padding-left: 0.75rem; color: #555; }
     .stepper-controls { display: flex; align-items: center; gap: 0.75rem; }
@@ -178,39 +180,35 @@ export class ParkingComponent implements OnInit, OnDestroy {
   selectedHours = 1;
   selectedZoneIndex = 0;
   detectedLocationName = '';
+  currentStreet = '';
   
-  parkedCarLocationName = '';
-  parkedCarZoneIndex = 0;
-
-  history: any[] = [
-    { day: '05', month: 'MAI', plate: 'BV 01 ABC', zone: 'Zona 0 - Centru', amount: '1.20' }
-  ];
-
+  history: any[] = [];
   private map: any;
   private marker: any;
   private timerSubscription: Subscription | undefined;
   public currentParkingSeconds = 0;
-  isOutOfZone = false;
-  
-  private PARKING_POIS = [
-    { name: 'Piața Sfatului / Mureșenilor', zone: 0, lat: 45.6423, lng: 25.5888 },
-    { name: 'Primăria Brașov / Eroilor', zone: 0, lat: 45.6450, lng: 25.5930 },
-    { name: 'Nicolae Bălcescu / Castelului', zone: 0, lat: 45.6400, lng: 25.5920 },
-    { name: 'Parcare Spitalul Militar', zone: 0, lat: 45.6470, lng: 25.5900 },
-    { name: 'Bulevardul Victoriei (Centru Civic)', zone: 1, lat: 45.6540, lng: 25.6060 },
-    { name: 'Centrul Civic / AFI', zone: 1, lat: 45.6510, lng: 25.6080 },
-    { name: 'Calea București / Astra', zone: 1, lat: 45.6400, lng: 25.6200 },
-    { name: '13 Decembrie / Onix', zone: 1, lat: 45.6580, lng: 25.6010 },
-    { name: 'Gara Brașov', zone: 1, lat: 45.6620, lng: 25.6130 },
-    { name: 'Coresi Shopping Resort', zone: 1, lat: 45.6740, lng: 25.6180 },
-    { name: 'Parcare Bartolomeu', zone: 1, lat: 45.6580, lng: 25.5720 },
-    { name: 'Zona Industrială Vest', zone: 2, lat: 45.6800, lng: 25.5400 },
-    { name: 'Triaj / Hărmanului', zone: 2, lat: 45.6720, lng: 25.6550 }
-  ];
 
-  private ZONE_BOUNDS = [
-    { minLat: 45.625, maxLat: 45.652, minLng: 25.570, maxLng: 25.602 },
-    { minLat: 45.620, maxLat: 45.685, minLng: 25.550, maxLng: 25.660 }
+  // 1. Centrele cartierelor (Date furnizate de utilizator)
+  private readonly NEIGHBORHOOD_CENTERS = [
+    { name: 'Centrul Vechi', zone: 0, lat: 45.6427, lng: 25.5887 },
+    { name: 'Schei', zone: 1, lat: 45.6360, lng: 25.5830 },
+    { name: 'Valea Cetății', zone: 0, lat: 45.6300, lng: 25.5980 },
+    { name: 'Poiana Brașov', zone: 0, lat: 45.5990, lng: 25.5570 },
+    
+    { name: 'Centrul Nou', zone: 1, lat: 45.6534, lng: 25.6086 },
+    { name: 'Astra', zone: 1, lat: 45.6410, lng: 25.6350 },
+    { name: 'Florilor', zone: 1, lat: 45.6650, lng: 25.6290 },
+    { name: 'Tractorul', zone: 1, lat: 45.6720, lng: 25.6100 },
+    { name: 'Bartolomeu', zone: 1, lat: 45.6560, lng: 25.5700 },
+    { name: 'Craiter', zone: 1, lat: 45.6600, lng: 25.6020 },
+    { name: 'Răcădau', zone: 1, lat: 45.6350, lng: 25.6050 },
+    { name: 'Gării', zone: 1, lat: 45.6590, lng: 25.5970 },
+    { name: 'Prund', zone: 1, lat: 45.6450, lng: 25.5860 },
+    
+    { name: 'Bartolomeu Nord', zone: 2, lat: 45.6750, lng: 25.5580 },
+    { name: 'Triaj', zone: 2, lat: 45.6670, lng: 25.5490 },
+    { name: 'Stupini', zone: 2, lat: 45.6810, lng: 25.6250 },
+    { name: 'Noua-Dârste', zone: 2, lat: 45.6230, lng: 25.6430 }
   ];
 
   public PARKING_ZONES = [
@@ -227,134 +225,91 @@ export class ParkingComponent implements OnInit, OnDestroy {
       this.initMap();
       this.startGpsTracking();
       this.loadPersistedData();
-      
-      window.addEventListener('focus', () => {
-        this.loadPersistedData();
-        this.cdr.detectChanges();
-      });
     });
   }
 
-  public startGpsTracking() {
-    if (!navigator.geolocation) return;
-
-    navigator.geolocation.getCurrentPosition(
-      (pos) => this.zone.run(() => this.updateZoneByLocation(pos.coords.latitude, pos.coords.longitude)),
-      (err) => console.warn('Initial GPS fail', err),
-      { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-    );
-
-    navigator.geolocation.watchPosition(
-      (pos) => {
-        const { latitude, longitude } = pos.coords;
-        this.zone.run(() => this.updateZoneByLocation(latitude, longitude));
-      },
-      (err) => {
-        this.zone.run(() => {
-          this.isOutOfZone = true;
-          this.cdr.detectChanges();
-        });
-      },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
-    );
+  // Formula Haversine pentru calcul distanță
+  private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   }
 
-  private updateZoneByLocation(lat: number, lng: number) {
-    this.currentLat = lat;
-    this.currentLng = lng;
-
-    let nearestPoi: any = null;
+  private async updateZoneByLocation(lat: number, lng: number) {
+    let nearest = this.NEIGHBORHOOD_CENTERS[0];
     let minDistance = Infinity;
 
-    this.PARKING_POIS.forEach(poi => {
-      const dist = this.getDistance(lat, lng, poi.lat, poi.lng);
+    for (const center of this.NEIGHBORHOOD_CENTERS) {
+      const dist = this.calculateDistance(lat, lng, center.lat, center.lng);
       if (dist < minDistance) {
         minDistance = dist;
-        nearestPoi = poi;
-      }
-    });
-
-    if (nearestPoi && minDistance < 250) {
-      this.selectedZoneIndex = nearestPoi.zone;
-      this.detectedLocationName = nearestPoi.name;
-      this.isOutOfZone = false;
-    } else {
-      const detectedBoundIndex = this.ZONE_BOUNDS.findIndex(b => 
-        lat >= b.minLat && lat <= b.maxLat && lng >= b.minLng && lng <= b.maxLng
-      );
-
-      if (detectedBoundIndex !== -1) {
-        this.selectedZoneIndex = detectedBoundIndex;
-        this.detectedLocationName = '';
-        this.isOutOfZone = false;
-      } else {
-        this.detectedLocationName = '';
-        this.isOutOfZone = true;
+        nearest = center;
       }
     }
+
+    this.selectedZoneIndex = nearest.zone;
+    this.detectedLocationName = `ZONA ${nearest.zone} – ${nearest.name}`;
     
-    this.updateMarker(lat, lng, this.isOutOfZone ? '#ff4d4d' : '#4285f4');
+    // Reverse Geocoding via Google pentru numele străzii
+    try {
+      const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${(window as any).GOOGLE_MAPS_API_KEY}`);
+      const data = await response.json();
+      if (data.results && data.results[0]) {
+        this.currentStreet = data.results[0].address_components.find((c: any) => c.types.includes('route'))?.long_name || '';
+      }
+    } catch (e) { console.error('Geocoding error', e); }
+
+    this.updateMarker(lat, lng, nearest.zone);
     if (this.map) this.map.setCenter({ lat, lng });
     this.cdr.detectChanges();
   }
 
-  currentLat: number = 0;
-  currentLng: number = 0;
-
-  private getDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-    const R = 6371e3;
-    const φ1 = lat1 * Math.PI / 180;
-    const φ2 = lat2 * Math.PI / 180;
-    const Δφ = (lat2 - lat1) * Math.PI / 180;
-    const Δλ = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  private startGpsTracking() {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.watchPosition(
+      (pos) => this.zone.run(() => this.updateZoneByLocation(pos.coords.latitude, pos.coords.longitude)),
+      (err) => console.warn('GPS Error', err),
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
   }
 
-  private updateMarker(lat: number, lng: number, color: string) {
+  private async updateMarker(lat: number, lng: number, zone: number) {
     if (!this.map) return;
-    if (this.marker) this.marker.setMap(null);
-    
-    this.marker = new google.maps.Marker({
-      position: { lat, lng },
+    if (this.marker) this.marker.map = null;
+    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker") as any;
+    const PIN_COLORS: any = { 0: '#e74c3c', 1: '#f39c12', 2: '#27ae60' };
+    this.marker = new AdvancedMarkerElement({
       map: this.map,
-      icon: {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: 12,
-        fillColor: color,
-        fillOpacity: 1,
-        strokeColor: '#ffffff',
-        strokeWeight: 4
-      },
-      label: {
-        text: 'P',
-        color: '#ffffff',
-        fontWeight: '900',
-        fontSize: '14px'
-      }
+      position: { lat, lng },
+      content: Object.assign(document.createElement('div'), {
+        innerHTML: `Z${zone}`,
+        style: `background:${PIN_COLORS[zone] || '#747d8c'};color:white;font-weight:700;padding:5px 10px;border-radius:20px;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);font-size:13px`
+      })
     });
   }
 
   private initMap() {
-    if (this.map) return;
-    if (!this.mapContainer) return false;
-
+    if (this.map || !this.mapContainer) return;
     this.map = new google.maps.Map(this.mapContainer.nativeElement, {
       center: { lat: 45.6423, lng: 25.5888 },
       zoom: 15,
+      mapId: 'SMART_CITY_MAP_ID',
       disableDefaultUI: true,
       gestureHandling: 'greedy',
       styles: this.getMapStyles()
     });
-    
-    this.updateMarker(45.6423, 25.5888, '#ff4d4d');
-    return true;
   }
 
   ngOnInit() {
     this.requestNotificationPermission();
     this.loadPersistedData();
   }
+
+  ngOnDestroy() { if (this.timerSubscription) this.timerSubscription.unsubscribe(); }
 
   private loadPersistedData() {
     const savedPlate = localStorage.getItem('parked_plate');
@@ -367,7 +322,6 @@ export class ParkingComponent implements OnInit, OnDestroy {
     if (expiry) {
       const remainingSeconds = Math.floor((parseInt(expiry) - Date.now()) / 1000);
       if (remainingSeconds > 0) this.resumeCountdown(remainingSeconds);
-      else this.clearParkedData();
     }
   }
 
@@ -375,22 +329,21 @@ export class ParkingComponent implements OnInit, OnDestroy {
     if (this.timerSubscription) this.timerSubscription.unsubscribe();
     this.currentParkingSeconds = seconds;
     this.timeLeft = this.formatTime(this.currentParkingSeconds);
-    let notificationSent = false;
     this.timerSubscription = interval(1000).subscribe(() => {
       if (this.currentParkingSeconds > 0) {
         this.currentParkingSeconds--;
         this.timeLeft = this.formatTime(this.currentParkingSeconds);
-        if (this.currentParkingSeconds === 300 && !notificationSent) { this.sendExpiryNotification('Timpul de parcare expiră în 5 minute!'); notificationSent = true; }
-        if (this.currentParkingSeconds === 0) { this.clearParkedData(); if (this.timerSubscription) this.timerSubscription.unsubscribe(); }
         this.cdr.detectChanges();
-      }
+      } else { this.clearParkedData(); }
     });
   }
 
-  ngOnDestroy() { if (this.timerSubscription) this.timerSubscription.unsubscribe(); }
-
-  private requestNotificationPermission() { if ('Notification' in window) Notification.requestPermission(); }
-  private sendExpiryNotification(message: string) { if ('Notification' in window && Notification.permission === 'granted') new Notification('Smart City Brașov', { body: message }); }
+  private formatTime(totalSeconds: number): string {
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  }
 
   savePlate() { if (this.tempPlate.trim()) { this.carPlate = this.tempPlate.toUpperCase(); this.isPlateSaved = true; localStorage.setItem('parked_plate', this.carPlate); } }
   incrementHours() { if (this.selectedHours < 24) this.selectedHours++; localStorage.setItem('parking_selected_hours', this.selectedHours.toString()); }
@@ -401,11 +354,6 @@ export class ParkingComponent implements OnInit, OnDestroy {
     if (!this.carPlate) { alert('Te rugăm să introduci numărul de înmatriculare!'); return; }
     const recipient = '1234';
     const body = `${this.carPlate} ${this.selectedHours}`;
-    this.parkedCarLocationName = this.detectedLocationName || this.PARKING_ZONES[this.selectedZoneIndex].name;
-    this.parkedCarZoneIndex = this.selectedZoneIndex;
-    localStorage.setItem('parked_location_name', this.parkedCarLocationName);
-    localStorage.setItem('parked_zone_index', this.parkedCarZoneIndex.toString());
-    localStorage.setItem('parked_plate', this.carPlate);
     this.startCountdown(this.selectedHours);
     this.addToHistory();
     const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
@@ -418,20 +366,12 @@ export class ParkingComponent implements OnInit, OnDestroy {
     this.resumeCountdown(seconds);
   }
 
-  private formatTime(totalSeconds: number): string {
-    const h = Math.floor(totalSeconds / 3600);
-    const m = Math.floor((totalSeconds % 3600) / 60);
-    const s = totalSeconds % 60;
-    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-  }
-
   private addToHistory() {
     const now = new Date();
     const months = ['IAN', 'FEB', 'MAR', 'APR', 'MAI', 'IUN', 'IUL', 'AUG', 'SEP', 'OCT', 'NOI', 'DEC'];
     const zone = this.PARKING_ZONES[this.selectedZoneIndex];
     const newEntry = { day: String(now.getDate()).padStart(2, '0'), month: months[now.getMonth()], plate: this.carPlate, zone: zone.name, amount: (this.selectedHours * zone.tariff).toFixed(2) + '€' };
     this.history.unshift(newEntry);
-    if (this.history.length > 10) this.history.pop();
     localStorage.setItem('parking_history', JSON.stringify(this.history));
   }
 
@@ -440,37 +380,26 @@ export class ParkingComponent implements OnInit, OnDestroy {
   scrollToHistory() { const el = document.getElementById('history-section'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
 
   extendTime(minutes: number) {
-    const extraSeconds = minutes * 60;
-    this.currentParkingSeconds += extraSeconds;
+    this.currentParkingSeconds += minutes * 60;
     localStorage.setItem('parking_expiry', (Date.now() + this.currentParkingSeconds * 1000).toString());
     const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
     window.location.href = `sms:1234${isIos ? '&' : '?'}body=${encodeURIComponent(this.carPlate + ' ' + Math.ceil(minutes / 60))}`;
     this.resumeCountdown(this.currentParkingSeconds);
-    this.cdr.detectChanges();
   }
 
   clearParkedData() {
     this.currentParkingSeconds = 0;
     this.timeLeft = '00:00:00';
     localStorage.removeItem('parking_expiry');
-    localStorage.removeItem('parked_zone_index');
-    localStorage.removeItem('parked_location_name');
-    localStorage.removeItem('parked_plate');
   }
+
+  private requestNotificationPermission() { if ('Notification' in window) Notification.requestPermission(); }
 
   private getMapStyles() {
     return [
       { "featureType": "all", "elementType": "labels.text.fill", "stylers": [{ "color": "#7c93a3" }, { "lightness": "-10" }] },
-      { "featureType": "administrative.country", "elementType": "geometry", "stylers": [{ "visibility": "on" }] },
-      { "featureType": "landscape", "elementType": "geometry", "stylers": [{ "color": "#f5f5f5" }, { "lightness": 20 }] },
-      { "featureType": "poi", "elementType": "geometry", "stylers": [{ "color": "#f5f5f5" }, { "lightness": 21 }] },
-      { "featureType": "poi.park", "elementType": "geometry", "stylers": [{ "color": "#dedede" }, { "lightness": 21 }] },
-      { "featureType": "road.highway", "elementType": "geometry.fill", "stylers": [{ "color": "#ffffff" }, { "lightness": 17 }] },
-      { "featureType": "road.highway", "elementType": "geometry.stroke", "stylers": [{ "color": "#ffffff" }, { "lightness": 29 }, { "weight": 0.2 }] },
-      { "featureType": "road.arterial", "elementType": "geometry", "stylers": [{ "color": "#ffffff" }, { "lightness": 18 }] },
-      { "featureType": "road.local", "elementType": "geometry", "stylers": [{ "color": "#ffffff" }, { "lightness": 16 }] },
-      { "featureType": "transit", "elementType": "geometry", "stylers": [{ "color": "#f2f2f2" }, { "lightness": 19 }] },
-      { "featureType": "water", "elementType": "geometry", "stylers": [{ "color": "#e9e9e9" }, { "lightness": 17 }] }
+      { "featureType": "landscape", "elementType": "geometry", "stylers": [{ "color": "#f5f5f5" }] },
+      { "featureType": "water", "elementType": "geometry", "stylers": [{ "color": "#e9e9e9" }] }
     ];
   }
 }
