@@ -12,6 +12,12 @@ body {
   width: 100%;
   position: fixed; /* Absolute lock to prevent scroll-to-hide-URL-bar shifts */
   overscroll-behavior: none;
+  font-size: 16px; /* Base size to prevent zoom */
+}
+
+input, select, textarea {
+  font-size: 16px !important; /* Force 16px to prevent iOS auto-zoom */
+}
   
   /* Safe Area Variables */
   --safe-top: env(safe-area-inset-top, 0px);
