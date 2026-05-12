@@ -105,7 +105,7 @@ declare const google: any;
             <div class="summary-bar">
               <div class="route-info">
                 <span class="duration">{{ routeDuration() }}</span>
-                <span class="arrival-estimate">Sosești la {{ getFinalArrivalTime() }}</span>
+                <span class="arrival-estimate">Sosești la {{ arrivalEstimate() }}</span>
               </div>
               <button class="go-button" (click)="startNavigation()">
                 <span class="material-icons">navigation</span>
@@ -273,6 +273,8 @@ export class BusProgramComponent implements OnInit {
   private map: any;
   private userMarker: any;
   private directionsService: any;
+  private walkingRenderer: any;
+  private walkingRendererEnd: any;
   private directionsRenderer: any;
   private traversedPolyline: any;
   private autocompleteService: any;
@@ -290,6 +292,7 @@ export class BusProgramComponent implements OnInit {
   destination = signal<any>(null);
   currentRoute = signal<any>(null);
   travelMode = signal<any>(google.maps.TravelMode.TRANSIT);
+  arrivalEstimate = signal<string>('');
   routeDuration = signal<string>('');
 
   private watchId: number | null = null;
@@ -439,35 +442,260 @@ export class BusProgramComponent implements OnInit {
     if (this.destination()) this.calculateRoute();
   }
 
-  calculateRoute() {
+  async calculateRoute() {
     if (!this.userCoords() || !this.destination()) return;
     this.isLoading.set(true);
 
     const isTransit = this.travelMode() === google.maps.TravelMode.TRANSIT;
-    const waypoints: any[] = [];
-    if (this.showWaypoint() && this.waypoint()) {
-      waypoints.push({ location: this.waypoint().geometry.location, stopover: true });
+    const origin = this.userCoords();
+    const dest = this.destination().geometry.location;
+
+    if (isTransit) {
+      if (!this.transitService.isLoaded()) await this.transitService.loadData();
+
+      const userLat = typeof origin.lat === 'function' ? origin.lat() : origin.lat;
+      const userLon = typeof origin.lng === 'function' ? origin.lng() : origin.lng;
+      const destLat = typeof dest.lat === 'function' ? dest.lat() : (dest as any).lat;
+      const destLon = typeof dest.lng === 'function' ? dest.lng() : (dest as any).lng;
+
+      // Search for a local GTFS trip first
+      const bestTrip = this.transitService.findBestTransitTrip(userLat, userLon, destLat, destLon, 1500);
+
+      if (bestTrip) {
+        console.log(`[HybridRoute] Local trip found: Line ${bestTrip.line} via ${bestTrip.boarding.name}`);
+        this.executeHybridRoute(origin, dest, bestTrip);
+        return;
+      }
     }
 
+    // Standard Fallback if no local trip found or if not in transit mode
     this.directionsService.route({
-      origin: this.userCoords(),
-      destination: this.destination().geometry.location,
-      waypoints: waypoints,
+      origin: origin,
+      destination: dest,
       travelMode: this.travelMode(),
-      transitOptions: isTransit ? { departureTime: new Date() } : undefined,
+      transitOptions: isTransit ? {
+        departureTime: new Date(),
+        routingPreference: google.maps.TransitRoutePreference.LESS_WALKING,
+        modes: [google.maps.TransitMode.BUS]
+      } : undefined,
       provideRouteAlternatives: true
     }, (response: any, status: string) => {
       this.isLoading.set(false);
       if (status === 'OK') {
-        const route = response.routes[0];
-        this.directionsRenderer.setDirections(response);
-        this.currentRoute.set(route);
-        this.routeDuration.set(route.legs[0].duration.text);
-        if (route.bounds) this.map.fitBounds(route.bounds, { bottom: 160, top: 80, left: 30, right: 30 });
-        this.fetchLiveArrivalsForSteps();
+        this.renderStandardRoute(response);
+      } else {
+        console.error('[Route] request failed:', status);
       }
     });
   }
+
+  private async executeHybridRoute(origin: any, dest: any, trip: any) {
+    try {
+      const boardingPos = { lat: trip.boarding.lat, lng: trip.boarding.lon };
+      const alightingPos = { lat: trip.alighting.lat, lng: trip.alighting.lon };
+      
+      // 1. Get Walking Leg
+      const walkResult: any = await this.requestRoute({
+        origin: origin,
+        destination: boardingPos,
+        travelMode: google.maps.TravelMode.WALKING
+      });
+
+      // 2. Get Bus Leg (using DRIVING to follow roads precisely through waypoints)
+      const sequence = this.transitService.getTripSequence(trip.line, trip.target, trip.boarding.id, trip.alighting.id);
+      // Intermediate stops only for waypoints
+      const waypoints = sequence.slice(1, -1).map(s => ({ location: { lat: s.lat, lng: s.lon }, stopover: true }));
+      
+      const busResult: any = await this.requestRoute({
+        origin: boardingPos,
+        destination: alightingPos,
+        travelMode: google.maps.TravelMode.DRIVING,
+        waypoints: waypoints.length > 0 ? waypoints : undefined
+      });
+
+      // 3. Walk from Alighting to Final Destination
+      const finalWalkResult: any = await this.requestRoute({
+        origin: alightingPos,
+        destination: dest,
+        travelMode: google.maps.TravelMode.WALKING
+      });
+
+      this.isLoading.set(false);
+      
+      // Clear previous and set new
+      this.walkingRenderer.setDirections(walkResult);
+      this.walkingRendererEnd.setDirections(finalWalkResult);
+      this.directionsRenderer.setDirections(busResult);
+      
+      this.renderStopMarkers(trip);
+      
+      const combinedRoute = this.synthesizeRoute(walkResult, busResult, finalWalkResult, trip);
+      this.currentRoute.set(combinedRoute);
+      this.routeDuration.set(combinedRoute.legs[0].duration.text);
+
+      // Initial estimate (without wait)
+      const initialDuration = combinedRoute.legs[0].duration.value;
+      const initialArrivalDate = new Date(new Date().getTime() + initialDuration * 1000);
+      this.arrivalEstimate.set(`${initialArrivalDate.getHours().toString().padStart(2, '0')}:${initialArrivalDate.getMinutes().toString().padStart(2, '0')}`);
+
+      const bounds = new google.maps.LatLngBounds();
+      walkResult.routes[0].overview_path.forEach((p: any) => bounds.extend(p));
+      busResult.routes[0].overview_path.forEach((p: any) => bounds.extend(p));
+      finalWalkResult.routes[0].overview_path.forEach((p: any) => bounds.extend(p));
+      this.map.fitBounds(bounds, { bottom: 160, top: 80, left: 30, right: 30 });
+      
+      this.fetchLiveArrivalsForSteps();
+    } catch (err) {
+      console.error('[HybridRoute] Construction failed, falling back:', err);
+      // Fallback to standard if hybrid fails
+      this.travelMode.set(google.maps.TravelMode.TRANSIT);
+      this.calculateRoute();
+    }
+  }
+
+  private requestRoute(request: any) {
+    return new Promise((resolve, reject) => {
+      this.directionsService.route(request, (res: any, status: string) => {
+        if (status === 'OK') resolve(res);
+        else reject(status);
+      });
+    });
+  }
+
+  private routeMarkers: any[] = [];
+
+  private clearMarkers() {
+    this.routeMarkers.forEach(m => m.setMap(null));
+    this.routeMarkers = [];
+  }
+
+  private renderStopMarkers(trip?: any) {
+    this.clearMarkers();
+    if (!this.map) return;
+
+    const origin = this.userCoords();
+    const dest = this.destination().geometry.location;
+
+    // Origin Marker
+    this.routeMarkers.push(new google.maps.Marker({
+      position: origin,
+      map: this.map,
+      icon: {
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: 7,
+        fillColor: '#4285F4',
+        fillOpacity: 1,
+        strokeColor: '#FFFFFF',
+        strokeWeight: 2,
+      },
+      title: 'Origine',
+      zIndex: 100
+    }));
+
+    // Destination Marker
+    this.routeMarkers.push(new google.maps.Marker({
+      position: dest,
+      map: this.map,
+      icon: {
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: 9,
+        fillColor: '#EA4335',
+        fillOpacity: 1,
+        strokeColor: '#FFFFFF',
+        strokeWeight: 2,
+      },
+      title: 'Destinație',
+      zIndex: 100
+    }));
+
+    // If hybrid trip, add boarding/alighting pins
+    if (trip) {
+      [trip.boarding, trip.alighting].forEach(stop => {
+        this.routeMarkers.push(new google.maps.Marker({
+          position: { lat: stop.lat, lng: stop.lon },
+          map: this.map,
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 6,
+            fillColor: '#FFFFFF',
+            fillOpacity: 1,
+            strokeColor: '#023c9f',
+            strokeWeight: 2,
+          },
+          title: stop.name,
+          zIndex: 90
+        }));
+      });
+    }
+  }
+
+  private synthesizeRoute(walk: any, bus: any, walkFinal: any, trip: any) {
+    const busLeg = bus.routes[0].legs[0];
+    const walkLeg = walk.routes[0].legs[0];
+    const finalLeg = walkFinal.routes[0].legs[0];
+
+    // Get real travel time from GTFS instead of driving time
+    const realBusMins = this.transitService.getTravelTimeMinutes(trip.line, trip.target, trip.boarding.id, trip.alighting.id);
+    const busDurationSec = realBusMins * 60;
+
+    const walkStep = {
+      travel_mode: 'WALKING',
+      instructions: `Mergi pe jos până la stația <b>${trip.boarding.name}</b>`,
+      duration: walkLeg.duration,
+      distance: walkLeg.distance
+    };
+
+    const transitStep = {
+      travel_mode: 'TRANSIT',
+      instructions: `Ia autobuzul <b>${trip.line}</b> spre ${trip.target}`,
+      duration: { text: `${realBusMins} min`, value: busDurationSec },
+      distance: busLeg.distance,
+      transit: {
+        line: { short_name: trip.line, name: trip.line, color: '#023c9f', text_color: '#FFFFFF' },
+        departure_stop: { 
+          name: trip.boarding.name, 
+          location: new google.maps.LatLng(trip.boarding.lat, trip.boarding.lon),
+          stationId: trip.boarding.id // Pass the ID for live arrivals
+        },
+        arrival_stop: { name: trip.alighting.name },
+        num_stops: trip.stopsInBetween
+      }
+    };
+
+    const finalWalkStep = {
+      travel_mode: 'WALKING',
+      instructions: `Mergi pe jos până la destinație`,
+      duration: finalLeg.duration,
+      distance: finalLeg.distance
+    };
+
+    const totalSec = walkLeg.duration.value + busDurationSec + finalLeg.duration.value;
+
+    return {
+      legs: [{
+        duration: { text: `${Math.round(totalSec / 60)} min`, value: totalSec },
+        steps: [walkStep, transitStep, finalWalkStep]
+      }]
+    };
+  }
+
+  private renderStandardRoute(response: any) {
+    this.walkingRenderer.setDirections({ routes: [] });
+    this.walkingRendererEnd.setDirections({ routes: [] });
+    this.renderStopMarkers();
+    
+    let selectedRoute = response.routes[0];
+    this.directionsRenderer.setDirections({ ...response, routes: [selectedRoute] });
+    this.currentRoute.set(selectedRoute);
+    this.routeDuration.set(selectedRoute.legs[0].duration.text);
+    
+    const initialDuration = selectedRoute.legs[0].duration.value;
+    const initialArrivalDate = new Date(new Date().getTime() + initialDuration * 1000);
+    this.arrivalEstimate.set(`${initialArrivalDate.getHours().toString().padStart(2, '0')}:${initialArrivalDate.getMinutes().toString().padStart(2, '0')}`);
+    if (selectedRoute.bounds) this.map.fitBounds(selectedRoute.bounds, { bottom: 160, top: 80, left: 30, right: 30 });
+    this.fetchLiveArrivalsForSteps();
+  }
+
 
   startNavigation() {
     if (!this.currentRoute()) return;
@@ -608,21 +836,46 @@ export class BusProgramComponent implements OnInit {
     const steps = this.allSteps();
     const transitSteps = steps.filter((s: any) => s.travel_mode === 'TRANSIT');
     if (!this.transitService.isLoaded()) await this.transitService.loadData();
+    
+    let totalWaitTimeSec = 0;
+
     for (const step of transitSteps) {
       const loc = { lat: step.transit.departure_stop.location.lat(), lng: step.transit.departure_stop.location.lng() };
       const officialName = step.transit.departure_stop.name;
       const lineName = step.transit.line.short_name || step.transit.line.name || '';
+      const stationId = step.transit.departure_stop.stationId;
+      
       let offsetSeconds = 0;
       const stepIdx = steps.indexOf(step);
       for (let i = 0; i < stepIdx; i++) offsetSeconds += steps[i].duration.value;
-      const arrivals = await this.transitService.getArrivalsForStep(officialName, lineName, loc, offsetSeconds);
+      
+      const arrivals = await this.transitService.getArrivalsForStep(officialName, lineName, loc, offsetSeconds, stationId);
+      
       if (arrivals.length > 0) {
+        // Calculate the wait time (difference between arrival at stop and bus departure)
+        const firstArrivalWaitMins = arrivals[0].wait;
+        totalWaitTimeSec += firstArrivalWaitMins * 60;
+
         this.stepArrivalsMap.update(map => {
           const newMap = new Map(map);
           newMap.set(step.instructions, arrivals);
           return newMap;
         });
       }
+    }
+
+    if (totalWaitTimeSec > 0) {
+      const originalDuration = this.currentRoute().legs[0].duration.value;
+      const finalDurationSec = originalDuration + totalWaitTimeSec;
+      
+      this.routeDuration.set(`${Math.round(finalDurationSec / 60)} min`);
+      
+      const arrivalDate = new Date(new Date().getTime() + finalDurationSec * 1000);
+      this.arrivalEstimate.set(`${arrivalDate.getHours().toString().padStart(2, '0')}:${arrivalDate.getMinutes().toString().padStart(2, '0')}`);
+    } else {
+      const originalDuration = this.currentRoute().legs[0].duration.value;
+      const arrivalDate = new Date(new Date().getTime() + originalDuration * 1000);
+      this.arrivalEstimate.set(`${arrivalDate.getHours().toString().padStart(2, '0')}:${arrivalDate.getMinutes().toString().padStart(2, '0')}`);
     }
   }
 
@@ -639,6 +892,38 @@ export class BusProgramComponent implements OnInit {
       suppressMarkers: true,
       preserveViewport: true,
       polylineOptions: { strokeColor: '#1a1a1a', strokeWeight: 8, strokeOpacity: 1, zIndex: 50 }
+    });
+    this.walkingRenderer = new google.maps.DirectionsRenderer({
+      map: this.map,
+      suppressMarkers: true,
+      preserveViewport: true,
+      polylineOptions: { 
+        strokeColor: '#4285F4', 
+        strokeWeight: 4, 
+        strokeOpacity: 0, 
+        zIndex: 40,
+        icons: [{ 
+          icon: { path: google.maps.SymbolPath.CIRCLE, fillOpacity: 1, scale: 3, strokeOpacity: 1, strokeWeight: 0 }, 
+          offset: '0', 
+          repeat: '12px' 
+        }]
+      }
+    });
+    this.walkingRendererEnd = new google.maps.DirectionsRenderer({
+      map: this.map,
+      suppressMarkers: true,
+      preserveViewport: true,
+      polylineOptions: { 
+        strokeColor: '#4285F4', 
+        strokeWeight: 4, 
+        strokeOpacity: 0, 
+        zIndex: 40,
+        icons: [{ 
+          icon: { path: google.maps.SymbolPath.CIRCLE, fillOpacity: 1, scale: 3, strokeOpacity: 1, strokeWeight: 0 }, 
+          offset: '0', 
+          repeat: '12px' 
+        }]
+      }
     });
     this.traversedPolyline = new google.maps.Polyline({ map: this.map, strokeColor: '#BDC1C6', strokeWeight: 6, strokeOpacity: 0.6, zIndex: 100 });
     this.autocompleteService = new google.maps.places.AutocompleteService();

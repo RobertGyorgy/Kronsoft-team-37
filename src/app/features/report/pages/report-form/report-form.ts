@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, signal, inject, ViewChild, ElementRef, afterNextRender } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ReportService } from '../../services/report';
 import { gsap } from 'gsap';
@@ -8,7 +8,7 @@ import { gsap } from 'gsap';
 @Component({
   selector: 'app-report-form',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './report-form.html',
   styleUrl: './report-form.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

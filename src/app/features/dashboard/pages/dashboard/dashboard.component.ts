@@ -13,16 +13,24 @@ import { gsap } from 'gsap';
       <header class="dashboard-header">
         <div class="greeting-wrapper">
           <h1 class="hello-text line-mask">
-            <span *ngFor="let word of helloWords" class="word">
-              <span *ngFor="let char of word.split('')" class="char">{{ char }}</span>
-              <span class="char">&nbsp;</span>
-            </span>
+            @for (word of helloWords; track word) {
+              <span class="word">
+                @for (char of word.split(''); track char) {
+                  <span class="char">{{ char }}</span>
+                }
+                <span class="char">&nbsp;</span>
+              </span>
+            }
           </h1>
           <h2 class="interest-text line-mask">
-            <span *ngFor="let word of interestWords" class="word">
-              <span *ngFor="let char of word.split('')" class="char">{{ char }}</span>
-              <span class="char">&nbsp;</span>
-            </span>
+            @for (word of interestWords; track word) {
+              <span class="word">
+                @for (char of word.split(''); track char) {
+                  <span class="char">{{ char }}</span>
+                }
+                <span class="char">&nbsp;</span>
+              </span>
+            }
           </h2>
         </div>
       </header>

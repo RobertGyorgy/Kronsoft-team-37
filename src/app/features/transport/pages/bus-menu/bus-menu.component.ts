@@ -18,10 +18,14 @@ import { gsap } from 'gsap';
       <section class="welcome-hero" #hero>
         <div class="greeting-block">
           <h1 class="bold-header">
-            <span *ngFor="let word of splitByWord('Brașov Transit')" class="word">
-              <span *ngFor="let char of word.split('')" class="char">{{ char }}</span>
-              <span class="char">&nbsp;</span>
-            </span>
+            @for (word of splitByWord('Brașov Transit'); track word) {
+              <span class="word">
+                @for (char of word.split(''); track char) {
+                  <span class="char">{{ char }}</span>
+                }
+                <span class="char">&nbsp;</span>
+              </span>
+            }
           </h1>
         </div>
       </section>

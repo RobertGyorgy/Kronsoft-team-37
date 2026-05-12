@@ -153,10 +153,14 @@ declare const google: any;
           } @else if (!isLoading()) {
             <div class="hero-welcome">
               <h1 class="bold-header">
-                <span *ngFor="let word of splitByWord('Brașov Transit')" class="word">
-                  <span *ngFor="let char of word.split('')" class="char">{{ char }}</span>
-                  <span class="char">&nbsp;</span>
-                </span>
+                @for (word of splitByWord('Brașov Transit'); track word) {
+                  <span class="word">
+                    @for (char of word.split(''); track char) {
+                      <span class="char">{{ char }}</span>
+                    }
+                    <span class="char">&nbsp;</span>
+                  </span>
+                }
               </h1>
               <p class="hero-subtext">Search for a station or find one nearby to see real-time schedules.</p>
               <button class="primary-bold-btn" (click)="findNearbyStation()">
