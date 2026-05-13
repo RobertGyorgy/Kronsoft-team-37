@@ -18,7 +18,7 @@ if (!apiKey) {
     try {
         const configPath = path.resolve(__dirname, '../public/config.json');
         const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-        apiKey = config.googleMapsApiKey;
+        apiKey = config.GOOGLE_MAPS_API_KEY;
     } catch (e) {
         console.warn('⚠️ No API Key found in environment or config.json');
     }

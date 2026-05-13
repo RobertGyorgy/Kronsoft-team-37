@@ -7,10 +7,14 @@
         <span>Înapoi</span>
       </button>
       <h1 class="page-title">
-        <span *ngFor="let word of splitByWord('Raportează o neregulă')" class="word">
-          <span *ngFor="let char of word.split('')" class="char">{{ char }}</span>
-          <span class="char">&nbsp;</span>
-        </span>
+        @for (word of splitByWord('Raportează o neregulă'); track word) {
+          <span class="word">
+            @for (char of word.split(''); track char) {
+              <span class="char">{{ char }}</span>
+            }
+            <span class="char">&nbsp;</span>
+          </span>
+        }
       </h1>
     </div>
   </header>

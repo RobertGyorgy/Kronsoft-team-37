@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  otp:
+    image: opentripplanner/opentripplanner:latest
+    container_name: brasov_otp
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./otp-config:/var/otp/graphs/brasov
+    command: [ "--build", "--serve", "/var/otp/graphs/brasov" ]
+
+  routing-api:
+    build: .
+    container_name: brasov_routing_api
+    ports:
+      - "8081:8081"
+    environment:
+      - OTP_URL=http://otp:8080/otp/routers/default
+    depends_on:
+      - otp
