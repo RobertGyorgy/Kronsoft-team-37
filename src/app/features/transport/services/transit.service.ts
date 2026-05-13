@@ -58,6 +58,107 @@ export class TransitService {
     });
   }
 
+  findBoardingStation(userLat: number, userLon: number, destLat: number, destLon: number, threshold: number = 2000) {
+    const data = this.smartStops();
+    if (!data || data.length === 0) return null;
+
+    const byName = new Map<string, any[]>();
+    for (const stop of data) {
+      if (!byName.has(stop.name)) byName.set(stop.name, []);
+      byName.get(stop.name)!.push(stop);
+    }
+
+    let bestStop: any = null;
+    let bestScore = -Infinity;
+    const lonFactor = Math.cos(userLat * Math.PI / 180);
+
+    data.forEach(stop => {
+      const dist = this.calculateDistance(userLat, userLon, stop.lat, stop.lon);
+      if (dist > threshold) return;
+
+      const toDest = { lat: destLat - stop.lat, lon: (destLon - stop.lon) * lonFactor };
+      let maxStopAlignment = -1;
+      const lineCount = Object.keys(stop.lines || {}).length;
+      
+      Object.values(stop.lines as Record<string, any>).forEach((line: any) => {
+        const termini = byName.get(line.target);
+        if (!termini || termini.length === 0) return;
+        const terminus = termini[0];
+        const toTerminus = { lat: terminus.lat - stop.lat, lon: (terminus.lon - stop.lon) * lonFactor };
+        const mag1 = Math.sqrt(toDest.lat**2 + toDest.lon**2);
+        const mag2 = Math.sqrt(toTerminus.lat**2 + toTerminus.lon**2);
+        if (mag1 === 0 || mag2 === 0) return;
+        const dot = (toDest.lat * toTerminus.lat + toDest.lon * toTerminus.lon) / (mag1 * mag2);
+        if (dot > maxStopAlignment) maxStopAlignment = dot;
+      });
+
+      // LOGICAL HUB PRIORITY
+      // 1. alignment * 5000 (Directional priority)
+      // 2. pow(lineCount, 1.8) * 30 (Aggressive Hub Gravity)
+      // 3. dist * 1.5 (Exponential walking penalty to favor the nearest hub)
+      const score = (maxStopAlignment * 5000) + (Math.pow(lineCount, 1.8) * 30) - Math.pow(dist, 1.2);
+      
+      if (score > bestScore) {
+        bestScore = score;
+        bestStop = { ...stop, distance: dist };
+      }
+    });
+
+    return bestStop;
+  }
+
+  findTopHubs(userLat: number, userLon: number, destLat: number, destLon: number, limit: number = 3, threshold: number = 2000) {
+    const data = this.smartStops();
+    if (!data || data.length === 0) return [];
+
+    const byName = new Map<string, any[]>();
+    for (const stop of data) {
+      if (!byName.has(stop.name)) byName.set(stop.name, []);
+      byName.get(stop.name)!.push(stop);
+    }
+
+    const scored = data.map(stop => {
+      const dist = this.calculateDistance(userLat, userLon, stop.lat, stop.lon);
+      if (dist > threshold) return { stop, score: -Infinity };
+
+      const lonFactor = Math.cos(userLat * Math.PI / 180);
+      const toDest = { lat: destLat - stop.lat, lon: (destLon - stop.lon) * lonFactor };
+      let maxStopAlignment = -1;
+      const lineCount = Object.keys(stop.lines || {}).length;
+      
+      Object.values(stop.lines as Record<string, any>).forEach((line: any) => {
+        const termini = byName.get(line.target);
+        if (termini?.[0]) {
+          const terminus = termini[0];
+          const toTerminus = { lat: terminus.lat - stop.lat, lon: (terminus.lon - stop.lon) * lonFactor };
+          const mag1 = Math.sqrt(toDest.lat**2 + toDest.lon**2);
+          const mag2 = Math.sqrt(toTerminus.lat**2 + toTerminus.lon**2);
+          if (mag1 > 0 && mag2 > 0) {
+            const dot = (toDest.lat * toTerminus.lat + toDest.lon * toTerminus.lon) / (mag1 * mag2);
+            if (dot > maxStopAlignment) maxStopAlignment = dot;
+          }
+        }
+      });
+
+      const score = (maxStopAlignment * 5000) + (Math.pow(lineCount, 1.8) * 30) - Math.pow(dist, 1.2);
+      return { stop, score };
+    })
+    .filter(s => s.score > -Infinity)
+    .sort((a, b) => b.score - a.score);
+
+    // Ensure we don't return duplicate names
+    const unique: any[] = [];
+    const seen = new Set<string>();
+    for (const s of scored) {
+      if (!seen.has(s.stop.name)) {
+        unique.push({ ...s.stop, totalScore: s.score });
+        seen.add(s.stop.name);
+      }
+      if (unique.length >= limit) break;
+    }
+    return unique;
+  }
+
   getTravelTimeMinutes(line: string, target: string, boardingId: string, alightingId: string): number {
     const sequence = this.getTripSequence(line, target, boardingId, alightingId);
     if (sequence.length < 2) return 0;
@@ -118,12 +219,8 @@ export class TransitService {
                 const aDist = this.calculateDistance(destLat, destLon, aStop.lat, aStop.lon);
                 let totalWalk = bDist + aDist;
 
-                // Aggressive preference for advanced stations or specific ones like Saguna
-                const isSaguna = bStop.name.toLowerCase().includes('saguna');
-                if (isSaguna) totalWalk -= 300; // Large bonus for Saguna
-
                 const isSignificantlyCloser = totalWalk < minWalk - 300;
-                const isComparableButBetterSeq = Math.abs(totalWalk - minWalk) <= 300 && bIdx > maxIdx;
+                const isComparableButBetterSeq = Math.abs(totalWalk - minWalk) <= 50 && bIdx > maxIdx;
 
                 if (isSignificantlyCloser || isComparableButBetterSeq) {
                   minWalk = totalWalk;
@@ -144,6 +241,81 @@ export class TransitService {
     });
 
     return bestTrip;
+  }
+
+  findLocalJourney(userLat: number, userLon: number, destLat: number, destLon: number, threshold: number = 1500) {
+    const data = this.smartStops();
+    if (!data || data.length === 0) return null;
+
+    const boardingStops = data.filter(s => this.calculateDistance(userLat, userLon, s.lat, s.lon) <= threshold);
+    const alightingStops = data.filter(s => this.calculateDistance(destLat, destLon, s.lat, s.lon) <= threshold);
+
+    let bestJourney: any = null;
+    let minTotalTime = Infinity;
+
+    // 1. Check for Direct Trips
+    boardingStops.forEach(bStop => {
+      alightingStops.forEach(aStop => {
+        Object.values(bStop.lines as Record<string, any>).forEach(bLine => {
+          Object.values(aStop.lines as Record<string, any>).forEach(aLine => {
+            if (bLine.name === aLine.name && bLine.target === aLine.target) {
+              const travelTime = this.getTravelTimeMinutes(bLine.name, bLine.target, bStop.id, aStop.id);
+              if (travelTime > 0) {
+                // Approximate first wait
+                const firstWait = 10; 
+                const total = travelTime + firstWait + (this.calculateDistance(userLat, userLon, bStop.lat, bStop.lon) / 80);
+                if (total < minTotalTime) {
+                  minTotalTime = total;
+                  bestJourney = {
+                    type: 'DIRECT',
+                    legs: [{ line: bLine.name, target: bLine.target, boarding: bStop, alighting: aStop, duration: travelTime }]
+                  };
+                }
+              }
+            }
+          });
+        });
+      });
+    });
+
+    // 2. Check for 1-Transfer Trips (The "Thinking" part)
+    if (!bestJourney || minTotalTime > 60) {
+      boardingStops.forEach(bStop => {
+        Object.values(bStop.lines as Record<string, any>).forEach(bLine => {
+          const sequence = this.getTripSequence(bLine.name, bLine.target, bStop.id, null as any);
+          sequence.forEach(transferStop => {
+            if (transferStop.id === bStop.id) return;
+            
+            Object.values(transferStop.lines as Record<string, any>).forEach(tLine => {
+              alightingStops.forEach(aStop => {
+                Object.values(aStop.lines as Record<string, any>).forEach(finalLine => {
+                  if (tLine.name === finalLine.name && tLine.target === finalLine.target) {
+                    const time1 = this.getTravelTimeMinutes(bLine.name, bLine.target, bStop.id, transferStop.id);
+                    const time2 = this.getTravelTimeMinutes(tLine.name, tLine.target, transferStop.id, aStop.id);
+                    
+                    if (time1 > 0 && time2 > 0) {
+                      const total = time1 + time2 + 15; // 15 min buffer for transfer and wait
+                      if (total < minTotalTime) {
+                        minTotalTime = total;
+                        bestJourney = {
+                          type: 'TRANSFER',
+                          legs: [
+                            { line: bLine.name, target: bLine.target, boarding: bStop, alighting: transferStop, duration: time1 },
+                            { line: tLine.name, target: tLine.target, boarding: transferStop, alighting: aStop, duration: time2 }
+                          ]
+                        };
+                      }
+                    }
+                  }
+                });
+              });
+            });
+          });
+        });
+      });
+    }
+
+    return bestJourney;
   }
 
   getArrivalsForStep(stopName: string, lineName: string, coords: {lat: number, lng: number}, timeOffsetSeconds: number = 0, stationId?: string) {
@@ -241,61 +413,6 @@ export class TransitService {
     if (day === 6) return ['Sa-Su', 'Sa'];
     if (day === 5) return ['Mo-Fr', 'green_fridays', 'TE:Mo-Fr'];
     return ['Mo-Fr', 'TE:Mo-Fr'];
-  }
-
-  findBoardingStation(
-    userLat: number, userLon: number,
-    destLat: number, destLon: number,
-    walkingThreshold: number = 600
-  ) {
-    const data = this.smartStops();
-    if (!data || data.length === 0) return null;
-
-    const byName = new Map<string, any[]>();
-    for (const stop of data) {
-      if (!byName.has(stop.name)) byName.set(stop.name, []);
-      byName.get(stop.name)!.push(stop);
-    }
-
-    const candidates: { stop: any; distance: number }[] = [];
-    let fallbackNearest: { stop: any; distance: number } | null = null;
-    let fallbackDist = Infinity;
-
-    for (const stop of data) {
-      const dist = this.calculateDistance(userLat, userLon, stop.lat, stop.lon);
-
-      if (dist < fallbackDist) { fallbackDist = dist; fallbackNearest = { stop, distance: dist }; }
-
-      if (dist > walkingThreshold) continue;
-
-      const toDestLat = destLat - stop.lat;
-      const toDestLon = destLon - stop.lon;
-
-      const hasDirectionalLine = Object.values(stop.lines as Record<string, any>).some((line: any) => {
-        const terminusStops = byName.get(line.target);
-        if (!terminusStops || terminusStops.length === 0) return false;
-
-        const terminus = terminusStops[0];
-        const toTerminusLat = terminus.lat - stop.lat;
-        const toTerminusLon = terminus.lon - stop.lon;
-
-        const dot = toTerminusLat * toDestLat + toTerminusLon * toDestLon;
-        return dot > 0;
-      });
-
-      if (hasDirectionalLine) {
-        candidates.push({ stop, distance: dist });
-      }
-    }
-
-    if (candidates.length === 0) {
-      return fallbackNearest && fallbackDist <= walkingThreshold
-        ? { ...fallbackNearest.stop, distance: fallbackDist }
-        : null;
-    }
-
-    candidates.sort((a, b) => a.distance - b.distance);
-    return { ...candidates[0].stop, distance: candidates[0].distance };
   }
 
   public calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {

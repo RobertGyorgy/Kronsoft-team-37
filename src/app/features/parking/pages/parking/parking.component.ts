@@ -4,6 +4,8 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { interval, Subscription } from 'rxjs';
 import { gsap } from 'gsap';
+import maplibregl from 'maplibre-gl';
+import * as turf from '@turf/turf';
 
 declare const google: any;
 
@@ -246,10 +248,11 @@ export class ParkingComponent implements OnInit, OnDestroy {
   private userLng = 0;
   
   history: any[] = [];
-  private map: any;
-  private marker: any;
   private timerSubscription: Subscription | undefined;
   public currentParkingSeconds = 0;
+  private map: any;
+  private marker: any;
+  private neighborhoodData: any[] = [];
 
   public PARKING_ZONES = [
     { name: 'Zona 0 - Centru Vechi', smsNumber: '1234', tariff: 0.60 },
@@ -278,21 +281,66 @@ export class ParkingComponent implements OnInit, OnDestroy {
   private async loadHDNeighborhoods() {
     try {
       const response = await fetch('brasov_neighborhoods.json');
-      const data = await response.json();
+      this.neighborhoodData = await response.json();
+      
+      if (!this.map) return;
+
+      const features = this.neighborhoodData.map((nb: any, index: number) => {
+        const coords = nb.path.map((p: any) => [p.lng, p.lat]);
+        // Close the polygon
+        if (coords.length > 0) coords.push(coords[0]);
+
+        return {
+          type: 'Feature',
+          geometry: { type: 'Polygon', coordinates: [coords] },
+          properties: { 
+            id: index,
+            name: nb.name, 
+            zone: nb.zone 
+          }
+        };
+      });
+
+      this.map.addSource('parking-zones', {
+        type: 'geojson',
+        data: { type: 'FeatureCollection', features: features }
+      });
+
       const ZONE_COLORS: any = { 0: '#ea4335', 1: '#fb8c00', 2: '#34a853' };
 
-      this.polygonObjects = data.map((nb: any) => {
-        const poly = new google.maps.Polygon({
-          paths: nb.path,
-          strokeColor: ZONE_COLORS[nb.zone],
-          strokeOpacity: 0.6,
-          strokeWeight: 1,
-          fillColor: ZONE_COLORS[nb.zone],
-          fillOpacity: 0.1,
-          map: this.map
-        });
-        return { poly, name: nb.name, zone: nb.zone };
+      this.map.addLayer({
+        id: 'zones-fill',
+        type: 'fill',
+        source: 'parking-zones',
+        paint: {
+          'fill-color': [
+            'match', ['get', 'zone'],
+            0, ZONE_COLORS[0],
+            1, ZONE_COLORS[1],
+            2, ZONE_COLORS[2],
+            '#747d8c'
+          ],
+          'fill-opacity': 0.15
+        }
       });
+
+      this.map.addLayer({
+        id: 'zones-outline',
+        type: 'line',
+        source: 'parking-zones',
+        paint: {
+          'line-color': [
+            'match', ['get', 'zone'],
+            0, ZONE_COLORS[0],
+            1, ZONE_COLORS[1],
+            2, ZONE_COLORS[2],
+            '#747d8c'
+          ],
+          'line-width': 2,
+          'line-opacity': 0.5
+        }
+      });
+
       this.cdr.detectChanges();
     } catch (e) {
       console.error('Failed to load HD neighborhoods', e);
@@ -302,13 +350,17 @@ export class ParkingComponent implements OnInit, OnDestroy {
   private updateZoneByLocation(lat: number, lng: number) {
     this.userLat = lat;
     this.userLng = lng;
-    if (!google.maps.geometry) return;
-    const userPos = new google.maps.LatLng(lat, lng);
+    
     let foundNeighborhood = null;
+    const pt = turf.point([lng, lat]);
 
-    for (const obj of this.polygonObjects) {
-      if (google.maps.geometry.poly.containsLocation(userPos, obj.poly)) {
-        foundNeighborhood = obj;
+    for (const nb of this.neighborhoodData) {
+      const coords = nb.path.map((p: any) => [p.lng, p.lat]);
+      if (coords.length > 0) coords.push(coords[0]);
+      const poly = turf.polygon([coords]);
+      
+      if (turf.booleanPointInPolygon(pt, poly)) {
+        foundNeighborhood = nb;
         break;
       }
     }
@@ -326,19 +378,28 @@ export class ParkingComponent implements OnInit, OnDestroy {
       this.cdr.detectChanges();
     });
 
-    // Geocoding for Street Name
-    const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ location: { lat, lng } }, (results: any, status: any) => {
-      if (status === 'OK' && results && results[0]) {
+    this.updateMarker(lat, lng, this.selectedZoneIndex);
+    if (this.map) this.map.easeTo({ center: [lng, lat], duration: 1000 });
+
+    // OSM Reverse Geocoding for Street Name
+    this.reverseGeocodeOSM(lat, lng);
+  }
+
+  private async reverseGeocodeOSM(lat: number, lng: number) {
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`, {
+        headers: { 'User-Agent': 'SmartCityBrasovPWA/1.0' }
+      });
+      const data = await response.json();
+      if (data && data.address) {
         this.zone.run(() => {
-          this.currentStreet = results[0].address_components.find((c: any) => c.types.includes('route'))?.long_name || '';
+          this.currentStreet = data.address.road || data.address.pedestrian || data.address.suburb || '';
           this.cdr.detectChanges();
         });
       }
-    });
-
-    this.updateMarker(lat, lng, this.selectedZoneIndex);
-    if (this.map) this.map.setCenter({ lat, lng });
+    } catch (e) {
+      console.warn('OSM Geocoding failed', e);
+    }
   }
 
   private startGpsTracking() {
@@ -350,33 +411,47 @@ export class ParkingComponent implements OnInit, OnDestroy {
     );
   }
 
-  private async updateMarker(lat: number, lng: number, zone: number) {
+  private updateMarker(lat: number, lng: number, zone: number) {
     if (!this.map) return;
-    if (this.marker) this.marker.map = null;
-    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker") as any;
+    const pos: [number, number] = [lng, lat];
     const PIN_COLORS: any = { 0: '#ea4335', 1: '#fb8c00', 2: '#34a853' };
-    this.marker = new AdvancedMarkerElement({
-      map: this.map,
-      position: { lat, lng },
-      content: Object.assign(document.createElement('div'), {
-        innerHTML: `P`,
-        style: `background:${this.isOutsideZones ? '#747d8c' : PIN_COLORS[zone]};color:white;font-weight:900;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:3px solid white;box-shadow:0 8px 24px rgba(0,0,0,0.3);font-size:16px`
-      })
-    });
+    
+    if (this.marker) {
+      this.marker.setLngLat(pos);
+      const el = this.marker.getElement();
+      el.style.background = this.isOutsideZones ? '#747d8c' : PIN_COLORS[zone];
+    } else {
+      const el = document.createElement('div');
+      el.innerHTML = `P`;
+      el.style.background = this.isOutsideZones ? '#747d8c' : PIN_COLORS[zone];
+      el.style.color = 'white';
+      el.style.fontWeight = '900';
+      el.style.width = '36px';
+      el.style.height = '36px';
+      el.style.borderRadius = '50%';
+      el.style.display = 'flex';
+      el.style.alignItems = 'center';
+      el.style.justifyContent = 'center';
+      el.style.border = '3px solid white';
+      el.style.boxShadow = '0 8px 24px rgba(0,0,0,0.3)';
+      el.style.fontSize = '16px';
+      el.style.transition = 'background 0.3s';
+
+      this.marker = new maplibregl.Marker({ element: el })
+        .setLngLat(pos)
+        .addTo(this.map);
+    }
   }
 
   public async initMap() {
     if (this.map || !this.mapContainer) return;
-    const { Map } = await google.maps.importLibrary("maps") as any;
-    await google.maps.importLibrary("geometry"); // Explicitly import geometry library
     
-    this.map = new Map(this.mapContainer.nativeElement, {
-      center: { lat: 45.6423, lng: 25.5888 },
+    this.map = new maplibregl.Map({
+      container: this.mapContainer.nativeElement,
+      style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
+      center: [25.5888, 45.6423],
       zoom: 14,
-      mapId: 'SMART_CITY_MAP_ID',
-      disableDefaultUI: true,
-      gestureHandling: 'greedy',
-      styles: this.getMapStyles()
+      attributionControl: false
     });
   }
 
@@ -491,19 +566,18 @@ export class ParkingComponent implements OnInit, OnDestroy {
   }
 
   private checkProximity(lat: number, lng: number) {
-    if (!google.maps.geometry) return;
-    const userPos = new google.maps.LatLng(lat, lng);
     let minDistance = Infinity;
+    const pt = turf.point([lng, lat]);
 
-    for (const obj of this.polygonObjects) {
-      const path = obj.poly.getPath();
-      for (let i = 0; i < path.getLength(); i++) {
-        const dist = google.maps.geometry.spherical.computeDistanceBetween(userPos, path.getAt(i));
-        if (dist < minDistance) minDistance = dist;
-      }
+    for (const nb of this.neighborhoodData) {
+      const coords = nb.path.map((p: any) => [p.lng, p.lat]);
+      if (coords.length > 0) coords.push(coords[0]);
+      const poly = turf.polygon([coords]);
+      const dist = turf.pointToLineDistance(pt, turf.polygonToLine(poly) as any, { units: 'meters' });
+      if (dist < minDistance) minDistance = dist;
     }
 
-    this.showProximityWarning = minDistance < 500;
+    this.showProximityWarning = minDistance < 100;
   }
 
   confirmPayment() {

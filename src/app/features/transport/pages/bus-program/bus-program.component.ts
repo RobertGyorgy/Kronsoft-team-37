@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, signal, OnInit, afterNextRender, ElementRef, ViewChild, inject, computed, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, OnInit, afterNextRender, ElementRef, ViewChild, inject, computed, effect, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { TransitService } from '../../services/transit.service';
 import { gsap } from 'gsap';
+import maplibregl from 'maplibre-gl';
 
 declare const google: any;
 
@@ -10,7 +11,6 @@ declare const google: any;
   selector: 'app-bus-program',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  animations: [],
   template: `
     <main class="bus-shell" 
           [class.nav-active]="isNavigating()" 
@@ -64,16 +64,17 @@ declare const google: any;
                 </button>
               </div>
             </div>
+
           </div>
 
           @if (predictions().length > 0) {
             <div class="predictions-overlay">
-              @for (p of predictions(); track p.place_id) {
+              @for (p of predictions(); track p.id) {
                 <button class="prediction-item" (click)="selectPrediction(p)">
-                  <span class="material-icons">location_on</span>
+                  <span class="material-icons">{{ p.isStation ? 'directions_bus' : 'location_on' }}</span>
                   <div class="p-text">
-                    <span class="main">{{ p.structured_formatting.main_text }}</span>
-                    <span class="sub">{{ p.structured_formatting.secondary_text }}</span>
+                    <span class="main">{{ p.mainText }}</span>
+                    <span class="sub">{{ p.secondaryText }}</span>
                   </div>
                 </button>
               }
@@ -119,12 +120,14 @@ declare const google: any;
               <div class="timeline-step" [class.transit]="step.travel_mode === 'TRANSIT'">
                 <div class="timeline-indicator">
                   <div class="time-col">
-                    <span class="time">{{ getStepStartTime($index) }}</span>
+                    <span class="time start">{{ timelineSteps()[$index]?.start }}</span>
+                    <span class="time-separator"></span>
+                    <span class="time end">{{ timelineSteps()[$index]?.end }}</span>
                   </div>
                   <div class="node-col" [style.color]="step.transit?.line?.color">
                     <div class="dot-container">
                       <div class="step-dot">
-                        <span class="material-icons">{{ getStepIcon(step, false) }}</span>
+                        <span class="material-icons">{{ getStepIcon(step) }}</span>
                       </div>
                     </div>
                     <div class="connector" [class.dashed]="step.travel_mode === 'WALKING'"></div>
@@ -134,16 +137,21 @@ declare const google: any;
                 <div class="step-details">
                   <div class="step-card">
                     <div class="step-header">
-                      @if (step.transit) {
+                      @if (step.transit?.line) {
                         <div class="line-badge" [style.background]="step.transit.line.color">
                           {{ step.transit.line.short_name }}
                         </div>
                       }
-                      <span class="title">{{ getStepTitle(step, false) }}</span>
+                      <span class="title" [innerHTML]="getStepTitle(step, false)"></span>
                     </div>
-                    <div class="meta">{{ step.duration.text }} ({{ step.distance.text }})</div>
+                    <div class="meta">{{ step.duration?.text }} ({{ step.distance?.text }})</div>
                     
                     @if (step.transit) {
+                      <div class="departure-info">
+                        <span class="material-icons">schedule</span>
+                        <span>Plecare la <strong>{{ timelineSteps()[$index]?.start }}</strong> din <strong>{{ step.transit.departure_stop.name }}</strong></span>
+                      </div>
+                      
                       <div class="realtime-updates">
                         @for (arr of getStepArrivals(step); track arr.time) {
                           <div class="arrival-row">
@@ -163,7 +171,7 @@ declare const google: any;
             <div class="timeline-step final">
               <div class="timeline-indicator">
                 <div class="time-col">
-                  <span class="time">{{ getFinalArrivalTime() }}</span>
+                  <span class="time start">{{ getFinalArrivalTime() }}</span>
                 </div>
                 <div class="node-col dest">
                   <div class="dot-container">
@@ -194,7 +202,7 @@ declare const google: any;
     .minimal-back-btn { background: transparent; border: none; width: 40px; display: flex; align-items: center; justify-content: center; color: #1a1a1a; cursor: pointer; border-right: 1px solid #f1f3f4; margin-right: 0.25rem; }
     .search-fields { flex: 1; display: flex; flex-direction: column; }
     .search-field { display: flex; align-items: center; gap: 0.75rem; padding: 0.4rem 0.5rem; }
-    .search-field input { border: none; background: transparent; flex: 1; outline: none; font-size: 0.95rem; font-weight: 600; color: #202124; }
+    .search-field input { border: none; background: transparent; flex: 1; outline: none; font-size: 0.95rem; font-weight: 600; color: #202124; width: 100%; }
     .divider { height: 1px; background: #f1f3f4; margin: 0 0.5rem; }
     .marker { width: 8px; height: 8px; border-radius: 50%; }
     .marker.origin { border: 2px solid #4285f4; }
@@ -202,13 +210,15 @@ declare const google: any;
     .mode-toggle { display: flex; flex-direction: column; background: #f1f3f4; border-radius: 12px; padding: 2px; gap: 2px; align-self: stretch; justify-content: center; }
     .mode-toggle button { border: none; background: transparent; padding: 0; width: 36px; height: 36px; border-radius: 10px; color: #5f6368; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
     .mode-toggle button.active { background: #fff; color: #1a73e8; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
-    .mode-toggle button .material-icons { font-size: 1.2rem; }
+    
+    
     .predictions-overlay { background: #fff; border-radius: 16px; margin-top: 0.5rem; box-shadow: 0 12px 40px rgba(0,0,0,0.15); overflow: hidden; }
     .prediction-item { width: 100%; display: flex; align-items: center; gap: 1rem; padding: 1rem 1.25rem; border: none; background: transparent; text-align: left; border-bottom: 1px solid #f1f3f4; }
     .prediction-item .material-icons { color: #70757a; }
     .p-text { display: flex; flex-direction: column; }
     .p-text .main { font-weight: 600; font-size: 0.95rem; }
     .p-text .sub { font-size: 0.8rem; color: #70757a; }
+    
     .nav-header { position: absolute; top: 0; left: 0; right: 0; background: #188038; color: #fff; padding: calc(var(--safe-top) + 1rem) 1rem 1rem; z-index: 1001; display: flex; align-items: center; gap: 1rem; border-radius: 0 0 24px 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
     .nav-instruction { display: flex; align-items: center; gap: 1rem; flex: 1; }
     .instruction-icon-box { background: rgba(255,255,255,0.2); padding: 0.5rem; border-radius: 12px; }
@@ -216,13 +226,15 @@ declare const google: any;
     .instruction-text { font-size: 1.1rem; font-weight: 700; line-height: 1.3; }
     .instruction-sub { font-size: 0.9rem; opacity: 0.9; font-weight: 500; }
     .stop-btn { background: rgba(255,255,255,0.2); border: none; width: 40px; height: 40px; border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; }
+    
     .map-view { height: 100vh; width: 100%; flex-shrink: 0; transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1); position: relative; z-index: 1; }
     .current-route-active .map-view { height: 35vh; }
     .minimized-state .map-view { height: calc(100vh - 120px); }
     .map-core { width: 100%; height: 100%; }
     .loading-shimmer { position: absolute; inset: 0; background: rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; z-index: 10; }
     .spinner { width: 32px; height: 32px; border: 3px solid #f1f3f4; border-top-color: #1a73e8; border-radius: 50%; animation: spin 0.8s linear infinite; }
-    .route-panel { position: absolute; top: 0; left: 0; right: 0; height: 100dvh; background: #fff; display: flex; flex-direction: column; overflow-y: auto; border-radius: 28px 28px 0 0; z-index: 10; box-shadow: 0 -12px 40px rgba(0,0,0,0.12); transform: translateY(100%); padding-bottom: calc(var(--safe-bottom) + 5rem); -webkit-overflow-scrolling: touch; }
+    
+    .route-panel { position: absolute; top: 0; left: 0; right: 0; height: 100dvh; background: #fff; display: flex; flex-direction: column; overflow-y: auto; border-radius: 32px 32px 0 0; z-index: 10; box-shadow: 0 -20px 48px rgba(0,0,0,0.15); transform: translateY(100%); padding-bottom: calc(var(--safe-bottom) + 5rem); -webkit-overflow-scrolling: touch; }
     .panel-header { position: sticky; top: 0; z-index: 20; background: #fff; padding-bottom: 0.5rem; border-bottom: 1px solid #f1f3f4; }
     .drag-bar-box { padding: 0.75rem 0 0.5rem; display: flex; justify-content: center; cursor: pointer; }
     .drag-bar { width: 36px; height: 4px; background: #dadce0; border-radius: 2px; }
@@ -231,11 +243,14 @@ declare const google: any;
     .duration { font-size: 1.5rem; font-weight: 700; color: #188038; }
     .arrival-estimate { font-size: 0.9rem; color: #70757a; font-weight: 500; }
     .go-button { background: #1a73e8; color: #fff; border: none; padding: 0.75rem 1.5rem; border-radius: 24px; font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 2px 8px rgba(26, 115, 232, 0.3); }
+    
     .journey-timeline { padding: 1.5rem; display: flex; flex-direction: column; }
     .timeline-step { display: flex; gap: 1.25rem; }
     .timeline-indicator { display: flex; gap: 1rem; width: 95px; flex-shrink: 0; }
-    .time-col { width: 50px; display: flex; flex-direction: column; align-items: flex-end; }
-    .time { font-size: 0.85rem; font-weight: 600; color: #3c4043; }
+    .time-col { width: 60px; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; padding-top: 4px; }
+    .time { font-size: 0.7rem; font-weight: 600; color: #70757a; }
+    .time.start { color: #1a1a1a; font-size: 0.85rem; font-weight: 800; }
+    .time-separator { width: 8px; height: 1px; background: #dadce0; margin: 2px 0; align-self: flex-end; margin-right: 4px; }
     .node-col { display: flex; flex-direction: column; align-items: center; position: relative; width: 32px; }
     .dot-container { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; z-index: 2; }
     .step-dot { width: 26px; height: 26px; border-radius: 50%; background: #fff; border: 2px solid #dadce0; display: flex; align-items: center; justify-content: center; color: #5f6368; z-index: 5; position: relative; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
@@ -253,11 +268,11 @@ declare const google: any;
     .title { font-size: 1.05rem; font-weight: 600; color: #202124; line-height: 1.2; }
     .meta { font-size: 0.85rem; color: #70757a; font-weight: 400; }
     .step-card.dark .title { font-size: 1.2rem; font-weight: 700; }
+    .departure-info { margin-top: 0.75rem; padding: 0.8rem 1rem; background: rgba(66, 133, 244, 0.08); border-left: 4px solid #4285f4; border-radius: 4px 12px 12px 4px; display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem; color: #1a73e8; box-shadow: 0 2px 8px rgba(66, 133, 244, 0.05); }
+    .departure-info .material-icons { font-size: 1.2rem; }
+    .departure-info strong { color: #174ea6; font-weight: 800; }
     .realtime-updates { margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem; }
     .arrival-row { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: #70757a; background: #f8f9fa; padding: 8px 12px; border-radius: 12px; border: 1px solid #f1f3f4; }
-    .arrival-row .material-icons { font-size: 1.1rem; }
-    .arrival-time { font-weight: 700; }
-    .arrival-wait { font-weight: 500; }
     @keyframes spin { to { transform: rotate(360deg); } }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -267,666 +282,286 @@ export class BusProgramComponent implements OnInit {
   @ViewChild('topNav') topNav!: ElementRef;
   @ViewChild('destInput') destInput!: ElementRef;
   @ViewChild('originInput') originInput!: ElementRef;
-  @ViewChild('waypointInput') waypointInput!: ElementRef;
   @ViewChild('details') routePanel!: ElementRef;
 
   private map: any;
-  private userMarker: any;
-  private directionsService: any;
-  private walkingRenderer: any;
-  private walkingRendererEnd: any;
-  private directionsRenderer: any;
-  private traversedPolyline: any;
+  private userMarker: maplibregl.Marker | null = null;
   private autocompleteService: any;
   private placesService: any;
   private transitService = inject(TransitService);
   private route = inject(ActivatedRoute);
+  private cdr = inject(ChangeDetectorRef);
+  private zone = inject(NgZone);
 
   isLoading = signal(false);
-  isNavigating = signal(false);
-  showWaypoint = signal(false);
-  activeStep = signal<any>(null);
-  userLocationName = signal('Locația ta');
-  userCoords = signal<any>(null);
-  waypoint = signal<any>(null);
-  destination = signal<any>(null);
+  activeBusColor = signal('#4285F4');
   currentRoute = signal<any>(null);
-  travelMode = signal<any>(google.maps.TravelMode.TRANSIT);
-  arrivalEstimate = signal<string>('');
-  routeDuration = signal<string>('');
+  destination = signal<any>(null);
+  userCoords = signal<any>(null);
+  userLocationName = signal('Locația ta');
+  travelMode = signal<'TRANSIT' | 'WALKING' | 'CAR'>('TRANSIT');
+  isNavigating = signal(false);
+  isMinimized = signal(true);
+  predictions = signal<any[]>([]);
+  activeSearchType = signal<'origin' | 'destination' | null>(null);
+  stepArrivalsMap = signal<Map<string, any[]>>(new Map());
+  activeStep = signal<any>(null);
 
+  private routeMarkers: any[] = [];
   private watchId: number | null = null;
-  private lastRerouteTime = 0;
+  private touchStartY = 0;
 
   allSteps = computed(() => {
-    const route = this.currentRoute();
-    if (!route) return [];
-    return route.legs.flatMap((leg: any) => leg.steps);
-  });
-  predictions = signal<any[]>([]);
-  activeSearchType = signal<'origin' | 'destination' | 'waypoint' | null>(null);
-  stepArrivalsMap = signal<Map<string, any[]>>(new Map());
+    const data = this.currentRoute();
+    if (!data || !data.features) return [];
 
-  isMinimized = signal<boolean>(true);
-  private touchStartY = 0;
+    try {
+      return data.features.map((f: any) => ({
+        travel_mode: f.properties?.mode === 'WALK' ? 'WALKING' : 'TRANSIT',
+        instructions: f.properties?.instructions || 'Mergi',
+        duration: { text: `${f.properties?.duration || 0} min`, value: (f.properties?.duration || 0) * 60 },
+        distance: { text: `${((f.properties?.distance || 0) / 1000).toFixed(1)} km`, value: f.properties?.distance || 0 },
+        transit: f.properties?.mode !== 'WALK' ? { 
+          line: { short_name: f.properties?.instructions?.split(' ')[1] || '?', color: f.properties?.color || '#333' },
+          departure_stop: { 
+            name: f.properties?.instructions?.split('din ')[1] || 'Stație',
+            time: f.properties?.startTime ? new Date(f.properties.startTime).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' }) : null,
+            timeMs: f.properties?.startTime || null
+          }
+        } : null
+      }));
+    } catch (e) {
+      console.error('Error parsing route steps:', e);
+      return [];
+    }
+  });
+
+  timelineSteps = computed(() => {
+    const steps = this.allSteps();
+    const now = new Date();
+    let currentMs = now.getTime();
+    
+    return steps.map((step: any) => {
+      // Prioritize Java-provided scheduled time
+      if (step.transit?.departure_stop?.timeMs) {
+        currentMs = step.transit.departure_stop.timeMs;
+      }
+      
+      const startTime = new Date(currentMs);
+      const durationMs = (step.duration?.value || 0) * 1000;
+      const endTime = new Date(startTime.getTime() + durationMs);
+      const res = { start: this.formatTime(startTime), end: this.formatTime(endTime) };
+      currentMs = endTime.getTime();
+      return res;
+    });
+  });
+
+  routeDuration = computed(() => {
+    const data = this.currentRoute();
+    if (!data) return '-- min';
+    return `${data.metadata?.totalDurationMinutes || 0} min`;
+  });
+
+  arrivalEstimate = computed(() => {
+    const timeline = this.timelineSteps();
+    return timeline.length > 0 ? timeline[timeline.length - 1].end : '--:--';
+  });
 
   constructor() {
     afterNextRender(() => {
       this.initMap();
       this.getUserLocation();
-      this.transitService.loadData();
       this.checkIncomingDestination();
     });
 
     effect(() => {
-      const route = this.currentRoute();
+      const hasRoute = this.currentRoute();
       const minimized = this.isMinimized();
-      
+      if (!hasRoute) return;
+
       setTimeout(() => {
-        const el = this.routePanel?.nativeElement || document.querySelector('.route-panel');
-        if (!route || !el) return;
-        
-        const topNavEl = this.topNav?.nativeElement;
-        const topNavHeight = topNavEl ? topNavEl.offsetHeight : 120;
-        
-        // Use full viewport height for calculations
+        const el = this.routePanel?.nativeElement;
+        if (!el) return;
         const vh = window.innerHeight;
-        const targetY = minimized ? (vh - 140) : (topNavHeight + 10);
-        
-        gsap.to(el, {
-          y: targetY,
-          duration: 0.7,
-          ease: 'power3.out',
-          overwrite: 'auto'
-        });
-      }, 60);
+        const targetY = minimized ? (vh - 140) : 180;
+        gsap.to(el, { y: targetY, duration: 0.6, ease: 'power3.out' });
+      }, 50);
     });
   }
 
   ngOnInit() {}
 
-  onTouchStart(event: TouchEvent) {
-    this.touchStartY = event.touches[0].clientY;
-  }
-
-  onTouchMove(event: TouchEvent) {
-    const touchY = event.touches[0].clientY;
-    const deltaY = touchY - this.touchStartY;
-    const el = this.routePanel?.nativeElement;
-    
-    if (el && el.scrollTop <= 0 && deltaY > 60 && !this.isMinimized()) {
-      this.isMinimized.set(true);
-    } else if (el && deltaY < -60 && this.isMinimized()) {
-      this.isMinimized.set(false);
-    }
-  }
-
-  onViewerScroll(event: Event) {
-    const el = event.target as HTMLElement;
-    if (el.scrollTop > 40 && this.isMinimized()) {
-      this.isMinimized.set(false);
-    }
-  }
-
-  onSearchInput(event: any, type: 'origin' | 'destination' | 'waypoint') {
-    const query = event.target.value;
-    this.activeSearchType.set(type);
-    if (query.length < 3) { this.predictions.set([]); return; }
-    this.autocompleteService.getPlacePredictions({
-      input: query,
-      locationBias: { radius: 10000, center: { lat: 45.6483, lng: 25.5891 } },
-      componentRestrictions: { country: 'ro' }
-    }, (results: any) => this.predictions.set(results || []));
-  }
-
-  selectPrediction(p: any) {
-    this.placesService.getDetails({ placeId: p.place_id }, (place: any) => {
-      const type = this.activeSearchType();
-      if (type === 'origin') {
-        this.userCoords.set(place.geometry.location);
-        this.userLocationName.set(place.name);
-        this.originInput.nativeElement.value = place.name;
-      } else if (type === 'waypoint') {
-        this.waypoint.set(place);
-        this.waypointInput.nativeElement.value = place.name;
-      } else {
-        this.destination.set(place);
-        this.destInput.nativeElement.value = place.name;
-      }
-      this.map.panTo(place.geometry.location);
-      this.map.setZoom(16);
-      this.predictions.set([]);
-      this.calculateRoute();
+  private initMap() {
+    this.map = new maplibregl.Map({
+      container: this.mapContainer.nativeElement,
+      style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
+      center: [25.5891, 45.6483],
+      zoom: 13,
+      maxBounds: [25.0, 45.4, 26.5, 46.0]
     });
-  }
 
-  getUserLocation() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const pos = { lat: position.coords.latitude, lng: position.coords.longitude };
-        this.userCoords.set(pos);
-        this.updateUserMarker(pos);
-        this.map.setCenter(pos);
-        const geocoder = new google.maps.Geocoder();
-        geocoder.geocode({ location: pos }, (results: any) => {
-          if (results && results[0]) this.userLocationName.set(results[0].formatted_address.split(',')[0]);
-        });
-      });
-    }
-  }
-
-  private updateUserMarker(coords: any) {
-    if (!this.map) return;
-    if (this.userMarker) {
-      this.userMarker.setPosition(coords);
-    } else {
-      this.userMarker = new google.maps.Marker({
-        position: coords,
-        map: this.map,
-        icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 8,
-          fillColor: '#4285F4',
-          fillOpacity: 1,
-          strokeColor: '#FFFFFF',
-          strokeWeight: 2,
+    this.map.on('load', () => {
+      this.map.addSource('current-route', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+      this.map.addLayer({
+        id: 'route-line-walk',
+        type: 'line',
+        source: 'current-route',
+        filter: ['==', ['get', 'mode'], 'WALK'],
+        paint: {
+          'line-color': ['get', 'color'],
+          'line-width': 5,
+          'line-dasharray': [0.1, 1.8]
         },
-        title: 'Locația ta',
-        zIndex: 9999
+        layout: { 'line-cap': 'round', 'line-join': 'round' }
       });
-    }
-  }
 
-  setTravelMode(mode: string) {
-    this.travelMode.set(mode);
-    if (this.destination()) this.calculateRoute();
+      this.map.addLayer({
+        id: 'route-line-transit',
+        type: 'line',
+        source: 'current-route',
+        filter: ['!=', ['get', 'mode'], 'WALK'],
+        paint: {
+          'line-color': ['get', 'color'],
+          'line-width': 7
+        },
+        layout: { 'line-cap': 'round', 'line-join': 'round' }
+      });
+    });
+
+    this.autocompleteService = new google.maps.places.AutocompleteService();
+    this.placesService = new google.maps.places.PlacesService(document.createElement('div'));
   }
 
   async calculateRoute() {
     if (!this.userCoords() || !this.destination()) return;
     this.isLoading.set(true);
-
-    const isTransit = this.travelMode() === google.maps.TravelMode.TRANSIT;
-    const origin = this.userCoords();
-    const dest = this.destination().geometry.location;
-
-    if (isTransit) {
-      if (!this.transitService.isLoaded()) await this.transitService.loadData();
-
-      const userLat = typeof origin.lat === 'function' ? origin.lat() : origin.lat;
-      const userLon = typeof origin.lng === 'function' ? origin.lng() : origin.lng;
-      const destLat = typeof dest.lat === 'function' ? dest.lat() : (dest as any).lat;
-      const destLon = typeof dest.lng === 'function' ? dest.lng() : (dest as any).lng;
-
-      // Search for a local GTFS trip first
-      const bestTrip = this.transitService.findBestTransitTrip(userLat, userLon, destLat, destLon, 1500);
-
-      if (bestTrip) {
-        console.log(`[HybridRoute] Local trip found: Line ${bestTrip.line} via ${bestTrip.boarding.name}`);
-        this.executeHybridRoute(origin, dest, bestTrip);
-        return;
-      }
-    }
-
-    // Standard Fallback if no local trip found or if not in transit mode
-    this.directionsService.route({
-      origin: origin,
-      destination: dest,
-      travelMode: this.travelMode(),
-      transitOptions: isTransit ? {
-        departureTime: new Date(),
-        routingPreference: google.maps.TransitRoutePreference.LESS_WALKING,
-        modes: [google.maps.TransitMode.BUS]
-      } : undefined,
-      provideRouteAlternatives: true
-    }, (response: any, status: string) => {
-      this.isLoading.set(false);
-      if (status === 'OK') {
-        this.renderStandardRoute(response);
-      } else {
-        console.error('[Route] request failed:', status);
-      }
-    });
+    this.executeOTPRoute();
   }
 
-  private async executeHybridRoute(origin: any, dest: any, trip: any) {
+  private async executeOTPRoute() {
     try {
-      const boardingPos = { lat: trip.boarding.lat, lng: trip.boarding.lon };
-      const alightingPos = { lat: trip.alighting.lat, lng: trip.alighting.lon };
-      
-      // 1. Get Walking Leg
-      const walkResult: any = await this.requestRoute({
-        origin: origin,
-        destination: boardingPos,
-        travelMode: google.maps.TravelMode.WALKING
-      });
+      const origin = this.userCoords();
+      const dest = this.destination().geometry.location;
+      const mode = this.travelMode() === 'TRANSIT' ? 'WALK,TRANSIT' : (this.travelMode() === 'WALKING' ? 'WALK' : 'CAR');
 
-      // 2. Get Bus Leg (using DRIVING to follow roads precisely through waypoints)
-      const sequence = this.transitService.getTripSequence(trip.line, trip.target, trip.boarding.id, trip.alighting.id);
-      // Intermediate stops only for waypoints
-      const waypoints = sequence.slice(1, -1).map(s => ({ location: { lat: s.lat, lng: s.lon }, stopover: true }));
-      
-      const busResult: any = await this.requestRoute({
-        origin: boardingPos,
-        destination: alightingPos,
-        travelMode: google.maps.TravelMode.DRIVING,
-        waypoints: waypoints.length > 0 ? waypoints : undefined
+      const res = await fetch('/api/v1/routing/plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fromLat: origin.lat, fromLon: origin.lng,
+          toLat: typeof dest.lat === 'function' ? dest.lat() : dest.lat,
+          toLon: typeof dest.lng === 'function' ? dest.lng() : dest.lng,
+          mode
+        })
       });
-
-      // 3. Walk from Alighting to Final Destination
-      const finalWalkResult: any = await this.requestRoute({
-        origin: alightingPos,
-        destination: dest,
-        travelMode: google.maps.TravelMode.WALKING
-      });
-
+      const data = await res.json();
+      this.currentRoute.set(data);
       this.isLoading.set(false);
-      
-      // Clear previous and set new
-      this.walkingRenderer.setDirections(walkResult);
-      this.walkingRendererEnd.setDirections(finalWalkResult);
-      this.directionsRenderer.setDirections(busResult);
-      
-      this.renderStopMarkers(trip);
-      
-      const combinedRoute = this.synthesizeRoute(walkResult, busResult, finalWalkResult, trip);
-      this.currentRoute.set(combinedRoute);
-      this.routeDuration.set(combinedRoute.legs[0].duration.text);
-
-      // Initial estimate (without wait)
-      const initialDuration = combinedRoute.legs[0].duration.value;
-      const initialArrivalDate = new Date(new Date().getTime() + initialDuration * 1000);
-      this.arrivalEstimate.set(`${initialArrivalDate.getHours().toString().padStart(2, '0')}:${initialArrivalDate.getMinutes().toString().padStart(2, '0')}`);
-
-      const bounds = new google.maps.LatLngBounds();
-      walkResult.routes[0].overview_path.forEach((p: any) => bounds.extend(p));
-      busResult.routes[0].overview_path.forEach((p: any) => bounds.extend(p));
-      finalWalkResult.routes[0].overview_path.forEach((p: any) => bounds.extend(p));
-      this.map.fitBounds(bounds, { bottom: 160, top: 80, left: 30, right: 30 });
-      
-      this.fetchLiveArrivalsForSteps();
-    } catch (err) {
-      console.error('[HybridRoute] Construction failed, falling back:', err);
-      // Fallback to standard if hybrid fails
-      this.travelMode.set(google.maps.TravelMode.TRANSIT);
-      this.calculateRoute();
-    }
+      this.drawCurrentRoute();
+    } catch (e) { console.error('Java OTP failed', e); this.isLoading.set(false); }
   }
 
-  private requestRoute(request: any) {
-    return new Promise((resolve, reject) => {
-      this.directionsService.route(request, (res: any, status: string) => {
-        if (status === 'OK') resolve(res);
-        else reject(status);
-      });
-    });
-  }
-
-  private routeMarkers: any[] = [];
-
-  private clearMarkers() {
-    this.routeMarkers.forEach(m => m.setMap(null));
-    this.routeMarkers = [];
-  }
-
-  private renderStopMarkers(trip?: any) {
-    this.clearMarkers();
+  drawCurrentRoute() {
     if (!this.map) return;
+    const data = this.currentRoute();
+    if (!data) return;
 
-    const origin = this.userCoords();
-    const dest = this.destination().geometry.location;
-
-    // Origin Marker
-    this.routeMarkers.push(new google.maps.Marker({
-      position: origin,
-      map: this.map,
-      icon: {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: 7,
-        fillColor: '#4285F4',
-        fillOpacity: 1,
-        strokeColor: '#FFFFFF',
-        strokeWeight: 2,
-      },
-      title: 'Origine',
-      zIndex: 100
-    }));
-
-    // Destination Marker
-    this.routeMarkers.push(new google.maps.Marker({
-      position: dest,
-      map: this.map,
-      icon: {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: 9,
-        fillColor: '#EA4335',
-        fillOpacity: 1,
-        strokeColor: '#FFFFFF',
-        strokeWeight: 2,
-      },
-      title: 'Destinație',
-      zIndex: 100
-    }));
-
-    // If hybrid trip, add boarding/alighting pins
-    if (trip) {
-      [trip.boarding, trip.alighting].forEach(stop => {
-        this.routeMarkers.push(new google.maps.Marker({
-          position: { lat: stop.lat, lng: stop.lon },
-          map: this.map,
-          icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 6,
-            fillColor: '#FFFFFF',
-            fillOpacity: 1,
-            strokeColor: '#023c9f',
-            strokeWeight: 2,
-          },
-          title: stop.name,
-          zIndex: 90
-        }));
-      });
-    }
+    (this.map.getSource('current-route') as any).setData(data);
+    this.fitBounds(data);
   }
 
-  private synthesizeRoute(walk: any, bus: any, walkFinal: any, trip: any) {
-    const busLeg = bus.routes[0].legs[0];
-    const walkLeg = walk.routes[0].legs[0];
-    const finalLeg = walkFinal.routes[0].legs[0];
-
-    // Get real travel time from GTFS instead of driving time
-    const realBusMins = this.transitService.getTravelTimeMinutes(trip.line, trip.target, trip.boarding.id, trip.alighting.id);
-    const busDurationSec = realBusMins * 60;
-
-    const walkStep = {
-      travel_mode: 'WALKING',
-      instructions: `Mergi pe jos până la stația <b>${trip.boarding.name}</b>`,
-      duration: walkLeg.duration,
-      distance: walkLeg.distance
-    };
-
-    const transitStep = {
-      travel_mode: 'TRANSIT',
-      instructions: `Ia autobuzul <b>${trip.line}</b> spre ${trip.target}`,
-      duration: { text: `${realBusMins} min`, value: busDurationSec },
-      distance: busLeg.distance,
-      transit: {
-        line: { short_name: trip.line, name: trip.line, color: '#023c9f', text_color: '#FFFFFF' },
-        departure_stop: { 
-          name: trip.boarding.name, 
-          location: new google.maps.LatLng(trip.boarding.lat, trip.boarding.lon),
-          stationId: trip.boarding.id // Pass the ID for live arrivals
-        },
-        arrival_stop: { name: trip.alighting.name },
-        num_stops: trip.stopsInBetween
+  private fitBounds(geoJson: any) {
+    if (!geoJson || !geoJson.features || geoJson.features.length === 0) return;
+    const bounds = new maplibregl.LngLatBounds();
+    geoJson.features.forEach((f: any) => {
+      if (f.geometry?.coordinates) {
+        f.geometry.coordinates.forEach((c: any) => bounds.extend(c));
       }
-    };
-
-    const finalWalkStep = {
-      travel_mode: 'WALKING',
-      instructions: `Mergi pe jos până la destinație`,
-      duration: finalLeg.duration,
-      distance: finalLeg.distance
-    };
-
-    const totalSec = walkLeg.duration.value + busDurationSec + finalLeg.duration.value;
-
-    return {
-      legs: [{
-        duration: { text: `${Math.round(totalSec / 60)} min`, value: totalSec },
-        steps: [walkStep, transitStep, finalWalkStep]
-      }]
-    };
-  }
-
-  private renderStandardRoute(response: any) {
-    this.walkingRenderer.setDirections({ routes: [] });
-    this.walkingRendererEnd.setDirections({ routes: [] });
-    this.renderStopMarkers();
-    
-    let selectedRoute = response.routes[0];
-    this.directionsRenderer.setDirections({ ...response, routes: [selectedRoute] });
-    this.currentRoute.set(selectedRoute);
-    this.routeDuration.set(selectedRoute.legs[0].duration.text);
-    
-    const initialDuration = selectedRoute.legs[0].duration.value;
-    const initialArrivalDate = new Date(new Date().getTime() + initialDuration * 1000);
-    this.arrivalEstimate.set(`${initialArrivalDate.getHours().toString().padStart(2, '0')}:${initialArrivalDate.getMinutes().toString().padStart(2, '0')}`);
-    if (selectedRoute.bounds) this.map.fitBounds(selectedRoute.bounds, { bottom: 160, top: 80, left: 30, right: 30 });
-    this.fetchLiveArrivalsForSteps();
-  }
-
-
-  startNavigation() {
-    if (!this.currentRoute()) return;
-    this.isNavigating.set(true);
-    this.activeStep.set(this.currentRoute().legs[0].steps[0]);
-    
-    if (navigator.geolocation) {
-      this.watchId = navigator.geolocation.watchPosition((pos) => {
-        const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-        this.userCoords.set(coords);
-        this.updateUserMarker(coords);
-        this.updateActiveStep(coords);
-        this.checkRerouting(coords);
-        this.updateTraversedPath(coords);
-      }, (err) => console.error(err), { enableHighAccuracy: true });
+    });
+    if (!bounds.isEmpty()) {
+      this.map.fitBounds(bounds, { padding: 100 });
     }
   }
 
-  stopNavigation() {
-    this.isNavigating.set(false);
-    if (this.watchId !== null) navigator.geolocation.clearWatch(this.watchId);
-  }
+  getUserLocation() {
+    navigator.geolocation.getCurrentPosition(p => {
+      const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
+      this.userCoords.set(pos);
+      this.map.setCenter([pos.lng, pos.lat]);
 
-  private updateActiveStep(coords: any) {
-    const route = this.currentRoute();
-    if (!route) return;
-    const steps = route.legs[0].steps;
-    let minIdx = 0;
-    let minDist = Infinity;
-    steps.forEach((step: any, idx: number) => {
-      const dist = google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(coords.lat, coords.lng), step.start_location);
-      if (dist < minDist) { minDist = dist; minIdx = idx; }
+      // Add or update user marker
+      if (this.userMarker) {
+        this.userMarker.setLngLat([pos.lng, pos.lat]);
+      } else {
+        const el = document.createElement('div');
+        el.className = 'user-location-dot';
+        el.style.width = '16px';
+        el.style.height = '16px';
+        el.style.background = '#4285F4';
+        el.style.border = '3px solid white';
+        el.style.borderRadius = '50%';
+        el.style.boxShadow = '0 0 10px rgba(66, 133, 244, 0.6)';
+        
+        this.userMarker = new maplibregl.Marker({ element: el })
+          .setLngLat([pos.lng, pos.lat])
+          .addTo(this.map);
+      }
+
+      new google.maps.Geocoder().geocode({ location: pos }, (res: any) => {
+        if (res?.[0]) this.userLocationName.set(res[0].formatted_address.split(',')[0]);
+      });
     });
-    this.activeStep.set(steps[minIdx]);
   }
 
-  private checkRerouting(coords: any) {
-    const route = this.currentRoute();
-    if (!route) return;
-    const path = google.maps.geometry.encoding.decodePath(route.overview_polyline);
-    const dist = google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(coords.lat, coords.lng), path[0]);
-    // Simple logic: if too far from path, reroute (placeholder logic)
+  onSearchInput(event: any, type: 'origin' | 'destination') {
+    const query = event.target.value;
+    this.activeSearchType.set(type);
+    if (query.length < 2) { this.predictions.set([]); return; }
+
+    this.autocompleteService.getPlacePredictions({ input: query, componentRestrictions: { country: 'ro' } }, (res: any) => {
+      this.predictions.set((res || []).map((r: any) => ({
+        id: r.place_id, mainText: r.structured_formatting.main_text, secondaryText: r.structured_formatting.secondary_text
+      })));
+    });
   }
 
-  private updateTraversedPath(coords: any) {
-    if (!this.traversedPolyline) return;
-    const path = this.traversedPolyline.getPath();
-    path.push(new google.maps.LatLng(coords.lat, coords.lng));
+  selectPrediction(p: any) {
+    this.placesService.getDetails({ placeId: p.id }, (place: any) => {
+      if (this.activeSearchType() === 'origin') {
+        this.userCoords.set({ lat: place.geometry.location.lat(), lng: place.geometry.location.lng() });
+        this.userLocationName.set(place.name);
+      } else {
+        this.destination.set(place);
+      }
+      this.predictions.set([]);
+      this.calculateRoute();
+    });
   }
+
+  setTravelMode(mode: any) { this.travelMode.set(mode); this.calculateRoute(); }
+  toggleNav() { this.isMinimized.set(!this.isMinimized()); }
+  startNavigation() { this.isNavigating.set(true); }
+  stopNavigation() { this.isNavigating.set(false); }
+  getStepIcon(step: any) { return step?.travel_mode === 'TRANSIT' ? 'directions_bus' : 'directions_walk'; }
+  getStepStartTime(idx: number) { return this.timelineSteps()[idx]?.start || '--:--'; }
+  getStepTitle(step: any, isLast: boolean) { return isLast ? 'Destinație' : (step.travel_mode === 'TRANSIT' ? step.instructions : 'Mergi pe jos'); }
+  getStepArrivals(step: any): any[] { return []; } // Placeholder for live logic
+  getFinalArrivalTime() { return this.arrivalEstimate(); }
+  formatTime(d: Date) { return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`; }
+  onViewerScroll(e: any) {}
+  onTouchStart(e: any) { this.touchStartY = e.touches[0].clientY; }
+  onTouchMove(e: any) { if (e.touches[0].clientY - this.touchStartY > 50) this.isMinimized.set(true); }
 
   private checkIncomingDestination() {
     this.route.queryParams.subscribe(params => {
       if (params['destLat'] && params['destLon']) {
         const dest = {
-          geometry: { location: new google.maps.LatLng(parseFloat(params['destLat']), parseFloat(params['destLon'])) },
+          geometry: { location: { lat: parseFloat(params['destLat']), lng: parseFloat(params['destLon']) } },
           name: params['destName'] || 'Destinație selectată'
         };
         this.destination.set(dest);
         setTimeout(() => { if (this.userCoords()) this.calculateRoute(); }, 500);
       }
     });
-  }
-
-  getStepStartTime(idx: number): string {
-    const steps = this.allSteps();
-    const step = steps[idx];
-    if (step.transit?.departure_time) {
-      const planned = step.transit.departure_time.text;
-      const stepData = this.stepArrivalsMap().get(step.instructions);
-      if (stepData && stepData.length > 0) {
-        const bestMatch = stepData.reduce((prev: any, curr: any) => {
-          const prevDiff = Math.abs(this.timeToMinutes(prev.time) - this.timeToMinutes(planned));
-          const currDiff = Math.abs(this.timeToMinutes(curr.time) - this.timeToMinutes(planned));
-          return currDiff < prevDiff ? curr : prev;
-        });
-        return bestMatch.time || planned;
-      }
-      return planned;
-    }
-    return this.calculateTheoreticalStartTime(idx);
-  }
-
-  private timeToMinutes(timeStr: string): number {
-    if (!timeStr) return 0;
-    const [h, m] = timeStr.split(':').map(n => parseInt(n, 10));
-    return h * 60 + m;
-  }
-
-  private calculateTheoreticalStartTime(idx: number): string {
-    const now = new Date();
-    let totalSeconds = 0;
-    const steps = this.allSteps();
-    for (let i = 0; i < idx; i++) totalSeconds += steps[i].duration.value;
-    const time = new Date(now.getTime() + totalSeconds * 1000);
-    return `${time.getHours().toString().padStart(2, '0')}:${time.getMinutes().toString().padStart(2, '0')}`;
-  }
-
-  getStepEndTime(idx: number): string {
-    const now = new Date();
-    let totalSeconds = 0;
-    const steps = this.allSteps();
-    for (let i = 0; i <= idx; i++) totalSeconds += steps[i].duration.value;
-    const time = new Date(now.getTime() + totalSeconds * 1000);
-    return `${time.getHours().toString().padStart(2, '0')}:${time.getMinutes().toString().padStart(2, '0')}`;
-  }
-
-  getFinalArrivalTime(): string {
-    if (!this.allSteps().length) return '';
-    return this.getStepEndTime(this.allSteps().length - 1);
-  }
-
-  getStepTitle(step: any, isLast: boolean = false): string {
-    if (isLast) return this.destination()?.name || 'Destinație';
-    if (step.travel_mode === 'TRANSIT') return step.transit.departure_stop.name;
-    return 'Mergi pe jos';
-  }
-
-  getStepIcon(step: any, isLast: boolean = false): string {
-    if (isLast) return 'location_on';
-    if (!step) return 'my_location';
-    if (step.travel_mode === 'TRANSIT') return 'directions_bus';
-    return 'directions_walk';
-  }
-
-  getStepArrivals(step: any) {
-    if (!step.transit) return [];
-    const stepData = this.stepArrivalsMap().get(step.instructions);
-    if (stepData && stepData.length > 0) return [stepData[0]];
-    const planned = step.transit.departure_time?.text;
-    const now = new Date();
-    const currentMins = now.getHours() * 60 + now.getMinutes();
-    let wait = this.timeToMinutes(planned) - currentMins;
-    if (wait < 0) wait = 0;
-    return [{ time: planned || '--:--', wait: wait }];
-  }
-
-  private async fetchLiveArrivalsForSteps() {
-    const steps = this.allSteps();
-    const transitSteps = steps.filter((s: any) => s.travel_mode === 'TRANSIT');
-    if (!this.transitService.isLoaded()) await this.transitService.loadData();
-    
-    let totalWaitTimeSec = 0;
-
-    for (const step of transitSteps) {
-      const loc = { lat: step.transit.departure_stop.location.lat(), lng: step.transit.departure_stop.location.lng() };
-      const officialName = step.transit.departure_stop.name;
-      const lineName = step.transit.line.short_name || step.transit.line.name || '';
-      const stationId = step.transit.departure_stop.stationId;
-      
-      let offsetSeconds = 0;
-      const stepIdx = steps.indexOf(step);
-      for (let i = 0; i < stepIdx; i++) offsetSeconds += steps[i].duration.value;
-      
-      const arrivals = await this.transitService.getArrivalsForStep(officialName, lineName, loc, offsetSeconds, stationId);
-      
-      if (arrivals.length > 0) {
-        // Calculate the wait time (difference between arrival at stop and bus departure)
-        const firstArrivalWaitMins = arrivals[0].wait;
-        totalWaitTimeSec += firstArrivalWaitMins * 60;
-
-        this.stepArrivalsMap.update(map => {
-          const newMap = new Map(map);
-          newMap.set(step.instructions, arrivals);
-          return newMap;
-        });
-      }
-    }
-
-    if (totalWaitTimeSec > 0) {
-      const originalDuration = this.currentRoute().legs[0].duration.value;
-      const finalDurationSec = originalDuration + totalWaitTimeSec;
-      
-      this.routeDuration.set(`${Math.round(finalDurationSec / 60)} min`);
-      
-      const arrivalDate = new Date(new Date().getTime() + finalDurationSec * 1000);
-      this.arrivalEstimate.set(`${arrivalDate.getHours().toString().padStart(2, '0')}:${arrivalDate.getMinutes().toString().padStart(2, '0')}`);
-    } else {
-      const originalDuration = this.currentRoute().legs[0].duration.value;
-      const arrivalDate = new Date(new Date().getTime() + originalDuration * 1000);
-      this.arrivalEstimate.set(`${arrivalDate.getHours().toString().padStart(2, '0')}:${arrivalDate.getMinutes().toString().padStart(2, '0')}`);
-    }
-  }
-
-  private initMap() {
-    this.map = new google.maps.Map(this.mapContainer.nativeElement, {
-      center: { lat: 45.6483, lng: 25.5891 },
-      zoom: 13,
-      disableDefaultUI: true,
-      gestureHandling: 'greedy'
-    });
-    this.directionsService = new google.maps.DirectionsService();
-    this.directionsRenderer = new google.maps.DirectionsRenderer({
-      map: this.map,
-      suppressMarkers: true,
-      preserveViewport: true,
-      polylineOptions: { strokeColor: '#1a1a1a', strokeWeight: 8, strokeOpacity: 1, zIndex: 50 }
-    });
-    this.walkingRenderer = new google.maps.DirectionsRenderer({
-      map: this.map,
-      suppressMarkers: true,
-      preserveViewport: true,
-      polylineOptions: { 
-        strokeColor: '#4285F4', 
-        strokeWeight: 4, 
-        strokeOpacity: 0, 
-        zIndex: 40,
-        icons: [{ 
-          icon: { path: google.maps.SymbolPath.CIRCLE, fillOpacity: 1, scale: 3, strokeOpacity: 1, strokeWeight: 0 }, 
-          offset: '0', 
-          repeat: '12px' 
-        }]
-      }
-    });
-    this.walkingRendererEnd = new google.maps.DirectionsRenderer({
-      map: this.map,
-      suppressMarkers: true,
-      preserveViewport: true,
-      polylineOptions: { 
-        strokeColor: '#4285F4', 
-        strokeWeight: 4, 
-        strokeOpacity: 0, 
-        zIndex: 40,
-        icons: [{ 
-          icon: { path: google.maps.SymbolPath.CIRCLE, fillOpacity: 1, scale: 3, strokeOpacity: 1, strokeWeight: 0 }, 
-          offset: '0', 
-          repeat: '12px' 
-        }]
-      }
-    });
-    this.traversedPolyline = new google.maps.Polyline({ map: this.map, strokeColor: '#BDC1C6', strokeWeight: 6, strokeOpacity: 0.6, zIndex: 100 });
-    this.autocompleteService = new google.maps.places.AutocompleteService();
-    this.placesService = new google.maps.places.PlacesService(this.map);
   }
 }

@@ -8,3 +8,6 @@ src/environments/environment*.ts
 .vscode/*
 !.vscode/settings.json
 .DS_Store
+java-otp-backend/otp-config/otp.jar
+java-otp-backend/otp-config/brasov.pbf
+java-otp-backend.zip

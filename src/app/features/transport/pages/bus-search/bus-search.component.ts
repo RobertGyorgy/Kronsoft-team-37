@@ -4,8 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TransitService } from '../../services/transit.service';
 import { gsap } from 'gsap';
-
-declare const google: any;
+import maplibregl from 'maplibre-gl';
 
 @Component({
   selector: 'app-bus-search',
@@ -458,13 +457,16 @@ export class BusSearchComponent implements OnInit, OnDestroy {
     if (this.map) return true;
     if (!this.mapContainer) return false;
 
-    const center = initialCoords || { lat: 45.6483, lng: 25.5891 };
-    this.map = new google.maps.Map(this.mapContainer.nativeElement, {
+    const bounds: [number, number, number, number] = [25.00, 45.40, 26.50, 46.00];
+    const center: [number, number] = initialCoords ? [initialCoords.lng, initialCoords.lat] : [25.5891, 45.6483];
+    
+    this.map = new maplibregl.Map({
+      container: this.mapContainer.nativeElement,
+      style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
       center: center,
       zoom: initialCoords ? 16 : 14,
-      disableDefaultUI: true,
-      gestureHandling: 'greedy',
-      styles: this.getMapStyles()
+      maxBounds: bounds,
+      attributionControl: false
     });
     return true;
   }
@@ -620,44 +622,37 @@ export class BusSearchComponent implements OnInit, OnDestroy {
 
   private updateMap(platforms: any[], hub: any) {
     if (!this.map) return;
-    this.markers.forEach(m => m.setMap(null));
+    this.markers.forEach(m => m.remove());
     this.markers = [];
     if (!platforms || platforms.length === 0) return;
 
-    const bounds = new google.maps.LatLngBounds();
+    const bounds = new maplibregl.LngLatBounds();
     platforms.forEach((plat) => {
-      const pos = { lat: plat.lat, lng: plat.lon };
+      const pos: [number, number] = [plat.lon, plat.lat];
       bounds.extend(pos);
-      const marker = new google.maps.Marker({
-        position: pos,
-        map: this.map,
-        icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 7,
-          fillColor: '#1a1a1a',
-          fillOpacity: 1,
-          strokeColor: '#ffffff',
-          strokeWeight: 2
-        }
-      });
-      marker.addListener('click', () => this.selectPlatform(plat));
+
+      const el = document.createElement('div');
+      el.className = 'station-marker';
+      el.style.width = '14px';
+      el.style.height = '14px';
+      el.style.background = '#1a1a1a';
+      el.style.border = '2px solid white';
+      el.style.borderRadius = '50%';
+      el.style.boxShadow = '0 2px 5px rgba(0,0,0,0.3)';
+
+      const marker = new maplibregl.Marker({ element: el })
+        .setLngLat(pos)
+        .addTo(this.map);
+      
+      el.addEventListener('click', () => this.selectPlatform(plat));
       this.markers.push(marker);
     });
 
     if (platforms.length === 1) {
-      const pos = { lat: platforms[0].lat, lng: platforms[0].lon };
-      this.map.setCenter(pos);
-      this.map.setZoom(17);
-      // Pushing it down just a bit to clear the search bar, but not too much since the dock is tall
-      setTimeout(() => this.map.panBy(0, -70), 150);
+      const pos: [number, number] = [platforms[0].lon, platforms[0].lat];
+      this.map.easeTo({ center: pos, zoom: 17, duration: 1000 });
     } else {
-      // For hubs, use padding that accounts for the search bar and the visible part of the dock
-      this.map.fitBounds(bounds, { 
-        bottom: 120, 
-        top: 100,
-        left: 50, 
-        right: 50 
-      });
+      this.map.fitBounds(bounds, { padding: 100 });
     }
   }
 
