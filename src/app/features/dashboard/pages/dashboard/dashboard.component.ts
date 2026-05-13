@@ -57,7 +57,7 @@ import { gsap } from 'gsap';
           <span class="card-title">Servicii Primărie</span>
         </div>
 
-        <div class="grid-card purple" (click)="onCityEventsClick()">
+        <div class="grid-card purple" routerLink="/events">
           <span class="material-icons card-bg-icon">event</span>
           <span class="card-title">Evenimente Oraș</span>
         </div>
