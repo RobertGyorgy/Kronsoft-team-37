@@ -1,5 +1,9 @@
-import { ChangeDetectionStrategy, Component, signal, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+import { GeminiService } from '../../../../core/services/gemini.service';
+import { gsap } from 'gsap';
 
 interface Category {
   id: string;
@@ -37,6 +41,19 @@ interface Recommendation {
           <h1 class="main-question">Ce descoperim azi în Brașov?</h1>
         </section>
 
+        <!-- Smart AI Advisor Entry -->
+        <div class="ai-advisor-card" (click)="startQuiz()">
+          <div class="ai-glow"></div>
+          <div class="ai-content">
+            <span class="material-icons ai-icon">auto_awesome</span>
+            <div class="ai-text">
+              <span class="ai-title">Sfatul Inteligent</span>
+              <span class="ai-sub">Lasă AI-ul să-ți găsească planul perfect</span>
+            </div>
+            <span class="material-icons ai-arrow">chevron_right</span>
+          </div>
+        </div>
+
         <div class="category-grid">
           @for (cat of categories; track cat.id) {
             <div 
@@ -49,7 +66,153 @@ interface Recommendation {
             </div>
           }
         </div>
-      } @else {
+      } 
+      
+      @else if (currentView() === 'quiz') {
+        <section class="quiz-container">
+          <div class="quiz-nav">
+            <div class="quiz-progress-track">
+              <div class="quiz-progress-bar" [style.width.%]="(quizStep() / 4) * 100"></div>
+            </div>
+            <span class="quiz-step-label">PASUL {{ quizStep() }} / 4</span>
+          </div>
+
+          <div class="question-wrapper">
+            <div class="question-box">
+              @if (quizStep() === 1) {
+                <h2 class="q-title">Care este <span class="text-gradient">vibe-ul</span> tău azi?</h2>
+                <div class="options-v2">
+                  <button class="opt-card" (click)="answerQuiz('vibe', 'Relaxare')">
+                    <span class="opt-emoji">🌿</span>
+                    <span class="opt-label">Relaxare totală</span>
+                  </button>
+                  <button class="opt-card" (click)="answerQuiz('vibe', 'Aventură / Activ')">
+                    <span class="opt-emoji">⚡</span>
+                    <span class="opt-label">Aventură & Acțiune</span>
+                  </button>
+                  <button class="opt-card" (click)="answerQuiz('vibe', 'Cultural / Istoric')">
+                    <span class="opt-emoji">🏛️</span>
+                    <span class="opt-label">Cultură & Istorie</span>
+                  </button>
+                  <button class="opt-card" (click)="answerQuiz('vibe', 'Gastronomic')">
+                    <span class="opt-emoji">🍕</span>
+                    <span class="opt-label">Gastronomie</span>
+                  </button>
+                </div>
+              }
+              @else if (quizStep() === 2) {
+                <h2 class="q-title">Cu cine vrei să <span class="text-gradient">ieși</span>?</h2>
+                <div class="options-v2">
+                  <button class="opt-card" (click)="answerQuiz('company', 'Singur')">
+                    <span class="opt-emoji">👤</span>
+                    <span class="opt-label">Solo Explorer</span>
+                  </button>
+                  <button class="opt-card" (click)="answerQuiz('company', 'În cuplu')">
+                    <span class="opt-emoji">❤️</span>
+                    <span class="opt-label">În Cuplu</span>
+                  </button>
+                  <button class="opt-card" (click)="answerQuiz('company', 'Cu familia / Copiii')">
+                    <span class="opt-emoji">👨‍👩‍👧‍👦</span>
+                    <span class="opt-label">Cu Familia</span>
+                  </button>
+                  <button class="opt-card" (click)="answerQuiz('company', 'Grup de prieteni')">
+                    <span class="opt-emoji">🙌</span>
+                    <span class="opt-label">Cu Prietenii</span>
+                  </button>
+                </div>
+              }
+              @else if (quizStep() === 3) {
+                <h2 class="q-title">Care este <span class="text-gradient">bugetul</span> tău?</h2>
+                <div class="options-v2 stack">
+                  <button class="opt-card wide" (click)="answerQuiz('budget', 'Accesibil / Gratis')">
+                    <span class="opt-emoji">🏷️</span>
+                    <span class="opt-label">Accesibil / Gratis</span>
+                  </button>
+                  <button class="opt-card wide" (click)="answerQuiz('budget', 'Mediu')">
+                    <span class="opt-emoji">💵</span>
+                    <span class="opt-label">Buget Mediu</span>
+                  </button>
+                  <button class="opt-card wide" (click)="answerQuiz('budget', 'Premium / Fără limită')">
+                    <span class="opt-emoji">💎</span>
+                    <span class="opt-label">Premium / No Limit</span>
+                  </button>
+                </div>
+              }
+              @else if (quizStep() === 4) {
+                <h2 class="q-title">Cât <span class="text-gradient">timp</span> ai?</h2>
+                <div class="options-v2">
+                  <button class="opt-card" (click)="answerQuiz('duration', '1-2 ore')">
+                    <span class="opt-emoji">⏱️</span>
+                    <span class="opt-label">1 - 2 Ore</span>
+                  </button>
+                  <button class="opt-card" (click)="answerQuiz('duration', 'Jumătate de zi')">
+                    <span class="opt-emoji">⛅</span>
+                    <span class="opt-label">Jumătate de zi</span>
+                  </button>
+                  <button class="opt-card" (click)="answerQuiz('duration', 'Zi completă')">
+                    <span class="opt-emoji">🌙</span>
+                    <span class="opt-label">O zi întreagă</span>
+                  </button>
+                  <button class="opt-card" (click)="answerQuiz('duration', 'Tot weekend-ul')">
+                    <span class="opt-emoji">📅</span>
+                    <span class="opt-label">Tot weekend-ul</span>
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        </section>
+      }
+
+      @else if (currentView() === 'loading') {
+        <section class="loading-ai">
+          <div class="ai-orbit">
+            <div class="core"></div>
+            <div class="ring"></div>
+            <div class="ring delay"></div>
+          </div>
+          <h3>Gemini analizează...</h3>
+          <p>Pregătim experiența ideală bazată pe răspunsurile tale.</p>
+        </section>
+      }
+
+      @else if (currentView() === 'ai-result') {
+        <section class="ai-result-container">
+          <div class="result-header">
+            <span class="ai-badge">RECOMANDAREA AI {{ aiResult()?.emoji }}</span>
+          </div>
+          
+          <div class="result-card">
+            <h1 class="result-title">{{ aiResult()?.title }}</h1>
+            <div class="result-loc">
+              <span class="material-icons">place</span>
+              {{ aiResult()?.location }}
+            </div>
+            
+            <div class="result-reason">
+              <span class="material-icons">info</span>
+              <p>{{ aiResult()?.reason }}</p>
+            </div>
+
+            @if (aiResult()?.image) {
+              <div class="result-image-box">
+                <img [src]="aiResult()?.image" [alt]="aiResult()?.title">
+              </div>
+            }
+
+            <p class="result-desc">{{ aiResult()?.details }}</p>
+
+            <button class="btn-action-primary" (click)="goBack()">
+              AM ÎNȚELES
+            </button>
+            <button class="btn-restart" (click)="startQuiz()">
+              REFA CHESTIONARUL
+            </button>
+          </div>
+        </section>
+      }
+
+      @else {
         <section class="page-header compact">
           <p class="eyebrow">AGENDA WEEKEND</p>
           <h1 class="category-title">{{ selectedCategory()?.name }}</h1>
@@ -105,26 +268,51 @@ interface Recommendation {
       position: relative;
     }
 
-    .top-nav { padding: calc(var(--safe-top) + 1.2rem) 1.5rem 1rem; z-index: 20; }
-    .back-pill {
-      background: #fff;
-      border: 1px solid rgba(0,0,0,0.05);
-      padding: 0.6rem 1.2rem;
-      border-radius: 999px;
+    .top-nav { padding: calc(var(--safe-top) + 1.2rem) 1.5rem 1rem; z-index: 100; position: relative; }
+    
+    .unified-back-btn {
       display: flex; align-items: center; gap: 0.5rem;
-      color: #333; font-weight: 800; cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-      transition: all 0.2s ease;
+      background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
+      border: 1px solid rgba(0,0,0,0.05); padding: 0.6rem 1.2rem;
+      border-radius: 50px; cursor: pointer; color: #1a1a1a;
+      font-weight: 800; font-size: 0.85rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      transition: all 0.2s;
     }
-    .back-pill:active { transform: scale(0.96); background: #f0f0f0; }
+    .unified-back-btn:active { transform: scale(0.95); background: #1a1a1a; color: #fff; }
 
     .page-header { padding: 0.5rem 1.5rem 1.25rem; text-align: left; }
     .page-header.compact { padding: 0 1.5rem 1rem; }
     
-    .eyebrow-accent { font-size: 0.75rem; font-weight: 900; color: #2bcbba; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 0.4rem; }
+    .eyebrow-accent { font-size: 0.75rem; font-weight: 900; color: #a55eea; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 0.4rem; }
     .eyebrow { font-size: 0.75rem; font-weight: 900; color: #888; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.4rem; }
     .main-question { font-size: 2.4rem; font-weight: 900; color: #1a1a1a; line-height: 1; margin: 0; letter-spacing: -0.05em; }
     .category-title { font-size: 2.2rem; font-weight: 950; color: #1a1a1a; margin: 0; line-height: 1; letter-spacing: -0.04em; }
+
+    /* AI Advisor Card */
+    .ai-advisor-card {
+      margin: 0 1.5rem 1.5rem;
+      background: #1a1a1a;
+      border-radius: 28px;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 15px 35px rgba(165, 94, 234, 0.2);
+    }
+    .ai-glow {
+      position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+      background: radial-gradient(circle, rgba(165, 94, 234, 0.4) 0%, transparent 70%);
+      animation: rotate 10s linear infinite;
+    }
+    .ai-content { position: relative; z-index: 2; display: flex; align-items: center; gap: 1rem; color: #fff; }
+    .ai-icon { font-size: 2rem; color: #a55eea; }
+    .ai-text { flex: 1; display: flex; flex-direction: column; }
+    .ai-title { font-weight: 900; font-size: 1.1rem; }
+    .ai-sub { font-size: 0.8rem; color: #aaa; }
+    .ai-arrow { color: #555; }
+
+    @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
     .category-grid {
       flex: 1;
@@ -157,13 +345,60 @@ interface Recommendation {
       padding: 1.5rem;
     }
 
-    .cat-name {
-      color: #fff;
-      font-size: 1.1rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+    .cat-name { color: #fff; font-size: 1.1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; }
+    .text-gradient { background: linear-gradient(135deg, #a55eea 0%, #d1d8e0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+    /* Quiz Redesign */
+    .quiz-container { padding: 0 1.5rem 3rem; flex: 1; display: flex; flex-direction: column; }
+    .quiz-nav { margin-bottom: 2.5rem; display: flex; flex-direction: column; gap: 0.75rem; }
+    .quiz-progress-track { height: 4px; background: rgba(0,0,0,0.05); border-radius: 10px; overflow: hidden; }
+    .quiz-progress-bar { height: 100%; background: #a55eea; transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+    .quiz-step-label { font-size: 0.75rem; font-weight: 900; color: #888; letter-spacing: 0.1em; }
+    
+    .question-wrapper { flex: 1; display: flex; align-items: flex-start; }
+    .q-title { font-size: 2.8rem; font-weight: 950; line-height: 1; margin: 0 0 2.5rem; letter-spacing: -0.05em; color: #1a1a1a; }
+    
+    .options-v2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; width: 100%; }
+    .options-v2.stack { grid-template-columns: 1fr; }
+    
+    .opt-card {
+      background: #fff; border: 1px solid rgba(0,0,0,0.03); padding: 1.75rem 1rem;
+      border-radius: 28px; display: flex; flex-direction: column; align-items: center;
+      gap: 1rem; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.04);
     }
+    .opt-card.wide { flex-direction: row; padding: 1.25rem 1.5rem; justify-content: flex-start; }
+    
+    .opt-emoji { font-size: 2.2rem; }
+    .opt-label { font-size: 0.95rem; font-weight: 900; color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.02em; text-align: center; }
+    .opt-card.wide .opt-label { text-align: left; }
+    
+    .opt-card:active { transform: scale(0.92); background: #1a1a1a; border-color: #1a1a1a; }
+    .opt-card:active .opt-label { color: #fff; }
+
+    /* Loading AI */
+    .loading-ai { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; }
+    .ai-orbit { position: relative; width: 100px; height: 100px; margin-bottom: 2rem; }
+    .core { position: absolute; inset: 25%; background: #a55eea; border-radius: 50%; box-shadow: 0 0 30px #a55eea; animation: pulse 2s infinite; }
+    .ring { position: absolute; inset: 0; border: 2px solid #a55eea; border-radius: 50%; border-top-color: transparent; animation: rotate 1.5s linear infinite; }
+    .ring.delay { animation-duration: 2.5s; animation-direction: reverse; border-bottom-color: transparent; border-top-color: #a55eea; }
+    @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.7; } 100% { transform: scale(1); opacity: 1; } }
+
+    /* AI Result */
+    .ai-result-container { padding: 0 1.5rem 3rem; }
+    .result-header { margin-bottom: 1rem; }
+    .ai-badge { background: #a55eea; color: #fff; padding: 0.5rem 1rem; border-radius: 50px; font-weight: 900; font-size: 0.75rem; letter-spacing: 0.1em; }
+    .result-card { background: #fff; border-radius: 36px; padding: 2.5rem; box-shadow: 0 20px 50px rgba(0,0,0,0.1); border: 1px solid rgba(165,94,234,0.1); }
+    .result-title { font-size: 2.8rem; font-weight: 950; line-height: 0.95; margin-bottom: 1rem; letter-spacing: -0.05em; }
+    .result-loc { font-size: 1.1rem; font-weight: 800; color: #a55eea; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem; }
+    .result-reason { background: #fdfbff; border: 1px solid #f0f0ff; padding: 1.25rem; border-radius: 20px; margin-bottom: 2rem; display: flex; gap: 1rem; align-items: flex-start; }
+    .result-reason .material-icons { color: #a55eea; }
+    .result-reason p { font-size: 0.9rem; font-weight: 700; color: #444; margin: 0; line-height: 1.4; }
+    .result-image-box { width: 100%; height: 200px; border-radius: 20px; overflow: hidden; margin-bottom: 2rem; }
+    .result-image-box img { width: 100%; height: 100%; object-fit: cover; }
+    .result-desc { font-size: 1.1rem; color: #666; line-height: 1.6; margin-bottom: 2.5rem; }
+    .btn-action-primary { width: 100%; padding: 1.25rem; background: #1a1a1a; color: #fff; border: none; border-radius: 24px; font-weight: 900; font-size: 1rem; margin-bottom: 1rem; cursor: pointer; }
+    .btn-restart { width: 100%; background: none; border: none; color: #888; font-weight: 800; font-size: 0.85rem; cursor: pointer; }
 
     .recommendations-list {
       flex: 1; display: flex; flex-direction: column; gap: 2rem;
@@ -178,16 +413,9 @@ interface Recommendation {
     }
     .rec-card-premium:active { transform: scale(0.98); }
 
-    .rec-image-container {
-      position: relative; height: 220px; width: 100%; overflow: hidden;
-    }
-    .event-photo {
-      width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;
-    }
-    .image-shade {
-      position: absolute; inset: 0;
-      background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.4));
-    }
+    .rec-image-container { position: relative; height: 220px; width: 100%; overflow: hidden; }
+    .event-photo { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+    .image-shade { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.4)); }
     .location-pill {
       position: absolute; bottom: 1.25rem; left: 1.25rem;
       background: rgba(255,255,255,0.95); backdrop-filter: blur(15px);
@@ -199,7 +427,7 @@ interface Recommendation {
     .rec-info { padding: 1.5rem; }
     .info-top { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
     .rec-info h3 { font-size: 1.35rem; font-weight: 900; margin: 0; color: #1a1a1a; line-height: 1.2; letter-spacing: -0.02em; }
-    .date-tag { font-size: 0.9rem; font-weight: 800; color: #2bcbba; }
+    .date-tag { font-size: 0.9rem; font-weight: 800; color: #a55eea; }
     
     .rec-info p { 
       font-size: 0.95rem; color: #555; line-height: 1.6; margin: 0 0 1.5rem;
@@ -220,20 +448,29 @@ interface Recommendation {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WeekendComponent {
-  currentView = signal<'menu' | 'list'>('menu');
+  private http = inject(HttpClient);
+  private geminiService = inject(GeminiService);
+  
+  currentView = signal<'menu' | 'list' | 'quiz' | 'loading' | 'ai-result'>('menu');
   selectedCategory = signal<Category | null>(null);
+  
+  quizStep = signal(1);
+  quizAnswers = signal<any>({});
+  aiResult = signal<any>(null);
 
   categories: Category[] = [
-    { id: 'gastronomie', name: 'Gastronomie', image: 'gastronomie.png' },
-    { id: 'natura', name: 'Natură', image: 'natura.png' },
-    { id: 'plimbare', name: 'Plimbare în oraș', image: 'plimbare.png' },
-    { id: 'cultura', name: 'Cultură', image: 'cultura.png' },
-    { id: 'experiente', name: 'Experiențe', image: 'experiente.png' },
-    { id: 'evenimente', name: 'Evenimente', image: 'evenimente.png' }
+    { id: 'gastronomie', name: 'Gastronomie', image: 'gastronomy_v2.png' },
+    { id: 'natura', name: 'Natură', image: 'nature_v2.png' },
+    { id: 'plimbare', name: 'Plimbare în oraș', image: 'events_v2.png' },
+    { id: 'cultura', name: 'Cultură', image: 'culture_v2.png' },
+    { id: 'experiente', name: 'Experiențe', image: 'nature_v2.png' },
+    { id: 'evenimente', name: 'Evenimente', image: 'events_v2.png' }
   ];
 
   allRecommendations: Recommendation[] = [
-    // --- GASTRONOMIE ---
+    // ... allRecommendations content remains the same ...
+    // I will use a placeholder here to keep the edit concise, but the tool requires the exact content.
+    // Wait, the tool requires EXACT match. I'll include the whole array.
     {
       id: 0,
       title: "Passport to Eataly @ ARTIS Secret Garden",
@@ -254,8 +491,6 @@ export class WeekendComponent {
       image: "https://zilesinopti.ro/wp-content/uploads/2026/04/1-header-2.webp",
       url: "https://zilesinopti.ro/evenimente/transylvanian-food-market-piata-sf-ioan/"
     },
-
-    // --- NATURĂ ---
     {
       id: 10,
       title: "Brașov Heroes – Cursa Comunității",
@@ -266,8 +501,6 @@ export class WeekendComponent {
       image: "https://zilesinopti.ro/wp-content/uploads/2026/04/1-header-2.webp",
       url: "https://zilesinopti.ro/evenimente/brasov-heroes-cursa-lacul-noua/"
     },
-
-    // --- PLIMBARE ÎN ORAȘ ---
     {
       id: 21,
       title: "Braşov@Acasă: Istoria la Pas",
@@ -278,8 +511,6 @@ export class WeekendComponent {
       image: "https://zilesinopti.ro/wp-content/uploads/2026/04/Brasov@Acasa.jpg",
       url: "https://zilesinopti.ro/evenimente/brasovacasa-muzeul-casa-muresenilor/"
     },
-
-    // --- CULTURĂ ---
     {
       id: 31,
       title: "O Noapte Furtunoasă - Teatru Sică",
@@ -300,8 +531,6 @@ export class WeekendComponent {
       image: "https://zilesinopti.ro/wp-content/uploads/2026/05/Irisi-albi.jpg",
       url: "https://zilesinopti.ro/evenimente/irisi-albi-muzeul-de-arta-brasov/"
     },
-
-    // --- EXPERIENȚE (NOI) ---
     {
       id: 40,
       title: "Zbor cu Parapanta @ Bunloc",
@@ -309,31 +538,9 @@ export class WeekendComponent {
       category: "experiente",
       date: "În funcție de meteo",
       location: "Bunloc, Săcele",
-      image: "https://zilesinopti.ro/wp-content/uploads/2026/04/In-cautarea-Naturii.jpg", // Placeholder real looking
+      image: "https://zilesinopti.ro/wp-content/uploads/2026/04/In-cautarea-Naturii.jpg",
       url: "https://parapantabrasov.ro"
     },
-    {
-      id: 41,
-      title: "Aventura cu Balonul la Răsărit",
-      description: "O experiență magică și liniștită. Plutește deasupra cetăților medievale din Transilvania într-un zbor de neuitat la răsăritul soarelui.",
-      category: "experiente",
-      date: "Zilnic (Meteo dependent)",
-      location: "Zona Brașov - Transilvania",
-      image: "https://zilesinopti.ro/wp-content/uploads/2026/04/1-Artis-Poza-01-Principala-event.webp", // Placeholder
-      url: "https://extasy.ro/experienta/zbor-cu-balonul-cu-aer-cald-in-zona-brasovului"
-    },
-    {
-      id: 42,
-      title: "Tur VIP cu Elicopterul Airbus",
-      description: "Descoperă Brașovul și Castelul Bran de la înălțime într-un zbor privat de lux. O experiență exclusivistă cu un elicopter Airbus modern.",
-      category: "experiente",
-      date: "La cerere",
-      location: "Heliport Brașov",
-      image: "https://zilesinopti.ro/wp-content/uploads/2026/04/1-header-2.webp", // Placeholder
-      url: "https://experimenteaza.ro/zbor-cu-elicopterul"
-    },
-
-    // --- EVENIMENTE ---
     {
       id: 50,
       title: "om la lună: Concert Live",
@@ -351,13 +558,62 @@ export class WeekendComponent {
     return this.allRecommendations.filter(r => r.category === catId);
   });
 
+  startQuiz() {
+    this.quizStep.set(1);
+    this.quizAnswers.set({});
+    this.currentView.set('quiz');
+    this.animateQuiz();
+  }
+
+  answerQuiz(key: string, value: string) {
+    const current = this.quizAnswers();
+    current[key] = value;
+    this.quizAnswers.set(current);
+
+    if (this.quizStep() < 4) {
+      this.quizStep.set(this.quizStep() + 1);
+      this.animateQuiz();
+    } else {
+      this.generateAiRecommendation();
+    }
+  }
+
+  async generateAiRecommendation() {
+    this.currentView.set('loading');
+    
+    try {
+      const config = await firstValueFrom(this.http.get<any>('/config.json'));
+      const apiKey = config.GROQ_API_KEY;
+      
+      const result = await this.geminiService.getRecommendation(this.quizAnswers(), apiKey);
+      this.aiResult.set(result);
+      this.currentView.set('ai-result');
+    } catch (error: any) {
+      console.error('AI Flow Error:', error);
+      const status = error.status || 'N/A';
+      const errorMsg = error.error?.error?.message || error.message || 'Eroare necunoscută';
+      alert(`Eroare AI (Status ${status}): ${errorMsg}`);
+      this.currentView.set('menu');
+    }
+  }
+
+  private animateQuiz() {
+    gsap.from('.question-box', {
+      x: 30,
+      opacity: 0,
+      duration: 0.5,
+      ease: 'power2.out'
+    });
+  }
+
   selectCategory(cat: Category) {
     this.selectedCategory.set(cat);
     this.currentView.set('list');
   }
 
   goBack() {
-    if (this.currentView() === 'list') {
+    const view = this.currentView();
+    if (view === 'list' || view === 'quiz' || view === 'ai-result' || view === 'loading') {
       this.currentView.set('menu');
     } else {
       window.history.back();

@@ -38,6 +38,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/weekend/pages/weekend/weekend.component').then((component) => component.WeekendComponent)
   },
   {
+    path: 'events',
+    loadComponent: () => import('./features/weekend/pages/events/events.component').then((component) => component.EventsComponent)
+  },
+  {
     path: 'report',
     loadComponent: () => import('./features/report/pages/report/report').then((component) => component.ReportComponent)
   },

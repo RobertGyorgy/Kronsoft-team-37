@@ -11,3 +11,4 @@ src/environments/environment*.ts
 java-otp-backend/otp-config/otp.jar
 java-otp-backend/otp-config/brasov.pbf
 java-otp-backend.zip
+public/config.json
