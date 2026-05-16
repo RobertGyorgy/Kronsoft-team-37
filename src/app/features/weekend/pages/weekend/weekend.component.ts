@@ -156,10 +156,16 @@ interface Recommendation {
             }
           </div>
 
-          <button class="restart-btn" (click)="restart()">
-            <span class="material-icons">refresh</span>
-            ALTĂ CĂUTARE
-          </button>
+          <div class="results-actions">
+            <button class="action-btn-secondary" (click)="fetchResults()">
+              <span class="material-icons">cached</span>
+              REGENEREAZĂ RECOMANDĂRI
+            </button>
+            <button class="action-btn-primary" (click)="restart()">
+              <span class="material-icons">refresh</span>
+              ALTĂ CĂUTARE
+            </button>
+          </div>
         </div>
       }
 
@@ -480,8 +486,14 @@ interface Recommendation {
     .tip-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
     .tip-text { font-size: 0.85rem; font-weight: 600; color: #444; line-height: 1.5; }
 
-    .restart-btn {
+    .results-actions {
       margin-top: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .action-btn-primary, .action-btn-secondary {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -489,17 +501,28 @@ interface Recommendation {
       width: 100%;
       padding: 1.2rem;
       border-radius: 100px;
-      background: #1a1a1a;
-      border: none;
-      color: #fff;
       font-weight: 700;
       font-size: 1rem;
       cursor: pointer;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
       transition: all 0.25s ease;
+      border: none;
     }
-    .restart-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(0,0,0,0.15); }
-    .restart-btn:active { transform: scale(0.97); }
+
+    .action-btn-primary {
+      background: #1a1a1a;
+      color: #fff;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .action-btn-secondary {
+      background: #f8f9fa;
+      color: #1a1a1a;
+      border: 1px solid #eee;
+    }
+
+    .action-btn-primary:hover, .action-btn-secondary:hover { transform: translateY(-2px); }
+    .action-btn-primary:active, .action-btn-secondary:active { transform: scale(0.97); }
+    .action-btn-primary:hover { box-shadow: 0 15px 30px rgba(0,0,0,0.15); }
 
     @media (min-width: 600px) {
       .interaction-grid { grid-template-columns: repeat(3, 1fr); max-width: 800px; }
