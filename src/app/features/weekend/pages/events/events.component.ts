@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, signal, inject, computed, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { EventsService } from '../../services/events.service';
 import { gsap } from 'gsap';
 
@@ -15,7 +15,7 @@ interface EventItem {
 @Component({
   selector: 'app-events',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   template: `
     <main class="events-shell" #container>
       <!-- Standard Unified Header -->
