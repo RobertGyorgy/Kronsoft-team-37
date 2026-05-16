@@ -50,6 +50,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/report/pages/report-form/report-form').then((component) => component.ReportFormComponent)
   },
   {
+    path: 'settings',
+    loadComponent: () => import('./features/settings/pages/settings/settings.component').then((component) => component.SettingsComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

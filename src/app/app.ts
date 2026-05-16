@@ -9,4 +9,10 @@ import { RouterOutlet } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class App {
+  constructor() {
+    if (typeof localStorage !== 'undefined') {
+      const isDark = localStorage.getItem('theme_dark') === 'true';
+      document.body.classList.toggle('dark-theme', isDark);
+    }
+  }
 }

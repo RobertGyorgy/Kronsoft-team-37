@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal, AfterViewInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, afterNextRender } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -7,16 +7,28 @@ import { gsap } from 'gsap';
 
 @Component({
   selector: 'app-register',
+  standalone: true,
   imports: [ReactiveFormsModule, RouterLink, CommonModule],
   styleUrl: './register.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="auth-shell">
-      <div class="auth-header">
-        <button class="back-btn" (click)="goBack()">
-          <span class="material-icons">arrow_back</span>
-        </button>
-      </div>
+      <div class="bg-glow"></div>
+      <div class="bg-glow-bottom"></div>
+
+      <header class="auth-header">
+        <div class="header-meta">
+          <button class="back-btn" (click)="goBack()">
+            <span class="material-icons">arrow_back</span>
+          </button>
+          <div class="brand-mark">Brașov Smart City</div>
+        </div>
+        
+        <div class="greeting-block">
+          <h1>Creează Cont</h1>
+          <p>Alătură-te comunității și accesează serviciile orașului.</p>
+        </div>
+      </header>
 
       <div class="auth-content">
         <div class="toggle-pill on-register">
@@ -34,21 +46,21 @@ import { gsap } from 'gsap';
                   <span class="material-icons input-icon">mail_outline</span>
                   <input
                     type="email"
-                    placeholder="Email Address"
+                    placeholder="Adresă Email"
                     formControlName="email"
                     class="input-field"
                     autocomplete="email"
                   />
                 </div>
                 @if (emailControl.touched && emailControl.invalid) {
-                  <span class="error-text">Enter a valid email address</span>
+                  <span class="error-text">Introdu o adresă de email validă</span>
                 }
 
                 <div class="input-wrapper password-wrapper">
                   <span class="material-icons input-icon">lock_outline</span>
                   <input
                     type="password"
-                    placeholder="Password"
+                    placeholder="Parolă"
                     formControlName="password"
                     class="input-field"
                     autocomplete="new-password"
@@ -59,17 +71,17 @@ import { gsap } from 'gsap';
                   <span class="material-icons input-icon">lock_outline</span>
                   <input
                     type="password"
-                    placeholder="Confirm Password"
+                    placeholder="Confirmă Parola"
                     formControlName="confirmPassword"
                     class="input-field"
                   />
                 </div>
                 @if (passwordControl.touched && registerForm.errors?.['mismatch']) {
-                  <span class="error-text">Passwords do not match</span>
+                  <span class="error-text">Parolele nu se potrivesc</span>
                 }
 
                 <button type="button" class="primary-btn" (click)="nextStep()">
-                  Continue
+                  Continuă
                 </button>
               </div>
             }
@@ -81,7 +93,7 @@ import { gsap } from 'gsap';
                   <span class="material-icons input-icon">person_outline</span>
                   <input
                     type="text"
-                    placeholder="Full Name"
+                    placeholder="Nume Complet"
                     formControlName="fullName"
                     class="input-field"
                     autocomplete="name"
@@ -92,7 +104,7 @@ import { gsap } from 'gsap';
                   <span class="material-icons input-icon">phone_iphone</span>
                   <input
                     type="tel"
-                    placeholder="Phone Number"
+                    placeholder="Număr Telefon"
                     formControlName="phone"
                     class="input-field"
                     autocomplete="tel"
@@ -103,7 +115,7 @@ import { gsap } from 'gsap';
                   <span class="material-icons input-icon">cake</span>
                   <input
                     type="number"
-                    placeholder="Age"
+                    placeholder="Vârstă"
                     formControlName="age"
                     class="input-field"
                   />
@@ -111,22 +123,22 @@ import { gsap } from 'gsap';
 
                 <label class="checkbox-label">
                   <input type="checkbox" class="checkbox-input" />
-                  <span>I Have Read And Agree To <a href="#">User Agreement Privacy Policy</a></span>
+                  <span>Am citit și sunt de acord cu <a href="#">Termenii și Condițiile</a></span>
                 </label>
 
                 <button type="submit" class="primary-btn" [disabled]="isSubmitting()">
-                  {{ isSubmitting() ? 'Creating Account...' : 'Complete Registration' }}
+                  {{ isSubmitting() ? 'Se creează contul...' : 'Finalizează Înregistrarea' }}
                 </button>
               </div>
             }
           </div>
 
           <button type="button" class="secondary-btn" (click)="demoContinue()">
-            Continue (Demo)
+            Continuă (Demo)
           </button>
         </form>
 
-        <div class="divider">OR</div>
+        <div class="divider">SAU</div>
 
         <button class="google-btn">
           <svg viewBox="0 0 24 24" class="google-icon">
@@ -135,7 +147,7 @@ import { gsap } from 'gsap';
             <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
             <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
           </svg>
-          Continue with Google
+          Continuă cu Google
         </button>
       </div>
     </section>
@@ -164,6 +176,23 @@ export class RegisterComponent {
       return pass === confirmPass ? null : { mismatch: true };
     }
   });
+
+  constructor() {
+    afterNextRender(() => {
+      this.animateEntrance();
+    });
+  }
+
+  private animateEntrance() {
+    // We can keep the logic but remove the class from elements to be safe
+    // Since the class is gone from template, this won't affect visibility anymore
+    gsap.from('.form', {
+      y: 20,
+      opacity: 0,
+      duration: 0.6,
+      ease: 'power3.out'
+    });
+  }
 
   protected nextStep(): void {
     const step1Fields = ['email', 'password', 'confirmPassword'];
@@ -202,7 +231,6 @@ export class RegisterComponent {
     const tl = gsap.timeline({
       onComplete: () => {
         this.currentStep.set(targetStep);
-        // Wait for next tick to animate in
         setTimeout(() => {
           gsap.fromTo('.step-content', 
             { x: isReverse ? -50 : 50, opacity: 0 },
