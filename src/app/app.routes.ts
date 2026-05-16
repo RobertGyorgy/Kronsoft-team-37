@@ -43,11 +43,11 @@ export const routes: Routes = [
   },
   {
     path: 'report',
-    loadComponent: () => import('./features/report/pages/report/report').then((component) => component.ReportComponent)
+    loadComponent: () => import('./features/report/pages/report/report.component').then((component) => component.ReportComponent)
   },
   {
     path: 'report/form',
-    loadComponent: () => import('./features/report/pages/report-form/report-form').then((component) => component.ReportFormComponent)
+    loadComponent: () => import('./features/report/pages/report-form/report-form.component').then((component) => component.ReportFormComponent)
   },
   {
     path: 'settings',

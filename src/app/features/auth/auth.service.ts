@@ -11,7 +11,8 @@ export interface RegisterRequest {
   fullName: string;
   email: string;
   password: string;
-  confirmPassword?: string;
+  confirmPassword: string;
+  role: 'CITIZEN' | 'TOURIST' | 'ADMIN';
 }
 
 export interface AuthResponse {

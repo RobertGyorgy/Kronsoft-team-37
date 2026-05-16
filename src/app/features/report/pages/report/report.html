@@ -57,18 +57,19 @@
         @for (report of filteredReports(); track report.id) {
           <div class="report-card">
             <div class="image-wrapper">
-              <img [src]="report.image" [alt]="report.title">
-              <div class="zone-badge">{{ report.location }}</div>
+              <img [src]="report.photoUrl" [alt]="report.categoryName">
+              <div class="zone-badge">{{ report.categoryName }}</div>
               <div class="status-overlay" [attr.data-status]="report.status">
-                {{ report.status }}
+                {{ report.status === 'NEW' ? 'Sesizat' : 'În lucru' }}
               </div>
             </div>
             <div class="card-info">
               <div class="card-meta">
-                <span class="category-tag">{{ report.category }}</span>
-                <span class="date-tag">{{ report.date }}</span>
+                <span class="category-tag">{{ report.categoryName }}</span>
+                <span class="date-tag">{{ report.createdAt | date:'dd MMM' }}</span>
               </div>
-              <h4>{{ report.title }}</h4>
+              <h4>{{ report.description | slice:0:60 }}{{ report.description.length > 60 ? '...' : '' }}</h4>
+              <p class="reporter-name">Raportat de {{ report.userName }}</p>
             </div>
           </div>
         }

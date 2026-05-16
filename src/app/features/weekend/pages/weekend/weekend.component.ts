@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { GeminiService } from '../../../../core/services/gemini.service';
+import { AiService } from '../../../../core/services/ai.service';
 import { gsap } from 'gsap';
 
 interface Category {
@@ -533,7 +533,7 @@ interface Recommendation {
 })
 export class WeekendComponent implements AfterViewInit {
   private http = inject(HttpClient);
-  private geminiService = inject(GeminiService);
+  private aiService = inject(AiService);
   private zone = inject(NgZone);
   @ViewChild('quizBody') quizBody!: ElementRef;
 
@@ -659,7 +659,7 @@ export class WeekendComponent implements AfterViewInit {
     }, 20);
 
     try {
-      const data = await this.geminiService.getRecommendation(
+      const data = await this.aiService.getRecommendation(
         this.activeCategory()?.name || '',
         this.answers()
       );

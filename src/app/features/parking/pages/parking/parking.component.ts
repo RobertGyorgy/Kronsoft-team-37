@@ -7,6 +7,9 @@ import { gsap } from 'gsap';
 import maplibregl from 'maplibre-gl';
 import * as turf from '@turf/turf';
 import { GeolocationService } from '../../../../core/services/geolocation.service';
+import { TransitService } from '../../../transport/services/transit.service';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 
 
 @Component({
@@ -276,23 +279,21 @@ export class ParkingComponent implements OnInit, OnDestroy {
   private lastGeocodeTime = 0;
   private lastGeocodeCoords = { lat: 0, lng: 0 };
 
-  public PARKING_ZONES = [
-    { name: 'Zona 0 - Centru Vechi', smsNumber: '1234', tariff: 0.60 },
-    { name: 'Zona 1 - Centrul Civic', smsNumber: '1234', tariff: 0.40 },
-    { name: 'Zona 2 - Periferie', smsNumber: '1234', tariff: 0.30 }
-  ];
+  public PARKING_ZONES: any[] = [];
 
   private polygonObjects: any[] = [];
 
   constructor(
     private cdr: ChangeDetectorRef, 
     private zone: NgZone,
-    private geoService: GeolocationService
+    private geoService: GeolocationService,
+    private transitService: TransitService,
+    private http: HttpClient
   ) {
     afterNextRender(async () => {
       try {
         await this.initMap();
-        await this.loadHDNeighborhoods();
+        await this.loadParkingData();
         this.setupLocationSync();
         this.loadPersistedData();
         this.animateEntrance();
@@ -308,10 +309,23 @@ export class ParkingComponent implements OnInit, OnDestroy {
     gsap.from('.glass-round-btn', { x: 50, opacity: 0, stagger: 0.1, duration: 0.6, delay: 0.6, ease: 'power2.out' });
   }
 
-  private async loadHDNeighborhoods() {
+  private async loadParkingData() {
     try {
-      const response = await fetch('brasov_neighborhoods.json');
-      this.neighborhoodData = await response.json();
+      // Fetch Production Zones from Java Backend (8083)
+      const zoneRes = await firstValueFrom(this.http.get<any>('/api/parking/zones?page=0&size=50'));
+      
+      // Fetch Neighborhoods from Bridge (8081)
+      const bridgeData = await firstValueFrom(this.http.get<any>('/api/v1/parking/data'));
+
+      this.PARKING_ZONES = zoneRes.content.map((z: any, idx: number) => ({
+        id: idx,
+        name: z.zone,
+        smsNumber: '1234', // Default for now
+        tariff: z.tariffPerHour,
+        tariffPerDay: z.tariffPerDay
+      }));
+
+      this.neighborhoodData = bridgeData.neighborhoods;
       
       if (!this.map) return;
 
@@ -685,6 +699,10 @@ export class ParkingComponent implements OnInit, OnDestroy {
 
   private getMapStyles() {
     return [{ "featureType": "all", "elementType": "labels.text.fill", "stylers": [{ "color": "#7c93a3" }, { "lightness": "-10" }] }, { "featureType": "landscape", "elementType": "geometry", "stylers": [{ "color": "#f5f5f5" }] }, { "featureType": "water", "elementType": "geometry", "stylers": [{ "color": "#e9e9e9" }] }];
+  }
+
+  public calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    return this.transitService.calculateDistance(lat1, lon1, lat2, lon2);
   }
 
   public cycleZone() {
