@@ -54,7 +54,7 @@ interface EventItem {
           <!-- Events List (Staggered Stack) -->
           <div class="events-stack" #eventsStack>
             @for (event of events(); track event.id) {
-              <div class="event-card-premium" (click)="openLink(event.link)">
+              <div class="event-card-premium">
                 <div class="image-box">
                   <img [src]="event.image" [alt]="event.title" class="event-img">
                   <div class="img-overlay"></div>
@@ -78,10 +78,7 @@ interface EventItem {
                   <p>{{ event.description }}</p>
                   
                   <div class="card-action">
-                    <button class="btn-more">
-                      VEZI DETALII
-                      <span class="material-icons">arrow_forward</span>
-                    </button>
+                    <span class="view-tag">GHID VIZUAL</span>
                   </div>
                 </div>
               </div>
@@ -302,21 +299,15 @@ interface EventItem {
       padding-top: 1.5rem;
     }
 
-    .btn-more {
-      background: #1a1a1a;
-      color: #fff;
-      border: none;
-      padding: 0.9rem 1.8rem;
-      border-radius: 100px;
-      font-size: 0.8rem;
-      font-weight: 950;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      letter-spacing: 0.05em;
-      transition: all 0.2s;
+    .view-tag {
+      font-size: 0.7rem;
+      font-weight: 900;
+      color: #a55eea;
+      letter-spacing: 0.1em;
+      background: #f8f1ff;
+      padding: 0.4rem 1rem;
+      border-radius: 50px;
     }
-    .btn-more:active { transform: scale(0.95); background: #333; }
 
     .empty-state {
       padding: 6rem 2rem;
@@ -429,9 +420,5 @@ export class EventsComponent implements AfterViewInit {
 
   onSearch(event: any) {
     this.searchTerm.set(event.target.value);
-  }
-
-  openLink(url: string) {
-    window.open(url, '_blank');
   }
 }

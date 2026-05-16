@@ -63,8 +63,8 @@ import { gsap } from 'gsap';
         </div>
 
         <div class="grid-card teal" routerLink="/weekend">
-          <span class="material-icons card-bg-icon">auto_awesome</span>
-          <span class="card-title">Recomandări de Weekend</span>
+          <span class="material-icons card-bg-icon">explore</span>
+          <span class="card-title">Recomandări de weekend</span>
         </div>
       </section>
 
