@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal, inject, AfterViewInit, ElementRef, ViewChild, NgZone } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject, AfterViewInit, ElementRef, ViewChild, NgZone, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -31,7 +31,7 @@ interface Recommendation {
 
       <!-- HEADER -->
       <header class="standard-header">
-        <button class="unified-back-btn" routerLink="/dashboard">
+        <button class="unified-back-btn" (click)="goBack()">
           <span class="material-icons">arrow_back</span>
           <span>Înapoi</span>
         </button>
@@ -156,10 +156,16 @@ interface Recommendation {
             }
           </div>
 
-          <button class="restart-btn" (click)="restart()">
-            <span class="material-icons">refresh</span>
-            O ALTĂ CĂUTARE
-          </button>
+          <div class="results-actions">
+            <button class="action-btn-secondary" (click)="fetchResults()">
+              <span class="material-icons">cached</span>
+              REGENEREAZĂ RECOMANDĂRI
+            </button>
+            <button class="action-btn-primary" (click)="restart()">
+              <span class="material-icons">refresh</span>
+              ALTĂ CĂUTARE
+            </button>
+          </div>
         </div>
       }
 
@@ -480,8 +486,14 @@ interface Recommendation {
     .tip-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
     .tip-text { font-size: 0.85rem; font-weight: 600; color: #444; line-height: 1.5; }
 
-    .restart-btn {
+    .results-actions {
       margin-top: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .action-btn-primary, .action-btn-secondary {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -489,17 +501,28 @@ interface Recommendation {
       width: 100%;
       padding: 1.2rem;
       border-radius: 100px;
-      background: #1a1a1a;
-      border: none;
-      color: #fff;
       font-weight: 700;
       font-size: 1rem;
       cursor: pointer;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
       transition: all 0.25s ease;
+      border: none;
     }
-    .restart-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(0,0,0,0.15); }
-    .restart-btn:active { transform: scale(0.97); }
+
+    .action-btn-primary {
+      background: #1a1a1a;
+      color: #fff;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .action-btn-secondary {
+      background: #f8f9fa;
+      color: #1a1a1a;
+      border: 1px solid #eee;
+    }
+
+    .action-btn-primary:hover, .action-btn-secondary:hover { transform: translateY(-2px); }
+    .action-btn-primary:active, .action-btn-secondary:active { transform: scale(0.97); }
+    .action-btn-primary:hover { box-shadow: 0 15px 30px rgba(0,0,0,0.15); }
 
     @media (min-width: 600px) {
       .interaction-grid { grid-template-columns: repeat(3, 1fr); max-width: 800px; }
@@ -508,7 +531,7 @@ interface Recommendation {
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class WeekendComponent {
+export class WeekendComponent implements AfterViewInit {
   private http = inject(HttpClient);
   private geminiService = inject(GeminiService);
   private zone = inject(NgZone);
@@ -524,30 +547,16 @@ export class WeekendComponent {
   titleWords = 'Explorează Brașovul'.split(' ');
   subtitleWords = 'Alege o categorie și primești 3 recomandări potrivite pentru tine.'.split(' ');
 
-  ngAfterViewInit() {
-    // Așteptăm 100ms pentru a fi siguri că literele au fost desenate în DOM
-    setTimeout(() => {
-      this.animateReveal();
-    }, 100);
+  constructor() {
+    effect(() => {
+      if (this.view() === 'menu') {
+        setTimeout(() => this.animateReveal(), 100);
+      }
+    });
   }
 
-  private animateReveal() {
-    const tl = gsap.timeline({ defaults: { ease: 'power2.out', duration: 0.8 } });
-    
-    // Forțăm starea inițială (ascunse și coborâte)
-    gsap.set('.hero-title .char', { y: 30, opacity: 0 });
-    gsap.set('.hero-subtitle .char-sub', { y: 20, opacity: 0 });
-
-    tl.to('.hero-title .char', {
-      y: 0,
-      opacity: 1,
-      stagger: 0.02
-    })
-    .to('.hero-subtitle .char-sub', {
-      y: 0,
-      opacity: 1,
-      stagger: 0.005
-    }, '-=0.4');
+  ngAfterViewInit() {
+    // Initial call will be handled by the effect or manually if needed
   }
 
   categories: Category[] = [
@@ -639,7 +648,10 @@ export class WeekendComponent {
       return;
     }
     this.lastRequest = now;
-    // Reducem decalajul la 20ms pentru viteză maximă
+    
+    // Resetăm rezultatele anterioare pentru a asigura re-randarea și feedback-ul vizual
+    this.recs.set([]);
+    
     setTimeout(() => {
       this.zone.run(() => {
         this.view.set('loading');
@@ -657,7 +669,6 @@ export class WeekendComponent {
           this.recs.set(data.recommendations || []);
           this.view.set('results');
           
-          // Animație stagger pentru cardurile de rezultate
           setTimeout(() => {
             gsap.from('.result-card', {
               y: 40,
@@ -675,7 +686,7 @@ export class WeekendComponent {
       
       this.zone.run(() => {
         alert(`Eroare AI Live: ${errorMsg}. Verifică dacă cheia API este validă și ai internet.`);
-        this.view.set('menu'); // Revenim la meniu în caz de eroare totală
+        this.view.set('menu');
       });
     }
   }
@@ -685,11 +696,9 @@ export class WeekendComponent {
   }
 
   private animateIn() {
-    // Curățăm orice animație în curs pentru a evita conflictele
     gsap.killTweensOf('.quiz-char, .answer-btn');
 
     setTimeout(() => {
-      // Animație text întrebare
       gsap.fromTo('.quiz-char', 
         { y: 15, opacity: 0 },
         { 
@@ -698,11 +707,10 @@ export class WeekendComponent {
           stagger: 0.01, 
           duration: 0.5, 
           ease: 'power2.out',
-          clearProps: 'transform' // Curățăm transform-ul după animație
+          clearProps: 'transform'
         }
       );
 
-      // Animație butoane răspuns
       gsap.fromTo('.answer-btn', 
         { y: 20, opacity: 0, scale: 0.95 },
         { 
@@ -713,9 +721,8 @@ export class WeekendComponent {
           stagger: 0.08, 
           ease: 'back.out(1.7)',
           delay: 0.1,
-          clearProps: 'all', // FOARTE IMPORTANT: Elimină orice stil GSAP care ar putea bloca clicul
+          clearProps: 'all',
           onComplete: () => {
-            // Ne asigurăm că butoanele sunt interactive
             gsap.set('.answer-btn', { pointerEvents: 'auto', cursor: 'pointer' });
           }
         }
@@ -723,8 +730,25 @@ export class WeekendComponent {
     }, 100);
   }
 
+  private animateReveal() {
+    const tl = gsap.timeline({ defaults: { ease: 'power2.out', duration: 0.8 } });
+    
+    gsap.set('.hero-title .char', { y: 30, opacity: 0 });
+    gsap.set('.hero-subtitle .char-sub', { y: 20, opacity: 0 });
+
+    tl.to('.hero-title .char', {
+      y: 0,
+      opacity: 1,
+      stagger: 0.02
+    })
+    .to('.hero-subtitle .char-sub', {
+      y: 0,
+      opacity: 1,
+      stagger: 0.005
+    }, '-=0.4');
+  }
+
   handleImageError(event: any) {
-    // Dacă imaginea de la AI e invalidă, punem o imagine superbă de rezervă cu Brașovul
     event.target.src = 'https://images.unsplash.com/photo-1590272213038-f9479ba0a55e?q=80&w=800';
   }
 
