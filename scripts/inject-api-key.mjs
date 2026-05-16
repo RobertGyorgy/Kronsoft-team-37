@@ -43,14 +43,8 @@ if (mapsKey && fs.existsSync(indexPath)) {
 // ── 2. Config JSON → public/config.json ────────────────────────
 const configPath = path.resolve(__dirname, '../public/config.json');
 const config = {
-    GOOGLE_MAPS_API_KEY: envVars['GOOGLE_MAPS_API_KEY'] || '',
-    GROQ_API_KEY:        envVars['GROQ_API_KEY']        || ''
+    GOOGLE_MAPS_API_KEY: envVars['GOOGLE_MAPS_API_KEY'] || ''
 };
 
 fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
-console.log('✅ public/config.json actualizat');
-
-// ── Validare ───────────────────────────────────────────────────
-if (!config.GEMINI_API_KEY) {
-    console.warn('⚠️  GEMINI_API_KEY lipsește din .env!');
-}
+console.log('✅ public/config.json actualizat (Keys secured)');
