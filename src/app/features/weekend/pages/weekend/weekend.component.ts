@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, signal, inject, AfterViewInit, ElementRef, ViewChild, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { GeminiService } from '../../../../core/services/gemini.service';
@@ -38,10 +39,30 @@ interface Recommendation {
 
       <!-- VIEW: Meniu Categorii -->
       @if (view() === 'menu') {
+        <div class="hero-section">
+          <h1 class="hero-title line-mask">
+            @for (word of titleWords; track word) {
+              <span class="word">
+                @for (char of word.split(''); track char) {
+                  <span class="char">{{ char }}</span>
+                }
+                <span class="char">&nbsp;</span>
+              </span>
+            }
+          </h1>
+        </div>
         <div class="content-zone animate-in">
           <div class="page-title-group">
-            <h1 class="page-title">Explorează<br>Brașovul</h1>
-            <p class="page-subtitle">Alege o direcție și primești 3 recomandări personalizate.</p>
+            <p class="hero-subtitle line-mask">
+              @for (word of subtitleWords; track word) {
+                <span class="word">
+                  @for (char of word.split(''); track char) {
+                    <span class="char-sub">{{ char }}</span>
+                  }
+                  <span class="char-sub">&nbsp;</span>
+                </span>
+              }
+            </p>
           </div>
 
           <section class="interaction-grid">
@@ -61,14 +82,25 @@ interface Recommendation {
           <!-- Progress -->
           <div class="quiz-progress">
             <div class="progress-track">
-              <div class="progress-fill" [style.width.%]="(step() / 3) * 100" [style.background]="activeCategory()?.color"></div>
+              <div class="progress-fill" 
+                   [style.width.%]="(step() / (activeCategory()?.questions?.length || 1)) * 100" 
+                   [style.background]="activeCategory()?.color"></div>
             </div>
-            <span class="progress-label">PASUL {{ step() }} DIN 3</span>
+            <span class="progress-label">PASUL {{ step() }} DIN {{ activeCategory()?.questions?.length }}</span>
           </div>
 
           <!-- Întrebare -->
           <div class="quiz-body" #quizBody>
-            <h2 class="question-text">{{ activeCategory()?.questions?.[step() - 1]?.text }}</h2>
+            <h2 class="question-text" [style.background-image]="'linear-gradient(135deg, ' + activeCategory()?.color + ', #1a1a1a)'">
+              @for (word of splitText(activeCategory()?.questions?.[step() - 1]?.text || ''); track $index) {
+                <span class="quiz-word">
+                  @for (char of word; track $index) {
+                    <span class="quiz-char">{{ char }}</span>
+                  }
+                  &nbsp;
+                </span>
+              }
+            </h2>
 
             <div class="answers-grid">
               @for (opt of activeCategory()?.questions?.[step() - 1]?.options; track $index) {
@@ -97,16 +129,22 @@ interface Recommendation {
           <div class="results-header">
             <span class="results-badge" [style.background]="activeCategory()?.color">RECOMANDAT PENTRU TINE</span>
             <h2 class="results-title">{{ activeCategory()?.name }}</h2>
-            <p class="results-subtitle">3 locuri selectate pe baza preferințelor tale.</p>
+            <p class="results-subtitle">3 locații selectate special pentru tine.</p>
           </div>
 
           <div class="results-list">
             @for (rec of recs(); track $index; let i = $index) {
               <div class="result-card">
+                <div class="card-accent" [style.background]="activeCategory()?.color"></div>
                 <div class="result-number" [style.background]="activeCategory()?.color">{{ i + 1 }}</div>
                 <div class="result-body">
                   <div class="result-header-row">
                     <h3 class="result-name">{{ rec.name }}</h3>
+                    <a [href]="'https://www.google.com/maps/search/?api=1&query=' + rec.name + ' Brasov'" 
+                       target="_blank" class="location-link" [style.color]="activeCategory()?.color">
+                      <span class="material-icons">near_me</span>
+                      MAPS
+                    </a>
                   </div>
                   <p class="result-desc">{{ rec.description }}</p>
                   <div class="result-tip">
@@ -120,7 +158,7 @@ interface Recommendation {
 
           <button class="restart-btn" (click)="restart()">
             <span class="material-icons">refresh</span>
-            CAUTĂ ALTCEVA
+            O ALTĂ CĂUTARE
           </button>
         </div>
       }
@@ -149,6 +187,8 @@ interface Recommendation {
     }
 
     /* ────── Titlu pagină ────── */
+    .hero-section { padding: 1rem 1.25rem 1rem; }
+    .eyebrow-teal { font-size: 0.7rem; font-weight: 800; color: #00a8a8; letter-spacing: 0.15em; margin: 0 0 0.5rem; }
     .page-title-group { margin-bottom: 1.5rem; }
     .page-title {
       font-size: 2.4rem;
@@ -199,6 +239,25 @@ interface Recommendation {
       transform: rotate(-10deg);
       pointer-events: none;
     }
+    .hero-title {
+      font-size: 3.2rem;
+      font-weight: 800;
+      color: #1a1a1a;
+      letter-spacing: -0.05em;
+      line-height: 1;
+      margin: 0;
+    }
+    .hero-subtitle {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      line-height: 1.4;
+      margin: 0;
+    }
+    .word { display: inline-block; white-space: nowrap; }
+    .char { display: inline-block; opacity: 0; }
+    .char-sub { display: inline-block; opacity: 0; }
+    .line-mask { overflow: visible; display: block; }
     .card-title {
       font-size: 1rem;
       font-weight: 800;
@@ -207,6 +266,8 @@ interface Recommendation {
       z-index: 2;
       letter-spacing: -0.01em;
     }
+
+    .loading-sub { color: #888; font-size: 0.95rem; margin: 0; }
 
     /* ────── Quiz ────── */
     .quiz-zone { justify-content: flex-start; padding-top: 0.5rem; }
@@ -233,13 +294,20 @@ interface Recommendation {
 
     .quiz-body { flex: 1; display: flex; flex-direction: column; justify-content: center; }
     .question-text {
-      font-size: 2.4rem;
+      font-size: 2.8rem;
       font-weight: 800;
-      color: #1a1a1a;
-      letter-spacing: -0.04em;
-      line-height: 1.1;
+      letter-spacing: -0.05em;
+      line-height: 1;
       margin-bottom: 2.5rem;
+      /* Gradient style */
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: block;
     }
+
+    .quiz-char { display: inline-block; }
+    .quiz-word { display: inline-block; white-space: nowrap; }
 
     .answers-grid {
       display: flex;
@@ -255,7 +323,10 @@ interface Recommendation {
       border: 2px solid #f0f0f0;
       border-radius: 20px;
       cursor: pointer;
-      transition: all 0.25s ease;
+      transition: border-color 0.25s ease, background 0.25s ease, transform 0.1s ease;
+      position: relative;
+      z-index: 10;
+      pointer-events: auto !important;
     }
     .answer-btn:active {
       transform: scale(0.97);
@@ -300,123 +371,135 @@ interface Recommendation {
     .loading-sub { color: #888; font-size: 0.95rem; margin: 0; }
 
     /* ────── Rezultate ────── */
-    .results-zone { padding-top: 0; }
-    .results-header { margin-bottom: 1.5rem; }
+    .results-zone { padding-top: 0; max-width: 600px; margin: 0 auto; }
+    .results-header { margin-bottom: 2rem; padding: 0 0.5rem; }
     .results-badge {
       display: inline-block;
-      padding: 0.4rem 0.9rem;
-      border-radius: 100px;
+      padding: 0.5rem 1rem;
+      border-radius: 12px;
       color: #fff;
-      font-size: 0.65rem;
-      font-weight: 800;
-      letter-spacing: 0.12em;
-      margin-bottom: 0.75rem;
+      font-size: 0.7rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
     .results-title {
-      font-size: 2.4rem;
+      font-size: 2.8rem;
       font-weight: 800;
       color: #1a1a1a;
       letter-spacing: -0.04em;
-      line-height: 1;
-      margin: 0 0 0.4rem;
+      line-height: 1.1;
+      margin: 0 0 0.5rem;
     }
-    .results-subtitle { color: #888; font-size: 0.95rem; margin: 0; }
+    .results-subtitle { color: #666; font-size: 1rem; font-weight: 500; margin: 0; }
 
     .results-list {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 1.2rem;
     }
     .result-card {
       background: #ffffff;
-      border-radius: 24px;
-      border: 1px solid #f0f0f0;
-      padding: 1.5rem;
+      border-radius: 28px;
+      padding: 1.8rem;
       display: flex;
-      gap: 1.2rem;
+      gap: 1.5rem;
       align-items: flex-start;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.04);
+      border: 1px solid rgba(0,0,0,0.03);
       position: relative;
+      overflow: hidden;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
+    .result-card:hover { transform: translateY(-4px); box-shadow: 0 15px 45px rgba(0,0,0,0.08); }
+    
+    .card-accent {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 6px;
+      height: 100%;
+    }
+
     .result-number {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #fff;
-      font-size: 0.9rem;
+      font-size: 1rem;
       font-weight: 800;
       flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
     .result-body { flex: 1; }
     .result-header-row {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 0.5rem;
-      gap: 1rem;
+      align-items: center;
+      margin-bottom: 0.8rem;
     }
     .location-link {
       display: flex;
       align-items: center;
-      gap: 0.3rem;
-      font-size: 0.75rem;
-      font-weight: 800;
+      gap: 0.4rem;
+      font-size: 0.7rem;
+      font-weight: 900;
       text-decoration: none;
-      text-transform: uppercase;
       letter-spacing: 0.05em;
-      padding: 0.5rem 0.8rem;
-      background: #f9f9f9;
+      padding: 0.6rem 1rem;
+      background: #f8f9fa;
       border-radius: 100px;
       transition: all 0.2s ease;
-      white-space: nowrap;
     }
-    .location-link:hover { background: #f0f0f0; transform: translateY(-1px); }
-    .location-link .material-icons { font-size: 0.9rem; }
+    .location-link:hover { background: #f0f2f5; transform: scale(1.05); }
     .result-name {
-      font-size: 1.2rem;
+      font-size: 1.4rem;
       font-weight: 800;
       color: #1a1a1a;
-      margin: 0 0 0.3rem;
+      margin: 0;
       letter-spacing: -0.02em;
     }
     .result-desc {
-      font-size: 0.9rem;
-      color: #666;
-      line-height: 1.5;
-      margin: 0 0 0.75rem;
+      font-size: 1rem;
+      color: #555;
+      line-height: 1.6;
+      margin: 0 0 1.2rem;
     }
     .result-tip {
       display: flex;
       align-items: flex-start;
-      gap: 0.4rem;
-      padding: 0.6rem 0.8rem;
-      background: #fff;
-      border-radius: 14px;
-      border: 1px solid #f0f0f0;
+      gap: 0.8rem;
+      padding: 1rem;
+      background: rgba(0,0,0,0.02);
+      border-radius: 18px;
     }
-    .tip-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
-    .tip-text { font-size: 0.8rem; font-weight: 600; color: #555; line-height: 1.4; }
+    .tip-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
+    .tip-text { font-size: 0.85rem; font-weight: 600; color: #444; line-height: 1.5; }
 
     .restart-btn {
-      margin-top: 1.5rem;
+      margin-top: 2.5rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.5rem;
+      gap: 0.6rem;
       width: 100%;
-      padding: 1.1rem;
+      padding: 1.2rem;
       border-radius: 100px;
-      background: #f5f5f5;
+      background: #1a1a1a;
       border: none;
-      color: #1a1a1a;
+      color: #fff;
       font-weight: 700;
-      font-size: 0.95rem;
+      font-size: 1rem;
       cursor: pointer;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      transition: all 0.25s ease;
     }
-    .restart-btn:active { background: #eee; transform: scale(0.97); }
+    .restart-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(0,0,0,0.15); }
+    .restart-btn:active { transform: scale(0.97); }
 
     @media (min-width: 600px) {
       .interaction-grid { grid-template-columns: repeat(3, 1fr); max-width: 800px; }
@@ -438,19 +521,47 @@ export class WeekendComponent {
   recs = signal<Recommendation[]>([]);
 
   private lastRequest = 0;
+  titleWords = 'Explorează Brașovul'.split(' ');
+  subtitleWords = 'Alege o categorie și primești 3 recomandări potrivite pentru tine.'.split(' ');
+
+  ngAfterViewInit() {
+    // Așteptăm 100ms pentru a fi siguri că literele au fost desenate în DOM
+    setTimeout(() => {
+      this.animateReveal();
+    }, 100);
+  }
+
+  private animateReveal() {
+    const tl = gsap.timeline({ defaults: { ease: 'power2.out', duration: 0.8 } });
+    
+    // Forțăm starea inițială (ascunse și coborâte)
+    gsap.set('.hero-title .char', { y: 30, opacity: 0 });
+    gsap.set('.hero-subtitle .char-sub', { y: 20, opacity: 0 });
+
+    tl.to('.hero-title .char', {
+      y: 0,
+      opacity: 1,
+      stagger: 0.02
+    })
+    .to('.hero-subtitle .char-sub', {
+      y: 0,
+      opacity: 1,
+      stagger: 0.005
+    }, '-=0.4');
+  }
 
   categories: Category[] = [
     {
-      id: 'natura', name: 'Natură și Aer Liber', icon: 'terrain',
+      id: 'natura', name: 'Natură', icon: 'terrain',
       color: '#2ed573', shadow: '0 10px 20px rgba(46,213,115,0.15)',
       questions: [
-        { id: 'activitate', text: 'Ce nivel de activitate preferi?', options: ['Relaxat', 'Moderat', 'Intens'] },
+        { id: 'activitate', text: 'Ce nivel de activitate preferi?', options: ['Relaxat – plimbări, natură', 'Activ – drumeții, ciclism', 'Aventuros – sport, adrenalină'] },
         { id: 'grup', text: 'Câți oameni sunteți?', options: ['Singur', 'Cuplu', 'Grup', 'Familie'] },
         { id: 'timp', text: 'Cât timp ai?', options: ['1-2 ore', 'Jumătate de zi', 'O zi'] }
       ]
     },
     {
-      id: 'arta', name: 'Artă și Istorie', icon: 'museum',
+      id: 'arta', name: 'Artă și istorie', icon: 'museum',
       color: '#a55eea', shadow: '0 10px 20px rgba(165,94,234,0.15)',
       questions: [
         { id: 'interes', text: 'Ce te interesează?', options: ['Muzee', 'Clădiri istorice', 'Galerii de artă'] },
@@ -459,7 +570,7 @@ export class WeekendComponent {
       ]
     },
     {
-      id: 'restaurante', name: 'Restaurante și Cafenele', icon: 'restaurant',
+      id: 'restaurante', name: 'Restaurante', icon: 'restaurant',
       color: '#ff4500', shadow: '0 10px 20px rgba(255,69,0,0.15)',
       questions: [
         { id: 'mancare', text: 'Ce mâncare preferi?', options: ['Românească', 'Internațională', 'Vegană', 'Fast food'] },
@@ -468,16 +579,16 @@ export class WeekendComponent {
       ]
     },
     {
-      id: 'evenimente', name: 'Evenimente în Oraș', icon: 'confirmation_number',
-      color: '#4285f4', shadow: '0 10px 20px rgba(66,133,244,0.15)',
+      id: 'cafenele', name: 'Cafenele', icon: 'local_cafe',
+      color: '#bcaaa4', shadow: '0 10px 20px rgba(188,170,164,0.15)',
       questions: [
-        { id: 'tip', text: 'Ce tip de eveniment?', options: ['Concert', 'Festival', 'Teatru', 'Sport'] },
-        { id: 'cand', text: 'Când vrei să mergi?', options: ['Azi', 'Weekend', 'Oricând'] },
-        { id: 'companie', text: 'Cu cine mergi?', options: ['Singur', 'Cuplu', 'Prieteni', 'Familie'] }
+        { id: 'atmosfera', text: 'Ce atmosferă cauți?', options: ['Cozy', 'Modern', 'Liniștită', 'Terasă'] },
+        { id: 'buget', text: 'Buget per persoană?', options: ['Sub 20 lei', '20-40 lei', 'Peste 40 lei'] },
+        { id: 'companie', text: 'Cu cine ești?', options: ['Singur', 'Cuplu', 'Prieteni', 'Familie'] }
       ]
     },
     {
-      id: 'plimbari', name: 'Plimbări Urbane', icon: 'directions_walk',
+      id: 'plimbari', name: 'Plimbări urbane', icon: 'directions_walk',
       color: '#2bcbba', shadow: '0 10px 20px rgba(43,203,186,0.15)',
       questions: [
         { id: 'viziune', text: 'Ce vrei să vezi?', options: ['Centrul istoric', 'Cartiere locale', 'Priveliști', 'Street art'] },
@@ -486,7 +597,7 @@ export class WeekendComponent {
       ]
     },
     {
-      id: 'experiente', name: 'Experiențe Inedite', icon: 'explore',
+      id: 'experiente', name: 'Experiențe inedite', icon: 'explore',
       color: '#ff6348', shadow: '0 10px 20px rgba(255,99,72,0.15)',
       questions: [
         { id: 'tip', text: 'Ce tip de experiență?', options: ['Aventură', 'Relaxare', 'Culturală', 'Gastronomică'] },
@@ -512,7 +623,7 @@ export class WeekendComponent {
     const q = cat.questions[this.step() - 1];
     this.answers.update(prev => ({ ...prev, [q.text]: opt }));
 
-    if (this.step() < 3) {
+    if (this.step() < (cat.questions.length)) {
       this.step.update(s => s + 1);
       this.animateIn();
     } else {
@@ -545,46 +656,71 @@ export class WeekendComponent {
         setTimeout(() => {
           this.recs.set(data.recommendations || []);
           this.view.set('results');
+          
+          // Animație stagger pentru cardurile de rezultate
+          setTimeout(() => {
+            gsap.from('.result-card', {
+              y: 40,
+              opacity: 0,
+              duration: 0.8,
+              stagger: 0.15,
+              ease: 'power3.out'
+            });
+          }, 50);
         }, 10);
       });
     } catch (err: any) {
-      console.error('Eroare AI:', err);
-      // --- SIGURANȚA SUPREMĂ: FALLBACK STATIC ---
-      const staticFallback: Recommendation[] = [
-        {
-          name: 'Piața Sfatului',
-          description: 'Inima istorică a Brașovului, înconjurată de clădiri medievale și cafenele cochete.',
-          tip: 'Urcă în Turnul Sfatului pentru o panoramă superbă.',
-          link: 'https://www.google.com/maps/search/?api=1&query=Piata+Sfatului+Brasov'
-        },
-        {
-          name: 'Biserica Neagră',
-          description: 'Cel mai mare edificiu religios în stil gotic din sud-estul Europei.',
-          tip: 'Vizitează interiorul pentru a vedea colecția unică de covoare orientale.',
-          link: 'https://www.google.com/maps/search/?api=1&query=Biserica+Neagra+Brasov'
-        },
-        {
-          name: 'Tâmpa și Telecabina',
-          description: 'Muntele care străjuiește orașul, oferind cea mai bună priveliște deasupra Brașovului.',
-          tip: 'Poți urca cu telecabina sau pe jos pe traseul marcat.',
-          link: 'https://www.google.com/maps/search/?api=1&query=Tampa+Brasov'
-        }
-      ];
-
+      console.error('Eroare AI Finală:', err);
+      const errorMsg = err?.error?.message || err?.message || 'Eroare necunoscută';
+      
       this.zone.run(() => {
-        setTimeout(() => {
-          this.recs.set(staticFallback);
-          this.view.set('results');
-        }, 100);
+        alert(`Eroare AI Live: ${errorMsg}. Verifică dacă cheia API este validă și ai internet.`);
+        this.view.set('menu'); // Revenim la meniu în caz de eroare totală
       });
-      // ------------------------------------------
     }
   }
 
+  splitText(text: string): string[][] {
+    return text.split(' ').map(word => word.split(''));
+  }
+
   private animateIn() {
+    // Curățăm orice animație în curs pentru a evita conflictele
+    gsap.killTweensOf('.quiz-char, .answer-btn');
+
     setTimeout(() => {
-      gsap.from('.quiz-body', { y: 25, opacity: 0, duration: 0.5, ease: 'power2.out' });
-    }, 0);
+      // Animație text întrebare
+      gsap.fromTo('.quiz-char', 
+        { y: 15, opacity: 0 },
+        { 
+          y: 0, 
+          opacity: 1, 
+          stagger: 0.01, 
+          duration: 0.5, 
+          ease: 'power2.out',
+          clearProps: 'transform' // Curățăm transform-ul după animație
+        }
+      );
+
+      // Animație butoane răspuns
+      gsap.fromTo('.answer-btn', 
+        { y: 20, opacity: 0, scale: 0.95 },
+        { 
+          y: 0, 
+          opacity: 1, 
+          scale: 1,
+          duration: 0.5, 
+          stagger: 0.08, 
+          ease: 'back.out(1.7)',
+          delay: 0.1,
+          clearProps: 'all', // FOARTE IMPORTANT: Elimină orice stil GSAP care ar putea bloca clicul
+          onComplete: () => {
+            // Ne asigurăm că butoanele sunt interactive
+            gsap.set('.answer-btn', { pointerEvents: 'auto', cursor: 'pointer' });
+          }
+        }
+      );
+    }, 100);
   }
 
   handleImageError(event: any) {

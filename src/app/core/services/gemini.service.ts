@@ -1,51 +1,60 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GeminiService {
   
-  // Folosim modelul 8B - cel mai rapid model disponibil de la Google
-  private apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent';
+  // Folosim API-ul Groq (ultra-rapid)
+  private apiUrl = 'https://api.groq.com/openai/v1/chat/completions';
+  private apiKey: string | null = null;
+
+  private async loadConfig() {
+    if (this.apiKey) return;
+    try {
+      const res = await fetch('/config.json');
+      const config = await res.json();
+      this.apiKey = config.GROQ_API_KEY;
+    } catch (e) {
+      console.error('❌ Eșec la încărcarea config.json:', e);
+    }
+  }
 
   async getRecommendation(category: string, answers: any) {
-    const cacheKey = `gemini_cache_${category}_${JSON.stringify(answers)}`;
-    const cachedData = localStorage.getItem(cacheKey);
-    if (cachedData) return JSON.parse(cachedData);
+    await this.loadConfig();
+    if (!this.apiKey) throw new Error('API Key missing. Check config.json');
 
-    const apiKey = environment.geminiApiKey;
-    const url = `${this.apiUrl}?key=${apiKey}`;
-
-    const prompt = `Recomandă scurt 3 locuri în Brașov pt "${category}" (${Object.values(answers).join(', ')}). Răspunde DOAR JSON: {"recommendations":[{"name":"..","description":"..","tip":".."}]}`;
-
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000);
+    const prompt = `
+      Ești un ghid local expert din Brașov. Recomandă EXACT 3 locuri REALE din Brașov pentru categoria "${category}" pe baza: ${Object.values(answers).join(', ')}.
+      Răspunde DOAR JSON valid, fără text înainte sau după:
+      {
+        "recommendations": [
+          { "name": "Nume Locație", "description": "Descriere.", "tip": "Sfat." }
+        ]
+      }
+    `;
 
     try {
-      const response = await fetch(url, {
+      const response = await fetch(this.apiUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
-        signal: controller.signal
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [{ role: 'user', content: prompt }],
+          response_format: { type: 'json_object' }
+        })
       });
 
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw { status: response.status, message: errorData?.error?.message || response.statusText };
-      }
+      if (!response.ok) throw new Error('Groq API error');
 
       const data = await response.json();
-      let content = data.candidates[0].content.parts[0].text;
-      content = content.replace(/```json|```/g, '').trim();
-      
-      const parsed = JSON.parse(content);
-      localStorage.setItem(cacheKey, JSON.stringify(parsed));
-      return parsed;
-    } catch (error: any) {
-      clearTimeout(timeoutId);
+      const content = JSON.parse(data.choices[0].message.content);
+      return content;
+    } catch (error) {
+      console.error('❌ Groq Error:', error);
       throw error;
     }
   }
