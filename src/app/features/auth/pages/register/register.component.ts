@@ -185,7 +185,7 @@ export class RegisterComponent implements AfterViewInit {
     fullName: ['', [Validators.required]],
     phone: ['', [Validators.required]],
     age: ['', [Validators.required, Validators.min(13)]],
-    role: ['CITIZEN' as const, [Validators.required]]
+    role: ['CITIZEN' as 'CITIZEN' | 'TOURIST' | 'ADMIN', [Validators.required]]
   }, {
     validators: (group) => {
       const pass = group.get('password')?.value;
