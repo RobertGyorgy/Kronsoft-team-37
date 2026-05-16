@@ -70,8 +70,9 @@ import { gsap } from 'gsap';
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transform: scale(1.1); /* Scaled slightly to cover edges during blur */
-      filter: blur(5px) brightness(0.85); /* Added slight blur and optimized brightness */
+      object-position: center;
+      transform: scale(1.1);
+      filter: blur(5px) brightness(0.85);
       will-change: transform, filter;
     }
 
@@ -110,6 +111,7 @@ import { gsap } from 'gsap';
     .brand-logo-img {
       height: 48px;
       width: auto;
+      object-fit: contain;
       filter: drop-shadow(0 2px 10px rgba(0,0,0,0.2));
     }
 
