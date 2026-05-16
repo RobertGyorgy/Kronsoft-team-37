@@ -331,6 +331,20 @@
   opacity: 0.5;
 }
 
+.google-btn-host {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+  view-transition-name: auth-google;
+
+  > div {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+}
+
 .google-btn {
   width: 100%;
   padding: 1.1rem;
