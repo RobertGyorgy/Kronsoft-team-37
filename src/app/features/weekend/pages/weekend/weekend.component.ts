@@ -649,6 +649,9 @@ export class WeekendComponent implements AfterViewInit {
     }
     this.lastRequest = now;
     
+    // Resetăm rezultatele anterioare pentru a asigura re-randarea și feedback-ul vizual
+    this.recs.set([]);
+    
     setTimeout(() => {
       this.zone.run(() => {
         this.view.set('loading');

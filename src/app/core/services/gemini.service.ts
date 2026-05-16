@@ -25,11 +25,15 @@ export class GeminiService {
     if (!this.apiKey) throw new Error('API Key missing. Check config.json');
 
     const prompt = `
-      Ești un ghid local expert din Brașov. Recomandă EXACT 3 locuri REALE din Brașov pentru categoria "${category}" pe baza: ${Object.values(answers).join(', ')}.
-      Răspunde DOAR JSON valid, fără text înainte sau după:
+      Ești un ghid local expert din Brașov, România. Recomandă EXACT 3 locuri REALE, specifice și populare (sau nestate ascunse) din Brașov pentru categoria "${category}".
+      Criterii utilizator: ${Object.values(answers).join(', ')}.
+      ID Unic Solicitare: ${Date.now()} (Oferă variante diferite față de dățile trecute).
+      
+      IMPORTANT: Oferă locații REALE care pot fi găsite pe Google Maps.
+      Răspunde DOAR JSON valid:
       {
         "recommendations": [
-          { "name": "Nume Locație", "description": "Descriere.", "tip": "Sfat." }
+          { "name": "Nume Locație Reală", "description": "De ce e special acest loc?", "tip": "Un sfat util pentru vizitator." }
         ]
       }
     `;
@@ -44,7 +48,9 @@ export class GeminiService {
         body: JSON.stringify({
           model: 'llama-3.3-70b-versatile',
           messages: [{ role: 'user', content: prompt }],
-          response_format: { type: 'json_object' }
+          response_format: { type: 'json_object' },
+          temperature: 0.9,
+          max_tokens: 1000
         })
       });
 
