@@ -1,83 +1,51 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GeminiService {
-  private http = inject(HttpClient);
   
-  private apiUrl = 'https://api.groq.com/openai/v1/chat/completions';
+  // Folosim modelul 8B - cel mai rapid model disponibil de la Google
+  private apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent';
 
-  async getRecommendation(answers: any, apiKey: string) {
-    const brasovContext = `
-      Baza de date de referință (exemple de succes):
-      - Pietrele lui Solomon (Natură/Aventură) - Poză: https://zilesinopti.ro/wp-content/uploads/2026/04/pietrele-lui-solomon.jpg
-      - CH9 Specialty Coffee (Gastronomie/Relax) - Poză: https://zilesinopti.ro/wp-content/uploads/2024/05/ch9-coffee.jpg
-      - Turnul Alb (Istorie/Panoramă) - Poză: https://zilesinopti.ro/wp-content/uploads/2026/04/1-header-2.webp
-      - Lacul Noua (Familie/Relax) - Poză: https://zilesinopti.ro/wp-content/uploads/2026/04/1-header-2.webp
-      - Aftăr Stube (Social/Craft Beer) - Poză: https://zilesinopti.ro/wp-content/uploads/2026/04/1-Artis-Poza-01-Principala-event.webp
-      - Tipografia (Cultură/Urban) - Poză: https://zilesinopti.ro/wp-content/uploads/2026/04/Brasov@Acasa.jpg
-    `;
+  async getRecommendation(category: string, answers: any) {
+    const cacheKey = `gemini_cache_${category}_${JSON.stringify(answers)}`;
+    const cachedData = localStorage.getItem(cacheKey);
+    if (cachedData) return JSON.parse(cachedData);
 
-    const prompt = `
-      Ești asistentul "Smart Advisor" - un expert în date Open Source despre orașul Brașov.
-      
-      OBIECTIV: Oferă o recomandare de activitate REALĂ și PRECISĂ pentru acest weekend.
-      
-      DATE UTILIZATOR:
-      - VIBE: ${answers.vibe}
-      - COMPANIE: ${answers.company}
-      - BUGET: ${answers.budget}
-      - TIMP: ${answers.duration}
+    const apiKey = environment.geminiApiKey;
+    const url = `${this.apiUrl}?key=${apiKey}`;
 
-      INSTRUCȚIUNI CRITICE (OPEN SOURCE DATA):
-      1. Folosește-ți cunoștințele tale vaste despre Brașov (restaurante, trasee, muzee, parcuri).
-      2. Recomandarea trebuie să fie o locație care EXISTĂ în realitate.
-      3. Dacă locația nu este în lista de exemple de mai sus, caută în baza ta de date internă o imagine reală (URL valid) sau folosește unul dintre link-urile de poze de mai sus care se potrivește ca stil.
+    const prompt = `Recomandă scurt 3 locuri în Brașov pt "${category}" (${Object.values(answers).join(', ')}). Răspunde DOAR JSON: {"recommendations":[{"name":"..","description":"..","tip":".."}]}`;
 
-      RĂSPUNDE EXCLUSIV ÎN JSON CU ACEASTĂ STRUCTURĂ:
-      {
-        "title": "Numele Activității",
-        "location": "Adresa exactă sau zona",
-        "image": "URL-ul pozei reale",
-        "details": "Descriere detaliată și motivul alegerii (max 3 fraze)",
-        "reason": "De ce este perfect pentru vibe-ul ${answers.vibe}?",
-        "emoji": "Emoji relevant"
-      }
-    `;
-
-    const body = {
-      model: "llama-3.3-70b-versatile",
-      messages: [
-        {
-          role: "system",
-          content: "Ești un expert în date Open Source despre Brașov. Oferi doar locații reale și precise. Răspunzi DOAR în JSON."
-        },
-        {
-          role: "user",
-          content: prompt
-        }
-      ],
-      response_format: { type: "json_object" },
-      temperature: 0.6
-    };
-
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json'
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
 
     try {
-      const response = await firstValueFrom(
-        this.http.post<any>(this.apiUrl, body, { headers })
-      );
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw { status: response.status, message: errorData?.error?.message || response.statusText };
+      }
+
+      const data = await response.json();
+      let content = data.candidates[0].content.parts[0].text;
+      content = content.replace(/```json|```/g, '').trim();
       
-      const content = response.choices[0].message.content;
-      return JSON.parse(content);
-    } catch (error) {
-      console.error('Groq API Error:', error);
+      const parsed = JSON.parse(content);
+      localStorage.setItem(cacheKey, JSON.stringify(parsed));
+      return parsed;
+    } catch (error: any) {
+      clearTimeout(timeoutId);
       throw error;
     }
   }
