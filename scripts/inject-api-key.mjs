@@ -44,7 +44,9 @@ if (mapsKey && fs.existsSync(indexPath)) {
 const configPath = path.resolve(__dirname, '../public/config.json');
 const config = {
     GOOGLE_MAPS_API_KEY: envVars['GOOGLE_MAPS_API_KEY'] || '',
-    GEMINI_API_KEY:      envVars['GEMINI_API_KEY']      || ''
+    GEMINI_API_KEY:      envVars['GEMINI_API_KEY']      || '',
+    GROQ_API_KEY:        envVars['GROQ_API_KEY']        || '',
+    GOOGLE_CLIENT_ID:    envVars['GOOGLE_CLIENT_ID']    || ''
 };
 
 fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
