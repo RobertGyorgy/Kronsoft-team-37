@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TransitService } from '../../services/transit.service';
+import { GeolocationService } from '../../../../core/services/geolocation.service';
 import { gsap } from 'gsap';
 import maplibregl from 'maplibre-gl';
 
@@ -308,12 +309,15 @@ export class BusSearchComponent implements OnInit, OnDestroy {
   @ViewChild('viewer') viewer!: ElementRef;
   
   private transitService = inject(TransitService);
+  private geoService = inject(GeolocationService);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
   
   private map: any;
   private markers: any[] = [];
+  private userMarker: any;
   private initTimeout: any;
+  private isAlive = true;
   
   isLoading = signal<boolean>(false);
   isFetchingLines = signal<boolean>(false);
@@ -332,38 +336,28 @@ export class BusSearchComponent implements OnInit, OnDestroy {
   private locationTimeout: any;
 
   constructor() {
-    afterNextRender(() => {
+    afterNextRender(async () => {
       this.isLoading.set(true);
       
-      // Start finding location early
-      const earlyLoc = new Promise((resolve) => {
-        navigator.geolocation.getCurrentPosition(
-          (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-          () => resolve(null),
-          { timeout: 2000 }
-        );
-      });
+      const coords = await this.geoService.getCurrentPosition();
+      this.initMap(coords || undefined);
+      
+      await this.transitService.loadData();
+      this.fetchPopularHubs();
+      
+      if (coords) {
+        this.findNearbyStation(true);
+      } else {
+        this.isLoading.set(false);
+      }
 
-      earlyLoc.then((coords: any) => {
-        this.initMap(coords);
-        this.transitService.loadData().then(() => {
-          this.fetchPopularHubs();
-          
-          this.locationTimeout = setTimeout(() => {
-            if (!this.activeStation() && !this.searchTerm()) {
-              if (this.allStations.length > 0) this.selectStation(this.allStations[0]);
-              else this.isLoading.set(false);
-            }
-          }, 5000);
-
-          this.findNearbyStation(true);
-        });
-      });
+      this.setupLocationSync();
     });
   }
 
   ngOnInit() {}
   ngOnDestroy() {
+    this.isAlive = false;
     if (this.initTimeout) clearTimeout(this.initTimeout);
     if (this.locationTimeout) clearTimeout(this.locationTimeout);
   }
@@ -751,34 +745,71 @@ export class BusSearchComponent implements OnInit, OnDestroy {
   displayLimit = signal(15);
   showMore() { this.displayLimit.update(v => v + 15); }
 
+  private setupLocationSync() {
+    this.geoService.startTracking();
+    
+    // Sync user marker
+    const sync = () => {
+      if (!this.isAlive) return;
+      const loc = this.geoService.currentLocation();
+      if (loc && this.map) {
+        this.updateUserMarker(loc.lat, loc.lng);
+      }
+      requestAnimationFrame(sync);
+    };
+    sync();
+  }
+
+  private updateUserMarker(lat: number, lng: number) {
+    if (!this.map) return;
+    const pos: [number, number] = [lng, lat];
+
+    if (this.userMarker) {
+      this.userMarker.setLngLat(pos);
+    } else {
+      const el = document.createElement('div');
+      el.className = 'user-location-marker';
+      el.style.width = '20px';
+      el.style.height = '20px';
+      el.style.background = '#4285F4';
+      el.style.border = '3px solid white';
+      el.style.borderRadius = '50%';
+      el.style.boxShadow = '0 0 15px rgba(66, 133, 244, 0.5)';
+      
+      this.userMarker = new maplibregl.Marker({ element: el })
+        .setLngLat(pos)
+        .addTo(this.map);
+    }
+  }
+
   findNearbyStation(auto: boolean = false) {
-    if (!navigator.geolocation) return;
     if (!auto) this.isLoading.set(true);
 
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        if (this.locationTimeout) clearTimeout(this.locationTimeout);
-        const userLat = pos.coords.latitude;
-        const userLon = pos.coords.longitude;
-        let closest: any = null;
-        let minDist = Infinity;
-        
-        this.smartStops().forEach((stop: any) => {
-          const dist = this.calculateDistance(userLat, userLon, stop.lat, stop.lon);
-          if (dist < minDist) {
-            minDist = dist;
-            closest = stop;
-          }
-        });
-
-        if (closest) this.selectStation(closest);
+    const loc = this.geoService.currentLocation();
+    if (loc) {
+      this.processNearby(loc.lat, loc.lng, auto);
+    } else {
+      this.geoService.getCurrentPosition().then(l => {
+        if (l) this.processNearby(l.lat, l.lng, auto);
         else if (!auto) this.isLoading.set(false);
-      },
-      () => {
-        if (!auto) this.isLoading.set(false);
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-    );
+      });
+    }
+  }
+
+  private processNearby(userLat: number, userLon: number, auto: boolean) {
+    let closest: any = null;
+    let minDist = Infinity;
+    
+    this.smartStops().forEach((stop: any) => {
+      const dist = this.calculateDistance(userLat, userLon, stop.lat, stop.lon);
+      if (dist < minDist) {
+        minDist = dist;
+        closest = stop;
+      }
+    });
+
+    if (closest) this.selectStation(closest);
+    else if (!auto) this.isLoading.set(false);
   }
 
   private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {

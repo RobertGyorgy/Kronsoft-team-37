@@ -6,6 +6,7 @@ import { interval, Subscription } from 'rxjs';
 import { gsap } from 'gsap';
 import maplibregl from 'maplibre-gl';
 import * as turf from '@turf/turf';
+import { GeolocationService } from '../../../../core/services/geolocation.service';
 
 declare const google: any;
 
@@ -48,8 +49,8 @@ declare const google: any;
         <button class="glass-round-btn" (click)="toggleTariffs()">
           <span class="material-icons">payments</span>
         </button>
-        <button class="glass-round-btn" (click)="initMap()">
-          <span class="material-icons">my_location</span>
+        <button class="glass-round-btn" (click)="recenterMap()" [class.following]="followMode">
+          <span class="material-icons">{{ followMode ? 'gps_fixed' : 'my_location' }}</span>
         </button>
       </aside>
 
@@ -246,6 +247,9 @@ export class ParkingComponent implements OnInit, OnDestroy {
   showPaymentConfirmation = false;
   private userLat = 0;
   private userLng = 0;
+  public followMode = true;
+  private isUserPanning = false;
+  private isAlive = true;
   
   history: any[] = [];
   private timerSubscription: Subscription | undefined;
@@ -262,11 +266,15 @@ export class ParkingComponent implements OnInit, OnDestroy {
 
   private polygonObjects: any[] = [];
 
-  constructor(private cdr: ChangeDetectorRef, private zone: NgZone) {
+  constructor(
+    private cdr: ChangeDetectorRef, 
+    private zone: NgZone,
+    private geoService: GeolocationService
+  ) {
     afterNextRender(async () => {
       await this.initMap();
       await this.loadHDNeighborhoods();
-      this.startGpsTracking();
+      this.setupLocationSync();
       this.loadPersistedData();
       this.animateEntrance();
     });
@@ -379,7 +387,10 @@ export class ParkingComponent implements OnInit, OnDestroy {
     });
 
     this.updateMarker(lat, lng, this.selectedZoneIndex);
-    if (this.map) this.map.easeTo({ center: [lng, lat], duration: 1000 });
+    
+    if (this.map && this.followMode) {
+      this.map.easeTo({ center: [lng, lat], duration: 1000 });
+    }
 
     // OSM Reverse Geocoding for Street Name
     this.reverseGeocodeOSM(lat, lng);
@@ -402,13 +413,31 @@ export class ParkingComponent implements OnInit, OnDestroy {
     }
   }
 
-  private startGpsTracking() {
-    if (!navigator.geolocation) return;
-    navigator.geolocation.watchPosition(
-      (pos) => this.zone.run(() => this.updateZoneByLocation(pos.coords.latitude, pos.coords.longitude)),
-      (err) => console.warn('GPS Error', err),
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
+  private setupLocationSync() {
+    this.geoService.startTracking();
+    
+    // Use an effect-like sync with the signal
+    const sync = () => {
+      if (!this.isAlive) return;
+      const loc = this.geoService.currentLocation();
+      if (loc) {
+        this.updateZoneByLocation(loc.lat, loc.lng);
+      }
+      requestAnimationFrame(sync);
+    };
+    sync();
+  }
+
+  public recenterMap() {
+    const loc = this.geoService.currentLocation();
+    if (loc) {
+      this.followMode = true;
+      this.map.easeTo({ center: [loc.lng, loc.lat], zoom: 17, duration: 1000 });
+    } else {
+      this.geoService.getCurrentPosition().then(l => {
+        if (l) this.map.easeTo({ center: [l.lng, l.lat], zoom: 17, duration: 1000 });
+      });
+    }
   }
 
   private updateMarker(lat: number, lng: number, zone: number) {
@@ -453,10 +482,18 @@ export class ParkingComponent implements OnInit, OnDestroy {
       zoom: 14,
       attributionControl: false
     });
+
+    this.map.on('dragstart', () => {
+      this.followMode = false;
+      this.cdr.detectChanges();
+    });
   }
 
   ngOnInit() { this.loadPersistedData(); }
-  ngOnDestroy() { if (this.timerSubscription) this.timerSubscription.unsubscribe(); }
+  ngOnDestroy() { 
+    this.isAlive = false;
+    if (this.timerSubscription) this.timerSubscription.unsubscribe(); 
+  }
 
   private loadPersistedData() {
     const savedPlate = localStorage.getItem('parked_plate');
