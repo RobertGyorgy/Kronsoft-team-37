@@ -1,177 +1,223 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, afterNextRender, ElementRef, ViewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { gsap } from 'gsap';
 
 @Component({
   selector: 'app-welcome',
+  standalone: true,
   imports: [RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="welcome-shell">
-      <figure class="hero-figure">
+    <main class="welcome-shell">
+      <!-- BLURRED BACKGROUND -->
+      <div class="full-bg">
         <img
           src="/images/poza%20intro%20screen%20.jpg"
-          alt="Brașov city background"
-          class="hero-image"
+          alt="Brașov"
+          class="bg-image"
+          #bgImg
         />
-      </figure>
-
-      <div class="content">
-        <div class="middle-title">
-          <h1>Smart City Brașov</h1>
-        </div>
-
-        <div class="actions">
-          <a routerLink="/login" class="bicolored-btn">
-            <span class="btn-text">Get Started</span>
-            <div class="btn-icon">
-              <span class="chevron-group">
-                <span class="chevron"></span>
-                <span class="chevron"></span>
-                <span class="chevron"></span>
-              </span>
-            </div>
-          </a>
-        </div>
+        <div class="vignette-overlay"></div>
       </div>
-    </section>
+
+      <!-- CONTENT LAYER -->
+      <div class="safe-layer">
+        <nav class="top-brand">
+          <div class="brand-wrap">
+            <img src="/images/ROU_BV_Brasov_CoA.svg.png" alt="Logo" class="brand-logo-img" />
+            <span class="brand-text">Brașov Smart City</span>
+          </div>
+        </nav>
+
+        <section class="main-content">
+          <div class="text-group">
+            <h1 class="headline">Descoperă Viitorul<br/>Mobilității Urbane</h1>
+            <p class="tagline">Experimentează transportul public și parcarea inteligentă în Brașov — sigur, rapid și modern.</p>
+          </div>
+        </section>
+
+        <footer class="bottom-action-zone">
+          <div class="action-container">
+            <a routerLink="/login" class="theme-action-btn">
+              <span class="btn-label">Începe Acum</span>
+              <div class="arrow-ico">
+                <span class="material-icons">east</span>
+              </div>
+            </a>
+          </div>
+        </footer>
+      </div>
+    </main>
   `,
-  styles: [
-    `
-      :host {
-        display: block;
-      }
+  styles: [`
+    .welcome-shell {
+      height: 100dvh;
+      width: 100%;
+      position: relative;
+      background: #000;
+      font-family: 'Outfit', sans-serif;
+      overflow: hidden;
+    }
 
-      .welcome-shell {
-        height: 100dvh;
-        width: 100%;
-        overflow-x: hidden;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        background: #000;
-        font-family: 'Outfit', sans-serif;
-        color: #fff;
-      }
+    /* BACKGROUND */
+    .full-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
 
-      .hero-figure {
-        position: absolute;
-        inset: 0;
-        margin: 0;
-        z-index: 0;
-      }
+    .bg-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.1); /* Scaled slightly to cover edges during blur */
+      filter: blur(5px) brightness(0.85); /* Added slight blur and optimized brightness */
+      will-change: transform, filter;
+    }
 
-      .hero-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        filter: blur(2px) brightness(0.85); /* Added professional blur */
-        transform: scale(1.1); /* Scale up to cover edges from blur */
-      }
+    .vignette-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.4) 0%,
+        rgba(0,0,0,0) 40%,
+        rgba(0,0,0,0.8) 100%
+      );
+    }
 
-      .content {
-        position: relative;
-        z-index: 10;
-        flex: 1;
-        padding: 3rem 2rem calc(4rem + env(safe-area-inset-bottom));
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between; /* Spreads title to middle and button to bottom */
-        align-items: center;
-        text-align: center;
-      }
+    /* CONTENT LAYOUT */
+    .safe-layer {
+      position: relative;
+      z-index: 10;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: calc(env(safe-area-inset-top) + 2rem) 2rem calc(env(safe-area-inset-bottom) + 2rem);
+    }
 
-      .middle-title {
-        flex: 1;
-        display: flex;
-        align-items: center; /* Vertical center */
-        justify-content: center;
-      }
+    .top-brand {
+      margin-bottom: 2rem;
+    }
 
-      h1 {
-        font-size: 3.5rem;
-        font-weight: 800;
-        line-height: 1;
-        letter-spacing: -0.04em;
-        text-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      }
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      justify-content: center;
+    }
 
-      .actions {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-      }
+    .brand-logo-img {
+      height: 48px;
+      width: auto;
+      filter: drop-shadow(0 2px 10px rgba(0,0,0,0.2));
+    }
 
-      /* Bicolored Button Implementation */
-      .bicolored-btn {
-        background: #fff;
-        text-decoration: none;
-        padding: 0.35rem 0.35rem 0.35rem 2rem;
-        border-radius: 999px;
-        display: flex;
-        align-items: center;
-        gap: 1.25rem;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
-        max-width: 100%;
-        width: 300px;
-        justify-content: space-between;
-      }
+    .brand-text { color: #fff; font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; }
 
-      .bicolored-btn:hover {
-        transform: translateY(-2px);
-      }
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+    }
 
-      .bicolored-btn:active {
-        transform: translateY(0) scale(0.97);
-      }
+    .headline {
+      font-size: clamp(2.6rem, 10vw, 3.5rem);
+      font-weight: 950;
+      color: #fff;
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    }
 
-      .btn-text {
-        color: #000;
-        font-weight: 800;
-        font-size: 1.15rem;
-        letter-spacing: -0.01em;
-      }
+    .tagline {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.8);
+      max-width: 320px;
+      margin: 0 auto;
+      line-height: 1.4;
+    }
 
-      .btn-icon {
-        width: 3rem;
-        height: 3rem;
-        background: #ff4500;
-        border-radius: 999px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
+    /* ROUNDED FOOTER BUTTON */
+    .bottom-action-zone {
+      display: flex;
+      justify-content: center;
+    }
 
-      /* Animated CSS Chevrons */
-      .chevron-group {
-        display: flex;
-        gap: 3px;
-      }
+    .action-container {
+      width: 100%;
+      max-width: 400px;
+    }
 
-      .chevron {
-        width: 8px;
-        height: 8px;
-        border-right: 2.5px solid #fff;
-        border-top: 2.5px solid #fff;
-        transform: rotate(45deg);
-        display: block;
-        opacity: 0.2;
-        animation: chevron-flow 1.5s infinite;
-      }
+    .theme-action-btn {
+      width: 100%;
+      background: #fff;
+      color: #000;
+      text-decoration: none;
+      height: 64px;
+      padding: 0 0.5rem 0 2rem;
+      border-radius: 999px; /* Reverted to fully rounded capsule */
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+      transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1);
+    }
 
-      .chevron:nth-child(2) { animation-delay: 0.2s; }
-      .chevron:nth-child(3) { animation-delay: 0.4s; }
+    .theme-action-btn:active {
+      transform: scale(0.96);
+    }
 
-      @keyframes chevron-flow {
-        0%, 100% { opacity: 0.2; transform: rotate(45deg) scale(1); }
-        50% { opacity: 1; transform: rotate(45deg) scale(1.1); }
-      }
+    .btn-label {
+      font-weight: 900;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+    }
 
-      @media (max-width: 400px) {
-        h1 { font-size: 2.75rem; }
-        .bicolored-btn { width: 100%; padding-left: 1.25rem; }
-      }
-    `
-  ]
+    .arrow-ico {
+      width: 52px;
+      height: 52px;
+      background: #1a1a1a;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+
+    @media (max-width: 480px) {
+      .headline { font-size: 3rem; }
+      .safe-layer { padding: calc(env(safe-area-inset-top) + 2rem) 1.5rem calc(env(safe-area-inset-bottom) + 1.5rem); }
+    }
+  `]
 })
-export class WelcomeComponent {}
+export class WelcomeComponent {
+  @ViewChild('bgImg') bgImg!: ElementRef;
+
+  constructor() {
+    afterNextRender(() => {
+      this.animateEntrance();
+    });
+  }
+
+  private animateEntrance() {
+    const tl = gsap.timeline({ defaults: { ease: 'power4.out', duration: 1.2 } });
+
+    gsap.set('.headline, .tagline, .bottom-action-zone, .top-brand', { opacity: 0, y: 30 });
+    gsap.set(this.bgImg.nativeElement, { scale: 1.2 });
+
+    tl.to(this.bgImg.nativeElement, {
+      scale: 1.1,
+      duration: 3,
+      ease: 'power2.out'
+    })
+    .to('.top-brand', { opacity: 1, y: 0 }, 0.5)
+    .to('.headline', { opacity: 1, y: 0 }, 0.7)
+    .to('.tagline', { opacity: 1, y: 0 }, 0.9)
+    .to('.bottom-action-zone', { opacity: 1, y: 0 }, 1.1);
+  }
+}
