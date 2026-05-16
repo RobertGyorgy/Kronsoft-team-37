@@ -6,8 +6,8 @@ import { interval, Subscription } from 'rxjs';
 import { gsap } from 'gsap';
 import maplibregl from 'maplibre-gl';
 import * as turf from '@turf/turf';
+import { GeolocationService } from '../../../../core/services/geolocation.service';
 
-declare const google: any;
 
 @Component({
   selector: 'app-parking',
@@ -48,8 +48,8 @@ declare const google: any;
         <button class="glass-round-btn" (click)="toggleTariffs()">
           <span class="material-icons">payments</span>
         </button>
-        <button class="glass-round-btn" (click)="initMap()">
-          <span class="material-icons">my_location</span>
+        <button class="glass-round-btn" (click)="recenterMap()" [class.following]="followMode">
+          <span class="material-icons">{{ followMode ? 'gps_fixed' : 'my_location' }}</span>
         </button>
       </aside>
 
@@ -66,12 +66,22 @@ declare const google: any;
           <div class="dock-input-row">
             <div class="input-pill-modern">
               <span class="material-icons">directions_car</span>
-              <input type="text" [(ngModel)]="tempPlate" (ngModelChange)="tempPlate = $event.toUpperCase()" placeholder="Număr înmatriculare" class="plate-input-field">
+              <input type="text" [(ngModel)]="tempPlate" (ngModelChange)="onPlateInputChange($event)" placeholder="Număr înmatriculare" class="plate-input-field">
               <button class="pill-check-btn" (click)="savePlate()" [class.active]="isPlateSaved">
                 <span class="material-icons">{{ isPlateSaved ? 'check_circle' : 'save' }}</span>
               </button>
             </div>
           </div>
+
+          @if (userSavedPlates.length > 0) {
+            <div class="saved-plates-strip">
+              @for (p of userSavedPlates; track p) {
+                <button class="plate-tag" [class.active]="tempPlate === p" (click)="selectSavedPlate(p)">
+                  {{ p }}
+                </button>
+              }
+            </div>
+          }
 
           <div class="dock-controls-row">
             <div class="stepper-pill-glass">
@@ -153,48 +163,54 @@ declare const google: any;
     </main>
   `,
   styles: [`
-    .parking-glass-shell { height: 100dvh; width: 100%; overflow: hidden; position: relative; font-family: 'Outfit', sans-serif; background: #000; }
+    .parking-glass-shell { height: 100dvh; width: 100%; overflow: hidden; position: relative; font-family: 'Outfit', sans-serif; background: var(--bg-primary); }
     .map-bg { position: absolute; inset: 0; z-index: 1; }
     .map-overlay-vignette { position: absolute; inset: 0; background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.15) 100%); z-index: 2; pointer-events: none; }
     .top-status-hub { position: absolute; top: calc(var(--safe-top) + 0.75rem); left: 1rem; right: 1rem; z-index: 100; }
-    .glass-status-card { background: rgba(255,255,255,0.75); backdrop-filter: blur(25px); border-radius: 32px; border: 1px solid rgba(255,255,255,0.4); padding: 1.25rem; box-shadow: 0 15px 45px rgba(0,0,0,0.12); display: flex; flex-direction: column; gap: 1rem; }
+    .glass-status-card { background: var(--glass-bg); backdrop-filter: blur(25px); border-radius: 32px; border: 1px solid var(--glass-border); padding: 1.25rem; box-shadow: 0 15px 45px rgba(0,0,0,0.12); display: flex; flex-direction: column; gap: 1rem; }
     .status-top-row { display: flex; align-items: center; justify-content: space-between; }
-    .minimal-back-circle { width: 44px; height: 44px; border-radius: 50%; background: #fff; border: none; display: flex; align-items: center; justify-content: center; color: #1a1a1a; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .minimal-back-circle { width: 44px; height: 44px; border-radius: 50%; background: var(--bg-card); border: none; display: flex; align-items: center; justify-content: center; color: var(--text-primary); cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
     .timer-main-display { text-align: center; flex: 1; }
     .timer-sub { font-size: 0.65rem; font-weight: 900; color: #888; letter-spacing: 0.15em; display: block; margin-bottom: 0.2rem; }
-    .timer-digits { font-size: 3.2rem; font-weight: 950; color: #1a1a1a; margin: 0; line-height: 0.9; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; }
+    .timer-digits { font-size: 3.2rem; font-weight: 950; color: var(--text-primary); margin: 0; line-height: 0.9; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; }
     .status-bottom-row { display: flex; align-items: center; gap: 0.75rem; background: rgba(0,0,0,0.03); padding: 0.5rem; border-radius: 16px; transition: all 0.3s; }
     .status-bottom-row.outside { background: rgba(116, 125, 140, 0.1); }
-    .zone-pill { padding: 4px 10px; border-radius: 8px; font-weight: 950; font-size: 0.65rem; color: #fff; text-transform: uppercase; transition: all 0.3s; }
+    .zone-pill { padding: 4px 12px; border-radius: 999px; font-weight: 950; font-size: 0.65rem; color: #fff; text-transform: uppercase; transition: all 0.3s; }
     .z-0 { background: #ea4335; }
     .z-1 { background: #fb8c00; }
     .z-2 { background: #34a853; }
     .z-none { background: #747d8c; }
-    .street-label-minimal { font-size: 0.9rem; font-weight: 800; color: #1a1a1a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .street-label-minimal { font-size: 0.9rem; font-weight: 800; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .compact-side-rail { position: absolute; right: 1rem; top: 60%; transform: translateY(-50%); z-index: 10; display: flex; flex-direction: column; gap: 0.75rem; }
-    .glass-round-btn { width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,0.75); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: center; color: #1a1a1a; cursor: pointer; box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
+    .glass-round-btn { width: 52px; height: 52px; border-radius: 50%; background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; color: var(--text-primary); cursor: pointer; box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
     .action-dock-container { position: absolute; bottom: calc(var(--safe-bottom) + 1rem); left: 1rem; right: 1rem; z-index: 100; }
-    .glass-action-card { background: rgba(255,255,255,0.8); backdrop-filter: blur(30px); border-radius: 36px; border: 1px solid rgba(255,255,255,0.4); padding: 1.5rem; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; gap: 1.25rem; position: relative; }
+    .glass-action-card { background: var(--glass-bg); backdrop-filter: blur(30px); border-radius: 36px; border: 1px solid var(--glass-border); padding: 1.5rem; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; gap: 1.25rem; position: relative; }
     .dock-input-row { width: 100%; }
     .proximity-warning-bar { background: rgba(251, 140, 0, 0.9); backdrop-filter: blur(10px); color: #fff; padding: 0.75rem 1.25rem; border-radius: 20px; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.75rem; font-size: 0.8rem; font-weight: 800; box-shadow: 0 10px 30px rgba(251,140,0,0.2); animation: slideUp 0.4s ease-out; }
     @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     .input-pill-modern { background: rgba(0,0,0,0.04); border-radius: 999px; height: 56px; display: flex; align-items: center; padding: 0 0.5rem 0 1.25rem; gap: 0.75rem; border: 1px solid rgba(0,0,0,0.02); }
     .input-pill-modern .material-icons { color: #888; font-size: 1.2rem; }
-    .plate-input-field { flex: 1; border: none; background: transparent; outline: none; font-weight: 800; font-size: 1.1rem; color: #1a1a1a; width: 100%; }
+    .plate-input-field { flex: 1; border: none; background: transparent; outline: none; font-weight: 800; font-size: 1.1rem; color: var(--text-primary); width: 100%; }
     .pill-check-btn { width: 44px; height: 44px; border-radius: 50%; background: #fff; border: none; color: #ccc; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: all 0.3s; }
-    .pill-check-btn.active { background: #1a1a1a; color: #fff; }
+    .pill-check-btn.active { background: var(--text-primary); color: var(--bg-primary); }
+    
+    .saved-plates-strip { display: flex; gap: 0.5rem; overflow-x: auto; padding: 0.25rem 0 0.5rem; scrollbar-width: none; }
+    .saved-plates-strip::-webkit-scrollbar { display: none; }
+    .plate-tag { padding: 0.5rem 1rem; border-radius: 12px; background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-primary); font-weight: 900; font-size: 0.8rem; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+    .plate-tag.active { background: var(--text-primary); color: var(--bg-primary); border-color: var(--text-primary); }
+    
     .dock-controls-row { display: flex; gap: 0.75rem; }
     .stepper-pill-glass { flex: 1; height: 56px; background: rgba(0,0,0,0.04); border-radius: 28px; display: flex; align-items: center; justify-content: space-between; padding: 0 0.5rem; }
     .round-step { width: 44px; height: 44px; border-radius: 50%; background: #fff; border: none; font-size: 1.4rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
     .hour-val { font-size: 1.2rem; font-weight: 950; color: #1a1a1a; min-width: 35px; text-align: center; }
-    .pay-button-solid { flex: 1.4; height: 56px; background: #1a1a1a; border-radius: 28px; border: none; color: #fff; font-weight: 950; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.15); white-space: nowrap; }
+    .pay-button-solid { flex: 1.4; height: 56px; background: var(--text-primary); border-radius: 999px; border: none; color: var(--bg-primary); font-weight: 950; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.15); white-space: nowrap; }
     .dock-extension-drawer { max-height: 0; overflow: hidden; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
     .dock-extension-drawer.open { max-height: 60px; margin-top: -0.25rem; }
     .quick-pills { display: flex; gap: 0.5rem; }
-    .quick-pills button { flex: 1; height: 48px; border-radius: 18px; background: #fff; border: 1px solid rgba(0,0,0,0.05); font-weight: 900; color: #1a1a1a; cursor: pointer; white-space: nowrap; }
+    .quick-pills button { flex: 1; height: 48px; border-radius: 999px; background: #fff; border: 1px solid rgba(0,0,0,0.05); font-weight: 900; color: #1a1a1a; cursor: pointer; white-space: nowrap; }
     .drawer-trigger { width: 40px; height: 20px; background: none; border: none; color: #bbb; position: absolute; bottom: 0.25rem; left: 50%; transform: translateX(-50%); cursor: pointer; display: flex; align-items: center; justify-content: center; }
     .overlay-blur { position: fixed; inset: 0; background: rgba(0,0,0,0.25); backdrop-filter: blur(15px); z-index: 2000; display: flex; align-items: flex-end; }
-    .glass-drawer-sheet { width: 100%; background: rgba(255,255,255,0.85); backdrop-filter: blur(30px); border-radius: 40px 40px 0 0; padding: 2.5rem 1.5rem; box-shadow: 0 -20px 60px rgba(0,0,0,0.1); }
+    .glass-drawer-sheet { width: 100%; background: var(--glass-bg); backdrop-filter: blur(30px); border-radius: 40px 40px 0 0; padding: 2.5rem 1.5rem; box-shadow: 0 -20px 60px rgba(0,0,0,0.1); }
     .sheet-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
     .sheet-top h2 { font-size: 1.8rem; font-weight: 950; margin: 0; letter-spacing: -0.04em; }
     .close-round { width: 44px; height: 44px; border-radius: 50%; background: #f5f5f5; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
@@ -238,6 +254,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
   carPlate = '';
   isPlateSaved = false;
   tempPlate = '';
+  userSavedPlates: string[] = [];
   selectedHours = 1;
   selectedZoneIndex = 0;
   currentStreet = '';
@@ -246,6 +263,9 @@ export class ParkingComponent implements OnInit, OnDestroy {
   showPaymentConfirmation = false;
   private userLat = 0;
   private userLng = 0;
+  public followMode = true;
+  private isUserPanning = false;
+  private isAlive = true;
   
   history: any[] = [];
   private timerSubscription: Subscription | undefined;
@@ -253,6 +273,8 @@ export class ParkingComponent implements OnInit, OnDestroy {
   private map: any;
   private marker: any;
   private neighborhoodData: any[] = [];
+  private lastGeocodeTime = 0;
+  private lastGeocodeCoords = { lat: 0, lng: 0 };
 
   public PARKING_ZONES = [
     { name: 'Zona 0 - Centru Vechi', smsNumber: '1234', tariff: 0.60 },
@@ -262,13 +284,21 @@ export class ParkingComponent implements OnInit, OnDestroy {
 
   private polygonObjects: any[] = [];
 
-  constructor(private cdr: ChangeDetectorRef, private zone: NgZone) {
+  constructor(
+    private cdr: ChangeDetectorRef, 
+    private zone: NgZone,
+    private geoService: GeolocationService
+  ) {
     afterNextRender(async () => {
-      await this.initMap();
-      await this.loadHDNeighborhoods();
-      this.startGpsTracking();
-      this.loadPersistedData();
-      this.animateEntrance();
+      try {
+        await this.initMap();
+        await this.loadHDNeighborhoods();
+        this.setupLocationSync();
+        this.loadPersistedData();
+        this.animateEntrance();
+      } catch (err) {
+        console.error('Parking initialization failed', err);
+      }
     });
   }
 
@@ -379,36 +409,73 @@ export class ParkingComponent implements OnInit, OnDestroy {
     });
 
     this.updateMarker(lat, lng, this.selectedZoneIndex);
-    if (this.map) this.map.easeTo({ center: [lng, lat], duration: 1000 });
+    
+    if (this.map && this.followMode) {
+      this.map.easeTo({ center: [lng, lat], duration: 1000 });
+    }
 
     // OSM Reverse Geocoding for Street Name
     this.reverseGeocodeOSM(lat, lng);
   }
 
   private async reverseGeocodeOSM(lat: number, lng: number) {
+    const now = Date.now();
+    // Only geocode every 30 seconds OR if position moved more than ~50 meters
+    const dist = Math.sqrt(Math.pow(lat - this.lastGeocodeCoords.lat, 2) + Math.pow(lng - this.lastGeocodeCoords.lng, 2));
+    
+    if (this.lastGeocodeTime !== 0 && now - this.lastGeocodeTime < 30000 && dist < 0.0005) return;
+    
+    this.lastGeocodeTime = now;
+    this.lastGeocodeCoords = { lat, lng };
+
     try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`, {
-        headers: { 'User-Agent': 'SmartCityBrasovPWA/1.0' }
-      });
+      // Using BigDataCloud's reverse geocode client-side API - it's CORS friendly and free for client-side use
+      const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=ro`);
+      
+      if (!response.ok) return;
+
       const data = await response.json();
-      if (data && data.address) {
+      if (data) {
         this.zone.run(() => {
-          this.currentStreet = data.address.road || data.address.pedestrian || data.address.suburb || '';
+          // Priority: Street -> Locality -> Full Address
+          this.currentStreet = data.locality || data.city || data.principalSubdivision || '';
           this.cdr.detectChanges();
         });
       }
     } catch (e) {
-      console.warn('OSM Geocoding failed', e);
+      this.lastGeocodeTime = now + 60000; // Wait a minute on error
     }
   }
 
-  private startGpsTracking() {
-    if (!navigator.geolocation) return;
-    navigator.geolocation.watchPosition(
-      (pos) => this.zone.run(() => this.updateZoneByLocation(pos.coords.latitude, pos.coords.longitude)),
-      (err) => console.warn('GPS Error', err),
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
+  private setupLocationSync() {
+    this.geoService.startTracking();
+    
+    // Watch location changes reactively instead of using a frame loop
+    const loc = this.geoService.currentLocation();
+    if (loc) {
+      this.updateZoneByLocation(loc.lat, loc.lng);
+    }
+    
+    // Check every 2 seconds for location updates
+    this.timerSubscription = interval(2000).subscribe(() => {
+      if (!this.isAlive) return;
+      const currentLoc = this.geoService.currentLocation();
+      if (currentLoc && (currentLoc.lat !== this.userLat || currentLoc.lng !== this.userLng)) {
+        this.updateZoneByLocation(currentLoc.lat, currentLoc.lng);
+      }
+    });
+  }
+
+  public recenterMap() {
+    const loc = this.geoService.currentLocation();
+    if (loc) {
+      this.followMode = true;
+      this.map.easeTo({ center: [loc.lng, loc.lat], zoom: 17, duration: 1000 });
+    } else {
+      this.geoService.getCurrentPosition().then(l => {
+        if (l) this.map.easeTo({ center: [l.lng, l.lat], zoom: 17, duration: 1000 });
+      });
+    }
   }
 
   private updateMarker(lat: number, lng: number, zone: number) {
@@ -443,20 +510,44 @@ export class ParkingComponent implements OnInit, OnDestroy {
     }
   }
 
-  public async initMap() {
-    if (this.map || !this.mapContainer) return;
-    
-    this.map = new maplibregl.Map({
-      container: this.mapContainer.nativeElement,
-      style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
-      center: [25.5888, 45.6423],
-      zoom: 14,
-      attributionControl: false
+  public initMap(): Promise<void> {
+    return new Promise((resolve) => {
+      if (this.map || !this.mapContainer) {
+        resolve();
+        return;
+      }
+      
+      this.map = new maplibregl.Map({
+        container: this.mapContainer.nativeElement,
+        style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
+        center: [25.5888, 45.6423],
+        zoom: 14,
+        attributionControl: false
+      });
+
+      this.map.on('load', () => {
+        resolve();
+      });
+
+      this.map.on('dragstart', () => {
+        this.zone.run(() => {
+          this.followMode = false;
+          this.cdr.detectChanges();
+        });
+      });
+
+      this.map.on('error', (e: any) => {
+        console.error('MapLibre error:', e);
+        resolve(); // Resolve anyway to allow the rest of the app to try and load
+      });
     });
   }
 
   ngOnInit() { this.loadPersistedData(); }
-  ngOnDestroy() { if (this.timerSubscription) this.timerSubscription.unsubscribe(); }
+  ngOnDestroy() { 
+    this.isAlive = false;
+    if (this.timerSubscription) this.timerSubscription.unsubscribe(); 
+  }
 
   private loadPersistedData() {
     const savedPlate = localStorage.getItem('parked_plate');
@@ -472,6 +563,16 @@ export class ParkingComponent implements OnInit, OnDestroy {
     }
     const pending = localStorage.getItem('pending_parking_confirmation');
     if (pending === 'true') this.showPaymentConfirmation = true;
+
+    // Load Global Saved Plates from Settings
+    const globalPlates = localStorage.getItem('user_plates');
+    if (globalPlates) {
+      this.userSavedPlates = JSON.parse(globalPlates);
+      // If no plate currently set in parking, use the first saved one
+      if (!this.carPlate && this.userSavedPlates.length > 0) {
+        this.selectSavedPlate(this.userSavedPlates[0]);
+      }
+    }
   }
 
   private resumeCountdown(seconds: number) {
@@ -494,7 +595,33 @@ export class ParkingComponent implements OnInit, OnDestroy {
     return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
   }
 
-  savePlate() { if (this.tempPlate.trim()) { this.carPlate = this.tempPlate.toUpperCase(); this.isPlateSaved = true; localStorage.setItem('parked_plate', this.carPlate); } }
+  savePlate() { 
+    if (this.tempPlate.trim()) { 
+      this.carPlate = this.tempPlate.toUpperCase(); 
+      this.isPlateSaved = true; 
+      localStorage.setItem('parked_plate', this.carPlate); 
+      
+      // Also add to global plates if not exists
+      if (!this.userSavedPlates.includes(this.carPlate)) {
+        this.userSavedPlates.push(this.carPlate);
+        localStorage.setItem('user_plates', JSON.stringify(this.userSavedPlates));
+      }
+    } 
+  }
+
+  onPlateInputChange(val: string) {
+    this.tempPlate = val.toUpperCase();
+    this.isPlateSaved = (this.tempPlate === this.carPlate);
+  }
+
+  selectSavedPlate(plate: string) {
+    this.tempPlate = plate;
+    this.carPlate = plate;
+    this.isPlateSaved = true;
+    localStorage.setItem('parked_plate', this.carPlate);
+    this.cdr.detectChanges();
+  }
+
   incrementHours() { if (this.selectedHours < 24) this.selectedHours++; }
   decrementHours() { if (this.selectedHours > 1) this.selectedHours--; }
 

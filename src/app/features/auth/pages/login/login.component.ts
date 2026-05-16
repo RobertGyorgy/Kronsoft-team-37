@@ -6,12 +6,14 @@ import {
   inject,
   signal,
   viewChild,
+  afterNextRender,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../auth.service';
 import { GoogleAuthService } from '../../google-auth.service';
+import { gsap } from 'gsap';
 
 @Component({
   selector: 'app-login',
@@ -20,14 +22,25 @@ import { GoogleAuthService } from '../../google-auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="auth-shell">
-      <div class="auth-header">
-        <button class="back-btn" routerLink="/">
-          <span class="material-icons">arrow_back</span>
-        </button>
-      </div>
+      <div class="bg-glow"></div>
+      <div class="bg-glow-bottom"></div>
+
+      <header class="auth-header">
+        <div class="header-meta">
+          <button class="back-btn" routerLink="/">
+            <span class="material-icons">arrow_back</span>
+          </button>
+          <div class="brand-mark">Brașov Smart City</div>
+        </div>
+        
+        <div class="greeting-block">
+          <h1>Bine ai revenit</h1>
+          <p>Conectează-te pentru a accesa serviciile orașului tău.</p>
+        </div>
+      </header>
 
       <div class="auth-content">
-        <div class="toggle-pill">
+        <div class="toggle-pill animate-up">
           <div class="active-glider"></div>
           <button class="toggle-btn active" routerLink="/login">Sign In</button>
           <button class="toggle-btn" routerLink="/register">Sign Up</button>
@@ -38,21 +51,21 @@ import { GoogleAuthService } from '../../google-auth.service';
             <span class="material-icons input-icon">mail_outline</span>
             <input
               type="email"
-              placeholder="Phone/Email Id"
+              placeholder="Email sau Telefon"
               formControlName="email"
               class="input-field"
               autocomplete="email"
             />
           </div>
           @if (emailControl.touched && emailControl.invalid) {
-            <span class="error-text">Enter a valid email address</span>
+            <span class="error-text">Introdu o adresă de email validă</span>
           }
 
           <div class="input-wrapper password-wrapper">
             <span class="material-icons input-icon">lock_outline</span>
             <input
               [type]="isPasswordVisible() ? 'text' : 'password'"
-              placeholder="Password"
+              placeholder="Parolă"
               formControlName="password"
               class="input-field"
               autocomplete="current-password"
@@ -62,25 +75,25 @@ import { GoogleAuthService } from '../../google-auth.service';
               class="password-toggle-btn"
               (click)="togglePasswordVisibility()"
             >
-              {{ isPasswordVisible() ? 'Hide' : 'Show' }}
+              {{ isPasswordVisible() ? 'Ascunde' : 'Arată' }}
             </button>
           </div>
           @if (passwordControl.touched && passwordControl.invalid) {
-            <span class="error-text">Password is required</span>
+            <span class="error-text">Parola este obligatorie</span>
           }
 
-          <a routerLink="#" class="forgot-link">Forgotten Password?</a>
+          <a routerLink="#" class="forgot-link">Ai uitat parola?</a>
 
           <button type="submit" class="primary-btn" [disabled]="isSubmitting()">
-            {{ isSubmitting() ? 'Signing In...' : 'Continue' }}
+            {{ isSubmitting() ? 'Se autentifică...' : 'Continuă' }}
           </button>
           
           <button type="button" class="secondary-btn" routerLink="/dashboard">
-            Continue (Demo)
+            Continuă (Demo)
           </button>
         </form>
 
-        <div class="divider">OR</div>
+        <div class="divider">SAU</div>
 
         <div class="google-btn-host" #googleBtnHost></div>
         @if (authError()) {
@@ -104,6 +117,22 @@ export class LoginComponent implements AfterViewInit {
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]]
   });
+
+  constructor() {
+    afterNextRender(() => {
+      this.animateEntrance();
+    });
+  }
+
+  private animateEntrance() {
+    gsap.from('.animate-up', {
+      y: 40,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.1,
+      ease: 'power3.out'
+    });
+  }
 
   public ngAfterViewInit(): void {
     const host = this.googleBtnHost()?.nativeElement;

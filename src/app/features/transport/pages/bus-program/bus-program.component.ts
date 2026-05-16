@@ -207,8 +207,8 @@ declare const google: any;
     .marker { width: 8px; height: 8px; border-radius: 50%; }
     .marker.origin { border: 2px solid #4285f4; }
     .marker.dest { background: #ea4335; }
-    .mode-toggle { display: flex; flex-direction: column; background: #f1f3f4; border-radius: 12px; padding: 2px; gap: 2px; align-self: stretch; justify-content: center; }
-    .mode-toggle button { border: none; background: transparent; padding: 0; width: 36px; height: 36px; border-radius: 10px; color: #5f6368; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+    .mode-toggle { display: flex; flex-direction: column; background: #f1f3f4; border-radius: 999px; padding: 2px; gap: 2px; align-self: stretch; justify-content: center; }
+    .mode-toggle button { border: none; background: transparent; padding: 0; width: 36px; height: 36px; border-radius: 999px; color: #5f6368; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
     .mode-toggle button.active { background: #fff; color: #1a73e8; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
     
     
@@ -242,7 +242,7 @@ declare const google: any;
     .route-info { display: flex; flex-direction: column; }
     .duration { font-size: 1.5rem; font-weight: 700; color: #188038; }
     .arrival-estimate { font-size: 0.9rem; color: #70757a; font-weight: 500; }
-    .go-button { background: #1a73e8; color: #fff; border: none; padding: 0.75rem 1.5rem; border-radius: 24px; font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 2px 8px rgba(26, 115, 232, 0.3); }
+    .go-button { background: #1a73e8; color: #fff; border: none; padding: 0.75rem 1.5rem; border-radius: 999px; font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 2px 8px rgba(26, 115, 232, 0.3); }
     
     .journey-timeline { padding: 1.5rem; display: flex; flex-direction: column; }
     .timeline-step { display: flex; gap: 1.25rem; }
@@ -264,7 +264,7 @@ declare const google: any;
     .step-details { flex: 1; padding-bottom: 2.5rem; }
     .step-card { display: flex; flex-direction: column; gap: 0.25rem; }
     .step-header { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
-    .line-badge { color: #fff; padding: 2px 8px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; }
+    .line-badge { color: #fff; padding: 2px 8px; border-radius: 999px; font-weight: 700; font-size: 0.75rem; }
     .title { font-size: 1.05rem; font-weight: 600; color: #202124; line-height: 1.2; }
     .meta { font-size: 0.85rem; color: #70757a; font-weight: 400; }
     .step-card.dark .title { font-size: 1.2rem; font-weight: 700; }
@@ -272,7 +272,7 @@ declare const google: any;
     .departure-info .material-icons { font-size: 1.2rem; }
     .departure-info strong { color: #174ea6; font-weight: 800; }
     .realtime-updates { margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem; }
-    .arrival-row { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: #70757a; background: #f8f9fa; padding: 8px 12px; border-radius: 12px; border: 1px solid #f1f3f4; }
+    .arrival-row { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: #70757a; background: #f8f9fa; padding: 8px 12px; border-radius: 999px; border: 1px solid #f1f3f4; }
     @keyframes spin { to { transform: rotate(360deg); } }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush

@@ -70,7 +70,7 @@ import { gsap } from 'gsap';
 
       <!-- Footer Action -->
       <footer class="dashboard-footer" #footer>
-        <button class="icon-btn footer-btn" aria-label="Settings">
+        <button class="icon-btn footer-btn" aria-label="Settings" routerLink="/settings">
           <span class="material-icons">settings</span>
         </button>
         <a routerLink="/login" class="logout-link">
@@ -87,7 +87,7 @@ import { gsap } from 'gsap';
         width: 100%;
         overflow-x: hidden;
         overflow-y: auto;
-        background: #ffffff;
+        background: var(--bg-primary);
         padding: calc(var(--safe-top) + 1.5rem) 1.25rem calc(var(--safe-bottom) + 1.5rem);
         font-family: 'Outfit', sans-serif;
         display: flex;
@@ -119,7 +119,7 @@ import { gsap } from 'gsap';
       .hello-text {
         font-size: 3.2rem;
         font-weight: 800;
-        color: #1a1a1a;
+        color: var(--text-primary);
         letter-spacing: -0.05em;
         line-height: 1;
       }
@@ -127,7 +127,7 @@ import { gsap } from 'gsap';
       .interest-text {
         font-size: 1.35rem;
         font-weight: 500;
-        color: #666;
+        color: var(--text-secondary);
         letter-spacing: -0.02em;
         line-height: 1.2;
         max-width: 100%; /* Allow full width for better wrapping */
@@ -215,12 +215,12 @@ import { gsap } from 'gsap';
         width: 3.5rem;
         height: 3.5rem;
         border-radius: 50%;
-        border: 1px solid #eee;
-        background: #fff;
+        border: 1px solid var(--border-color);
+        background: var(--bg-card);
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #666;
+        color: var(--text-primary);
         cursor: pointer;
       }
 
@@ -232,12 +232,12 @@ import { gsap } from 'gsap';
         justify-content: center;
         gap: 0.6rem;
         text-decoration: none;
-        color: #1a1a1a;
+        color: var(--text-primary);
         font-weight: 700;
         font-size: 1rem;
         padding: 1.1rem 1.5rem;
         border-radius: 999px;
-        background: #f5f5f5;
+        background: var(--bg-secondary);
       }
 
       @media (min-width: 600px) {
@@ -258,8 +258,8 @@ export class DashboardComponent implements AfterViewInit {
   @ViewChild('grid') grid!: ElementRef;
   @ViewChild('footer') footer!: ElementRef;
 
-  helloWords = 'Hello, Ion'.split(' ');
-  interestWords = 'What are you interested in today?'.split(' ');
+  helloWords = 'Salut, Ion'.split(' ');
+  interestWords = 'Cu ce te putem ajuta astăzi?'.split(' ');
 
   ngAfterViewInit() {
     const tl = gsap.timeline({ 

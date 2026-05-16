@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TransitService } from '../../services/transit.service';
+import { GeolocationService } from '../../../../core/services/geolocation.service';
 import { gsap } from 'gsap';
 import maplibregl from 'maplibre-gl';
 
@@ -208,19 +209,19 @@ import maplibregl from 'maplibre-gl';
     </div>
   `,
   styles: [`
-    .transport-container { height: 100dvh; background: #fff; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; color: #1a1a1a; overflow: hidden; }
+    .transport-container { height: 100dvh; background: var(--bg-primary); font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; color: var(--text-primary); overflow: hidden; }
     
     .top-nav { position: absolute; top: 0; left: 0; right: 0; padding: calc(var(--safe-top) + 1rem) 1.25rem; z-index: 1000; transition: all 0.4s ease; }
-    .nav-row.pill-header { display: flex; align-items: center; background: #fff; border-radius: 999px; box-shadow: 0 10px 40px rgba(0,0,0,0.12); border: 1px solid rgba(0,0,0,0.05); padding: 0.25rem 0.5rem 0.25rem 0.75rem; max-width: 600px; margin: 0 auto; }
+    .nav-row.pill-header { display: flex; align-items: center; background: var(--bg-card); border-radius: 999px; box-shadow: 0 10px 40px rgba(0,0,0,0.12); border: 1px solid var(--border-color); padding: 0.25rem 0.5rem 0.25rem 0.75rem; max-width: 600px; margin: 0 auto; }
     
-    .minimal-back-btn { background: transparent; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #1a1a1a; cursor: pointer; transition: background 0.2s; }
+    .minimal-back-btn { background: transparent; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-primary); cursor: pointer; transition: background 0.2s; }
     .minimal-back-btn:active { background: #f5f5f5; }
     .search-pill { flex: 1; display: flex; align-items: center; background: transparent; padding: 0 0.5rem; border-radius: 0; box-shadow: none; border: none; }
-    .search-pill input { border: none; background: transparent; flex: 1; padding: 0.8rem 0; outline: none; font-size: 1rem; font-weight: 700; color: #1a1a1a; }
+    .search-pill input { border: none; background: transparent; flex: 1; padding: 0.8rem 0; outline: none; font-size: 1rem; font-weight: 700; color: var(--text-primary); }
     .search-ico { color: #ccc; margin-right: 0.5rem; font-size: 1.2rem; }
     .minimal-locate { background: #f5f5f5; border: none; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #1a1a1a; cursor: pointer; }
 
-    .search-overlay { position: absolute; top: calc(var(--safe-top) + 5rem); left: 1.25rem; right: 1.25rem; background: #fff; border-radius: 28px; z-index: 1001; box-shadow: 0 20px 50px rgba(0,0,0,0.15); max-height: 60vh; overflow-y: auto; padding: 1rem; border: 1px solid rgba(0,0,0,0.05); }
+    .search-overlay { position: absolute; top: calc(var(--safe-top) + 5rem); left: 1.25rem; right: 1.25rem; background: var(--bg-card); border-radius: 28px; z-index: 1001; box-shadow: 0 20px 50px rgba(0,0,0,0.15); max-height: 60vh; overflow-y: auto; padding: 1rem; border: 1px solid var(--border-color); }
     .result-card { display: flex; align-items: center; gap: 1rem; padding: 1.2rem; border-radius: 20px; transition: all 0.2s; cursor: pointer; }
     .result-card:active { background: #f9f9f9; transform: scale(0.98); }
     .res-icon { width: 48px; height: 48px; background: #f5f5f5; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: #1a1a1a; }
@@ -239,11 +240,11 @@ import maplibregl from 'maplibre-gl';
     .map-overlay-loader { position: absolute; inset: 0; background: rgba(255,255,255,0.4); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 5; }
     .loader-ring { width: 32px; height: 32px; border: 3px solid #eee; border-top-color: #1a1a1a; border-radius: 50%; animation: spin 0.8s linear infinite; }
     
-    .station-viewer { position: absolute; bottom: 0; left: 0; right: 0; height: 70vh; background: #fff; border-radius: 44px 44px 0 0; z-index: 10; padding: 0 1.5rem 2rem; box-shadow: 0 -25px 60px rgba(0,0,0,0.12); transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1); overflow-y: auto; scroll-behavior: smooth; transform: translateY(0); }
+    .station-viewer { position: absolute; bottom: 0; left: 0; right: 0; height: 70vh; background: var(--bg-card); border-radius: 44px 44px 0 0; z-index: 10; padding: 0 1.5rem 2rem; box-shadow: 0 -25px 60px rgba(0,0,0,0.12); transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1); overflow-y: auto; scroll-behavior: smooth; transform: translateY(0); }
     .minimized-state .station-viewer { transform: translateY(calc(70vh - 250px)); overflow-y: hidden; }
 
     
-    .drag-handle-container { padding: 1.25rem 0 1rem; display: flex; justify-content: center; cursor: pointer; position: sticky; top: 0; background: #fff; z-index: 10; margin: 0 -1.5rem; }
+    .drag-handle-container { padding: 1.25rem 0 1rem; display: flex; justify-content: center; cursor: pointer; position: sticky; top: 0; background: var(--bg-card); z-index: 10; margin: 0 -1.5rem; }
     .drag-handle { width: 44px; height: 5px; background: #f0f0f0; border-radius: 3px; transition: background 0.3s; }
     .drag-handle-container:active .drag-handle { background: #e0e0e0; }
 
@@ -253,7 +254,7 @@ import maplibregl from 'maplibre-gl';
     .word { display: inline-block; white-space: nowrap; }
     .char { display: inline-block; }
     
-    .primary-bold-btn { background: #1a1a1a; color: #fff; border: none; width: 100%; padding: 1.2rem; border-radius: 20px; font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem; letter-spacing: 0.02em; cursor: pointer; }
+    .primary-bold-btn { background: var(--text-primary); color: var(--bg-primary); border: none; width: 100%; padding: 1.2rem; border-radius: 999px; font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem; letter-spacing: 0.02em; cursor: pointer; }
     .primary-bold-btn:active { transform: scale(0.97); transition: transform 0.2s; }
 
     .section-block { margin-bottom: 2.5rem; }
@@ -261,10 +262,10 @@ import maplibregl from 'maplibre-gl';
     
     .line-scroller { display: flex; gap: 0.75rem; overflow-x: auto; padding-bottom: 0.5rem; scrollbar-width: none; }
     .line-scroller::-webkit-scrollbar { display: none; }
-    .line-pill-bold { flex-shrink: 0; padding: 0.8rem 1.5rem; border-radius: 14px; border: none; font-weight: 900; font-size: 1.1rem; cursor: pointer; box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
+    .line-pill-bold { flex-shrink: 0; padding: 0.8rem 1.5rem; border-radius: 999px; border: none; font-weight: 900; font-size: 1.1rem; cursor: pointer; box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
 
     .arrivals-list { display: flex; flex-direction: column; gap: 1rem; }
-    .arrival-card-bold { display: flex; align-items: center; gap: 1.25rem; background: #fafafa; padding: 1.25rem; border-radius: 24px; transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); cursor: pointer; border: 1px solid rgba(0,0,0,0.03); }
+    .arrival-card-bold { display: flex; align-items: center; gap: 1.25rem; background: var(--bg-secondary); padding: 1.25rem; border-radius: 24px; transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); cursor: pointer; border: 1px solid var(--border-color); }
     .arrival-card-bold.animated { transform: none !important; opacity: 1 !important; }
     .arrival-card-bold:active { transform: scale(0.96); background: #f0f0f0; }
     
@@ -273,25 +274,25 @@ import maplibregl from 'maplibre-gl';
     .arrival-dest { font-weight: 800; font-size: 1.1rem; color: #1a1a1a; letter-spacing: -0.02em; }
     .arrival-meta { font-size: 0.85rem; color: #999; font-weight: 600; }
     .arrival-eta { text-align: right; display: flex; flex-direction: column; align-items: flex-end; }
-    .eta-val { font-size: 1.6rem; font-weight: 950; color: #1a1a1a; line-height: 1; letter-spacing: -0.05em; }
+    .eta-val { font-size: 1.6rem; font-weight: 950; color: var(--text-primary); line-height: 1; letter-spacing: -0.05em; }
     .eta-min { font-size: 0.7rem; font-weight: 900; color: #bbb; letter-spacing: 0.1em; }
 
-    .minimal-more-btn { width: 100%; background: #fff; border: 2px solid #f0f0f0; padding: 1rem; border-radius: 24px; font-weight: 800; color: #1a1a1a; margin-top: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+    .minimal-more-btn { width: 100%; background: var(--bg-card); border: 2px solid var(--border-color); padding: 1rem; border-radius: 999px; font-weight: 800; color: var(--text-primary); margin-top: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
     
     .hero-welcome { text-align: center; padding: 3rem 1rem; display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
     .hero-subtext { color: #666; font-size: 1.1rem; line-height: 1.5; font-weight: 500; margin: 0; }
 
-    .modal-sheet-premium { background: #fff; width: 100%; border-radius: 40px 40px 0 0; max-height: 85vh; overflow-y: auto; box-shadow: 0 -20px 60px rgba(0,0,0,0.1); }
+    .modal-sheet-premium { background: var(--bg-card); width: 100%; border-radius: 40px 40px 0 0; max-height: 85vh; overflow-y: auto; box-shadow: 0 -20px 60px rgba(0,0,0,0.1); }
     .sheet-head { padding: 2.5rem 2rem; display: flex; justify-content: space-between; align-items: center; }
     .sheet-line-num { font-size: 3rem; font-weight: 800; line-height: 1; letter-spacing: -0.04em; }
     .sheet-destination { display: block; font-size: 1.1rem; font-weight: 700; opacity: 0.9; margin-top: 0.5rem; }
     .sheet-exit { background: rgba(0,0,0,0.1); border: none; width: 44px; height: 44px; border-radius: 50%; color: inherit; display: flex; align-items: center; justify-content: center; cursor: pointer; }
     .sheet-body { padding: 2.5rem 2rem; }
-    .day-pills { display: flex; background: #f5f5f5; padding: 6px; border-radius: 18px; margin-bottom: 2.5rem; }
-    .day-pills button { flex: 1; border: none; background: transparent; padding: 0.9rem; border-radius: 14px; font-weight: 800; color: #999; cursor: pointer; }
+    .day-pills { display: flex; background: #f5f5f5; padding: 6px; border-radius: 999px; margin-bottom: 2.5rem; }
+    .day-pills button { flex: 1; border: none; background: transparent; padding: 0.9rem; border-radius: 999px; font-weight: 800; color: #999; cursor: pointer; }
     .day-pills button.active { background: #fff; color: #1a1a1a; box-shadow: 0 6px 15px rgba(0,0,0,0.05); }
     .timetable-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 0.75rem; }
-    .time-slot { background: #fafafa; padding: 1rem; border-radius: 16px; font-weight: 700; font-size: 1.1rem; text-align: center; border: 1px solid #f0f0f0; }
+    .time-slot { background: #fafafa; padding: 1rem; border-radius: 999px; font-weight: 700; font-size: 1.1rem; text-align: center; border: 1px solid #f0f0f0; }
     .time-slot.is-next { background: #1a1a1a; color: #fff; border-color: #1a1a1a; transform: scale(1.05); }
 
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -308,12 +309,15 @@ export class BusSearchComponent implements OnInit, OnDestroy {
   @ViewChild('viewer') viewer!: ElementRef;
   
   private transitService = inject(TransitService);
+  private geoService = inject(GeolocationService);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
   
   private map: any;
   private markers: any[] = [];
+  private userMarker: any;
   private initTimeout: any;
+  private isAlive = true;
   
   isLoading = signal<boolean>(false);
   isFetchingLines = signal<boolean>(false);
@@ -332,38 +336,28 @@ export class BusSearchComponent implements OnInit, OnDestroy {
   private locationTimeout: any;
 
   constructor() {
-    afterNextRender(() => {
+    afterNextRender(async () => {
       this.isLoading.set(true);
       
-      // Start finding location early
-      const earlyLoc = new Promise((resolve) => {
-        navigator.geolocation.getCurrentPosition(
-          (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-          () => resolve(null),
-          { timeout: 2000 }
-        );
-      });
+      const coords = await this.geoService.getCurrentPosition();
+      this.initMap(coords || undefined);
+      
+      await this.transitService.loadData();
+      this.fetchPopularHubs();
+      
+      if (coords) {
+        this.findNearbyStation(true);
+      } else {
+        this.isLoading.set(false);
+      }
 
-      earlyLoc.then((coords: any) => {
-        this.initMap(coords);
-        this.transitService.loadData().then(() => {
-          this.fetchPopularHubs();
-          
-          this.locationTimeout = setTimeout(() => {
-            if (!this.activeStation() && !this.searchTerm()) {
-              if (this.allStations.length > 0) this.selectStation(this.allStations[0]);
-              else this.isLoading.set(false);
-            }
-          }, 5000);
-
-          this.findNearbyStation(true);
-        });
-      });
+      this.setupLocationSync();
     });
   }
 
   ngOnInit() {}
   ngOnDestroy() {
+    this.isAlive = false;
     if (this.initTimeout) clearTimeout(this.initTimeout);
     if (this.locationTimeout) clearTimeout(this.locationTimeout);
   }
@@ -751,34 +745,71 @@ export class BusSearchComponent implements OnInit, OnDestroy {
   displayLimit = signal(15);
   showMore() { this.displayLimit.update(v => v + 15); }
 
+  private setupLocationSync() {
+    this.geoService.startTracking();
+    
+    // Sync user marker
+    const sync = () => {
+      if (!this.isAlive) return;
+      const loc = this.geoService.currentLocation();
+      if (loc && this.map) {
+        this.updateUserMarker(loc.lat, loc.lng);
+      }
+      requestAnimationFrame(sync);
+    };
+    sync();
+  }
+
+  private updateUserMarker(lat: number, lng: number) {
+    if (!this.map) return;
+    const pos: [number, number] = [lng, lat];
+
+    if (this.userMarker) {
+      this.userMarker.setLngLat(pos);
+    } else {
+      const el = document.createElement('div');
+      el.className = 'user-location-marker';
+      el.style.width = '20px';
+      el.style.height = '20px';
+      el.style.background = '#4285F4';
+      el.style.border = '3px solid white';
+      el.style.borderRadius = '50%';
+      el.style.boxShadow = '0 0 15px rgba(66, 133, 244, 0.5)';
+      
+      this.userMarker = new maplibregl.Marker({ element: el })
+        .setLngLat(pos)
+        .addTo(this.map);
+    }
+  }
+
   findNearbyStation(auto: boolean = false) {
-    if (!navigator.geolocation) return;
     if (!auto) this.isLoading.set(true);
 
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        if (this.locationTimeout) clearTimeout(this.locationTimeout);
-        const userLat = pos.coords.latitude;
-        const userLon = pos.coords.longitude;
-        let closest: any = null;
-        let minDist = Infinity;
-        
-        this.smartStops().forEach((stop: any) => {
-          const dist = this.calculateDistance(userLat, userLon, stop.lat, stop.lon);
-          if (dist < minDist) {
-            minDist = dist;
-            closest = stop;
-          }
-        });
-
-        if (closest) this.selectStation(closest);
+    const loc = this.geoService.currentLocation();
+    if (loc) {
+      this.processNearby(loc.lat, loc.lng, auto);
+    } else {
+      this.geoService.getCurrentPosition().then(l => {
+        if (l) this.processNearby(l.lat, l.lng, auto);
         else if (!auto) this.isLoading.set(false);
-      },
-      () => {
-        if (!auto) this.isLoading.set(false);
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-    );
+      });
+    }
+  }
+
+  private processNearby(userLat: number, userLon: number, auto: boolean) {
+    let closest: any = null;
+    let minDist = Infinity;
+    
+    this.smartStops().forEach((stop: any) => {
+      const dist = this.calculateDistance(userLat, userLon, stop.lat, stop.lon);
+      if (dist < minDist) {
+        minDist = dist;
+        closest = stop;
+      }
+    });
+
+    if (closest) this.selectStation(closest);
+    else if (!auto) this.isLoading.set(false);
   }
 
   private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
