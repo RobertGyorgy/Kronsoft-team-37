@@ -1,9 +1,25 @@
 {
   "/api/auth": {
-    "target": "http://localhost:8080",
+    "target": "http://localhost:8083",
     "secure": false
   },
-  "/api/v1/routing": {
+  "/api/reports": {
+    "target": "http://localhost:8083",
+    "secure": false
+  },
+  "/api/events": {
+    "target": "http://localhost:8083",
+    "secure": false
+  },
+  "/api/parking": {
+    "target": "http://localhost:8083",
+    "secure": false
+  },
+  "/api/recommendations": {
+    "target": "http://localhost:8083",
+    "secure": false
+  },
+  "/api/v1": {
     "target": "http://localhost:8081",
     "secure": false
   }

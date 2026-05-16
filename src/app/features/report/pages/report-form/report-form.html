@@ -17,32 +17,16 @@
 
     <div class="report-form">
       <div class="input-group">
-        <label>Titlu incident</label>
-        <div class="input-wrapper">
-          <span class="material-icons field-icon">edit</span>
-          <input type="text" placeholder="Ex: Groapă în carosabil" [(ngModel)]="formData.title">
-        </div>
-      </div>
-
-      <div class="input-group">
-        <label>Adresă / Locație</label>
-        <div class="input-wrapper">
-          <span class="material-icons field-icon">location_on</span>
-          <input type="text" placeholder="Ex: Str. Lungă nr. 10" [(ngModel)]="formData.address">
-        </div>
-      </div>
-
-      <div class="input-group">
         <label>Categorie</label>
         <div class="category-scroll">
           <div class="chips-row">
-            @for (cat of categories; track cat) {
+            @for (cat of categories(); track cat.id) {
               <button 
                 type="button"
                 class="category-chip" 
-                [class.active]="formData.category === cat"
-                (click)="formData.category = cat">
-                {{ cat }}
+                [class.active]="formData.categoryId === cat.id"
+                (click)="formData.categoryId = cat.id">
+                {{ cat.name }}
               </button>
             }
           </div>
@@ -52,7 +36,7 @@
       <div class="input-group">
         <label>Descriere detalii</label>
         <div class="textarea-wrapper">
-          <textarea placeholder="Scrie..." rows="4" [(ngModel)]="formData.description"></textarea>
+          <textarea placeholder="Scrie despre problemă (ex: groapă, iluminat defect)..." rows="6" [(ngModel)]="formData.description"></textarea>
         </div>
       </div>
 
@@ -101,7 +85,7 @@
       <header class="doc-header">
         <div class="doc-header-left">
           <div class="stema-box">
-            <img src="assets/images/stema_brasov_2024.png" 
+            <img src="/images/ROU_BV_Brasov_CoA.svg.png" 
                  class="doc-stema-mini" 
                  alt="Stema Brașov"
                  #stemaRef
@@ -110,7 +94,7 @@
           </div>
           <div class="doc-logo-v2">SmartCity <span>Brașov</span></div>
         </div>
-        <div class="doc-ref-v2">Nr Raport: #{{ now | date:'yyMMdd' }}-{{ formData.category | uppercase }}</div>
+        <div class="doc-ref-v2">Nr Raport: #{{ now | date:'yyMMdd' }}-{{ formData.categoryId || 'URB' }}</div>
       </header>
 
       <div class="pdf-content doc-content">
@@ -119,12 +103,13 @@
             <div class="doc-date-line">{{ getRomanianDate() }}</div>
             
             <div class="doc-subject">
-              RAPORT SESIZARE: {{ formData.title | uppercase }}
+              RAPORT SESIZARE URBANĂ
             </div>
 
-            <p>Subsemnatul, prin intermediul platformei SmartCity, semnalizez un incident de tip <strong>{{ formData.category }}</strong> identificat în zona <strong>{{ formData.address }}</strong>.</p>
+            <p>Subsemnatul, prin intermediul platformei SmartCity Brașov, semnalizez o problemă sesizată în oraș.</p>
             
             <div class="doc-description-box">
+              <strong>DETALII:</strong><br>
               {{ formData.description || 'Nu au fost furnizate detalii suplimentare în scris.' }}
             </div>
 

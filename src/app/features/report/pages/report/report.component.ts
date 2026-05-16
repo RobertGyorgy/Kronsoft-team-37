@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, signal, computed, inject, AfterViewInit, ElementRef, ViewChild, afterNextRender } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
-import { ReportService } from '../../services/report';
+import { ReportService } from '../../services/report.service';
 import { gsap } from 'gsap';
 
 @Component({
@@ -29,7 +29,7 @@ export class ReportComponent {
     const cat = this.activeCategory();
     const allReports = this.reportService.reports();
     if (cat === 'Toate') return allReports;
-    return allReports.filter(r => r.category === cat);
+    return allReports.filter(r => r.categoryName === cat);
   });
 
   constructor() {

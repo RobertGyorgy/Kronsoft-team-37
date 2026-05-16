@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, signal, inject, ViewChild, ElementR
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { ReportService } from '../../services/report';
+import { ReportService } from '../../services/report.service';
 import { gsap } from 'gsap';
 
 @Component({
@@ -21,17 +21,18 @@ export class ReportFormComponent {
   @ViewChild('videoElement') videoElement!: ElementRef<HTMLVideoElement>;
   @ViewChild('canvasElement') canvasElement!: ElementRef<HTMLCanvasElement>;
 
-  categories = ['Infrastructură', 'Deșeuri', 'Graffiti', 'Clădiri', 'Iluminare', 'Spații verzi', 'Altele'];
+  categories = this.reportService.categories;
   now = new Date();
 
   formData = {
-    title: '',
-    address: '',
     description: '',
-    category: 'Altele'
+    categoryId: 0,
+    latitude: 45.6427, // Default Brasov
+    longitude: 25.5890
   };
 
   uploadedPhotos = signal<string[]>([]);
+  photoFile: File | null = null;
   isCameraActive = signal<boolean>(false);
   showActionSheet = signal<boolean>(false);
   isPreviewMode = signal<boolean>(false);
@@ -120,18 +121,15 @@ export class ReportFormComponent {
     const files = event.target.files;
     if (!files || files.length === 0) return;
 
-    // Process each file
-    Array.from(files as FileList).forEach(file => {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        const base64Data = e.target.result;
-        this.uploadedPhotos.update(photos => [...photos, base64Data]);
-      };
-      reader.onerror = (err) => console.error('FileReader error:', err);
-      reader.readAsDataURL(file);
-    });
+    const file = files[0];
+    this.photoFile = file;
 
-    // Reset input so the same file can be selected again
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.uploadedPhotos.set([e.target.result]);
+    };
+    reader.readAsDataURL(file);
+
     event.target.value = '';
   }
 
@@ -152,6 +150,14 @@ export class ReportFormComponent {
     }
   }
 
+  stopCamera() {
+    if (this.stream) {
+      this.stream.getTracks().forEach(track => track.stop());
+      this.stream = null;
+    }
+    this.isCameraActive.set(false);
+  }
+
   capturePhoto() {
     if (!this.videoElement || !this.canvasElement) return;
 
@@ -165,22 +171,22 @@ export class ReportFormComponent {
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
       
       const photoData = canvas.toDataURL('image/jpeg');
-      this.uploadedPhotos.update(photos => [...photos, photoData]);
+      this.uploadedPhotos.set([photoData]);
+      
+      // Convert to file
+      canvas.toBlob((blob) => {
+        if (blob) {
+          this.photoFile = new File([blob], `capture_${Date.now()}.jpg`, { type: 'image/jpeg' });
+        }
+      }, 'image/jpeg');
+
       this.stopCamera();
     }
   }
 
-  stopCamera() {
-    if (this.stream) {
-      this.stream.getTracks().forEach(track => track.stop());
-      this.stream = null;
-    }
-    this.isCameraActive.set(false);
-  }
-
   onSubmit() {
-    if (!this.formData.title || !this.formData.address) {
-      alert('Te rugăm să completezi titlul și adresa!');
+    if (!this.formData.description) {
+      alert('Te rugăm să completezi descrierea!');
       return;
     }
     this.isPreviewMode.set(true);
@@ -197,16 +203,7 @@ export class ReportFormComponent {
   }
 
   confirmSubmit() {
-    this.reportService.addReport({
-      title: this.formData.title,
-      location: this.formData.address,
-      description: this.formData.description,
-      category: this.formData.category,
-      image: this.uploadedPhotos().length > 0 
-        ? this.uploadedPhotos()[0] 
-        : 'https://images.unsplash.com/photo-1515162305285-0293e4767cc2?q=80&w=800'
-    });
-
+    this.reportService.addReport(this.formData, this.photoFile || undefined);
     this.router.navigate(['/report']);
   }
 }

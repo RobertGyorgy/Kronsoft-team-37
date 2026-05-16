@@ -474,16 +474,7 @@ export class BusSearchComponent implements OnInit, OnDestroy {
   }
 
   private normalizeText(value: string): string {
-    if (!value) return '';
-    return value
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/ă|â/g, 'a')
-      .replace(/î/g, 'i')
-      .replace(/ș/g, 's')
-      .replace(/ț/g, 't')
-      .trim();
+    return this.transitService.normalizeText(value);
   }
 
   private fetchPopularHubs() {
@@ -801,7 +792,7 @@ export class BusSearchComponent implements OnInit, OnDestroy {
     let minDist = Infinity;
     
     this.smartStops().forEach((stop: any) => {
-      const dist = this.calculateDistance(userLat, userLon, stop.lat, stop.lon);
+      const dist = this.transitService.calculateDistance(userLat, userLon, stop.lat, stop.lon);
       if (dist < minDist) {
         minDist = dist;
         closest = stop;
@@ -810,17 +801,6 @@ export class BusSearchComponent implements OnInit, OnDestroy {
 
     if (closest) this.selectStation(closest);
     else if (!auto) this.isLoading.set(false);
-  }
-
-  private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-    const R = 6371e3;
-    const φ1 = lat1 * Math.PI/180;
-    const φ2 = lat2 * Math.PI/180;
-    const Δφ = (lat2-lat1) * Math.PI/180;
-    const Δλ = (lon2-lon1) * Math.PI/180;
-    const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ/2) * Math.sin(Δλ/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    return R * c;
   }
 
   private getMapStyles() {

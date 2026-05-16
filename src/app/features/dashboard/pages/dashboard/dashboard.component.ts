@@ -305,11 +305,4 @@ export class DashboardComponent implements AfterViewInit {
   onTownHallClick() { 
     window.open('https://www.brasovcity.ro', '_blank');
   }
-  
-  onCityEventsClick() { console.log('Opening City Events...'); }
 }
-
-
-
-
-
