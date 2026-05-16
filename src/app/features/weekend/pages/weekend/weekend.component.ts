@@ -12,7 +12,11 @@ interface Category {
   icon: string;
   color: string;
   shadow: string;
-  questions: { id: string; text: string; options: string[] }[];
+  questions: { 
+    id: string; 
+    text: string; 
+    options: { label: string; icon: string }[] 
+  }[];
 }
 
 interface Recommendation {
@@ -104,8 +108,11 @@ interface Recommendation {
 
             <div class="answers-grid">
               @for (opt of activeCategory()?.questions?.[step() - 1]?.options; track $index) {
-                <button class="answer-btn" [style.border-color]="activeCategory()?.color" (click)="answer(opt)">
-                  <span class="answer-label">{{ opt }}</span>
+                <button class="answer-btn" [style.border-color]="activeCategory()?.color" (click)="answer(opt.label)">
+                  <div class="answer-left">
+                    <span class="material-icons opt-icon" [style.color]="activeCategory()?.color">{{ opt.icon }}</span>
+                    <span class="answer-label">{{ opt.label }}</span>
+                  </div>
                   <span class="material-icons answer-arrow" [style.color]="activeCategory()?.color">east</span>
                 </button>
               }
@@ -147,7 +154,7 @@ interface Recommendation {
                     </a>
                   </div>
                   <p class="result-desc">{{ rec.description }}</p>
-                  <div class="result-tip">
+                  <div class="result-tip" [style.background]="activeCategory()?.color + '12'">
                     <span class="material-icons tip-icon" [style.color]="activeCategory()?.color">lightbulb</span>
                     <span class="tip-text">{{ rec.tip }}</span>
                   </div>
@@ -313,7 +320,11 @@ interface Recommendation {
     }
 
     .quiz-char { display: inline-block; }
-    .quiz-word { display: inline-block; white-space: nowrap; }
+    .quiz-word { 
+      display: inline-block; 
+      white-space: nowrap; 
+      margin-right: 0.25em; /* Adăugăm spațiu garantat între cuvinte */
+    }
 
     .answers-grid {
       display: flex;
@@ -334,6 +345,8 @@ interface Recommendation {
       z-index: 10;
       pointer-events: auto !important;
     }
+    .answer-left { display: flex; align-items: center; gap: 1rem; }
+    .opt-icon { font-size: 1.5rem; opacity: 0.9; }
     .answer-btn:active {
       transform: scale(0.97);
     }
@@ -378,113 +391,130 @@ interface Recommendation {
 
     /* ────── Rezultate ────── */
     .results-zone { padding-top: 0; max-width: 600px; margin: 0 auto; }
-    .results-header { margin-bottom: 2rem; padding: 0 0.5rem; }
+    .results-header { margin-bottom: 2.5rem; padding: 0 0.5rem; }
     .results-badge {
       display: inline-block;
-      padding: 0.5rem 1rem;
-      border-radius: 12px;
+      padding: 0.6rem 1.2rem;
+      border-radius: 14px;
       color: #fff;
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       font-weight: 900;
-      letter-spacing: 0.08em;
-      margin-bottom: 1rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      letter-spacing: 0.1em;
+      margin-bottom: 1.2rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      text-transform: uppercase;
     }
     .results-title {
-      font-size: 2.8rem;
+      font-size: 3.2rem;
       font-weight: 800;
       color: #1a1a1a;
-      letter-spacing: -0.04em;
-      line-height: 1.1;
-      margin: 0 0 0.5rem;
+      letter-spacing: -0.05em;
+      line-height: 1;
+      margin: 0 0 0.6rem;
     }
-    .results-subtitle { color: #666; font-size: 1rem; font-weight: 500; margin: 0; }
+    .results-subtitle { color: #888; font-size: 1.1rem; font-weight: 500; margin: 0; }
 
     .results-list {
       display: flex;
       flex-direction: column;
-      gap: 1.2rem;
+      gap: 1.5rem;
     }
     .result-card {
       background: #ffffff;
-      border-radius: 28px;
-      padding: 1.8rem;
+      border-radius: 32px;
+      padding: 2rem;
       display: flex;
       gap: 1.5rem;
       align-items: flex-start;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.04);
-      border: 1px solid rgba(0,0,0,0.03);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.03);
+      border: 1px solid rgba(0,0,0,0.04);
       position: relative;
       overflow: hidden;
-      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    .result-card:hover { transform: translateY(-4px); box-shadow: 0 15px 45px rgba(0,0,0,0.08); }
+    .result-card:hover { 
+      transform: translateY(-8px) scale(1.01); 
+      box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+    }
     
     .card-accent {
       position: absolute;
       top: 0;
       left: 0;
-      width: 6px;
+      width: 8px;
       height: 100%;
+      opacity: 0.8;
     }
 
     .result-number {
-      width: 40px;
-      height: 40px;
-      border-radius: 14px;
+      width: 48px;
+      height: 48px;
+      border-radius: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #fff;
-      font-size: 1rem;
-      font-weight: 800;
+      font-size: 1.2rem;
+      font-weight: 900;
       flex-shrink: 0;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
     }
     .result-body { flex: 1; }
     .result-header-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.8rem;
+      margin-bottom: 1rem;
     }
     .location-link {
       display: flex;
       align-items: center;
-      gap: 0.4rem;
-      font-size: 0.7rem;
+      gap: 0.5rem;
+      font-size: 0.75rem;
       font-weight: 900;
       text-decoration: none;
       letter-spacing: 0.05em;
-      padding: 0.6rem 1rem;
+      padding: 0.7rem 1.2rem;
       background: #f8f9fa;
       border-radius: 100px;
-      transition: all 0.2s ease;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.02);
     }
-    .location-link:hover { background: #f0f2f5; transform: scale(1.05); }
+    .location-link:hover { 
+      background: #1a1a1a; 
+      color: #fff !important;
+      transform: rotate(3deg);
+    }
     .result-name {
-      font-size: 1.4rem;
+      font-size: 1.6rem;
       font-weight: 800;
       color: #1a1a1a;
       margin: 0;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.03em;
     }
     .result-desc {
-      font-size: 1rem;
+      font-size: 1.05rem;
       color: #555;
       line-height: 1.6;
-      margin: 0 0 1.2rem;
+      margin: 0 0 1.5rem;
+      font-weight: 400;
     }
     .result-tip {
       display: flex;
       align-items: flex-start;
-      gap: 0.8rem;
-      padding: 1rem;
-      background: rgba(0,0,0,0.02);
-      border-radius: 18px;
+      gap: 1rem;
+      padding: 1.2rem;
+      border-radius: 22px;
+      background: rgba(0,0,0,0.03); 
+      border: 1px solid rgba(0,0,0,0.02);
     }
-    .tip-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
-    .tip-text { font-size: 0.85rem; font-weight: 600; color: #444; line-height: 1.5; }
+    .tip-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .tip-text { 
+      font-size: 0.9rem; 
+      font-weight: 600; 
+      color: #333; 
+      line-height: 1.5; 
+    }
 
     .results-actions {
       margin-top: 2.5rem;
@@ -497,21 +527,21 @@ interface Recommendation {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.6rem;
+      gap: 0.8rem;
       width: 100%;
-      padding: 1.2rem;
+      padding: 1.4rem;
       border-radius: 100px;
-      font-weight: 700;
-      font-size: 1rem;
+      font-weight: 800;
+      font-size: 1.1rem;
       cursor: pointer;
-      transition: all 0.25s ease;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       border: none;
     }
 
     .action-btn-primary {
       background: #1a1a1a;
       color: #fff;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
     }
 
     .action-btn-secondary {
@@ -520,9 +550,9 @@ interface Recommendation {
       border: 1px solid #eee;
     }
 
-    .action-btn-primary:hover, .action-btn-secondary:hover { transform: translateY(-2px); }
-    .action-btn-primary:active, .action-btn-secondary:active { transform: scale(0.97); }
-    .action-btn-primary:hover { box-shadow: 0 15px 30px rgba(0,0,0,0.15); }
+    .action-btn-primary:hover, .action-btn-secondary:hover { transform: translateY(-4px); }
+    .action-btn-primary:active, .action-btn-secondary:active { transform: scale(0.96); }
+    .action-btn-primary:hover { box-shadow: 0 20px 45px rgba(0,0,0,0.2); background: #000; }
 
     @media (min-width: 600px) {
       .interaction-grid { grid-template-columns: repeat(3, 1fr); max-width: 800px; }
@@ -564,54 +594,187 @@ export class WeekendComponent implements AfterViewInit {
       id: 'natura', name: 'Natură', icon: 'terrain',
       color: '#2ed573', shadow: '0 10px 20px rgba(46,213,115,0.15)',
       questions: [
-        { id: 'activitate', text: 'Ce nivel de activitate preferi?', options: ['Relaxat – plimbări, natură', 'Activ – drumeții, ciclism', 'Aventuros – sport, adrenalină'] },
-        { id: 'grup', text: 'Câți oameni sunteți?', options: ['Singur', 'Cuplu', 'Grup', 'Familie'] },
-        { id: 'timp', text: 'Cât timp ai?', options: ['1-2 ore', 'Jumătate de zi', 'O zi'] }
+        { 
+          id: 'activitate', text: 'Ce nivel de activitate preferi?', 
+          options: [
+            { label: 'Relaxat – plimbări, natură', icon: 'nature_people' },
+            { label: 'Activ – drumeții, ciclism', icon: 'directions_run' },
+            { label: 'Aventuros – sport, adrenalină', icon: 'explore' }
+          ] 
+        },
+        { 
+          id: 'grup', text: 'Câți oameni sunteți?', 
+          options: [
+            { label: 'Singur', icon: 'person' },
+            { label: 'Cuplu', icon: 'favorite' },
+            { label: 'Grup', icon: 'groups' },
+            { label: 'Familie', icon: 'family_restroom' }
+          ] 
+        },
+        { 
+          id: 'timp', text: 'Cât timp ai?', 
+          options: [
+            { label: '1-2 ore', icon: 'schedule' },
+            { label: 'Jumătate de zi', icon: 'wb_sunny' },
+            { label: 'O zi', icon: 'event_available' }
+          ] 
+        }
       ]
     },
     {
       id: 'arta', name: 'Artă și istorie', icon: 'museum',
       color: '#a55eea', shadow: '0 10px 20px rgba(165,94,234,0.15)',
       questions: [
-        { id: 'interes', text: 'Ce te interesează?', options: ['Muzee', 'Clădiri istorice', 'Galerii de artă'] },
-        { id: 'explorare', text: 'Cum preferi să explorezi?', options: ['Cu ghid', 'Singur', 'Cu audioghid'] },
-        { id: 'buget', text: 'Care e bugetul?', options: ['Gratuit', 'Până la 30 lei', 'Peste 30 lei'] }
+        { 
+          id: 'interes', text: 'Ce te interesează?', 
+          options: [
+            { label: 'Muzee', icon: 'account_balance' },
+            { label: 'Clădiri istorice', icon: 'castle' },
+            { label: 'Galerii de artă', icon: 'palette' }
+          ] 
+        },
+        { 
+          id: 'explorare', text: 'Cum preferi să explorezi?', 
+          options: [
+            { label: 'Cu ghid', icon: 'record_voice_over' },
+            { label: 'Singur', icon: 'person' },
+            { label: 'Cu audioghid', icon: 'headset' }
+          ] 
+        },
+        { 
+          id: 'buget', text: 'Care e bugetul?', 
+          options: [
+            { label: 'Gratuit', icon: 'volunteer_activism' },
+            { label: 'Până la 30 lei', icon: 'payments' },
+            { label: 'Peste 30 lei', icon: 'savings' }
+          ] 
+        }
       ]
     },
     {
       id: 'restaurante', name: 'Restaurante', icon: 'restaurant',
       color: '#ff4500', shadow: '0 10px 20px rgba(255,69,0,0.15)',
       questions: [
-        { id: 'mancare', text: 'Ce mâncare preferi?', options: ['Românească', 'Internațională', 'Vegană', 'Fast food'] },
-        { id: 'atmosfera', text: 'Ce atmosferă cauți?', options: ['Cozy', 'Modern', 'Rustic', 'Terasă'] },
-        { id: 'buget', text: 'Buget per persoană?', options: ['Sub 40 lei', '40-80 lei', 'Peste 80 lei'] }
+        { 
+          id: 'mancare', text: 'Ce mâncare preferi?', 
+          options: [
+            { label: 'Românească', icon: 'restaurant' },
+            { label: 'Internațională', icon: 'public' },
+            { label: 'Vegană', icon: 'eco' },
+            { label: 'Fast food', icon: 'fastfood' }
+          ] 
+        },
+        { 
+          id: 'atmosfera', text: 'Ce atmosferă cauți?', 
+          options: [
+            { label: 'Cozy', icon: 'weekend' },
+            { label: 'Modern', icon: 'lightbulb' },
+            { label: 'Rustic', icon: 'cottage' },
+            { label: 'Terasă', icon: 'deck' }
+          ] 
+        },
+        { 
+          id: 'buget', text: 'Buget per persoană?', 
+          options: [
+            { label: 'Sub 40 lei', icon: 'currency_exchange' },
+            { label: '40-80 lei', icon: 'local_atm' },
+            { label: 'Peste 80 lei', icon: 'diamond' }
+          ] 
+        }
       ]
     },
     {
       id: 'cafenele', name: 'Cafenele', icon: 'local_cafe',
       color: '#bcaaa4', shadow: '0 10px 20px rgba(188,170,164,0.15)',
       questions: [
-        { id: 'atmosfera', text: 'Ce atmosferă cauți?', options: ['Cozy', 'Modern', 'Liniștită', 'Terasă'] },
-        { id: 'buget', text: 'Buget per persoană?', options: ['Sub 20 lei', '20-40 lei', 'Peste 40 lei'] },
-        { id: 'companie', text: 'Cu cine ești?', options: ['Singur', 'Cuplu', 'Prieteni', 'Familie'] }
+        { 
+          id: 'atmosfera', text: 'Ce atmosferă cauți?', 
+          options: [
+            { label: 'Cozy', icon: 'coffee' },
+            { label: 'Modern', icon: 'architecture' },
+            { label: 'Liniștită', icon: 'self_improvement' },
+            { label: 'Terasă', icon: 'deck' }
+          ] 
+        },
+        { 
+          id: 'buget', text: 'Buget per persoană?', 
+          options: [
+            { label: 'Sub 20 lei', icon: 'savings' },
+            { label: '20-40 lei', icon: 'payments' },
+            { label: 'Peste 40 lei', icon: 'credit_card' }
+          ] 
+        },
+        { 
+          id: 'companie', text: 'Cu cine ești?', 
+          options: [
+            { label: 'Singur', icon: 'person' },
+            { label: 'Cuplu', icon: 'favorite' },
+            { label: 'Prieteni', icon: 'groups' },
+            { label: 'Familie', icon: 'family_restroom' }
+          ] 
+        }
       ]
     },
     {
       id: 'plimbari', name: 'Plimbări urbane', icon: 'directions_walk',
       color: '#2bcbba', shadow: '0 10px 20px rgba(43,203,186,0.15)',
       questions: [
-        { id: 'viziune', text: 'Ce vrei să vezi?', options: ['Centrul istoric', 'Cartiere locale', 'Priveliști', 'Street art'] },
-        { id: 'mers', text: 'Cât de mult mergi pe jos?', options: ['Puțin', 'Moderat', 'Mult'] },
-        { id: 'ora', text: 'La ce oră?', options: ['Dimineață', 'Zi', 'Seară'] }
+        { 
+          id: 'viziune', text: 'Ce vrei să vezi?', 
+          options: [
+            { label: 'Centrul istoric', icon: 'map' },
+            { label: 'Cartiere locale', icon: 'location_city' },
+            { label: 'Priveliști', icon: 'visibility' },
+            { label: 'Street art', icon: 'brush' }
+          ] 
+        },
+        { 
+          id: 'mers', text: 'Cât de mult mergi pe jos?', 
+          options: [
+            { label: 'Puțin', icon: 'blind' },
+            { label: 'Moderat', icon: 'directions_walk' },
+            { label: 'Mult', icon: 'directions_run' }
+          ] 
+        },
+        { 
+          id: 'ora', text: 'La ce oră?', 
+          options: [
+            { label: 'Dimineață', icon: 'wb_twilight' },
+            { label: 'Zi', icon: 'wb_sunny' },
+            { label: 'Seară', icon: 'bedtime' }
+          ] 
+        }
       ]
     },
     {
       id: 'experiente', name: 'Experiențe inedite', icon: 'explore',
       color: '#ff6348', shadow: '0 10px 20px rgba(255,99,72,0.15)',
       questions: [
-        { id: 'tip', text: 'Ce tip de experiență?', options: ['Aventură', 'Relaxare', 'Culturală', 'Gastronomică'] },
-        { id: 'buget', text: 'Care e bugetul?', options: ['Gratuit', 'Sub 100 lei', 'Peste 100 lei'] },
-        { id: 'preferinta', text: 'Preferi ceva?', options: ['Unic și necunoscut', 'Popular dar merită', 'Off the beaten path'] }
+        { 
+          id: 'tip', text: 'Ce tip de experiență?', 
+          options: [
+            { label: 'Aventură', icon: 'hiking' },
+            { label: 'Relaxare', icon: 'spa' },
+            { label: 'Culturală', icon: 'theater_comedy' },
+            { label: 'Gastronomică', icon: 'dinner_dining' }
+          ] 
+        },
+        { 
+          id: 'buget', text: 'Care e bugetul?', 
+          options: [
+            { label: 'Gratuit', icon: 'money_off' },
+            { label: 'Sub 100 lei', icon: 'attach_money' },
+            { label: 'Peste 100 lei', icon: 'paid' }
+          ] 
+        },
+        { 
+          id: 'preferinta', text: 'Preferi ceva?', 
+          options: [
+            { label: 'Unic și necunoscut', icon: 'auto_awesome' },
+            { label: 'Popular dar merită', icon: 'trending_up' },
+            { label: 'Off the beaten path', icon: 'map' }
+          ] 
+        }
       ]
     }
   ];
@@ -696,9 +859,11 @@ export class WeekendComponent implements AfterViewInit {
   }
 
   private animateIn() {
-    gsap.killTweensOf('.quiz-char, .answer-btn');
+    // Curățăm orice animație în curs pentru întrebare
+    gsap.killTweensOf('.quiz-char');
 
     setTimeout(() => {
+      // Animație text întrebare (char reveal) - PĂSTRATĂ
       gsap.fromTo('.quiz-char', 
         { y: 15, opacity: 0 },
         { 
@@ -711,23 +876,10 @@ export class WeekendComponent implements AfterViewInit {
         }
       );
 
-      gsap.fromTo('.answer-btn', 
-        { y: 20, opacity: 0, scale: 0.95 },
-        { 
-          y: 0, 
-          opacity: 1, 
-          scale: 1,
-          duration: 0.5, 
-          stagger: 0.08, 
-          ease: 'back.out(1.7)',
-          delay: 0.1,
-          clearProps: 'all',
-          onComplete: () => {
-            gsap.set('.answer-btn', { pointerEvents: 'auto', cursor: 'pointer' });
-          }
-        }
-      );
-    }, 100);
+      // Butoanele apar acum static (fără animație GSAP), 
+      // dar ne asigurăm că sunt vizibile și interactive imediat.
+      gsap.set('.answer-btn', { opacity: 1, y: 0, scale: 1, pointerEvents: 'auto', clearProps: 'all' });
+    }, 50);
   }
 
   private animateReveal() {

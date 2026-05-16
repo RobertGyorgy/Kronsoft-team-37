@@ -51,6 +51,6 @@ fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
 console.log('✅ public/config.json actualizat');
 
 // ── Validare ───────────────────────────────────────────────────
-if (!config.GEMINI_API_KEY) {
-    console.warn('⚠️  GEMINI_API_KEY lipsește din .env!');
+if (!config.GROQ_API_KEY) {
+    console.warn('⚠️  GROQ_API_KEY lipsește din .env!');
 }
