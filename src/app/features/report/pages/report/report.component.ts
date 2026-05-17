@@ -20,8 +20,6 @@ export class ReportComponent {
 
   @ViewChild('container') container!: ElementRef;
 
-  @ViewChild('container') container!: ElementRef;
-
   activeCategory = signal<string>('Toate');
   userName = signal<string>('');
   
