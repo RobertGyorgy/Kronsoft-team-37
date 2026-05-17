@@ -1946,415 +1946,343 @@
       }
     ],
     "places": {
-      "cafeneaua_franzelarilor": {
-        "id": "cafeneaua_franzelarilor",
-        "name": "Cafeneaua Franzelarilor",
-        "atmosphere": [
-          "Cozy",
-          "Liniștită"
-        ],
-        "shortDescription": "Cafenea vintage în centrul vechi – cafeaua zilei și prăjitura casei la prețuri de altădată.",
-        "description": "Una dintre cele mai ieftine și autentice cafenele din Brașov. Atmosferă retro, mobilier de lemn, miros de cafea proaspătă. Frecventată de localnici, departe de aglomerația turistică.",
-        "address": "Str. Apollonia Hirscher nr. 2, Brașov",
-        "coordinates": {
-          "lat": 45.6422,
-          "lng": 25.5882
-        },
-        "priceRange": "Sub 20 lei",
-        "tags": [
-          "cozy",
-          "ieftin",
-          "retro",
-          "centru vechi",
-          "localnici"
-        ],
-        "tip": "Cafeaua simplă și prăjitura de casă – combinația perfectă. Nu te grăbi, e locul unde brașovenii citesc ziarul.",
-        "hours": "08:00–20:00",
-        "image": "cafeneaua_franzelarilor.jpg"
-      },
-      "tabiet": {
-        "id": "tabiet",
-        "name": "Tabiet Café",
-        "atmosphere": [
-          "Cozy",
-          "Liniștită"
-        ],
-        "shortDescription": "Micuța cafenea de cartier – specialty coffee și deserturi artizanale lângă Piața Sfatului.",
-        "description": "Tabiet înseamnă răsfăț în română veche, și asta e exact ce oferă. Cafea de specialitate preparată cu grijă, deserturi de casă, atmosferă caldă. Spațiu mic și intim.",
-        "address": "Str. Mureșenilor nr. 9, Brașov",
-        "coordinates": {
-          "lat": 45.6419,
-          "lng": 25.5887
-        },
-        "priceRange": "20–40 lei",
-        "tags": [
-          "cozy",
-          "specialty coffee",
-          "deserturi",
-          "intim",
-          "centru"
-        ],
-        "tip": "Încearcă latte-ul cu caramel sărat și tarta cu lămâie – duo legendar!",
-        "hours": "09:00–21:00",
-        "image": "tabiet.jpg"
-      },
-      "rocks_cafe": {
-        "id": "rocks_cafe",
-        "name": "Rocks Café",
-        "atmosphere": [
-          "Cozy"
-        ],
-        "shortDescription": "Cafenea-bar cozy în Piața Sfatului – cafea bună, muzică, locul preferat al studenților.",
-        "description": "Rocks Café e o cafenea-bar cu personalitate în centrul vechi. Pereți din piatră, lumină caldă, muzică bună. Cafea, cocktailuri, deserturi. Atmosferă relaxată dimineața, animată seara.",
-        "address": "Piața Sfatului nr. 12, Brașov",
-        "coordinates": {
-          "lat": 45.6425,
-          "lng": 25.5884
-        },
-        "priceRange": "20–40 lei",
-        "tags": [
-          "cozy",
-          "Piața Sfatului",
-          "bar-cafenea",
-          "studenți",
-          "muzică"
-        ],
-        "tip": "Terasa interioară cu pereți din piatră e superb fotografiată. Seara devine mai animat.",
-        "hours": "09:00–00:00",
-        "image": "rocks_cafe.jpg"
-      },
-      "story_cafe": {
-        "id": "story_cafe",
-        "name": "Story Café",
-        "atmosphere": [
-          "Cozy",
-          "Liniștită"
-        ],
-        "shortDescription": "Cafenea-librărie în centrul vechi – citești, bei cafea bună, uiți de timp.",
-        "description": "Story Café e un refugiu pentru iubitorii de cărți și cafea bună. Rafturi cu cărți, fotolii confortabile, lumină naturală. Specialty coffee, ceaiuri, tartine. Perfectă pentru lucru de acasă sau lectură.",
-        "address": "Str. Republicii nr. 5, Brașov",
-        "coordinates": {
-          "lat": 45.6437,
-          "lng": 25.5908
-        },
-        "priceRange": "20–40 lei",
-        "tags": [
-          "cozy",
-          "librărie",
-          "liniștit",
-          "specialty coffee",
-          "laptop-friendly"
-        ],
-        "tip": "WiFi rapid, prize la fiecare masă – locul ideal pentru lucrat de acasă.",
-        "hours": "09:00–22:00",
-        "image": "story_cafe.jpg"
-      },
-      "einstein_cafe": {
-        "id": "einstein_cafe",
-        "name": "Einstein Café",
-        "atmosphere": [
-          "Cozy",
-          "Liniștită"
-        ],
-        "shortDescription": "Cafenea cult în centrul vechi – specialty coffee, cheesecake, atmosferă intelectuală.",
-        "description": "Einstein este una din cafenelele cu tradiție ale Brașovului. Specialitate în cafea și cheesecake de casă. Atmosferă intelectuală, perfectă pentru conversații lungi sau lucru concentrat.",
-        "address": "Str. Castelului nr. 4, Brașov",
-        "coordinates": {
-          "lat": 45.6413,
-          "lng": 25.5877
-        },
-        "priceRange": "20–40 lei",
-        "tags": [
-          "cozy",
-          "liniștit",
-          "specialty coffee",
-          "cheesecake",
-          "clasic"
-        ],
-        "tip": "Cheesecake-ul de casă e legendar în Brașov. Vine în 5-6 variante diferite.",
-        "hours": "09:00–22:00",
-        "image": "einstein_cafe.jpg"
-      },
-      "narcoffee": {
-        "id": "narcoffee",
-        "name": "Narcoffee Roasters",
-        "atmosphere": [
-          "Modern"
-        ],
-        "shortDescription": "Cea mai apreciată cafenea specialty din Brașov – prăjit propriu, latte art, filtre.",
-        "description": "Narcoffee Roasters e locul de referință al cafelei de specialitate în Brașov. Prăjesc propriu, au o selecție extinsă de origini single, filtre V60 și Chemex, latte art. Baristi pasionați și dedicați.",
-        "address": "Str. Mureșenilor nr. 23, Brașov",
-        "coordinates": {
-          "lat": 45.642,
-          "lng": 25.5889
-        },
-        "priceRange": "20–40 lei",
-        "tags": [
-          "specialty coffee",
-          "prăjit propriu",
-          "latte art",
-          "filtre",
-          "modern"
-        ],
-        "tip": "Roata de sortimente single-origin se schimbă lunar. Cere recomandarea baristului!",
-        "hours": "08:00–21:00",
-        "image": "narcoffee.jpg"
-      },
-      "beans_dots": {
-        "id": "beans_dots",
-        "name": "Beans & Dots",
-        "atmosphere": [
-          "Modern"
-        ],
-        "shortDescription": "Specialty coffee minimalist – espresso și filtre de top, design nordic curat.",
-        "description": "Beans & Dots e o cafenea specialty cu design minimalist inspirat din cafenelele nordice. Meniu scurt și atent curatorialat: espresso, flat white, filtre. Fiecare ceașcă e executată impecabil.",
-        "address": "Str. Nicolae Bălcescu nr. 35, Brașov",
-        "coordinates": {
-          "lat": 45.6451,
-          "lng": 25.5922
-        },
-        "priceRange": "20–40 lei",
-        "tags": [
-          "specialty coffee",
-          "minimalist",
-          "nordic",
-          "filtre",
-          "modern"
-        ],
-        "tip": "Flat white-ul e de referință. Spațiu mic – vino devreme pentru un loc.",
-        "hours": "08:00–19:00",
-        "image": "beans_dots.jpg"
-      },
-      "boo_coffee": {
-        "id": "boo_coffee",
-        "name": "Boo Coffee",
-        "atmosphere": [
-          "Modern"
-        ],
-        "shortDescription": "Cafenea modernă cu specialități de cafea, brunch și deserturi creative.",
-        "description": "Boo Coffee combină specialty coffee cu un meniu de brunch și deserturi creative. Design modern și luminos, perfect pentru work sessions sau întâlniri casual. Smoothie-uri și băuturi alternative de calitate.",
-        "address": "Str. Republicii nr. 53, Brașov",
-        "coordinates": {
-          "lat": 45.646,
-          "lng": 25.593
-        },
-        "priceRange": "20–40 lei",
-        "tags": [
-          "modern",
-          "brunch",
-          "specialty coffee",
-          "deserturi",
-          "luminoasă"
-        ],
-        "tip": "Avocado toast și cold brew-ul de casă sunt best-sellers.",
-        "hours": "08:30–21:00",
-        "image": "boo_coffee.jpg"
-      },
-      "ground_zero": {
-        "id": "ground_zero",
-        "name": "Ground Zero Coffee",
-        "atmosphere": [
-          "Modern"
-        ],
-        "shortDescription": "Cafenea specialty urban-industrial – cold brew, nitro coffee, espresso tonic.",
-        "description": "Ground Zero aduce o vibe urban-industrial în centrul Brașovului. Specialitate în preparate cu cafea rece: cold brew, nitro coffee, espresso tonic. Muzică bună, lumini calde, atmosferă dinamică.",
-        "address": "Str. Lungă nr. 40, Brașov",
-        "coordinates": {
-          "lat": 45.6443,
-          "lng": 25.5938
-        },
-        "priceRange": "20–40 lei",
-        "tags": [
-          "modern",
-          "cold brew",
-          "nitro coffee",
-          "industrial",
-          "urban"
-        ],
-        "tip": "Nitro cold brew-ul e o experiență! Servit dintr-un tap ca berea.",
-        "hours": "09:00–22:00",
-        "image": "ground_zero.jpg"
-      },
-      "curio": {
-        "id": "curio",
-        "name": "Curio Concept Store & Café",
-        "atmosphere": [
-          "Modern",
-          "Cozy"
-        ],
-        "shortDescription": "Concept store + cafenea premium – specialty coffee, design local, obiecte de artă.",
-        "description": "Curio e mai mult decât o cafenea: un spațiu unde poți bea o cafea excelentă înconjurat de obiecte de design românesc. Colaborare cu prăjitorii locali. Evenimente culturale lunare.",
-        "address": "Str. Mureșenilor nr. 15, Brașov",
-        "coordinates": {
-          "lat": 45.6421,
-          "lng": 25.5888
-        },
-        "priceRange": "Peste 40 lei",
-        "tags": [
-          "concept store",
-          "specialty coffee",
-          "design",
-          "artă",
-          "premium"
-        ],
-        "tip": "Mergi și cu timp liber – vei fi tentat să cumperi ceva frumos din magazin.",
-        "hours": "10:00–21:00",
-        "image": "curio.jpg"
-      },
-      "revolver_coffee": {
-        "id": "revolver_coffee",
-        "name": "Revolver Coffee",
+      "ch9": {
+        "id": "ch9",
+        "name": "CH9 Specialty Coffee",
         "atmosphere": [
           "Liniștită",
-          "Modern"
-        ],
-        "shortDescription": "Specialty coffee în liniște deplină – filtre, pourover, cortado, fără muzică intruzivă.",
-        "description": "Revolver Coffee e sanctuarul cafelei liniștite din Brașov. Accent pe preparatele la filtru și pourover. Muzică ambientală discretă, iluminat cald, perfectă pentru concentrat. Baristi pasionați care vor să explice cafeaua.",
-        "address": "Str. Iuliu Maniu nr. 22, Brașov",
-        "coordinates": {
-          "lat": 45.6468,
-          "lng": 25.5952
-        },
-        "priceRange": "20–40 lei",
-        "tags": [
-          "liniștit",
-          "specialty coffee",
-          "filtre",
-          "pourover",
-          "minimalist"
-        ],
-        "tip": "Cere un pourover single-origin și lasă baristul să îți explice povestea boabelor.",
-        "hours": "09:00–20:00",
-        "image": "revolver_coffee.jpg"
-      },
-      "vero_cafe": {
-        "id": "vero_cafe",
-        "name": "Vero Café",
-        "atmosphere": [
-          "Liniștită",
-          "Cozy"
-        ],
-        "shortDescription": "Cafenea intimă lângă Parcul Central – liniște, cafea bună, grădină verde.",
-        "description": "Vero Café e ascunsă discret lângă Parcul Tractorul, departe de zgomotul turistic. Grădiniță interioară verde, fotolii confortabile, muzică ambientală. Preferata localnicilor care vor liniște.",
-        "address": "Bd. 15 Noiembrie nr. 8, Brașov",
-        "coordinates": {
-          "lat": 45.651,
-          "lng": 25.599
-        },
-        "priceRange": "20–40 lei",
-        "tags": [
-          "liniștit",
-          "cozy",
-          "grădină",
-          "localnici",
-          "relaxat"
-        ],
-        "tip": "Locul secret al brașovenilor. Perfectă dimineața sau la prânz.",
-        "hours": "09:00–21:00",
-        "image": "vero_cafe.jpg"
-      },
-      "nomad_skybar": {
-        "id": "nomad_skybar",
-        "name": "Nomad Skybar",
-        "atmosphere": [
-          "Terasă",
-          "Modern"
-        ],
-        "shortDescription": "Cafenea-bar pe acoperișul Brașovului – panoramă 360°, cocktailuri, specialități cafea.",
-        "description": "Nomad Skybar ocupă acoperișul unei clădiri din centru și oferă una din cele mai spectaculoase panorame asupra Brașovului. Cafea de specialitate ziua, cocktailuri seara. Mobilier modern, umbrelă la soare.",
-        "address": "Str. Republicii nr. 62 (etaj 8), Brașov",
-        "coordinates": {
-          "lat": 45.6462,
-          "lng": 25.5932
-        },
-        "priceRange": "Peste 40 lei",
-        "tags": [
-          "terasă",
-          "rooftop",
-          "panoramă",
-          "cocktailuri",
-          "premium"
-        ],
-        "tip": "Apusul de soare cu Tâmpa în fundal e de neuitat. Rezervă loc cu cel puțin 2 zile înainte!",
-        "hours": "12:00–00:00",
-        "image": "nomad_skybar.jpg"
-      },
-      "corso_cafe": {
-        "id": "corso_cafe",
-        "name": "Corso Café",
-        "atmosphere": [
           "Terasă"
         ],
-        "shortDescription": "Terasă emblematică pe Strada Republicii – promenadă, cafea, vedere spre pietonală.",
-        "description": "Corso are una din cele mai animate terase de pe Strada Republicii. Locul ideal să urmărești viața orașului cu o cafea în mână. Mic dejun, prânz ușor, deserturi, sucuri fresh.",
-        "address": "Str. Republicii nr. 28, Brașov",
+        "shortDescription": "Specialty coffee în fața Bisericii Negre – clădire sec. XVII, cafea prăjită local, terasă unică.",
+        "description": "CH9 se află în Curtea Johannes Honterus nr. 9, în inima istorică a Brașovului, fix în față la intrarea în Biserica Neagră. Clădirea datează din sec. XVII și a fost locuită de paracliserul Bisericii Negre. Cafeaua e prăjită mediu de prăjitorii autohtone printr-o metodă unică în România. Pe lângă espresso și filtre, au ceaiuri fine și produse proaspete. Terasa oferă un view direct spre semnul Brașov pe Tâmpa.",
+        "address": "Curtea Johannes Honterus nr. 9, Brașov",
         "coordinates": {
-          "lat": 45.6447,
-          "lng": 25.5919
+          "lat": 45.6413,
+          "lng": 25.5882
         },
         "priceRange": "20–40 lei",
         "tags": [
+          "specialty coffee",
+          "liniștit",
           "terasă",
-          "Republicii",
-          "promenadă",
-          "animat",
-          "brunch"
+          "Biserica Neagră",
+          "istoric"
         ],
-        "tip": "Locul perfect pentru observat viața orașului. Terasa e cea mai aglomerată sâmbăta la prânz.",
-        "hours": "08:00–23:00",
-        "image": "corso_cafe.jpg"
+        "tip": "Singurul loc din Brașov de unde poți fotografia Biserica Neagră savurând o cafea de specialitate. Terasa e magică dimineața.",
+        "hours": "L-J: 08:00–19:00 / V: 08:00–20:00 / S-D: 09:00–20:00",
+        "image": "ch9.jpg"
       },
-      "cafeneaua_artelor": {
-        "id": "cafeneaua_artelor",
-        "name": "Cafeneaua Artelor",
+      "croitoria_cafea": {
+        "id": "croitoria_cafea",
+        "name": "Croitoria de Cafea",
         "atmosphere": [
-          "Terasă",
+          "Cozy",
+          "Liniștită"
+        ],
+        "shortDescription": "Cafenea-prăjitorie cozy pe Iuliu Maniu – specialty coffee proaspăt prăjit, vedere spre Tâmpa.",
+        "description": "Amenajată într-o fostă croitorie de pe Bulevardul Iuliu Maniu, Croitoria de Cafea este una dintre cele mai iubite cafenele specialty din Brașov. Cafeaua arabica e selecționată și proaspăt prăjită de Mugur Treschi, maestru prăjitor cu pasiune. Fereastra mare la stradă oferă o vedere extraordinară spre muntele Tâmpa. Ideal pentru cei care vor să evite agitația din centrul vechi.",
+        "address": "Bd. Iuliu Maniu nr. 17, Brașov",
+        "coordinates": {
+          "lat": 45.6468,
+          "lng": 25.5953
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "specialty coffee",
+          "cozy",
+          "prăjitorie",
+          "Tâmpa",
+          "liniștit"
+        ],
+        "tip": "Biscuiții home-made sunt legendari. Locul preferat al cunoscătorilor de specialty coffee din Brașov.",
+        "hours": "08:00–20:00",
+        "image": "croitoria_cafea.jpg"
+      },
+      "tipografia": {
+        "id": "tipografia",
+        "name": "Tipografia",
+        "atmosphere": [
           "Cozy"
         ],
-        "shortDescription": "Cafenea culturală cu terasă în curte interioară – expoziții, concerte mici, cafea bună.",
-        "description": "Cafeneaua Artelor e parte dintr-un centru cultural activ. Terasă în curte pavată, expoziții temporare de fotografie și pictură, uneori concerte acustice. Cafea de specialitate, vinuri, platouri.",
-        "address": "Str. Hirscher nr. 6, Brașov",
+        "shortDescription": "Hub cultural cozy în centrul vechi – cafea, bere artizanală, concerte live, lansări de carte.",
+        "description": "Situată la intersecția dintre Str. Diaconu Coresi și Str. Postăvarului, Tipografia este un loc special pentru brașovenii de toate vârstele. Dimineața e perfectă pentru cafea și lucru la laptop, seara devine hub cultural: concerte live (rock, jazz, blues, folk), lansări de carte, proiecții de film, expoziții. Sortimente variate de cafea, ceai și bere artizanală.",
+        "address": "Str. Postăvarului nr. 1 (colț cu Str. Diaconu Coresi), Brașov",
         "coordinates": {
-          "lat": 45.6423,
+          "lat": 45.6432,
+          "lng": 25.5896
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "cozy",
+          "cultural",
+          "concerte",
+          "bere artizanală",
+          "centru vechi",
+          "laptop-friendly"
+        ],
+        "tip": "Verifică programul de evenimente – seara are o energie aparte. Dimineața e perfect liniștit pentru lucrat.",
+        "hours": "08:00–00:00",
+        "image": "tipografia.jpg"
+      },
+      "book_coffee": {
+        "id": "book_coffee",
+        "name": "Book Coffee Shop",
+        "atmosphere": [
+          "Cozy",
+          "Liniștită"
+        ],
+        "shortDescription": "Cea mai cozy cafenea din Brașov – cărți, specialty coffee, rating 4.9 pe Google, Recenzie de Aur.",
+        "description": "Ascuns pe strada Sfântul Ioan, lângă o veche mănăstire franciscană, Book Coffee Shop este una din cele mai apreciate cafenele de specialitate din Brașov. Rating 4.9 pe Google și Recenzie de Aur din partea Google România. Ambient cozy cu cărți și plante, personal amabil și pasionat, specialty coffee cu origini etiopiene și alte single origin. Terasă mică și intimă pe o stradă pietonală liniștită.",
+        "address": "Str. Sfântul Ioan nr. 24, Brașov",
+        "coordinates": {
+          "lat": 45.6435,
+          "lng": 25.5902
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "cozy",
+          "liniștit",
+          "specialty coffee",
+          "cărți",
+          "rating 4.9",
+          "terasă intimă"
+        ],
+        "tip": "Cere originea etiopiană dacă e disponibilă – e senzațională. Terasa mică e superb pe timp bun.",
+        "hours": "09:00–20:00",
+        "image": "book_coffee.jpg"
+      },
+      "tekafe": {
+        "id": "tekafe",
+        "name": "Tekafe",
+        "atmosphere": [
+          "Liniștită",
+          "Modern"
+        ],
+        "shortDescription": "Specialty coffee scandinav în centrul vechi – filtre alternative (V60, aeropress, syphon), ceaiuri premium.",
+        "description": "Tekafe se află în inima Brașovului, pe Str. Apollonia Hirscher nr. 10. Design minimalist cu influențe scandinavice, ceaiuri din cele mai renumite plantații din lume și cafea preparată exclusiv prin metode alternative: syphon, V60, aeropress, ibric sau espresso. Fără siropuri, fără condimente – cafea pură și onestă.",
+        "address": "Str. Apollonia Hirscher nr. 10, Brașov",
+        "coordinates": {
+          "lat": 45.6422,
           "lng": 25.588
         },
         "priceRange": "20–40 lei",
         "tags": [
-          "terasă",
-          "cultural",
-          "artă",
-          "cozy",
-          "curte interioară"
+          "specialty coffee",
+          "scandinav",
+          "filtre alternative",
+          "liniștit",
+          "ceaiuri premium"
         ],
-        "tip": "Curtea pavată cu umbrele de soare e magică vara. Verifică programul de expoziții.",
-        "hours": "10:00–22:00",
-        "image": "cafeneaua_artelor.jpg"
+        "tip": "Dacă ești curios de cafea la filtru, Tekafe e locul ideal – barista îți va explica fiecare metodă.",
+        "hours": "09:00–21:00",
+        "image": "tekafe.jpg"
       },
-      "lacave_coffee": {
-        "id": "lacave_coffee",
-        "name": "La Cave Coffee & Wine",
+      "opus9": {
+        "id": "opus9",
+        "name": "Opus 9",
         "atmosphere": [
           "Cozy",
-          "Liniștită"
+          "Terasă"
         ],
-        "shortDescription": "Cafenea-bar în pivniță medievală – specialty coffee ziua, vinuri seara, atmosferă unică.",
-        "description": "Într-o pivniță medievală restaurată din centrul vechi, La Cave îmbină specialty coffee cu o selecție atentă de vinuri. Bolți de cărămidă, lumânări, muzică jazz la volum redus. Perfectă pe timp de ploaie.",
-        "address": "Str. Castelului nr. 9, Brașov",
+        "shortDescription": "Cafenea cozy în Piața George Enescu – latte excepțional, atmosferă caldă, în inima centrului vechi.",
+        "description": "Opus 9 este o cafenea cu personalitate în Piața George Enescu, la câțiva pași de Bistro de l'Arte și de pietonala Republicii. Latte excepțional, atmosferă caldă, personal prietenos. Locul preferat al brașovenilor pentru o cafea de dimineață sau o pauză în timpul plimbării prin centrul vechi.",
+        "address": "Piața George Enescu nr. 9, Brașov",
         "coordinates": {
-          "lat": 45.6411,
-          "lng": 25.5876
+          "lat": 45.6423,
+          "lng": 25.5868
         },
-        "priceRange": "Peste 40 lei",
+        "priceRange": "20–40 lei",
         "tags": [
           "cozy",
-          "pivniță medievală",
-          "specialty coffee",
-          "vinuri",
-          "romantic"
+          "latte",
+          "centru vechi",
+          "Piața George Enescu",
+          "terasă"
         ],
-        "tip": "Pe timp de ploaie e cel mai bun loc din Brașov. Seara cu lumânări e magic.",
-        "hours": "10:00–23:00",
-        "image": "lacave_coffee.jpg"
+        "tip": "Latte-ul este considerat printre cele mai bune din Brașov. Piața George Enescu e superb dimineața.",
+        "hours": "08:00–21:00",
+        "image": "opus9.jpg"
+      },
+      "nola_coffee": {
+        "id": "nola_coffee",
+        "name": "Nola Coffee Shop",
+        "atmosphere": [
+          "Liniștită"
+        ],
+        "shortDescription": "Specialty coffee de nișă – arabica proaspăt prăjit, single origin, latte art, atmosferă intimă.",
+        "description": "Nola Coffee Shop este dedicată pasionaților de cafea proaspăt prăjită. Aduce permanent origini noi de arabica pentru a stârni curiozitatea. Spațiu mic și intim, cu scaune la geam. Barista extrem de prietenoasă și amabilă. Rating înalt pe toate platformele. Ideal pentru un cortado sau espresso liniștit.",
+        "address": "Str. Hans Benkner nr. 6, Brașov",
+        "coordinates": {
+          "lat": 45.6417,
+          "lng": 25.5878
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "specialty coffee",
+          "liniștit",
+          "single origin",
+          "latte art",
+          "intim"
+        ],
+        "tip": "Cere origini etiopiene sau din America Centrală. Barista e pasionată și îți va povesti fiecare bob.",
+        "hours": "08:30–18:00",
+        "image": "nola_coffee.jpg"
+      },
+      "breakaway": {
+        "id": "breakaway",
+        "name": "Breakaway Coffee",
+        "atmosphere": [
+          "Modern",
+          "Liniștită"
+        ],
+        "shortDescription": "Prăjitorie și cafenea specialty pe pietonala Coresi – cafea prăjită local, design scandinav curat.",
+        "description": "Breakaway este genul de loc care vorbește despre esență: fără artificii, doar cafea de specialitate făcută impecabil. Atmosfera e curată și modernă, cu un aer scandinav. Cafeaua e prăjită local, în propria prăjitorie din Brașov. Selecția de origini se schimbă periodic, cu accent pe prospețime. Espresso clar, filtru impecabil. Pe pietonala Coresi, la nr. 3.",
+        "address": "Str. Camil Petrescu nr. 3, Brașov (Pietonala Coresi)",
+        "coordinates": {
+          "lat": 45.639,
+          "lng": 25.602
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "specialty coffee",
+          "prăjitorie proprie",
+          "modern",
+          "scandinav",
+          "Coresi"
+        ],
+        "tip": "Poți cumpăra și boabe de cafea de la prăjitoria lor. Filtru-ul e cel mai bun din Brașov pentru mulți.",
+        "hours": "08:00–20:00",
+        "image": "breakaway.jpg"
+      },
+      "lavender_cafe": {
+        "id": "lavender_cafe",
+        "name": "Lavender Café & Wine Bar",
+        "atmosphere": [
+          "Cozy",
+          "Terasă"
+        ],
+        "shortDescription": "Cafenea elegantă la poalele Tâmpei – eclere artizanale, Pavlova, vinuri moldovenești, loc de joacă copii.",
+        "description": "Lavender Café e o oază elegantă la poalele muntelui Tâmpa. Premiată de mai multe reviste de turism drept cel mai bun loc pentru cafea și prăjituri din Brașov. Cheesecake cu Gorgonzola, macarons, Pavlova, eclere variate. Cafea de specialitate, limonadă cu lavandă, vinuri moldovenești selecționate. Are și loc de joacă pentru copii și parcare proprie.",
+        "address": "Str. Calcarului nr. 19B, Brașov",
+        "coordinates": {
+          "lat": 45.6395,
+          "lng": 25.5878
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "cozy",
+          "deserturi artizanale",
+          "Tâmpa",
+          "copii",
+          "vinuri",
+          "terasă"
+        ],
+        "tip": "Pavlova și eclerele sunt de neratat. Au loc de joacă pentru copii – ideal pentru familiști.",
+        "hours": "L-V: 09:00–21:00 / S-D: 10:00–22:00",
+        "image": "lavender_cafe.jpg"
+      },
+      "moa_bakery": {
+        "id": "moa_bakery",
+        "name": "MOA Bakery",
+        "atmosphere": [
+          "Cozy"
+        ],
+        "shortDescription": "Brutărie-cafenea lângă Piața Sfatului – covrigi umpluți (Dubai, pesto, Nutella), cafea grecească.",
+        "description": "MOA Bakery este locul unde poți savura o cafea bună în compania celor mai buni covrigi din Brașov. Covrigi umpluți sărați sau dulci: roșii uscate cu pesto, Dubai (cu kataifi și cremă de pistacchio), Nutella și altele. Aluatul e proaspăt fără aditivi. Cafeaua grecească este senzațională. La câteva minute de Piața Sfatului.",
+        "address": "Str. Mureșenilor nr. 5, Brașov",
+        "coordinates": {
+          "lat": 45.6418,
+          "lng": 25.5886
+        },
+        "priceRange": "Sub 20 lei",
+        "tags": [
+          "cozy",
+          "covrigi umpluți",
+          "cafea grecească",
+          "ieftin",
+          "centru"
+        ],
+        "tip": "Covrigul Dubai și cel cu roșii uscate și pesto sunt top. Dimineața cozii se face repede!",
+        "hours": "08:00–21:00",
+        "image": "moa_bakery.jpg"
+      },
+      "cafeteca": {
+        "id": "cafeteca",
+        "name": "Cafeteca",
+        "atmosphere": [
+          "Modern"
+        ],
+        "shortDescription": "Brandul brașovean de referință al cafelei – specialty coffee, ceaiuri premium, produse locale. Mai multe locații.",
+        "description": "Cafeteca este unul dintre cele mai cunoscute branduri brașovene, cu mai multe locații în centru. Specialty coffee, ceaiuri fine, băuturi artizanale calde și reci, sandwichuri cu producători locali. Design modern și primitor. Punct de referință al comunității locale pentru o cafea de calitate la prețul corect.",
+        "address": "Str. Republicii nr. 13, Brașov (locație centrală)",
+        "coordinates": {
+          "lat": 45.6439,
+          "lng": 25.5912
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "modern",
+          "specialty coffee",
+          "ceaiuri",
+          "local",
+          "mai multe locații"
+        ],
+        "tip": "Are mai multe locații în centru. Locația de pe Republicii e cea mai animată.",
+        "hours": "08:00–22:00",
+        "image": "cafeteca.jpg"
+      },
+      "kaffeine": {
+        "id": "kaffeine",
+        "name": "Kaffeine Brașov",
+        "atmosphere": [
+          "Modern",
+          "Terasă"
+        ],
+        "shortDescription": "Specialty coffee cu imprimare foto pe cafea – latte art digital unic în Brașov, centrul orașului.",
+        "description": "Kaffeine este o cafenea de specialitate din centrul Brașovului cu un serviciu unic în oraș: imprimare foto pe cafea și latte art digital. Cafea de calitate superioară, băuturi de sezon, atmosferă modernă. Perfectă pentru o cafea originală sau un cadou inedit sub forma unui latte cu fotografia ta.",
+        "address": "Str. Nicolae Bălcescu nr. 10, Brașov",
+        "coordinates": {
+          "lat": 45.6451,
+          "lng": 25.592
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "modern",
+          "latte art digital",
+          "foto pe cafea",
+          "specialty",
+          "unic"
+        ],
+        "tip": "Încearcă imprimarea foto pe cafea – e un suvenir inedit din Brașov!",
+        "hours": "09:00–21:00",
+        "image": "kaffeine.jpg"
+      },
+      "shake_coffee": {
+        "id": "shake_coffee",
+        "name": "Shake Coffee",
+        "atmosphere": [
+          "Cozy",
+          "Terasă"
+        ],
+        "shortDescription": "Cafenea cozy cu vibe prietenos – latte-uri vegane, smoothies, jucării pentru copii, personal calduros.",
+        "description": "Shake Coffee este una dintre cafenelele cu cel mai prietenos vibe din Brașov. Personal amabil care lasă uneori mesaje personalizate lângă cafea. Smoothie-uri naturale, latte-uri vegane, băuturi creative. Are o cutiuță cu jucării pentru copii. Clienții revin în primul rând pentru atmosferă și servire.",
+        "address": "Str. Sfântul Ioan nr. 30, Brașov",
+        "coordinates": {
+          "lat": 45.6433,
+          "lng": 25.59
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "cozy",
+          "vegan",
+          "smoothies",
+          "copii",
+          "prietenos",
+          "latte art"
+        ],
+        "tip": "Cere un latte vegan cu lapte de ovăz – e excepțional. Personalul e cel mai primitor din Brașov.",
+        "hours": "08:30–20:00",
+        "image": "shake_coffee.jpg"
       }
     },
     "results": {
@@ -2365,9 +2293,9 @@
           "q3": "Singur"
         },
         "recommendations": [
-          "cafeneaua_franzelarilor",
-          "rocks_cafe",
-          "story_cafe"
+          "moa_bakery",
+          "tipografia",
+          "book_coffee"
         ]
       },
       "a-a-b": {
@@ -2377,9 +2305,9 @@
           "q3": "Cuplu"
         },
         "recommendations": [
-          "cafeneaua_franzelarilor",
-          "rocks_cafe",
-          "tabiet"
+          "moa_bakery",
+          "opus9",
+          "tipografia"
         ]
       },
       "a-a-c": {
@@ -2389,9 +2317,9 @@
           "q3": "Prieteni"
         },
         "recommendations": [
-          "cafeneaua_franzelarilor",
-          "rocks_cafe",
-          "story_cafe"
+          "moa_bakery",
+          "tipografia",
+          "opus9"
         ]
       },
       "a-a-d": {
@@ -2401,9 +2329,9 @@
           "q3": "Familie cu copii"
         },
         "recommendations": [
-          "cafeneaua_franzelarilor",
-          "story_cafe",
-          "rocks_cafe"
+          "moa_bakery",
+          "shake_coffee",
+          "tipografia"
         ]
       },
       "a-b-a": {
@@ -2413,9 +2341,9 @@
           "q3": "Singur"
         },
         "recommendations": [
-          "story_cafe",
-          "tabiet",
-          "einstein_cafe"
+          "book_coffee",
+          "croitoria_cafea",
+          "tipografia"
         ]
       },
       "a-b-b": {
@@ -2425,9 +2353,9 @@
           "q3": "Cuplu"
         },
         "recommendations": [
-          "tabiet",
-          "einstein_cafe",
-          "rocks_cafe"
+          "opus9",
+          "book_coffee",
+          "tipografia"
         ]
       },
       "a-b-c": {
@@ -2437,9 +2365,9 @@
           "q3": "Prieteni"
         },
         "recommendations": [
-          "rocks_cafe",
-          "tabiet",
-          "cafeneaua_artelor"
+          "tipografia",
+          "opus9",
+          "book_coffee"
         ]
       },
       "a-b-d": {
@@ -2449,9 +2377,9 @@
           "q3": "Familie cu copii"
         },
         "recommendations": [
-          "story_cafe",
-          "einstein_cafe",
-          "tabiet"
+          "lavender_cafe",
+          "shake_coffee",
+          "opus9"
         ]
       },
       "a-c-a": {
@@ -2461,9 +2389,9 @@
           "q3": "Singur"
         },
         "recommendations": [
-          "curio",
-          "lacave_coffee",
-          "tabiet"
+          "croitoria_cafea",
+          "book_coffee",
+          "nola_coffee"
         ]
       },
       "a-c-b": {
@@ -2473,9 +2401,9 @@
           "q3": "Cuplu"
         },
         "recommendations": [
-          "lacave_coffee",
-          "curio",
-          "einstein_cafe"
+          "lavender_cafe",
+          "opus9",
+          "croitoria_cafea"
         ]
       },
       "a-c-c": {
@@ -2485,9 +2413,9 @@
           "q3": "Prieteni"
         },
         "recommendations": [
-          "curio",
-          "lacave_coffee",
-          "rocks_cafe"
+          "tipografia",
+          "lavender_cafe",
+          "opus9"
         ]
       },
       "a-c-d": {
@@ -2497,9 +2425,9 @@
           "q3": "Familie cu copii"
         },
         "recommendations": [
-          "curio",
-          "story_cafe",
-          "einstein_cafe"
+          "lavender_cafe",
+          "shake_coffee",
+          "opus9"
         ]
       },
       "b-a-a": {
@@ -2509,9 +2437,9 @@
           "q3": "Singur"
         },
         "recommendations": [
-          "narcoffee",
-          "beans_dots",
-          "ground_zero"
+          "cafeteca",
+          "kaffeine",
+          "breakaway"
         ]
       },
       "b-a-b": {
@@ -2521,9 +2449,9 @@
           "q3": "Cuplu"
         },
         "recommendations": [
-          "narcoffee",
-          "boo_coffee",
-          "beans_dots"
+          "kaffeine",
+          "cafeteca",
+          "breakaway"
         ]
       },
       "b-a-c": {
@@ -2533,9 +2461,9 @@
           "q3": "Prieteni"
         },
         "recommendations": [
-          "ground_zero",
-          "narcoffee",
-          "boo_coffee"
+          "cafeteca",
+          "kaffeine",
+          "breakaway"
         ]
       },
       "b-a-d": {
@@ -2545,9 +2473,9 @@
           "q3": "Familie cu copii"
         },
         "recommendations": [
-          "boo_coffee",
-          "narcoffee",
-          "ground_zero"
+          "cafeteca",
+          "shake_coffee",
+          "kaffeine"
         ]
       },
       "b-b-a": {
@@ -2557,9 +2485,9 @@
           "q3": "Singur"
         },
         "recommendations": [
-          "narcoffee",
-          "beans_dots",
-          "revolver_coffee"
+          "breakaway",
+          "tekafe",
+          "cafeteca"
         ]
       },
       "b-b-b": {
@@ -2569,9 +2497,9 @@
           "q3": "Cuplu"
         },
         "recommendations": [
-          "narcoffee",
-          "boo_coffee",
-          "beans_dots"
+          "kaffeine",
+          "cafeteca",
+          "breakaway"
         ]
       },
       "b-b-c": {
@@ -2581,9 +2509,9 @@
           "q3": "Prieteni"
         },
         "recommendations": [
-          "ground_zero",
-          "boo_coffee",
-          "narcoffee"
+          "cafeteca",
+          "kaffeine",
+          "tipografia"
         ]
       },
       "b-b-d": {
@@ -2593,9 +2521,9 @@
           "q3": "Familie cu copii"
         },
         "recommendations": [
-          "boo_coffee",
-          "narcoffee",
-          "ground_zero"
+          "cafeteca",
+          "shake_coffee",
+          "kaffeine"
         ]
       },
       "b-c-a": {
@@ -2605,9 +2533,9 @@
           "q3": "Singur"
         },
         "recommendations": [
-          "curio",
-          "narcoffee",
-          "nomad_skybar"
+          "breakaway",
+          "tekafe",
+          "cafeteca"
         ]
       },
       "b-c-b": {
@@ -2617,9 +2545,9 @@
           "q3": "Cuplu"
         },
         "recommendations": [
-          "nomad_skybar",
-          "curio",
-          "narcoffee"
+          "kaffeine",
+          "breakaway",
+          "cafeteca"
         ]
       },
       "b-c-c": {
@@ -2629,9 +2557,9 @@
           "q3": "Prieteni"
         },
         "recommendations": [
-          "nomad_skybar",
-          "curio",
-          "ground_zero"
+          "cafeteca",
+          "tipografia",
+          "kaffeine"
         ]
       },
       "b-c-d": {
@@ -2641,9 +2569,9 @@
           "q3": "Familie cu copii"
         },
         "recommendations": [
-          "curio",
-          "boo_coffee",
-          "nomad_skybar"
+          "cafeteca",
+          "shake_coffee",
+          "breakaway"
         ]
       },
       "c-a-a": {
@@ -2653,9 +2581,9 @@
           "q3": "Singur"
         },
         "recommendations": [
-          "cafeneaua_franzelarilor",
-          "story_cafe",
-          "vero_cafe"
+          "nola_coffee",
+          "book_coffee",
+          "croitoria_cafea"
         ]
       },
       "c-a-b": {
@@ -2665,9 +2593,9 @@
           "q3": "Cuplu"
         },
         "recommendations": [
-          "story_cafe",
-          "cafeneaua_franzelarilor",
-          "vero_cafe"
+          "book_coffee",
+          "nola_coffee",
+          "tekafe"
         ]
       },
       "c-a-c": {
@@ -2677,9 +2605,9 @@
           "q3": "Prieteni"
         },
         "recommendations": [
-          "story_cafe",
-          "vero_cafe",
-          "cafeneaua_franzelarilor"
+          "book_coffee",
+          "croitoria_cafea",
+          "nola_coffee"
         ]
       },
       "c-a-d": {
@@ -2689,9 +2617,9 @@
           "q3": "Familie cu copii"
         },
         "recommendations": [
-          "story_cafe",
-          "cafeneaua_franzelarilor",
-          "vero_cafe"
+          "book_coffee",
+          "shake_coffee",
+          "nola_coffee"
         ]
       },
       "c-b-a": {
@@ -2701,9 +2629,9 @@
           "q3": "Singur"
         },
         "recommendations": [
-          "revolver_coffee",
-          "einstein_cafe",
-          "vero_cafe"
+          "ch9",
+          "nola_coffee",
+          "tekafe"
         ]
       },
       "c-b-b": {
@@ -2713,9 +2641,9 @@
           "q3": "Cuplu"
         },
         "recommendations": [
-          "revolver_coffee",
-          "story_cafe",
-          "einstein_cafe"
+          "ch9",
+          "tekafe",
+          "croitoria_cafea"
         ]
       },
       "c-b-c": {
@@ -2725,9 +2653,9 @@
           "q3": "Prieteni"
         },
         "recommendations": [
-          "einstein_cafe",
-          "vero_cafe",
-          "story_cafe"
+          "book_coffee",
+          "nola_coffee",
+          "ch9"
         ]
       },
       "c-b-d": {
@@ -2737,9 +2665,9 @@
           "q3": "Familie cu copii"
         },
         "recommendations": [
-          "story_cafe",
-          "einstein_cafe",
-          "vero_cafe"
+          "lavender_cafe",
+          "book_coffee",
+          "shake_coffee"
         ]
       },
       "c-c-a": {
@@ -2749,9 +2677,9 @@
           "q3": "Singur"
         },
         "recommendations": [
-          "lacave_coffee",
-          "revolver_coffee",
-          "curio"
+          "breakaway",
+          "nola_coffee",
+          "ch9"
         ]
       },
       "c-c-b": {
@@ -2761,9 +2689,9 @@
           "q3": "Cuplu"
         },
         "recommendations": [
-          "lacave_coffee",
-          "curio",
-          "revolver_coffee"
+          "ch9",
+          "tekafe",
+          "breakaway"
         ]
       },
       "c-c-c": {
@@ -2773,9 +2701,9 @@
           "q3": "Prieteni"
         },
         "recommendations": [
-          "lacave_coffee",
-          "curio",
-          "einstein_cafe"
+          "ch9",
+          "book_coffee",
+          "nola_coffee"
         ]
       },
       "c-c-d": {
@@ -2785,9 +2713,9 @@
           "q3": "Familie cu copii"
         },
         "recommendations": [
-          "lacave_coffee",
-          "story_cafe",
-          "curio"
+          "lavender_cafe",
+          "ch9",
+          "shake_coffee"
         ]
       },
       "d-a-a": {
@@ -2797,9 +2725,9 @@
           "q3": "Singur"
         },
         "recommendations": [
-          "corso_cafe",
-          "cafeneaua_artelor",
-          "rocks_cafe"
+          "moa_bakery",
+          "opus9",
+          "ch9"
         ]
       },
       "d-a-b": {
@@ -2809,9 +2737,9 @@
           "q3": "Cuplu"
         },
         "recommendations": [
-          "cafeneaua_artelor",
-          "corso_cafe",
-          "rocks_cafe"
+          "opus9",
+          "ch9",
+          "moa_bakery"
         ]
       },
       "d-a-c": {
@@ -2821,9 +2749,9 @@
           "q3": "Prieteni"
         },
         "recommendations": [
-          "corso_cafe",
-          "cafeneaua_artelor",
-          "rocks_cafe"
+          "opus9",
+          "moa_bakery",
+          "ch9"
         ]
       },
       "d-a-d": {
@@ -2833,9 +2761,9 @@
           "q3": "Familie cu copii"
         },
         "recommendations": [
-          "corso_cafe",
-          "cafeneaua_artelor",
-          "story_cafe"
+          "moa_bakery",
+          "lavender_cafe",
+          "opus9"
         ]
       },
       "d-b-a": {
@@ -2845,9 +2773,9 @@
           "q3": "Singur"
         },
         "recommendations": [
-          "corso_cafe",
-          "cafeneaua_artelor",
-          "narcoffee"
+          "ch9",
+          "opus9",
+          "book_coffee"
         ]
       },
       "d-b-b": {
@@ -2857,9 +2785,9 @@
           "q3": "Cuplu"
         },
         "recommendations": [
-          "cafeneaua_artelor",
-          "corso_cafe",
-          "rocks_cafe"
+          "ch9",
+          "opus9",
+          "kaffeine"
         ]
       },
       "d-b-c": {
@@ -2869,9 +2797,9 @@
           "q3": "Prieteni"
         },
         "recommendations": [
-          "corso_cafe",
-          "cafeneaua_artelor",
-          "rocks_cafe"
+          "opus9",
+          "ch9",
+          "cafeteca"
         ]
       },
       "d-b-d": {
@@ -2881,9 +2809,9 @@
           "q3": "Familie cu copii"
         },
         "recommendations": [
-          "corso_cafe",
-          "cafeneaua_artelor",
-          "boo_coffee"
+          "lavender_cafe",
+          "opus9",
+          "shake_coffee"
         ]
       },
       "d-c-a": {
@@ -2893,9 +2821,9 @@
           "q3": "Singur"
         },
         "recommendations": [
-          "nomad_skybar",
-          "cafeneaua_artelor",
-          "corso_cafe"
+          "ch9",
+          "kaffeine",
+          "opus9"
         ]
       },
       "d-c-b": {
@@ -2905,9 +2833,9 @@
           "q3": "Cuplu"
         },
         "recommendations": [
-          "nomad_skybar",
-          "cafeneaua_artelor",
-          "lacave_coffee"
+          "ch9",
+          "lavender_cafe",
+          "opus9"
         ]
       },
       "d-c-c": {
@@ -2917,9 +2845,9 @@
           "q3": "Prieteni"
         },
         "recommendations": [
-          "nomad_skybar",
-          "corso_cafe",
-          "cafeneaua_artelor"
+          "opus9",
+          "ch9",
+          "cafeteca"
         ]
       },
       "d-c-d": {
@@ -2929,9 +2857,9 @@
           "q3": "Familie cu copii"
         },
         "recommendations": [
-          "nomad_skybar",
-          "corso_cafe",
-          "cafeneaua_artelor"
+          "lavender_cafe",
+          "ch9",
+          "shake_coffee"
         ]
       }
     }
