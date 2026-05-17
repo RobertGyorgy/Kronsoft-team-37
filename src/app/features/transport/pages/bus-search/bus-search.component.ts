@@ -336,6 +336,15 @@ export class BusSearchComponent implements OnInit, OnDestroy {
   private locationTimeout: any;
 
   constructor() {
+    if (typeof window !== 'undefined') {
+      const hasRefreshed = sessionStorage.getItem('transport_first_load_refreshed');
+      if (!hasRefreshed) {
+        sessionStorage.setItem('transport_first_load_refreshed', 'true');
+        window.location.reload();
+        return;
+      }
+    }
+
     afterNextRender(async () => {
       this.isLoading.set(true);
       

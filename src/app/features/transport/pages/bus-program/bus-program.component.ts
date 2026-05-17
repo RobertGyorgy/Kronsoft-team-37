@@ -368,6 +368,15 @@ export class BusProgramComponent implements OnInit {
   });
 
   constructor() {
+    if (typeof window !== 'undefined') {
+      const hasRefreshed = sessionStorage.getItem('transport_first_load_refreshed');
+      if (!hasRefreshed) {
+        sessionStorage.setItem('transport_first_load_refreshed', 'true');
+        window.location.reload();
+        return;
+      }
+    }
+
     afterNextRender(() => {
       this.initMap();
       this.getUserLocation();
