@@ -105,19 +105,19 @@ export class AuthService {
   // ── Session Helpers ──────────────────────────────────────────
 
   public getAccessToken(): string | null {
-    return sessionStorage.getItem(ACCESS_TOKEN_KEY);
+    return localStorage.getItem(ACCESS_TOKEN_KEY);
   }
 
   public getRefreshToken(): string | null {
-    return sessionStorage.getItem(REFRESH_TOKEN_KEY);
+    return localStorage.getItem(REFRESH_TOKEN_KEY);
   }
 
   public getUserName(): string | null {
-    return sessionStorage.getItem(USER_NAME_KEY);
+    return localStorage.getItem(USER_NAME_KEY);
   }
 
   public getUserRole(): string | null {
-    return sessionStorage.getItem(USER_ROLE_KEY);
+    return localStorage.getItem(USER_ROLE_KEY);
   }
 
   public isLoggedIn(): boolean {
@@ -125,16 +125,16 @@ export class AuthService {
   }
 
   public clearSession(): void {
-    sessionStorage.removeItem(ACCESS_TOKEN_KEY);
-    sessionStorage.removeItem(REFRESH_TOKEN_KEY);
-    sessionStorage.removeItem(USER_NAME_KEY);
-    sessionStorage.removeItem(USER_ROLE_KEY);
+    localStorage.removeItem(ACCESS_TOKEN_KEY);
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
+    localStorage.removeItem(USER_NAME_KEY);
+    localStorage.removeItem(USER_ROLE_KEY);
   }
 
   private persistSession(response: AuthResponse): void {
-    sessionStorage.setItem(ACCESS_TOKEN_KEY, response.accessToken);
-    sessionStorage.setItem(REFRESH_TOKEN_KEY, response.refreshToken);
-    sessionStorage.setItem(USER_NAME_KEY, response.fullName);
-    sessionStorage.setItem(USER_ROLE_KEY, response.role);
+    localStorage.setItem(ACCESS_TOKEN_KEY, response.accessToken);
+    localStorage.setItem(REFRESH_TOKEN_KEY, response.refreshToken);
+    localStorage.setItem(USER_NAME_KEY, response.fullName);
+    localStorage.setItem(USER_ROLE_KEY, response.role);
   }
 }
