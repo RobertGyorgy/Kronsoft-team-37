@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { ReportService } from '../../services/report.service';
 import { UserService } from '../../../../core/services/user.service';
+import { AuthService } from '../../../auth/auth.service';
 import { gsap } from 'gsap';
 
 @Component({
@@ -16,6 +17,7 @@ import { gsap } from 'gsap';
 export class ReportComponent {
   private reportService = inject(ReportService);
   private userService = inject(UserService);
+  private authService = inject(AuthService);
   private router = inject(Router);
 
   @ViewChild('container') container!: ElementRef;
@@ -36,12 +38,14 @@ export class ReportComponent {
   });
 
   constructor() {
-    afterNextRender(async () => {
-      const profile = await this.userService.loadProfile();
-      if (profile && profile.fullName) {
-        this.userName.set(profile.fullName.split(' ')[0]);
-      }
+    const sessionName = this.authService.getUserName() || '';
+    if (sessionName) {
+      this.userName.set(sessionName.split(' ')[0]);
+    }
+
+    afterNextRender(() => {
       this.animateEntrance();
+      this.userService.loadProfile(); // fetch in background
     });
   }
 

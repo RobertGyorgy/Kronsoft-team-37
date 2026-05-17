@@ -263,19 +263,17 @@ export class DashboardComponent implements AfterViewInit {
   @ViewChild('grid') grid!: ElementRef;
   @ViewChild('footer') footer!: ElementRef;
 
-  helloWords = signal<string[]>(['Salut,', '']);
+  helloWords = signal<string[]>(['Salut,', 'Utilizator']);
   interestWords = 'Cu ce te putem ajuta astăzi?'.split(' ');
 
   constructor() {
-    afterNextRender(() => this.loadUserName());
-  }
-
-  private async loadUserName() {
-    // Try backend profile first, fallback to session
-    const profile = await this.userService.loadProfile();
-    const name = profile?.fullName || this.authService.getUserName() || 'Utilizator';
+    const name = this.authService.getUserName() || 'Utilizator';
     const firstName = name.split(' ')[0];
     this.helloWords.set(`Salut, ${firstName}`.split(' '));
+
+    afterNextRender(() => {
+      this.userService.loadProfile(); // fetch in background
+    });
   }
 
   ngAfterViewInit() {
