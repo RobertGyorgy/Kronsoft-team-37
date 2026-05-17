@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { gsap } from 'gsap';
+import { AuthService } from '../../../auth/auth.service';
+import { UserService } from '../../../../core/services/user.service';
 
 @Component({
   selector: 'app-settings',
@@ -27,9 +29,10 @@ import { gsap } from 'gsap';
           <div class="glass-profile-card">
             <div class="avatar-container">
               <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Robert" alt="Avatar" class="avatar">
-              <button class="edit-avatar-btn">
+              <button class="edit-avatar-btn" (click)="triggerAvatarUpload()">
                 <span class="material-icons">photo_camera</span>
               </button>
+              <input type="file" id="avatarInput" style="display:none" accept="image/*" (change)="onAvatarSelected($event)">
             </div>
             <div class="user-meta">
               <h2>{{ userName }}</h2>
@@ -203,7 +206,11 @@ import { gsap } from 'gsap';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SettingsComponent implements OnInit {
-  userName = 'Robert G.';
+  private authService = inject(AuthService);
+  private userService = inject(UserService);
+
+  userName = '';
+  userEmail = '';
   savedPlates: string[] = [];
   showAddPlate = false;
   newPlate = '';
@@ -214,6 +221,7 @@ export class SettingsComponent implements OnInit {
   constructor(private cdr: ChangeDetectorRef, private router: Router) {
     afterNextRender(() => {
       this.loadSettings();
+      this.loadUserProfile();
       this.applyTheme();
       this.animateEntrance();
     });
@@ -262,8 +270,44 @@ export class SettingsComponent implements OnInit {
     document.body.classList.toggle('dark-theme', this.darkMode);
   }
 
+  private async loadUserProfile() {
+    const profile = await this.userService.loadProfile();
+    if (profile) {
+      this.userName = profile.fullName;
+      this.userEmail = profile.email;
+      this.cdr.detectChanges();
+    } else {
+      // Fallback to session storage
+      this.userName = this.authService.getUserName() || 'Utilizator';
+      this.cdr.detectChanges();
+    }
+  }
+
   resetPassword() {
-    this.showToast('Link-ul de resetare a fost trimis pe email.');
+    if (!this.userEmail) {
+      this.showToast('Nu s-a putut determina adresa de email.');
+      return;
+    }
+    this.authService.forgotPassword(this.userEmail).subscribe({
+      next: () => this.showToast('Link-ul de resetare a fost trimis pe email.'),
+      error: () => this.showToast('Eroare la trimiterea link-ului de resetare.')
+    });
+  }
+
+  triggerAvatarUpload() {
+    const input = document.getElementById('avatarInput') as HTMLInputElement;
+    if (input) input.click();
+  }
+
+  async onAvatarSelected(event: any) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    try {
+      await this.userService.uploadProfilePicture(file);
+      this.showToast('Fotografia de profil a fost actualizată.');
+    } catch {
+      this.showToast('Eroare la încărcarea fotografiei.');
+    }
   }
 
   showToast(msg: string) {
@@ -284,8 +328,10 @@ export class SettingsComponent implements OnInit {
 
   logout() {
     if (confirm('Sigur vrei să te deconectezi?')) {
-      localStorage.removeItem('user_token');
-      this.router.navigate(['/login']);
+      this.authService.logout().subscribe({
+        next: () => this.router.navigate(['/login']),
+        error: () => this.router.navigate(['/login'])
+      });
     }
   }
 }

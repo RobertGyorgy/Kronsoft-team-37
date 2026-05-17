@@ -2,8 +2,11 @@ import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
+// ── Response Interfaces (from OpenAPI spec) ────────────────────
+
 export interface Report {
   id: number;
+  userId: number;
   userName: string;
   categoryName: string;
   description: string;
@@ -14,6 +17,11 @@ export interface Report {
   createdAt: string;
 }
 
+export interface ReportCategory {
+  id: number;
+  name: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -22,50 +30,68 @@ export class ReportService {
   private apiUrl = '/api/reports';
 
   reports = signal<Report[]>([]);
-  categories = signal<{id: number, name: string}[]>([]);
+  categories = signal<ReportCategory[]>([]);
 
   constructor() {
     this.loadReports();
     this.loadCategories();
   }
 
-  async loadCategories() {
+  /**
+   * GET /api/report-categories
+   * Returns all available report categories.
+   */
+  async loadCategories(): Promise<void> {
     try {
-      const data = await firstValueFrom(this.http.get<any[]>('/api/report-categories'));
+      const data = await firstValueFrom(
+        this.http.get<ReportCategory[]>('/api/report-categories')
+      );
       this.categories.set(data);
     } catch (err) {
       console.error('Failed to load categories:', err);
     }
   }
 
-  async loadReports() {
+  /**
+   * GET /api/reports?page=&size=&sort=createdAt,desc
+   * Paginated reports, sorted by most recent first.
+   */
+  async loadReports(page = 0, size = 50): Promise<void> {
     try {
-      // Default to page 0, size 50 for now
-      const res = await firstValueFrom(this.http.get<any>(`${this.apiUrl}?page=0&size=50`));
+      const res = await firstValueFrom(
+        this.http.get<any>(`${this.apiUrl}?page=${page}&size=${size}&sort=createdAt,desc`)
+      );
       this.reports.set(res.content || []);
     } catch (err) {
       console.error('Failed to load reports:', err);
     }
   }
 
-  async addReport(reportData: any, imageFile?: File) {
+  /**
+   * GET /api/reports/user?page=&size=
+   * Get reports submitted by the current user.
+   */
+  async loadUserReports(page = 0, size = 50): Promise<Report[]> {
+    try {
+      const res = await firstValueFrom(
+        this.http.get<any>(`${this.apiUrl}/user?page=${page}&size=${size}&sort=createdAt,desc`)
+      );
+      return res.content || [];
+    } catch (err) {
+      console.error('Failed to load user reports:', err);
+      return [];
+    }
+  }
+
+  /**
+   * POST /api/reports (multipart/form-data)
+   * Submit a new city report with an optional photo.
+   * Schema: CityReportRequest { categoryId, description, latitude, longitude, image?, status }
+   */
+  async addReport(reportData: { categoryId: number; description: string; latitude: number; longitude: number }, imageFile?: File): Promise<void> {
     try {
       const formData = new FormData();
-      
-      // The Java backend expects a 'report' part or individual fields as multipart
-      // Based on schema 'CityReportRequest' properties:
-      const requestBlob = new Blob([JSON.stringify({
-        categoryId: reportData.categoryId,
-        description: reportData.description,
-        latitude: reportData.latitude,
-        longitude: reportData.longitude,
-        status: 'NEW'
-      })], { type: 'application/json' });
 
-      // If the backend uses @RequestPart("report")
-      // formData.append('report', requestBlob);
-      
-      // If the backend uses individual fields:
       formData.append('categoryId', reportData.categoryId.toString());
       formData.append('description', reportData.description);
       formData.append('latitude', reportData.latitude.toString());
@@ -76,10 +102,27 @@ export class ReportService {
         formData.append('image', imageFile);
       }
 
-      const newReport = await firstValueFrom(this.http.post<Report>(this.apiUrl, formData));
+      const newReport = await firstValueFrom(
+        this.http.post<Report>(this.apiUrl, formData)
+      );
       this.reports.update(current => [newReport, ...current]);
     } catch (err) {
       console.error('Failed to add report:', err);
+    }
+  }
+
+  /**
+   * GET /api/reports/{reportId}
+   * Get a single report by ID.
+   */
+  async getReport(reportId: number): Promise<Report | null> {
+    try {
+      return await firstValueFrom(
+        this.http.get<Report>(`${this.apiUrl}/${reportId}`)
+      );
+    } catch (err) {
+      console.error('Failed to get report:', err);
+      return null;
     }
   }
 }
