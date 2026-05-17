@@ -609,7 +609,7 @@ export class WeekendComponent implements AfterViewInit {
             { label: 'Singur', icon: 'person' },
             { label: 'Cuplu', icon: 'favorite' },
             { label: 'Grup', icon: 'groups' },
-            { label: 'Familie', icon: 'family_restroom' }
+            { label: 'Familie cu copii', icon: 'family_restroom' }
           ] 
         },
         { 
@@ -711,7 +711,7 @@ export class WeekendComponent implements AfterViewInit {
             { label: 'Singur', icon: 'person' },
             { label: 'Cuplu', icon: 'favorite' },
             { label: 'Prieteni', icon: 'groups' },
-            { label: 'Familie', icon: 'family_restroom' }
+            { label: 'Familie cu copii', icon: 'family_restroom' }
           ] 
         }
       ]

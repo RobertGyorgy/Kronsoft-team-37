@@ -16,7 +16,7 @@ Acest document conține ierarhia completă a categoriilor, întrebărilor și op
     *   Singur (`person`)
     *   Cuplu (`favorite`)
     *   Grup (`groups`)
-    *   Familie (`family_restroom`)
+    *   Familie cu copii (`family_restroom`)
 *   **Întrebarea 3: Cât timp ai?**
     *   1-2 ore (`schedule`)
     *   Jumătate de zi (`wb_sunny`)
@@ -78,7 +78,7 @@ Acest document conține ierarhia completă a categoriilor, întrebărilor și op
     *   Singur (`person`)
     *   Cuplu (`favorite`)
     *   Prieteni (`groups`)
-    *   Familie (`family_restroom`)
+    *   Familie cu copii (`family_restroom`)
 
 ---
 
