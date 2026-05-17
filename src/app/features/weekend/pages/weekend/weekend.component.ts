@@ -164,10 +164,6 @@ interface Recommendation {
           </div>
 
           <div class="results-actions">
-            <button class="action-btn-secondary" (click)="fetchResults()">
-              <span class="material-icons">cached</span>
-              REGENEREAZĂ RECOMANDĂRI
-            </button>
             <button class="action-btn-primary" (click)="restart()">
               <span class="material-icons">refresh</span>
               ALTĂ CĂUTARE
