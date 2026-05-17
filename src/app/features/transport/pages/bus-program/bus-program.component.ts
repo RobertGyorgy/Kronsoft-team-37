@@ -368,6 +368,15 @@ export class BusProgramComponent implements OnInit {
   });
 
   constructor() {
+    if (typeof window !== 'undefined') {
+      const hasRefreshed = sessionStorage.getItem('transport_first_load_refreshed');
+      if (!hasRefreshed) {
+        sessionStorage.setItem('transport_first_load_refreshed', 'true');
+        window.location.reload();
+        return;
+      }
+    }
+
     afterNextRender(() => {
       this.initMap();
       this.getUserLocation();
@@ -397,7 +406,11 @@ export class BusProgramComponent implements OnInit {
       style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
       center: [25.5891, 45.6483],
       zoom: 13,
-      maxBounds: [25.0, 45.4, 26.5, 46.0]
+      maxBounds: [25.0, 45.4, 26.5, 46.0],
+      pitch: 0,
+      bearing: 0,
+      pitchWithRotate: false,
+      dragRotate: false
     });
 
     this.map.on('load', () => {
@@ -428,8 +441,18 @@ export class BusProgramComponent implements OnInit {
       });
     });
 
-    this.autocompleteService = new google.maps.places.AutocompleteService();
-    this.placesService = new google.maps.places.PlacesService(document.createElement('div'));
+    this.initGoogleServices();
+  }
+
+  private initGoogleServices() {
+    if (typeof google !== 'undefined' && google.maps) {
+      if (!this.autocompleteService && google.maps.places) {
+        this.autocompleteService = new google.maps.places.AutocompleteService();
+      }
+      if (!this.placesService && google.maps.places) {
+        this.placesService = new google.maps.places.PlacesService(document.createElement('div'));
+      }
+    }
   }
 
   async calculateRoute() {
@@ -507,9 +530,25 @@ export class BusProgramComponent implements OnInit {
           .addTo(this.map);
       }
 
-      new google.maps.Geocoder().geocode({ location: pos }, (res: any) => {
-        if (res?.[0]) this.userLocationName.set(res[0].formatted_address.split(',')[0]);
-      });
+      if (typeof google !== 'undefined' && google.maps) {
+        new google.maps.Geocoder().geocode({ location: pos }, (res: any) => {
+          if (res?.[0]) this.userLocationName.set(res[0].formatted_address.split(',')[0]);
+        });
+      }
+
+      // Automatically calculate route if we already have a destination loaded!
+      if (this.destination()) {
+        this.calculateRoute();
+      }
+    }, err => {
+      console.warn('Geolocation denied or timed out. Falling back to default center [Brasov Center] for routing tests.');
+      const fallbackPos = { lat: 45.6483, lng: 25.5891 };
+      this.userCoords.set(fallbackPos);
+      this.map.setCenter([fallbackPos.lng, fallbackPos.lat]);
+      
+      if (this.destination()) {
+        this.calculateRoute();
+      }
     });
   }
 
@@ -517,6 +556,12 @@ export class BusProgramComponent implements OnInit {
     const query = event.target.value;
     this.activeSearchType.set(type);
     if (query.length < 2) { this.predictions.set([]); return; }
+
+    this.initGoogleServices();
+    if (!this.autocompleteService) {
+      console.warn('Google Maps AutocompleteService is not yet loaded.');
+      return;
+    }
 
     this.autocompleteService.getPlacePredictions({ input: query, componentRestrictions: { country: 'ro' } }, (res: any) => {
       this.predictions.set((res || []).map((r: any) => ({
@@ -526,6 +571,12 @@ export class BusProgramComponent implements OnInit {
   }
 
   selectPrediction(p: any) {
+    this.initGoogleServices();
+    if (!this.placesService) {
+      console.warn('Google Maps PlacesService is not yet loaded.');
+      return;
+    }
+
     this.placesService.getDetails({ placeId: p.id }, (place: any) => {
       if (this.activeSearchType() === 'origin') {
         this.userCoords.set({ lat: place.geometry.location.lat(), lng: place.geometry.location.lng() });

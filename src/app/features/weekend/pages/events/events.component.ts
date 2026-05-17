@@ -1,25 +1,21 @@
 import { ChangeDetectionStrategy, Component, signal, inject, computed, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
+import { EventsService } from '../../services/events.service';
 import { gsap } from 'gsap';
 
 interface EventItem {
   id: number;
   title: string;
-  description: string;
-  date: string;
-  time: string;
+  when: string;
   location: string;
-  image: string;
-  category: string;
-  price?: string;
-  link: string;
+  imageUrl: string;
 }
 
 @Component({
   selector: 'app-events',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   template: `
     <main class="events-shell" #container>
       <!-- Standard Unified Header -->
@@ -56,26 +52,25 @@ interface EventItem {
             @for (event of events(); track event.id) {
               <div class="event-card-premium">
                 <div class="image-box">
-                  <img [src]="event.image" [alt]="event.title" class="event-img">
+                  <img [src]="event.imageUrl" [alt]="event.title" class="event-img">
                   <div class="img-overlay"></div>
-                  <span class="cat-chip">{{ event.category }}</span>
+                  <span class="cat-chip">EVENIMENT</span>
                   <div class="event-date-badge">
-                    <span class="d-val">{{ event.date.split(' ')[0] }}</span>
-                    <span class="d-mo">{{ event.date.split(' ')[1] }}</span>
+                    <span class="d-val">{{ event.when | date:'dd' }}</span>
+                    <span class="d-mo">{{ event.when | date:'MMM' }}</span>
                   </div>
                 </div>
                 
                 <div class="details-box">
                   <div class="meta-row">
-                    <span class="time-info"><span class="material-icons">schedule</span> {{ event.time }}</span>
-                    <span class="price-info">{{ event.price || 'Acces Liber' }}</span>
+                    <span class="time-info"><span class="material-icons">schedule</span> {{ event.when | date:'HH:mm' }}</span>
+                    <span class="price-info">Info disponibil</span>
                   </div>
                   <h3>{{ event.title }}</h3>
                   <div class="location-info">
                     <span class="material-icons">place</span>
                     <span>{{ event.location }}</span>
                   </div>
-                  <p>{{ event.description }}</p>
                   
                   <div class="card-action">
                     <span class="view-tag">GHID VIZUAL</span>
@@ -321,65 +316,17 @@ interface EventItem {
 })
 export class EventsComponent implements AfterViewInit {
   private router = inject(Router);
+  private eventsService = inject(EventsService);
   @ViewChild('container') container!: ElementRef;
 
-  allEvents = signal<EventItem[]>([
-    {
-      id: 1,
-      title: "Concert Subcarpați - Turneu 'Valea Voltului'",
-      description: "Vino să simți vibrația autentică a folclorului underground într-un concert exploziv la Kruhnen Musik Halle. Un mix unic de hip-hop și folclor românesc.",
-      date: "15 MAI",
-      time: "20:00",
-      location: "Kruhnen Musik Halle",
-      image: "https://zilesinopti.ro/wp-content/uploads/2024/03/Subcarpati-Valea-Voltului.jpg",
-      category: "CONCERT",
-      price: "120 RON",
-      link: "https://www.iabilet.ro/bilete-brasov-subcarpati-valea-voltului-95431/"
-    },
-    {
-      id: 2,
-      title: "Festivalul de Teatru Contemporan",
-      description: "Ediția a XXXIV-a aduce pe scenă cele mai revoluționare piese ale momentului. Spectacole premiate și dezbateri culturale.",
-      date: "18 MAI",
-      time: "19:00",
-      location: "Teatrul Sică Alexandrescu",
-      image: "https://zilesinopti.ro/wp-content/uploads/2024/04/Festival-Teatru-Contemporan.jpg",
-      category: "TEATRU",
-      price: "de la 40 RON",
-      link: "https://www.teatrulsicaalexandrescu.ro"
-    },
-    {
-      id: 3,
-      title: "Street Food Festival Brașov",
-      description: "Arome din toată lumea, burgeri artizanali, tacos și delicii asiatice, toate într-o atmosferă relaxată cu DJ set-uri live.",
-      date: "22 MAI",
-      time: "11:00",
-      location: "Parcul Nicolae Titulescu",
-      image: "https://zilesinopti.ro/wp-content/uploads/2024/05/Street-Food-Brasov.jpg",
-      category: "FESTIVAL",
-      link: "https://streetfoodfestival.ro"
-    },
-    {
-      id: 4,
-      title: "Jazz in the Park - Tiny Concerts",
-      description: "O serie de concerte acustice menite să aducă muzica mai aproape de oameni în spații neconvenționale din centrul istoric.",
-      date: "29 MAI",
-      time: "18:30",
-      location: "Piața Sf. Ioan",
-      image: "https://zilesinopti.ro/wp-content/uploads/2024/05/Jazz-Park-Brasov.jpg",
-      category: "MUZICĂ",
-      price: "Acces Liber",
-      link: "https://jazzinthepark.ro"
-    }
-  ]);
+  allEvents = this.eventsService.events;
 
   searchTerm = signal('');
   events = computed(() => {
     const term = this.searchTerm().toLowerCase();
     return this.allEvents().filter(e => 
       e.title.toLowerCase().includes(term) || 
-      e.description.toLowerCase().includes(term) ||
-      e.category.toLowerCase().includes(term)
+      e.location.toLowerCase().includes(term)
     );
   });
 

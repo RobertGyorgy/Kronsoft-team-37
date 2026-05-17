@@ -3,11 +3,13 @@ services:
   otp:
     image: opentripplanner/opentripplanner:latest
     container_name: brasov_otp
+    environment:
+      - JAVA_OPTS=-Xmx4G
     ports:
       - "8080:8080"
     volumes:
-      - ./otp-config:/var/otp/graphs/brasov
-    command: [ "--build", "--serve", "/var/otp/graphs/brasov" ]
+      - ./otp-config:/var/otp/graphs/default
+    command: [ "--build", "--serve", "/var/otp/graphs/default" ]
 
   routing-api:
     build: .

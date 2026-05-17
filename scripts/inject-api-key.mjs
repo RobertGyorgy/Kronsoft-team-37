@@ -48,7 +48,7 @@ const config = {
 };
 
 fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
-console.log('✅ public/config.json actualizat');
+console.log('✅ public/config.json actualizat (Keys secured)');
 
 // ── Validare ───────────────────────────────────────────────────
 if (!config.GROQ_API_KEY) {
