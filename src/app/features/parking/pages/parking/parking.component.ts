@@ -311,36 +311,33 @@ export class ParkingComponent implements OnInit, OnDestroy {
 
   private async loadParkingData() {
     try {
-      // Fetch Neighborhoods directly from static JSON asset
-      const neighborhoods = await firstValueFrom(this.http.get<any[]>('/brasov_neighborhoods.json'));
-      this.neighborhoodData = neighborhoods;
-
-      // Fetch Production Zones from Java Backend (8083) with safe local fallback
-      let fetchedZones: any[] = [];
+      // Fetch Production Zones from Java Backend (8083) with fallback
+      let zoneRes: any;
       try {
-        const zoneRes = await firstValueFrom(this.http.get<any>('/api/parking/zones?page=0&size=50'));
-        if (zoneRes && zoneRes.content && zoneRes.content.length > 0) {
-          fetchedZones = zoneRes.content.map((z: any, idx: number) => ({
-            id: idx,
-            name: z.zone,
-            smsNumber: '1234', // Default for now
-            tariff: z.tariffPerHour,
-            tariffPerDay: z.tariffPerDay
-          }));
-        }
+        zoneRes = await firstValueFrom(this.http.get<any>('/api/parking/zones?page=0&size=50'));
       } catch (err) {
-        console.warn('Failed to load parking zones from production backend, using default fallback:', err);
+        console.warn('Could not fetch zones from Java backend, using static fallback zones:', err);
+        zoneRes = {
+          content: [
+            { zone: 'Zona 0 - Centru Vechi', tariffPerHour: 0.60, tariffPerDay: 3.00 },
+            { zone: 'Zona 1 - Centrul Civic', tariffPerHour: 0.40, tariffPerDay: 2.00 },
+            { zone: 'Zona 2 - Periferie', tariffPerHour: 0.30, tariffPerDay: 1.50 }
+          ]
+        };
       }
+      
+      // Fetch Neighborhoods directly from the static GeoJSON asset (served from public/)
+      const neighborhoods = await firstValueFrom(this.http.get<any[]>('/brasov_neighborhoods.json'));
 
-      if (fetchedZones.length === 0) {
-        fetchedZones = [
-          { id: 0, name: 'Zona 0 - Centru Vechi', smsNumber: '1234', tariff: 0.60, tariffPerDay: 3.00 },
-          { id: 1, name: 'Zona 1 - Centrul Civic', smsNumber: '1234', tariff: 0.40, tariffPerDay: 2.00 },
-          { id: 2, name: 'Zona 2 - Periferie', smsNumber: '1234', tariff: 0.30, tariffPerDay: 1.50 }
-        ];
-      }
+      this.PARKING_ZONES = zoneRes.content.map((z: any, idx: number) => ({
+        id: idx,
+        name: z.zone,
+        smsNumber: '1234', // Default for now
+        tariff: z.tariffPerHour,
+        tariffPerDay: z.tariffPerDay
+      }));
 
-      this.PARKING_ZONES = fetchedZones;
+      this.neighborhoodData = neighborhoods;
       
       if (!this.map) return;
 
