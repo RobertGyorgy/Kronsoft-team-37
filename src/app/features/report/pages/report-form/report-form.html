@@ -9,13 +9,33 @@
 
   <div class="scroll-content">
     <h1 class="form-title">
-      <span *ngFor="let word of splitByWord('Scrie raportul')" class="word">
-        <span *ngFor="let char of word.split('')" class="char">{{ char }}</span>
-        <span class="char">&nbsp;</span>
-      </span>
+      @for (word of splitByWord('Scrie raportul'); track word) {
+        <span class="word">
+          @for (char of word.split(''); track char) {
+            <span class="char">{{ char }}</span>
+          }
+          <span class="char">&nbsp;</span>
+        </span>
+      }
     </h1>
 
     <div class="report-form">
+      <div class="input-group">
+        <label>Titlu incident</label>
+        <div class="input-wrapper">
+          <span class="material-icons field-icon">edit</span>
+          <input type="text" placeholder="Ex: Groapă în carosabil" [(ngModel)]="formData.title">
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Adresă / Locație</label>
+        <div class="input-wrapper">
+          <span class="material-icons field-icon">location_on</span>
+          <input type="text" placeholder="Ex: Str. Lungă nr. 10" [(ngModel)]="formData.address">
+        </div>
+      </div>
+
       <div class="input-group">
         <label>Categorie</label>
         <div class="category-scroll">
@@ -25,7 +45,7 @@
                 type="button"
                 class="category-chip" 
                 [class.active]="formData.categoryId === cat.id"
-                (click)="formData.categoryId = cat.id">
+                (click)="formData.categoryId = cat.id; formData.categoryName = cat.name">
                 {{ cat.name }}
               </button>
             }
@@ -36,7 +56,7 @@
       <div class="input-group">
         <label>Descriere detalii</label>
         <div class="textarea-wrapper">
-          <textarea placeholder="Scrie despre problemă (ex: groapă, iluminat defect)..." rows="6" [(ngModel)]="formData.description"></textarea>
+          <textarea placeholder="Scrie..." rows="4" [(ngModel)]="formData.description"></textarea>
         </div>
       </div>
 
@@ -85,7 +105,7 @@
       <header class="doc-header">
         <div class="doc-header-left">
           <div class="stema-box">
-            <img src="/images/ROU_BV_Brasov_CoA.svg.png" 
+            <img src="assets/images/stema_brasov_2024.png" 
                  class="doc-stema-mini" 
                  alt="Stema Brașov"
                  #stemaRef
@@ -94,7 +114,7 @@
           </div>
           <div class="doc-logo-v2">SmartCity <span>Brașov</span></div>
         </div>
-        <div class="doc-ref-v2">Nr Raport: #{{ now | date:'yyMMdd' }}-{{ formData.categoryId || 'URB' }}</div>
+        <div class="doc-ref-v2">Nr Raport: #{{ now | date:'yyMMdd' }}-{{ formData.categoryName | uppercase }}</div>
       </header>
 
       <div class="pdf-content doc-content">
@@ -103,13 +123,12 @@
             <div class="doc-date-line">{{ getRomanianDate() }}</div>
             
             <div class="doc-subject">
-              RAPORT SESIZARE URBANĂ
+              RAPORT SESIZARE: {{ formData.title | uppercase }}
             </div>
 
-            <p>Subsemnatul, prin intermediul platformei SmartCity Brașov, semnalizez o problemă sesizată în oraș.</p>
+            <p>Subsemnatul, prin intermediul platformei SmartCity, semnalizez un incident de tip <strong>{{ formData.categoryName }}</strong> identificat în zona <strong>{{ formData.address }}</strong>.</p>
             
             <div class="doc-description-box">
-              <strong>DETALII:</strong><br>
               {{ formData.description || 'Nu au fost furnizate detalii suplimentare în scris.' }}
             </div>
 
