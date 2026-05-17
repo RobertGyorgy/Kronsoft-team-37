@@ -57,7 +57,7 @@
         @for (report of filteredReports(); track report.id) {
           <div class="report-card">
             <div class="image-wrapper">
-              <img [src]="report.photoUrl" [alt]="report.categoryName">
+              <img [src]="report.photoUrl ? '/api/images?path=' + report.photoUrl : 'assets/images/report_placeholder.png'" [alt]="report.categoryName">
               <div class="zone-badge">{{ report.categoryName }}</div>
               <div class="status-overlay" [attr.data-status]="report.status">
                 {{ report.status === 'NEW' ? 'Sesizat' : 'În lucru' }}

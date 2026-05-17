@@ -39,6 +39,10 @@
     "target": "http://localhost:8083",
     "secure": false
   },
+  "/api/images": {
+    "target": "http://localhost:8083",
+    "secure": false
+  },
   "/api/v1": {
     "target": "http://localhost:8081",
     "secure": false

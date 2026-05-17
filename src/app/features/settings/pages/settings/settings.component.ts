@@ -4,7 +4,7 @@ import { RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { gsap } from 'gsap';
 import { AuthService } from '../../../auth/auth.service';
-import { UserService } from '../../../../core/services/user.service';
+import { UserService, VehicleResponse } from '../../../../core/services/user.service';
 
 @Component({
   selector: 'app-settings',
@@ -28,7 +28,7 @@ import { UserService } from '../../../../core/services/user.service';
         <section class="profile-hero">
           <div class="glass-profile-card">
             <div class="avatar-container">
-              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Robert" alt="Avatar" class="avatar">
+              <img [src]="avatarUrl" alt="Avatar" class="avatar">
               <button class="edit-avatar-btn" (click)="triggerAvatarUpload()">
                 <span class="material-icons">photo_camera</span>
               </button>
@@ -46,13 +46,13 @@ import { UserService } from '../../../../core/services/user.service';
           <div class="group-label">VEHICULE</div>
           <div class="glass-card-group">
             <div class="vehicle-list">
-              @for (plate of savedPlates; track plate) {
+              @for (vehicle of savedPlates; track vehicle.id) {
                 <div class="vehicle-row">
                   <div class="plate-box">
                     <span class="ro-flag">RO</span>
-                    <span class="plate-num">{{ plate }}</span>
+                    <span class="plate-num">{{ vehicle.licensePlate }}</span>
                   </div>
-                  <button class="icon-btn-danger" (click)="removePlate(plate)">
+                  <button class="icon-btn-danger" (click)="removePlate(vehicle)">
                     <span class="material-icons">delete_outline</span>
                   </button>
                 </div>
@@ -211,7 +211,8 @@ export class SettingsComponent implements OnInit {
 
   userName = '';
   userEmail = '';
-  savedPlates: string[] = [];
+  avatarUrl = 'https://api.dicebear.com/7.x/avataaars/svg?seed=User';
+  savedPlates: { id: number; licensePlate: string }[] = [];
   showAddPlate = false;
   newPlate = '';
   
@@ -230,13 +231,8 @@ export class SettingsComponent implements OnInit {
   ngOnInit() {}
 
   private loadSettings() {
-    // Load Plates
-    const allPlates = localStorage.getItem('user_plates');
-    if (allPlates) this.savedPlates = JSON.parse(allPlates);
-
     // Load Theme
     this.darkMode = localStorage.getItem('theme_dark') === 'true';
-
     this.cdr.detectChanges();
   }
 
@@ -245,19 +241,25 @@ export class SettingsComponent implements OnInit {
     gsap.from('.settings-group', { y: 50, opacity: 0, stagger: 0.1, duration: 0.8, delay: 0.2, ease: 'power3.out' });
   }
 
-  addPlate() {
-    if (this.newPlate.trim() && !this.savedPlates.includes(this.newPlate)) {
-      this.savedPlates.push(this.newPlate);
-      localStorage.setItem('user_plates', JSON.stringify(this.savedPlates));
+  async addPlate() {
+    if (this.newPlate.trim() && !this.savedPlates.some(v => v.licensePlate === this.newPlate)) {
+      const result = await this.userService.addVehicle(this.newPlate);
+      if (result?.vehicles) {
+        this.savedPlates = result.vehicles.map(v => ({ id: v.id, licensePlate: v.licensePlate }));
+      }
       this.newPlate = '';
       this.showAddPlate = false;
       this.cdr.detectChanges();
     }
   }
 
-  removePlate(plate: string) {
-    this.savedPlates = this.savedPlates.filter(p => p !== plate);
-    localStorage.setItem('user_plates', JSON.stringify(this.savedPlates));
+  async removePlate(vehicle: { id: number; licensePlate: string }) {
+    const result = await this.userService.removeVehicle(vehicle.id);
+    if (result?.vehicles) {
+      this.savedPlates = result.vehicles.map(v => ({ id: v.id, licensePlate: v.licensePlate }));
+    } else {
+      this.savedPlates = this.savedPlates.filter(v => v.id !== vehicle.id);
+    }
     this.cdr.detectChanges();
   }
 
@@ -275,6 +277,10 @@ export class SettingsComponent implements OnInit {
     if (profile) {
       this.userName = profile.fullName;
       this.userEmail = profile.email;
+      this.avatarUrl = this.userService.getImageUrl(profile.profilePictureUrl);
+      if (profile.vehicles) {
+        this.savedPlates = profile.vehicles.map(v => ({ id: v.id, licensePlate: v.licensePlate }));
+      }
       this.cdr.detectChanges();
     } else {
       // Fallback to session storage
@@ -303,7 +309,11 @@ export class SettingsComponent implements OnInit {
     const file = event.target.files?.[0];
     if (!file) return;
     try {
-      await this.userService.uploadProfilePicture(file);
+      const updated = await this.userService.uploadProfilePicture(file);
+      if (updated?.profilePictureUrl) {
+        this.avatarUrl = this.userService.getImageUrl(updated.profilePictureUrl);
+        this.cdr.detectChanges();
+      }
       this.showToast('Fotografia de profil a fost actualizată.');
     } catch {
       this.showToast('Eroare la încărcarea fotografiei.');

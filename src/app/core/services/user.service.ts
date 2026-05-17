@@ -2,7 +2,12 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
-// ── Response Interface (from OpenAPI spec) ─────────────────────
+// ── Response Interfaces (aligned with backend DTOs) ─────────────
+
+export interface VehicleResponse {
+  id: number;
+  licensePlate: string;
+}
 
 export interface UserProfileResponse {
   id: number;
@@ -10,6 +15,8 @@ export interface UserProfileResponse {
   email: string;
   role: string;
   lastLogin: string;
+  profilePictureUrl: string;
+  vehicles: VehicleResponse[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -37,10 +44,65 @@ export class UserService {
   /**
    * POST /api/user/profile-picture
    * Uploads a profile picture as multipart/form-data.
+   * Backend expects: @RequestPart("image") MultipartFile image
+   * Returns: updated UserProfileResponse with new profilePictureUrl
    */
-  async uploadProfilePicture(file: File): Promise<any> {
+  async uploadProfilePicture(file: File): Promise<UserProfileResponse | null> {
     const formData = new FormData();
     formData.append('image', file);
-    return firstValueFrom(this.http.post<any>('/api/user/profile-picture', formData));
+    try {
+      const updated = await firstValueFrom(
+        this.http.post<UserProfileResponse>('/api/user/profile-picture', formData)
+      );
+      this.profile.set(updated);
+      return updated;
+    } catch (err) {
+      console.error('Failed to upload profile picture:', err);
+      return null;
+    }
+  }
+
+  /**
+   * Resolves the full URL for downloading a backend image.
+   * Backend endpoint: GET /api/images?path={profilePictureUrl}
+   * Requires access-token (handled by auth interceptor).
+   */
+  getImageUrl(path: string | null | undefined): string {
+    if (!path) return 'https://api.dicebear.com/7.x/avataaars/svg?seed=User';
+    return `/api/images?path=${encodeURIComponent(path)}`;
+  }
+
+  /**
+   * POST /api/user/vehicles
+   * Adds a new vehicle (license plate) to the user's profile.
+   */
+  async addVehicle(licensePlate: string): Promise<UserProfileResponse | null> {
+    try {
+      const updated = await firstValueFrom(
+        this.http.post<UserProfileResponse>('/api/user/vehicles', { licensePlate })
+      );
+      this.profile.set(updated);
+      return updated;
+    } catch (err) {
+      console.error('Failed to add vehicle:', err);
+      return null;
+    }
+  }
+
+  /**
+   * DELETE /api/user/vehicles/{vehicleId}
+   * Removes a vehicle from the user's profile.
+   */
+  async removeVehicle(vehicleId: number): Promise<UserProfileResponse | null> {
+    try {
+      const updated = await firstValueFrom(
+        this.http.delete<UserProfileResponse>(`/api/user/vehicles/${vehicleId}`)
+      );
+      this.profile.set(updated);
+      return updated;
+    } catch (err) {
+      console.error('Failed to remove vehicle:', err);
+      return null;
+    }
   }
 }

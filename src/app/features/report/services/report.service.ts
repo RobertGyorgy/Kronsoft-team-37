@@ -2,7 +2,7 @@ import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
-// ── Response Interfaces (from OpenAPI spec) ────────────────────
+// ── Response Interfaces (aligned with backend DTOs) ────────────
 
 export interface Report {
   id: number;
@@ -44,7 +44,7 @@ export class ReportService {
   async loadCategories(): Promise<void> {
     try {
       const data = await firstValueFrom(
-        this.http.get<ReportCategory[]>('http://localhost:8083/api/report-categories')
+        this.http.get<ReportCategory[]>('/api/report-categories')
       );
       this.categories.set(data);
     } catch (err) {
@@ -59,7 +59,7 @@ export class ReportService {
   async loadReports(page = 0, size = 50): Promise<void> {
     try {
       const res = await firstValueFrom(
-        this.http.get<any>(`http://localhost:8083${this.apiUrl}?page=${page}&size=${size}&sort=createdAt,desc`)
+        this.http.get<any>(`${this.apiUrl}?page=${page}&size=${size}&sort=createdAt,desc`)
       );
       this.reports.set(res.content || []);
     } catch (err) {
@@ -84,9 +84,10 @@ export class ReportService {
   }
 
   /**
-   * POST /api/reports (multipart/form-data)
+   * POST /api/reports (multipart/form-data via @ModelAttribute)
    * Submit a new city report with an optional photo.
-   * Schema: CityReportRequest { categoryId, description, latitude, longitude, image?, status }
+   * Backend expects: CityReportRequest { categoryId, description, latitude, longitude, image?, status }
+   * Uses @ModelAttribute — all fields are sent as individual form-data parts.
    */
   async addReport(reportData: { categoryId: number; description: string; latitude: number; longitude: number }, imageFile?: File): Promise<void> {
     try {
