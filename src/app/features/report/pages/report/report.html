@@ -24,7 +24,7 @@
     <section class="hero-section">
       <div class="hero-card">
         <div class="hero-content">
-          <h2>Contribuie la un oraș mai bun</h2>
+          <h2>Salut{{ userName() ? ' ' + userName() : '' }}, contribuie la un oraș mai bun</h2>
           <p>Trimite o fotografie și detaliile incidentului. Analizăm rapid orice problemă și intervenim pentru remediere.</p>
           <button class="primary-btn-premium" (click)="onNewReport()">
             <span>Raportează un incident</span>

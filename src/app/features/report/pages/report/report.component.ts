@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, signal, computed, inject, AfterView
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { ReportService } from '../../services/report.service';
+import { UserService } from '../../../../core/services/user.service';
 import { gsap } from 'gsap';
 
 @Component({
@@ -14,11 +15,15 @@ import { gsap } from 'gsap';
 })
 export class ReportComponent {
   private reportService = inject(ReportService);
+  private userService = inject(UserService);
   private router = inject(Router);
 
   @ViewChild('container') container!: ElementRef;
 
+  @ViewChild('container') container!: ElementRef;
+
   activeCategory = signal<string>('Toate');
+  userName = signal<string>('');
   
   categories = [
     'Toate', 'Infrastructură', 'Deșeuri', 'Graffiti', 
@@ -33,7 +38,11 @@ export class ReportComponent {
   });
 
   constructor() {
-    afterNextRender(() => {
+    afterNextRender(async () => {
+      const profile = await this.userService.loadProfile();
+      if (profile && profile.fullName) {
+        this.userName.set(profile.fullName.split(' ')[0]);
+      }
       this.animateEntrance();
     });
   }
