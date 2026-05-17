@@ -686,33 +686,33 @@ export class WeekendComponent implements AfterViewInit {
       ]
     },
     {
-      id: 'cafenele', name: 'Cafenele', icon: 'local_cafe',
+      id: 'cafenele', name: 'Cafenele', icon: 'mug-hot',
       color: '#bcaaa4', shadow: '0 10px 20px rgba(188,170,164,0.15)',
       questions: [
         { 
-          id: 'atmosfera', text: 'Ce atmosferă cauți?', 
+          id: 'q1', text: 'Ce atmosferă cauți?', 
           options: [
-            { label: 'Cozy', icon: 'coffee' },
-            { label: 'Modern', icon: 'architecture' },
-            { label: 'Liniștită', icon: 'self_improvement' },
-            { label: 'Terasă', icon: 'deck' }
+            { label: 'Cozy', icon: 'mug-hot' },
+            { label: 'Modern', icon: 'bolt' },
+            { label: 'Liniștită', icon: 'leaf' },
+            { label: 'Terasă', icon: 'umbrella-beach' }
           ] 
         },
         { 
-          id: 'buget', text: 'Buget per persoană?', 
+          id: 'q2', text: 'Buget per persoană?', 
           options: [
-            { label: 'Sub 20 lei', icon: 'savings' },
-            { label: '20-40 lei', icon: 'payments' },
-            { label: 'Peste 40 lei', icon: 'credit_card' }
+            { label: 'Sub 20 lei', icon: 'coins' },
+            { label: '20–40 lei', icon: 'wallet' },
+            { label: 'Peste 40 lei', icon: 'gem' }
           ] 
         },
         { 
-          id: 'companie', text: 'Cu cine ești?', 
+          id: 'q3', text: 'Cu cine ești?', 
           options: [
             { label: 'Singur', icon: 'person' },
-            { label: 'Cuplu', icon: 'favorite' },
-            { label: 'Prieteni', icon: 'groups' },
-            { label: 'Familie cu copii', icon: 'family_restroom' }
+            { label: 'Cuplu', icon: 'heart' },
+            { label: 'Prieteni', icon: 'people-group' },
+            { label: 'Familie cu copii', icon: 'children' }
           ] 
         }
       ]
@@ -900,7 +900,12 @@ export class WeekendComponent implements AfterViewInit {
       'wallet': 'wallet',
       'gem': 'diamond',
       'crown': 'workspace_premium',
-      'utensils': 'restaurant'
+      'utensils': 'restaurant',
+      'mug-hot': 'coffee',
+      'bolt': 'bolt',
+      'leaf': 'spa',
+      'umbrella-beach': 'beach_access',
+      'children': 'child_care'
     };
     return iconMap[iconName] || iconName;
   }

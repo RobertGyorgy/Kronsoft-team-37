@@ -1865,5 +1865,1075 @@
         ]
       }
     }
+  },
+  "cafenele": {
+    "categoryId": "cafenele",
+    "categoryLabel": "Cafenele",
+    "categoryIcon": "mug-hot",
+    "questions": [
+      {
+        "id": "q1",
+        "text": "Ce atmosferă cauți?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Cozy",
+            "icon": "mug-hot"
+          },
+          {
+            "id": "b",
+            "label": "Modern",
+            "icon": "bolt"
+          },
+          {
+            "id": "c",
+            "label": "Liniștită",
+            "icon": "leaf"
+          },
+          {
+            "id": "d",
+            "label": "Terasă",
+            "icon": "umbrella-beach"
+          }
+        ]
+      },
+      {
+        "id": "q2",
+        "text": "Buget per persoană?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Sub 20 lei",
+            "icon": "coins"
+          },
+          {
+            "id": "b",
+            "label": "20–40 lei",
+            "icon": "wallet"
+          },
+          {
+            "id": "c",
+            "label": "Peste 40 lei",
+            "icon": "gem"
+          }
+        ]
+      },
+      {
+        "id": "q3",
+        "text": "Cu cine ești?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Singur",
+            "icon": "person"
+          },
+          {
+            "id": "b",
+            "label": "Cuplu",
+            "icon": "heart"
+          },
+          {
+            "id": "c",
+            "label": "Prieteni",
+            "icon": "people-group"
+          },
+          {
+            "id": "d",
+            "label": "Familie cu copii",
+            "icon": "children"
+          }
+        ]
+      }
+    ],
+    "places": {
+      "cafeneaua_franzelarilor": {
+        "id": "cafeneaua_franzelarilor",
+        "name": "Cafeneaua Franzelarilor",
+        "atmosphere": [
+          "Cozy",
+          "Liniștită"
+        ],
+        "shortDescription": "Cafenea vintage în centrul vechi – cafeaua zilei și prăjitura casei la prețuri de altădată.",
+        "description": "Una dintre cele mai ieftine și autentice cafenele din Brașov. Atmosferă retro, mobilier de lemn, miros de cafea proaspătă. Frecventată de localnici, departe de aglomerația turistică.",
+        "address": "Str. Apollonia Hirscher nr. 2, Brașov",
+        "coordinates": {
+          "lat": 45.6422,
+          "lng": 25.5882
+        },
+        "priceRange": "Sub 20 lei",
+        "tags": [
+          "cozy",
+          "ieftin",
+          "retro",
+          "centru vechi",
+          "localnici"
+        ],
+        "tip": "Cafeaua simplă și prăjitura de casă – combinația perfectă. Nu te grăbi, e locul unde brașovenii citesc ziarul.",
+        "hours": "08:00–20:00",
+        "image": "cafeneaua_franzelarilor.jpg"
+      },
+      "tabiet": {
+        "id": "tabiet",
+        "name": "Tabiet Café",
+        "atmosphere": [
+          "Cozy",
+          "Liniștită"
+        ],
+        "shortDescription": "Micuța cafenea de cartier – specialty coffee și deserturi artizanale lângă Piața Sfatului.",
+        "description": "Tabiet înseamnă răsfăț în română veche, și asta e exact ce oferă. Cafea de specialitate preparată cu grijă, deserturi de casă, atmosferă caldă. Spațiu mic și intim.",
+        "address": "Str. Mureșenilor nr. 9, Brașov",
+        "coordinates": {
+          "lat": 45.6419,
+          "lng": 25.5887
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "cozy",
+          "specialty coffee",
+          "deserturi",
+          "intim",
+          "centru"
+        ],
+        "tip": "Încearcă latte-ul cu caramel sărat și tarta cu lămâie – duo legendar!",
+        "hours": "09:00–21:00",
+        "image": "tabiet.jpg"
+      },
+      "rocks_cafe": {
+        "id": "rocks_cafe",
+        "name": "Rocks Café",
+        "atmosphere": [
+          "Cozy"
+        ],
+        "shortDescription": "Cafenea-bar cozy în Piața Sfatului – cafea bună, muzică, locul preferat al studenților.",
+        "description": "Rocks Café e o cafenea-bar cu personalitate în centrul vechi. Pereți din piatră, lumină caldă, muzică bună. Cafea, cocktailuri, deserturi. Atmosferă relaxată dimineața, animată seara.",
+        "address": "Piața Sfatului nr. 12, Brașov",
+        "coordinates": {
+          "lat": 45.6425,
+          "lng": 25.5884
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "cozy",
+          "Piața Sfatului",
+          "bar-cafenea",
+          "studenți",
+          "muzică"
+        ],
+        "tip": "Terasa interioară cu pereți din piatră e superb fotografiată. Seara devine mai animat.",
+        "hours": "09:00–00:00",
+        "image": "rocks_cafe.jpg"
+      },
+      "story_cafe": {
+        "id": "story_cafe",
+        "name": "Story Café",
+        "atmosphere": [
+          "Cozy",
+          "Liniștită"
+        ],
+        "shortDescription": "Cafenea-librărie în centrul vechi – citești, bei cafea bună, uiți de timp.",
+        "description": "Story Café e un refugiu pentru iubitorii de cărți și cafea bună. Rafturi cu cărți, fotolii confortabile, lumină naturală. Specialty coffee, ceaiuri, tartine. Perfectă pentru lucru de acasă sau lectură.",
+        "address": "Str. Republicii nr. 5, Brașov",
+        "coordinates": {
+          "lat": 45.6437,
+          "lng": 25.5908
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "cozy",
+          "librărie",
+          "liniștit",
+          "specialty coffee",
+          "laptop-friendly"
+        ],
+        "tip": "WiFi rapid, prize la fiecare masă – locul ideal pentru lucrat de acasă.",
+        "hours": "09:00–22:00",
+        "image": "story_cafe.jpg"
+      },
+      "einstein_cafe": {
+        "id": "einstein_cafe",
+        "name": "Einstein Café",
+        "atmosphere": [
+          "Cozy",
+          "Liniștită"
+        ],
+        "shortDescription": "Cafenea cult în centrul vechi – specialty coffee, cheesecake, atmosferă intelectuală.",
+        "description": "Einstein este una din cafenelele cu tradiție ale Brașovului. Specialitate în cafea și cheesecake de casă. Atmosferă intelectuală, perfectă pentru conversații lungi sau lucru concentrat.",
+        "address": "Str. Castelului nr. 4, Brașov",
+        "coordinates": {
+          "lat": 45.6413,
+          "lng": 25.5877
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "cozy",
+          "liniștit",
+          "specialty coffee",
+          "cheesecake",
+          "clasic"
+        ],
+        "tip": "Cheesecake-ul de casă e legendar în Brașov. Vine în 5-6 variante diferite.",
+        "hours": "09:00–22:00",
+        "image": "einstein_cafe.jpg"
+      },
+      "narcoffee": {
+        "id": "narcoffee",
+        "name": "Narcoffee Roasters",
+        "atmosphere": [
+          "Modern"
+        ],
+        "shortDescription": "Cea mai apreciată cafenea specialty din Brașov – prăjit propriu, latte art, filtre.",
+        "description": "Narcoffee Roasters e locul de referință al cafelei de specialitate în Brașov. Prăjesc propriu, au o selecție extinsă de origini single, filtre V60 și Chemex, latte art. Baristi pasionați și dedicați.",
+        "address": "Str. Mureșenilor nr. 23, Brașov",
+        "coordinates": {
+          "lat": 45.642,
+          "lng": 25.5889
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "specialty coffee",
+          "prăjit propriu",
+          "latte art",
+          "filtre",
+          "modern"
+        ],
+        "tip": "Roata de sortimente single-origin se schimbă lunar. Cere recomandarea baristului!",
+        "hours": "08:00–21:00",
+        "image": "narcoffee.jpg"
+      },
+      "beans_dots": {
+        "id": "beans_dots",
+        "name": "Beans & Dots",
+        "atmosphere": [
+          "Modern"
+        ],
+        "shortDescription": "Specialty coffee minimalist – espresso și filtre de top, design nordic curat.",
+        "description": "Beans & Dots e o cafenea specialty cu design minimalist inspirat din cafenelele nordice. Meniu scurt și atent curatorialat: espresso, flat white, filtre. Fiecare ceașcă e executată impecabil.",
+        "address": "Str. Nicolae Bălcescu nr. 35, Brașov",
+        "coordinates": {
+          "lat": 45.6451,
+          "lng": 25.5922
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "specialty coffee",
+          "minimalist",
+          "nordic",
+          "filtre",
+          "modern"
+        ],
+        "tip": "Flat white-ul e de referință. Spațiu mic – vino devreme pentru un loc.",
+        "hours": "08:00–19:00",
+        "image": "beans_dots.jpg"
+      },
+      "boo_coffee": {
+        "id": "boo_coffee",
+        "name": "Boo Coffee",
+        "atmosphere": [
+          "Modern"
+        ],
+        "shortDescription": "Cafenea modernă cu specialități de cafea, brunch și deserturi creative.",
+        "description": "Boo Coffee combină specialty coffee cu un meniu de brunch și deserturi creative. Design modern și luminos, perfect pentru work sessions sau întâlniri casual. Smoothie-uri și băuturi alternative de calitate.",
+        "address": "Str. Republicii nr. 53, Brașov",
+        "coordinates": {
+          "lat": 45.646,
+          "lng": 25.593
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "modern",
+          "brunch",
+          "specialty coffee",
+          "deserturi",
+          "luminoasă"
+        ],
+        "tip": "Avocado toast și cold brew-ul de casă sunt best-sellers.",
+        "hours": "08:30–21:00",
+        "image": "boo_coffee.jpg"
+      },
+      "ground_zero": {
+        "id": "ground_zero",
+        "name": "Ground Zero Coffee",
+        "atmosphere": [
+          "Modern"
+        ],
+        "shortDescription": "Cafenea specialty urban-industrial – cold brew, nitro coffee, espresso tonic.",
+        "description": "Ground Zero aduce o vibe urban-industrial în centrul Brașovului. Specialitate în preparate cu cafea rece: cold brew, nitro coffee, espresso tonic. Muzică bună, lumini calde, atmosferă dinamică.",
+        "address": "Str. Lungă nr. 40, Brașov",
+        "coordinates": {
+          "lat": 45.6443,
+          "lng": 25.5938
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "modern",
+          "cold brew",
+          "nitro coffee",
+          "industrial",
+          "urban"
+        ],
+        "tip": "Nitro cold brew-ul e o experiență! Servit dintr-un tap ca berea.",
+        "hours": "09:00–22:00",
+        "image": "ground_zero.jpg"
+      },
+      "curio": {
+        "id": "curio",
+        "name": "Curio Concept Store & Café",
+        "atmosphere": [
+          "Modern",
+          "Cozy"
+        ],
+        "shortDescription": "Concept store + cafenea premium – specialty coffee, design local, obiecte de artă.",
+        "description": "Curio e mai mult decât o cafenea: un spațiu unde poți bea o cafea excelentă înconjurat de obiecte de design românesc. Colaborare cu prăjitorii locali. Evenimente culturale lunare.",
+        "address": "Str. Mureșenilor nr. 15, Brașov",
+        "coordinates": {
+          "lat": 45.6421,
+          "lng": 25.5888
+        },
+        "priceRange": "Peste 40 lei",
+        "tags": [
+          "concept store",
+          "specialty coffee",
+          "design",
+          "artă",
+          "premium"
+        ],
+        "tip": "Mergi și cu timp liber – vei fi tentat să cumperi ceva frumos din magazin.",
+        "hours": "10:00–21:00",
+        "image": "curio.jpg"
+      },
+      "revolver_coffee": {
+        "id": "revolver_coffee",
+        "name": "Revolver Coffee",
+        "atmosphere": [
+          "Liniștită",
+          "Modern"
+        ],
+        "shortDescription": "Specialty coffee în liniște deplină – filtre, pourover, cortado, fără muzică intruzivă.",
+        "description": "Revolver Coffee e sanctuarul cafelei liniștite din Brașov. Accent pe preparatele la filtru și pourover. Muzică ambientală discretă, iluminat cald, perfectă pentru concentrat. Baristi pasionați care vor să explice cafeaua.",
+        "address": "Str. Iuliu Maniu nr. 22, Brașov",
+        "coordinates": {
+          "lat": 45.6468,
+          "lng": 25.5952
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "liniștit",
+          "specialty coffee",
+          "filtre",
+          "pourover",
+          "minimalist"
+        ],
+        "tip": "Cere un pourover single-origin și lasă baristul să îți explice povestea boabelor.",
+        "hours": "09:00–20:00",
+        "image": "revolver_coffee.jpg"
+      },
+      "vero_cafe": {
+        "id": "vero_cafe",
+        "name": "Vero Café",
+        "atmosphere": [
+          "Liniștită",
+          "Cozy"
+        ],
+        "shortDescription": "Cafenea intimă lângă Parcul Central – liniște, cafea bună, grădină verde.",
+        "description": "Vero Café e ascunsă discret lângă Parcul Tractorul, departe de zgomotul turistic. Grădiniță interioară verde, fotolii confortabile, muzică ambientală. Preferata localnicilor care vor liniște.",
+        "address": "Bd. 15 Noiembrie nr. 8, Brașov",
+        "coordinates": {
+          "lat": 45.651,
+          "lng": 25.599
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "liniștit",
+          "cozy",
+          "grădină",
+          "localnici",
+          "relaxat"
+        ],
+        "tip": "Locul secret al brașovenilor. Perfectă dimineața sau la prânz.",
+        "hours": "09:00–21:00",
+        "image": "vero_cafe.jpg"
+      },
+      "nomad_skybar": {
+        "id": "nomad_skybar",
+        "name": "Nomad Skybar",
+        "atmosphere": [
+          "Terasă",
+          "Modern"
+        ],
+        "shortDescription": "Cafenea-bar pe acoperișul Brașovului – panoramă 360°, cocktailuri, specialități cafea.",
+        "description": "Nomad Skybar ocupă acoperișul unei clădiri din centru și oferă una din cele mai spectaculoase panorame asupra Brașovului. Cafea de specialitate ziua, cocktailuri seara. Mobilier modern, umbrelă la soare.",
+        "address": "Str. Republicii nr. 62 (etaj 8), Brașov",
+        "coordinates": {
+          "lat": 45.6462,
+          "lng": 25.5932
+        },
+        "priceRange": "Peste 40 lei",
+        "tags": [
+          "terasă",
+          "rooftop",
+          "panoramă",
+          "cocktailuri",
+          "premium"
+        ],
+        "tip": "Apusul de soare cu Tâmpa în fundal e de neuitat. Rezervă loc cu cel puțin 2 zile înainte!",
+        "hours": "12:00–00:00",
+        "image": "nomad_skybar.jpg"
+      },
+      "corso_cafe": {
+        "id": "corso_cafe",
+        "name": "Corso Café",
+        "atmosphere": [
+          "Terasă"
+        ],
+        "shortDescription": "Terasă emblematică pe Strada Republicii – promenadă, cafea, vedere spre pietonală.",
+        "description": "Corso are una din cele mai animate terase de pe Strada Republicii. Locul ideal să urmărești viața orașului cu o cafea în mână. Mic dejun, prânz ușor, deserturi, sucuri fresh.",
+        "address": "Str. Republicii nr. 28, Brașov",
+        "coordinates": {
+          "lat": 45.6447,
+          "lng": 25.5919
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "terasă",
+          "Republicii",
+          "promenadă",
+          "animat",
+          "brunch"
+        ],
+        "tip": "Locul perfect pentru observat viața orașului. Terasa e cea mai aglomerată sâmbăta la prânz.",
+        "hours": "08:00–23:00",
+        "image": "corso_cafe.jpg"
+      },
+      "cafeneaua_artelor": {
+        "id": "cafeneaua_artelor",
+        "name": "Cafeneaua Artelor",
+        "atmosphere": [
+          "Terasă",
+          "Cozy"
+        ],
+        "shortDescription": "Cafenea culturală cu terasă în curte interioară – expoziții, concerte mici, cafea bună.",
+        "description": "Cafeneaua Artelor e parte dintr-un centru cultural activ. Terasă în curte pavată, expoziții temporare de fotografie și pictură, uneori concerte acustice. Cafea de specialitate, vinuri, platouri.",
+        "address": "Str. Hirscher nr. 6, Brașov",
+        "coordinates": {
+          "lat": 45.6423,
+          "lng": 25.588
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "terasă",
+          "cultural",
+          "artă",
+          "cozy",
+          "curte interioară"
+        ],
+        "tip": "Curtea pavată cu umbrele de soare e magică vara. Verifică programul de expoziții.",
+        "hours": "10:00–22:00",
+        "image": "cafeneaua_artelor.jpg"
+      },
+      "lacave_coffee": {
+        "id": "lacave_coffee",
+        "name": "La Cave Coffee & Wine",
+        "atmosphere": [
+          "Cozy",
+          "Liniștită"
+        ],
+        "shortDescription": "Cafenea-bar în pivniță medievală – specialty coffee ziua, vinuri seara, atmosferă unică.",
+        "description": "Într-o pivniță medievală restaurată din centrul vechi, La Cave îmbină specialty coffee cu o selecție atentă de vinuri. Bolți de cărămidă, lumânări, muzică jazz la volum redus. Perfectă pe timp de ploaie.",
+        "address": "Str. Castelului nr. 9, Brașov",
+        "coordinates": {
+          "lat": 45.6411,
+          "lng": 25.5876
+        },
+        "priceRange": "Peste 40 lei",
+        "tags": [
+          "cozy",
+          "pivniță medievală",
+          "specialty coffee",
+          "vinuri",
+          "romantic"
+        ],
+        "tip": "Pe timp de ploaie e cel mai bun loc din Brașov. Seara cu lumânări e magic.",
+        "hours": "10:00–23:00",
+        "image": "lacave_coffee.jpg"
+      }
+    },
+    "results": {
+      "a-a-a": {
+        "combination": {
+          "q1": "Cozy",
+          "q2": "Sub 20 lei",
+          "q3": "Singur"
+        },
+        "recommendations": [
+          "cafeneaua_franzelarilor",
+          "rocks_cafe",
+          "story_cafe"
+        ]
+      },
+      "a-a-b": {
+        "combination": {
+          "q1": "Cozy",
+          "q2": "Sub 20 lei",
+          "q3": "Cuplu"
+        },
+        "recommendations": [
+          "cafeneaua_franzelarilor",
+          "rocks_cafe",
+          "tabiet"
+        ]
+      },
+      "a-a-c": {
+        "combination": {
+          "q1": "Cozy",
+          "q2": "Sub 20 lei",
+          "q3": "Prieteni"
+        },
+        "recommendations": [
+          "cafeneaua_franzelarilor",
+          "rocks_cafe",
+          "story_cafe"
+        ]
+      },
+      "a-a-d": {
+        "combination": {
+          "q1": "Cozy",
+          "q2": "Sub 20 lei",
+          "q3": "Familie cu copii"
+        },
+        "recommendations": [
+          "cafeneaua_franzelarilor",
+          "story_cafe",
+          "rocks_cafe"
+        ]
+      },
+      "a-b-a": {
+        "combination": {
+          "q1": "Cozy",
+          "q2": "20–40 lei",
+          "q3": "Singur"
+        },
+        "recommendations": [
+          "story_cafe",
+          "tabiet",
+          "einstein_cafe"
+        ]
+      },
+      "a-b-b": {
+        "combination": {
+          "q1": "Cozy",
+          "q2": "20–40 lei",
+          "q3": "Cuplu"
+        },
+        "recommendations": [
+          "tabiet",
+          "einstein_cafe",
+          "rocks_cafe"
+        ]
+      },
+      "a-b-c": {
+        "combination": {
+          "q1": "Cozy",
+          "q2": "20–40 lei",
+          "q3": "Prieteni"
+        },
+        "recommendations": [
+          "rocks_cafe",
+          "tabiet",
+          "cafeneaua_artelor"
+        ]
+      },
+      "a-b-d": {
+        "combination": {
+          "q1": "Cozy",
+          "q2": "20–40 lei",
+          "q3": "Familie cu copii"
+        },
+        "recommendations": [
+          "story_cafe",
+          "einstein_cafe",
+          "tabiet"
+        ]
+      },
+      "a-c-a": {
+        "combination": {
+          "q1": "Cozy",
+          "q2": "Peste 40 lei",
+          "q3": "Singur"
+        },
+        "recommendations": [
+          "curio",
+          "lacave_coffee",
+          "tabiet"
+        ]
+      },
+      "a-c-b": {
+        "combination": {
+          "q1": "Cozy",
+          "q2": "Peste 40 lei",
+          "q3": "Cuplu"
+        },
+        "recommendations": [
+          "lacave_coffee",
+          "curio",
+          "einstein_cafe"
+        ]
+      },
+      "a-c-c": {
+        "combination": {
+          "q1": "Cozy",
+          "q2": "Peste 40 lei",
+          "q3": "Prieteni"
+        },
+        "recommendations": [
+          "curio",
+          "lacave_coffee",
+          "rocks_cafe"
+        ]
+      },
+      "a-c-d": {
+        "combination": {
+          "q1": "Cozy",
+          "q2": "Peste 40 lei",
+          "q3": "Familie cu copii"
+        },
+        "recommendations": [
+          "curio",
+          "story_cafe",
+          "einstein_cafe"
+        ]
+      },
+      "b-a-a": {
+        "combination": {
+          "q1": "Modern",
+          "q2": "Sub 20 lei",
+          "q3": "Singur"
+        },
+        "recommendations": [
+          "narcoffee",
+          "beans_dots",
+          "ground_zero"
+        ]
+      },
+      "b-a-b": {
+        "combination": {
+          "q1": "Modern",
+          "q2": "Sub 20 lei",
+          "q3": "Cuplu"
+        },
+        "recommendations": [
+          "narcoffee",
+          "boo_coffee",
+          "beans_dots"
+        ]
+      },
+      "b-a-c": {
+        "combination": {
+          "q1": "Modern",
+          "q2": "Sub 20 lei",
+          "q3": "Prieteni"
+        },
+        "recommendations": [
+          "ground_zero",
+          "narcoffee",
+          "boo_coffee"
+        ]
+      },
+      "b-a-d": {
+        "combination": {
+          "q1": "Modern",
+          "q2": "Sub 20 lei",
+          "q3": "Familie cu copii"
+        },
+        "recommendations": [
+          "boo_coffee",
+          "narcoffee",
+          "ground_zero"
+        ]
+      },
+      "b-b-a": {
+        "combination": {
+          "q1": "Modern",
+          "q2": "20–40 lei",
+          "q3": "Singur"
+        },
+        "recommendations": [
+          "narcoffee",
+          "beans_dots",
+          "revolver_coffee"
+        ]
+      },
+      "b-b-b": {
+        "combination": {
+          "q1": "Modern",
+          "q2": "20–40 lei",
+          "q3": "Cuplu"
+        },
+        "recommendations": [
+          "narcoffee",
+          "boo_coffee",
+          "beans_dots"
+        ]
+      },
+      "b-b-c": {
+        "combination": {
+          "q1": "Modern",
+          "q2": "20–40 lei",
+          "q3": "Prieteni"
+        },
+        "recommendations": [
+          "ground_zero",
+          "boo_coffee",
+          "narcoffee"
+        ]
+      },
+      "b-b-d": {
+        "combination": {
+          "q1": "Modern",
+          "q2": "20–40 lei",
+          "q3": "Familie cu copii"
+        },
+        "recommendations": [
+          "boo_coffee",
+          "narcoffee",
+          "ground_zero"
+        ]
+      },
+      "b-c-a": {
+        "combination": {
+          "q1": "Modern",
+          "q2": "Peste 40 lei",
+          "q3": "Singur"
+        },
+        "recommendations": [
+          "curio",
+          "narcoffee",
+          "nomad_skybar"
+        ]
+      },
+      "b-c-b": {
+        "combination": {
+          "q1": "Modern",
+          "q2": "Peste 40 lei",
+          "q3": "Cuplu"
+        },
+        "recommendations": [
+          "nomad_skybar",
+          "curio",
+          "narcoffee"
+        ]
+      },
+      "b-c-c": {
+        "combination": {
+          "q1": "Modern",
+          "q2": "Peste 40 lei",
+          "q3": "Prieteni"
+        },
+        "recommendations": [
+          "nomad_skybar",
+          "curio",
+          "ground_zero"
+        ]
+      },
+      "b-c-d": {
+        "combination": {
+          "q1": "Modern",
+          "q2": "Peste 40 lei",
+          "q3": "Familie cu copii"
+        },
+        "recommendations": [
+          "curio",
+          "boo_coffee",
+          "nomad_skybar"
+        ]
+      },
+      "c-a-a": {
+        "combination": {
+          "q1": "Liniștită",
+          "q2": "Sub 20 lei",
+          "q3": "Singur"
+        },
+        "recommendations": [
+          "cafeneaua_franzelarilor",
+          "story_cafe",
+          "vero_cafe"
+        ]
+      },
+      "c-a-b": {
+        "combination": {
+          "q1": "Liniștită",
+          "q2": "Sub 20 lei",
+          "q3": "Cuplu"
+        },
+        "recommendations": [
+          "story_cafe",
+          "cafeneaua_franzelarilor",
+          "vero_cafe"
+        ]
+      },
+      "c-a-c": {
+        "combination": {
+          "q1": "Liniștită",
+          "q2": "Sub 20 lei",
+          "q3": "Prieteni"
+        },
+        "recommendations": [
+          "story_cafe",
+          "vero_cafe",
+          "cafeneaua_franzelarilor"
+        ]
+      },
+      "c-a-d": {
+        "combination": {
+          "q1": "Liniștită",
+          "q2": "Sub 20 lei",
+          "q3": "Familie cu copii"
+        },
+        "recommendations": [
+          "story_cafe",
+          "cafeneaua_franzelarilor",
+          "vero_cafe"
+        ]
+      },
+      "c-b-a": {
+        "combination": {
+          "q1": "Liniștită",
+          "q2": "20–40 lei",
+          "q3": "Singur"
+        },
+        "recommendations": [
+          "revolver_coffee",
+          "einstein_cafe",
+          "vero_cafe"
+        ]
+      },
+      "c-b-b": {
+        "combination": {
+          "q1": "Liniștită",
+          "q2": "20–40 lei",
+          "q3": "Cuplu"
+        },
+        "recommendations": [
+          "revolver_coffee",
+          "story_cafe",
+          "einstein_cafe"
+        ]
+      },
+      "c-b-c": {
+        "combination": {
+          "q1": "Liniștită",
+          "q2": "20–40 lei",
+          "q3": "Prieteni"
+        },
+        "recommendations": [
+          "einstein_cafe",
+          "vero_cafe",
+          "story_cafe"
+        ]
+      },
+      "c-b-d": {
+        "combination": {
+          "q1": "Liniștită",
+          "q2": "20–40 lei",
+          "q3": "Familie cu copii"
+        },
+        "recommendations": [
+          "story_cafe",
+          "einstein_cafe",
+          "vero_cafe"
+        ]
+      },
+      "c-c-a": {
+        "combination": {
+          "q1": "Liniștită",
+          "q2": "Peste 40 lei",
+          "q3": "Singur"
+        },
+        "recommendations": [
+          "lacave_coffee",
+          "revolver_coffee",
+          "curio"
+        ]
+      },
+      "c-c-b": {
+        "combination": {
+          "q1": "Liniștită",
+          "q2": "Peste 40 lei",
+          "q3": "Cuplu"
+        },
+        "recommendations": [
+          "lacave_coffee",
+          "curio",
+          "revolver_coffee"
+        ]
+      },
+      "c-c-c": {
+        "combination": {
+          "q1": "Liniștită",
+          "q2": "Peste 40 lei",
+          "q3": "Prieteni"
+        },
+        "recommendations": [
+          "lacave_coffee",
+          "curio",
+          "einstein_cafe"
+        ]
+      },
+      "c-c-d": {
+        "combination": {
+          "q1": "Liniștită",
+          "q2": "Peste 40 lei",
+          "q3": "Familie cu copii"
+        },
+        "recommendations": [
+          "lacave_coffee",
+          "story_cafe",
+          "curio"
+        ]
+      },
+      "d-a-a": {
+        "combination": {
+          "q1": "Terasă",
+          "q2": "Sub 20 lei",
+          "q3": "Singur"
+        },
+        "recommendations": [
+          "corso_cafe",
+          "cafeneaua_artelor",
+          "rocks_cafe"
+        ]
+      },
+      "d-a-b": {
+        "combination": {
+          "q1": "Terasă",
+          "q2": "Sub 20 lei",
+          "q3": "Cuplu"
+        },
+        "recommendations": [
+          "cafeneaua_artelor",
+          "corso_cafe",
+          "rocks_cafe"
+        ]
+      },
+      "d-a-c": {
+        "combination": {
+          "q1": "Terasă",
+          "q2": "Sub 20 lei",
+          "q3": "Prieteni"
+        },
+        "recommendations": [
+          "corso_cafe",
+          "cafeneaua_artelor",
+          "rocks_cafe"
+        ]
+      },
+      "d-a-d": {
+        "combination": {
+          "q1": "Terasă",
+          "q2": "Sub 20 lei",
+          "q3": "Familie cu copii"
+        },
+        "recommendations": [
+          "corso_cafe",
+          "cafeneaua_artelor",
+          "story_cafe"
+        ]
+      },
+      "d-b-a": {
+        "combination": {
+          "q1": "Terasă",
+          "q2": "20–40 lei",
+          "q3": "Singur"
+        },
+        "recommendations": [
+          "corso_cafe",
+          "cafeneaua_artelor",
+          "narcoffee"
+        ]
+      },
+      "d-b-b": {
+        "combination": {
+          "q1": "Terasă",
+          "q2": "20–40 lei",
+          "q3": "Cuplu"
+        },
+        "recommendations": [
+          "cafeneaua_artelor",
+          "corso_cafe",
+          "rocks_cafe"
+        ]
+      },
+      "d-b-c": {
+        "combination": {
+          "q1": "Terasă",
+          "q2": "20–40 lei",
+          "q3": "Prieteni"
+        },
+        "recommendations": [
+          "corso_cafe",
+          "cafeneaua_artelor",
+          "rocks_cafe"
+        ]
+      },
+      "d-b-d": {
+        "combination": {
+          "q1": "Terasă",
+          "q2": "20–40 lei",
+          "q3": "Familie cu copii"
+        },
+        "recommendations": [
+          "corso_cafe",
+          "cafeneaua_artelor",
+          "boo_coffee"
+        ]
+      },
+      "d-c-a": {
+        "combination": {
+          "q1": "Terasă",
+          "q2": "Peste 40 lei",
+          "q3": "Singur"
+        },
+        "recommendations": [
+          "nomad_skybar",
+          "cafeneaua_artelor",
+          "corso_cafe"
+        ]
+      },
+      "d-c-b": {
+        "combination": {
+          "q1": "Terasă",
+          "q2": "Peste 40 lei",
+          "q3": "Cuplu"
+        },
+        "recommendations": [
+          "nomad_skybar",
+          "cafeneaua_artelor",
+          "lacave_coffee"
+        ]
+      },
+      "d-c-c": {
+        "combination": {
+          "q1": "Terasă",
+          "q2": "Peste 40 lei",
+          "q3": "Prieteni"
+        },
+        "recommendations": [
+          "nomad_skybar",
+          "corso_cafe",
+          "cafeneaua_artelor"
+        ]
+      },
+      "d-c-d": {
+        "combination": {
+          "q1": "Terasă",
+          "q2": "Peste 40 lei",
+          "q3": "Familie cu copii"
+        },
+        "recommendations": [
+          "nomad_skybar",
+          "corso_cafe",
+          "cafeneaua_artelor"
+        ]
+      }
+    }
   }
 }
