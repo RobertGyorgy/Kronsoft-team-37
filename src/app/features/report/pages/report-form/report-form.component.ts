@@ -25,8 +25,11 @@ export class ReportFormComponent {
   now = new Date();
 
   formData = {
+    title: '',
+    address: '',
     description: '',
     categoryId: 0,
+    categoryName: '',
     latitude: 45.6427, // Default Brasov
     longitude: 25.5890
   };
@@ -185,13 +188,21 @@ export class ReportFormComponent {
   }
 
   onSubmit() {
+    if (!this.formData.title) {
+      alert('Te rugăm să completezi titlul incidentului!');
+      return;
+    }
+    if (!this.formData.categoryId) {
+      alert('Te rugăm să selectezi o categorie!');
+      return;
+    }
     if (!this.formData.description) {
       alert('Te rugăm să completezi descrierea!');
       return;
     }
     this.isPreviewMode.set(true);
     setTimeout(() => {
-      gsap.fromTo('.pdf-preview-container', 
+      gsap.fromTo('.pdf-container', 
         { y: 50, opacity: 0 }, 
         { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }
       );
@@ -203,7 +214,16 @@ export class ReportFormComponent {
   }
 
   confirmSubmit() {
-    this.reportService.addReport(this.formData, this.photoFile || undefined);
+    const finalDescription = `[${this.formData.title}] ${this.formData.address ? 'Locație: ' + this.formData.address + '. ' : ''}${this.formData.description}`;
+
+    const payload = {
+      description: finalDescription,
+      categoryId: this.formData.categoryId,
+      latitude: this.formData.latitude,
+      longitude: this.formData.longitude
+    };
+
+    this.reportService.addReport(payload, this.photoFile || undefined);
     this.router.navigate(['/report']);
   }
 }

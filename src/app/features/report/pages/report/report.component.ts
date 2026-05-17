@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, signal, computed, inject, AfterView
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { ReportService } from '../../services/report.service';
+import { UserService } from '../../../../core/services/user.service';
+import { AuthService } from '../../../auth/auth.service';
 import { gsap } from 'gsap';
 
 @Component({
@@ -14,11 +16,14 @@ import { gsap } from 'gsap';
 })
 export class ReportComponent {
   private reportService = inject(ReportService);
+  private userService = inject(UserService);
+  private authService = inject(AuthService);
   private router = inject(Router);
 
   @ViewChild('container') container!: ElementRef;
 
   activeCategory = signal<string>('Toate');
+  userName = signal<string>('');
   
   categories = [
     'Toate', 'Infrastructură', 'Deșeuri', 'Graffiti', 
@@ -33,8 +38,14 @@ export class ReportComponent {
   });
 
   constructor() {
+    const sessionName = this.authService.getUserName() || '';
+    if (sessionName) {
+      this.userName.set(sessionName.split(' ')[0]);
+    }
+
     afterNextRender(() => {
       this.animateEntrance();
+      this.userService.loadProfile(); // fetch in background
     });
   }
 
@@ -52,38 +63,41 @@ export class ReportComponent {
     const cards = container.querySelectorAll('.report-card');
     const title = container.querySelector('.section-title');
 
-    gsap.set(chars, { y: 40, opacity: 0 });
-    gsap.set([hero, title, chips, cards], { y: 30, opacity: 0 });
+    const elements = [hero, title];
+    if (chips.length) elements.push(...Array.from(chips));
+    if (cards.length) elements.push(...Array.from(cards));
+    
+    const validElements = elements.filter(el => el);
+
+    if (chars.length) gsap.set(chars, { y: 40, opacity: 0 });
+    if (validElements.length) gsap.set(validElements, { y: 30, opacity: 0 });
     
     const tl = gsap.timeline({ defaults: { ease: 'power3.out', duration: 0.8 } });
     
-    tl.to(chars, {
-      y: 0,
-      opacity: 1,
-      stagger: 0.02,
-    })
-    .to(hero, {
-      y: 0,
-      opacity: 1,
-      duration: 1
-    }, '-=0.6')
-    .to(title, {
-      y: 0,
-      opacity: 1,
-    }, '-=0.7')
-    .to(chips, {
-      y: 0,
-      opacity: 1,
-      stagger: 0.05
-    }, '-=0.6')
-    .to(cards, {
-      y: 0,
-      opacity: 1,
-      stagger: 0.1,
-      onComplete: () => {
-        cards.forEach((el: any) => el.classList.add('animated'));
-      }
-    }, '-=0.5');
+    if (chars.length) {
+      tl.to(chars, { y: 0, opacity: 1, stagger: 0.02 });
+    }
+    
+    if (hero) {
+      tl.to(hero, { y: 0, opacity: 1, duration: 1 }, chars.length ? '-=0.6' : 0);
+    }
+    
+    if (title) {
+      tl.to(title, { y: 0, opacity: 1 }, '-=0.7');
+    }
+    
+    if (chips.length) {
+      tl.to(chips, { y: 0, opacity: 1, stagger: 0.05 }, '-=0.6');
+    }
+    
+    if (cards.length) {
+      tl.to(cards, {
+        y: 0, opacity: 1, stagger: 0.1,
+        onComplete: () => {
+          cards.forEach((el: any) => el.classList.add('animated'));
+        }
+      }, '-=0.5');
+    }
   }
 
   setCategory(cat: string) {

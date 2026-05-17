@@ -35,14 +35,12 @@ export class UserService {
   }
 
   /**
-   * POST /api/users/profile-picture
+   * POST /api/user/profile-picture
    * Uploads a profile picture as multipart/form-data.
-   * Note: This endpoint is from the backend txt spec but not yet in api-docs.json.
-   *       Schema may change once backend confirms.
    */
   async uploadProfilePicture(file: File): Promise<any> {
     const formData = new FormData();
     formData.append('image', file);
-    return firstValueFrom(this.http.post<any>('/api/users/profile-picture', formData));
+    return firstValueFrom(this.http.post<any>('/api/user/profile-picture', formData));
   }
 }
