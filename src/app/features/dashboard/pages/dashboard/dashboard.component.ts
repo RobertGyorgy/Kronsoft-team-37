@@ -15,9 +15,9 @@ import { AuthService } from '../../../auth/auth.service';
       <header class="dashboard-header">
         <div class="greeting-wrapper">
           <h1 class="hello-text line-mask">
-            @for (word of helloWords(); track word) {
+            @for (word of helloWords(); track $index) {
               <span class="word">
-                @for (char of word.split(''); track char) {
+                @for (char of word.split(''); track $index) {
                   <span class="char">{{ char }}</span>
                 }
                 <span class="char">&nbsp;</span>
@@ -25,9 +25,9 @@ import { AuthService } from '../../../auth/auth.service';
             }
           </h1>
           <h2 class="interest-text line-mask">
-            @for (word of interestWords; track word) {
+            @for (word of interestWords; track $index) {
               <span class="word">
-                @for (char of word.split(''); track char) {
+                @for (char of word.split(''); track $index) {
                   <span class="char">{{ char }}</span>
                 }
                 <span class="char">&nbsp;</span>

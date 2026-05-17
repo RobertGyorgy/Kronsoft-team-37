@@ -1,0 +1,2867 @@
+{
+  "natura": {
+    "categoryId": "natura",
+    "categoryLabel": "Natură",
+    "categoryIcon": "leaf",
+    "questions": [
+      {
+        "id": "q1",
+        "text": "Ce nivel de activitate preferi?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Relaxat – plimbări, natură",
+            "icon": "leaf"
+          },
+          {
+            "id": "b",
+            "label": "Activ – drumeții, ciclism",
+            "icon": "person-running"
+          },
+          {
+            "id": "c",
+            "label": "Aventuros – sport, adrenalină",
+            "icon": "compass"
+          },
+          {
+            "id": "d",
+            "label": "Contemplativ – foto, observare",
+            "icon": "camera"
+          }
+        ]
+      },
+      {
+        "id": "q2",
+        "text": "Câți oameni sunteți?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Singur",
+            "icon": "person"
+          },
+          {
+            "id": "b",
+            "label": "Cuplu",
+            "icon": "heart"
+          },
+          {
+            "id": "c",
+            "label": "Grup",
+            "icon": "people-group"
+          },
+          {
+            "id": "d",
+            "label": "Familie cu copii",
+            "icon": "family"
+          }
+        ]
+      },
+      {
+        "id": "q3",
+        "text": "Cât timp ai?",
+        "options": [
+          {
+            "id": "a",
+            "label": "1-2 ore",
+            "icon": "clock"
+          },
+          {
+            "id": "b",
+            "label": "Jumătate de zi",
+            "icon": "sun"
+          },
+          {
+            "id": "c",
+            "label": "O zi întreagă",
+            "icon": "calendar-day"
+          },
+          {
+            "id": "d",
+            "label": "Un weekend",
+            "icon": "calendar-week"
+          }
+        ]
+      }
+    ],
+    "places": {},
+    "results": {}
+  },
+  "arta": {
+    "categoryId": "arta",
+    "categoryLabel": "Artă și istorie",
+    "categoryIcon": "museum",
+    "questions": [
+      {
+        "id": "q1",
+        "text": "Ce te interesează?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Muzee",
+            "icon": "account_balance"
+          },
+          {
+            "id": "b",
+            "label": "Clădiri istorice",
+            "icon": "castle"
+          },
+          {
+            "id": "c",
+            "label": "Galerii de artă",
+            "icon": "palette"
+          }
+        ]
+      },
+      {
+        "id": "q2",
+        "text": "Cum preferi să explorezi?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Cu ghid",
+            "icon": "record_voice_over"
+          },
+          {
+            "id": "b",
+            "label": "Singur",
+            "icon": "person"
+          },
+          {
+            "id": "c",
+            "label": "Cu audioghid",
+            "icon": "headset"
+          }
+        ]
+      },
+      {
+        "id": "q3",
+        "text": "Care e bugetul?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Gratuit",
+            "icon": "volunteer_activism"
+          },
+          {
+            "id": "b",
+            "label": "Până la 30 lei",
+            "icon": "payments"
+          },
+          {
+            "id": "c",
+            "label": "Peste 30 lei",
+            "icon": "savings"
+          }
+        ]
+      }
+    ],
+    "places": {},
+    "results": {}
+  },
+  "restaurante": {
+    "categoryId": "restaurante",
+    "categoryLabel": "Restaurante",
+    "categoryIcon": "utensils",
+    "questions": [
+      {
+        "id": "q1",
+        "text": "Ce tip de mâncare preferi?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Tradițională",
+            "icon": "bowl-food"
+          },
+          {
+            "id": "b",
+            "label": "Internațională-Fusion",
+            "icon": "globe"
+          },
+          {
+            "id": "c",
+            "label": "Italiană-Mediteraneană",
+            "icon": "pizza-slice"
+          },
+          {
+            "id": "d",
+            "label": "Street food-Casual",
+            "icon": "burger"
+          }
+        ]
+      },
+      {
+        "id": "q2",
+        "text": "Cu cine ești?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Singur",
+            "icon": "person"
+          },
+          {
+            "id": "b",
+            "label": "Cuplu",
+            "icon": "heart"
+          },
+          {
+            "id": "c",
+            "label": "Grup",
+            "icon": "people-group"
+          },
+          {
+            "id": "d",
+            "label": "Familie",
+            "icon": "family"
+          }
+        ]
+      },
+      {
+        "id": "q3",
+        "text": "Ce buget ai?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Sub 40 lei",
+            "icon": "coins"
+          },
+          {
+            "id": "b",
+            "label": "40–80 lei",
+            "icon": "wallet"
+          },
+          {
+            "id": "c",
+            "label": "80–150 lei",
+            "icon": "gem"
+          },
+          {
+            "id": "d",
+            "label": "Peste 150 lei",
+            "icon": "crown"
+          }
+        ]
+      }
+    ],
+    "places": {
+      "la_ceaun": {
+        "id": "la_ceaun",
+        "name": "La Ceaun",
+        "cuisine": "Tradițională",
+        "shortDescription": "Bucate tradiționale în oale de lut, chiar în Piața Sfatului.",
+        "description": "Preparate tradiționale servite în oale de lut, atmosferă rustică și prețuri accesibile. Ciorbele și sarmalele sunt hit-ul casei.",
+        "address": "Piața Sfatului nr. 14, Brașov",
+        "coordinates": {
+          "lat": 45.6427,
+          "lng": 25.5886
+        },
+        "priceRange": "Sub 40 lei",
+        "tags": [
+          "tradițional",
+          "oale de lut",
+          "Piața Sfatului",
+          "accesibil"
+        ],
+        "tip": "Meniul de prânz e foarte avantajos. Ciorbele sunt oase.",
+        "hours": "10:00–22:00",
+        "image": "la_ceaun.jpg"
+      },
+      "haplea": {
+        "id": "haplea",
+        "name": "Haplea d'ale Gurii",
+        "cuisine": "Tradițională",
+        "shortDescription": "Mâncare tradițională ca pe vremuri – ciorbe, sarmale, porții mari, prețuri mici.",
+        "description": "Haplea este nostalgia copilăriei pe farfurie. Ciorbă de perișoare, sarmale, mâncare de fasole, tocăniță. Porții generoase la prețuri foarte accesibile. Mai multe locații: Michael Weiss, Iuliu Maniu, Magnolia.",
+        "address": "Str. Michael Weiss / Str. Iuliu Maniu, Brașov",
+        "coordinates": {
+          "lat": 45.6435,
+          "lng": 25.59
+        },
+        "priceRange": "Sub 40 lei",
+        "tags": [
+          "tradițional",
+          "ieftin",
+          "porții mari",
+          "nostalgic"
+        ],
+        "tip": "Ciorbele și sarmalele sunt excelente. Cel mai bun raport calitate-preț din Brașov.",
+        "hours": "10:00–21:00",
+        "image": "haplea.jpg"
+      },
+      "ceasu_rau": {
+        "id": "ceasu_rau",
+        "name": "Ceasu' Rău",
+        "cuisine": "Tradițională",
+        "shortDescription": "Mâncare tradițională ca la mama acasă – ingrediente de la Poiana Mărului.",
+        "description": "Parte din familia Sergiana, cu ingrediente proaspete de la Poiana Mărului. Porții generoase, gust autentic, prețuri foarte accesibile. Recomandat pe TripAdvisor.",
+        "address": "Str. Iuliu Maniu nr. 56, Brașov",
+        "coordinates": {
+          "lat": 45.647,
+          "lng": 25.596
+        },
+        "priceRange": "Sub 40 lei",
+        "tags": [
+          "tradițional",
+          "Sergiana",
+          "accesibil",
+          "porții mari"
+        ],
+        "tip": "Raport calitate-preț excelent. Meniurile de prânz sunt foarte avantajoase.",
+        "hours": "11:00–22:00",
+        "image": "ceasu_rau.jpg"
+      },
+      "sergiana": {
+        "id": "sergiana",
+        "name": "Sergiana Mureșenilor",
+        "cuisine": "Tradițională",
+        "shortDescription": "Instituție brașoveană – mâncare ardelenească cu ingrediente de la ferma proprie.",
+        "description": "Sergiana este o instituție în Brașov. Subsolul unei clădiri istorice, decor tradițional, ospătari în port popular. Jumări și pâine cu ceapă din partea casei. Ingrediente de la ferma proprie.",
+        "address": "Str. Mureșenilor nr. 28, Brașov",
+        "coordinates": {
+          "lat": 45.642,
+          "lng": 25.589
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "tradițional",
+          "ardelenesc",
+          "ferma proprie",
+          "centru vechi"
+        ],
+        "tip": "Rezervă masă – e mereu plin! Încearcă tochitura ardelenească și papanașii.",
+        "hours": "12:00–23:00",
+        "image": "sergiana.jpg"
+      },
+      "ograda": {
+        "id": "ograda",
+        "name": "Ograda din Piața Sfatului",
+        "cuisine": "Tradițională",
+        "shortDescription": "Ca în ograda bunicii – preparate autentice, cafea de specialitate excelentă.",
+        "description": "Ograda aduce autenticitatea gastronomiei românești chiar în Piața Sfatului. Preparate tradiționale făcute cu suflet, cafea de specialitate remarcabilă.",
+        "address": "Piața Sfatului, Brașov",
+        "coordinates": {
+          "lat": 45.6426,
+          "lng": 25.5888
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "tradițional",
+          "autentic",
+          "Piața Sfatului",
+          "cafea"
+        ],
+        "tip": "Neapărat încearcă și cafeaua de specialitate – e remarcabilă!",
+        "hours": "09:00–22:00",
+        "image": "ograda.jpg"
+      },
+      "casa_tudor": {
+        "id": "casa_tudor",
+        "name": "Casa Tudor",
+        "cuisine": "Tradițională",
+        "shortDescription": "Restaurant Sergiana – prospețime, gust și rafinament tradițional.",
+        "description": "Parte a Grupului Sergiana, Casa Tudor combină prospețime și rafinament. Ingrediente de la ferma proprie, preparate tradiționale executate cu grijă.",
+        "address": "Str. Avram Iancu nr. 58, Brașov",
+        "coordinates": {
+          "lat": 45.644,
+          "lng": 25.594
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "tradițional",
+          "rafinat",
+          "Sergiana",
+          "ingrediente proaspete"
+        ],
+        "tip": "Pasta de jumări și preparatele la ceaun sunt de neratat.",
+        "hours": "12:00–22:00",
+        "image": "casa_tudor.jpg"
+      },
+      "pilvax": {
+        "id": "pilvax",
+        "name": "Pilvax",
+        "cuisine": "Tradițională",
+        "shortDescription": "Specific unguresc-transilvănean – gulaș, supă de pește, gomboți cu prune, 100+ vinuri.",
+        "description": "Pilvax poartă numele celebrei cafenele din Budapesta. Gulaș, supă de pește, gomboți cu prune. Peste 100 de vinuri ungurești. Menționat de The Guardian în top 20 restaurante din Europa.",
+        "address": "Str. Nicolae Bălcescu nr. 26, Brașov",
+        "coordinates": {
+          "lat": 45.645,
+          "lng": 25.592
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "unguresc",
+          "transilvănean",
+          "gulaș",
+          "vinuri",
+          "The Guardian"
+        ],
+        "tip": "Gomboții cu prune sunt un must! Lista de vinuri ungurești este excepțională.",
+        "hours": "12:00–23:00",
+        "image": "pilvax.jpg"
+      },
+      "bella_muzica": {
+        "id": "bella_muzica",
+        "name": "Bella Muzica",
+        "cuisine": "Tradițională",
+        "shortDescription": "Restaurant medieval în Piața Sfatului – arcade de cărămidă, bucătărie tradițională și ungurească.",
+        "description": "Clădire medievală din sec. XVI cu arcade de cărămidă și piatră. Bucătărie tradițională românească și ungurească. Atmosferă fancy într-un cadru istoric la subsol. Buton la masă pentru a chema ospătarul.",
+        "address": "Piața Sfatului nr. 19, Brașov",
+        "coordinates": {
+          "lat": 45.6428,
+          "lng": 25.5883
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "medieval",
+          "tradițional",
+          "unguresc",
+          "Piața Sfatului",
+          "atmospheric"
+        ],
+        "tip": "Atmosfera de pivniță medievală e unică. Servirea cu buton la masă e un plus amuzant.",
+        "hours": "12:00–23:00",
+        "image": "bella_muzica.jpg"
+      },
+      "sub_tampa_rest": {
+        "id": "sub_tampa_rest",
+        "name": "Sub Tâmpa",
+        "cuisine": "Tradițională",
+        "shortDescription": "Gastronomie neo-tradițională – rețete din 1600-1900, reinterpretate modern.",
+        "description": "Concept unic: rețete vechi românești (1600-1900) reinterpretate cu tehnici moderne. Burger din carne de urs, burtă de vită crocantă, budincă de cozonac. Cadru elegant la poalele Tâmpei.",
+        "address": "Aleea Tiberiu Brediceanu nr. 1, Brașov",
+        "coordinates": {
+          "lat": 45.64,
+          "lng": 25.588
+        },
+        "priceRange": "80–150 lei",
+        "tags": [
+          "neo-tradițional",
+          "rețete istorice",
+          "elegant",
+          "premium"
+        ],
+        "tip": "Meniul se schimbă sezonier. Experiența culinară e unică în Brașov.",
+        "hours": "12:00–23:00",
+        "image": "sub_tampa_rest.jpg"
+      },
+      "panoramic": {
+        "id": "panoramic",
+        "name": "Panoramic – pe Vârful Tâmpei",
+        "cuisine": "Tradițională",
+        "shortDescription": "Fine dining pe Tâmpa la 960 m – redeschis 2025, gastronomie contemporană transilvăneană.",
+        "description": "Redeschis după renovare completă, Panoramic e accesibil cu telecabina. Gastronomie contemporană cu rădăcini transilvănene, rafinament și ingrediente locale. Panoramă unică asupra Brașovului.",
+        "address": "Vârful Tâmpa (telecabina), Brașov",
+        "coordinates": {
+          "lat": 45.638,
+          "lng": 25.596
+        },
+        "priceRange": "Peste 150 lei",
+        "tags": [
+          "fine dining",
+          "panoramă",
+          "telecabină",
+          "premium",
+          "transilvănean"
+        ],
+        "tip": "Urcarea cu telecabina face parte din experiență. Perfect pentru ocazii speciale.",
+        "hours": "12:00–22:00",
+        "image": "panoramic.jpg"
+      },
+      "fract": {
+        "id": "fract",
+        "name": "Fract Restaurant",
+        "cuisine": "Internațională-Fusion",
+        "shortDescription": "Restaurant social – responsabilitate socială + mâncare internațională bună, prețuri mici.",
+        "description": "Fract combină un proiect social cu gastronomie de calitate. Preparate internaționale, meniu zilnic care se schimbă, ingrediente proaspete. Concept unic în Brașov.",
+        "address": "Str. Războieni nr. 5, Brașov",
+        "coordinates": {
+          "lat": 45.6455,
+          "lng": 25.5925
+        },
+        "priceRange": "Sub 40 lei",
+        "tags": [
+          "social dining",
+          "internațional",
+          "accesibil",
+          "concept unic"
+        ],
+        "tip": "Susții o cauză bună mâncând bine. Meniul zilei e mereu o surpriză plăcută.",
+        "hours": "10:00–20:00",
+        "image": "fract.jpg"
+      },
+      "dze_best": {
+        "id": "dze_best",
+        "name": "Dze Best – Restaurant Georgian",
+        "cuisine": "Internațională-Fusion",
+        "shortDescription": "Bucătărie georgiană autentică – khachapuri, khinkali – la 10 min de centru.",
+        "description": "Deschis de o familie din Republica Moldova pasionată de gastronomia georgiană. Khachapuri, khinkali și alte specialități autentice. Prețuri foarte bune.",
+        "address": "Str. Lungă, Brașov",
+        "coordinates": {
+          "lat": 45.6465,
+          "lng": 25.595
+        },
+        "priceRange": "Sub 40 lei",
+        "tags": [
+          "georgian",
+          "khachapuri",
+          "khinkali",
+          "accesibil"
+        ],
+        "tip": "Khachapuri-ul Acharuli (cu ou) e o experiență! Fă rezervare în weekend.",
+        "hours": "11:00–22:00",
+        "image": "dze_best.jpg"
+      },
+      "wagners_loft": {
+        "id": "wagners_loft",
+        "name": "Wagner's Loft",
+        "cuisine": "Internațională-Fusion",
+        "shortDescription": "Restaurant elegant – burgeri gourmet, paste, vegane – 60+ locuri, centrul vechi.",
+        "description": "În incinta Hotelului Casa Wagner, la pași de Piața Sfatului. Decor industrial-chic. Peste 60 de locuri în 4 zone. Meniu internațional: burgeri gourmet, paste, salate, preparate vegane.",
+        "address": "Piața George Enescu nr. 16, Brașov",
+        "coordinates": {
+          "lat": 45.6425,
+          "lng": 25.587
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "internațional",
+          "burgeri gourmet",
+          "vegan",
+          "centru vechi",
+          "spațios"
+        ],
+        "tip": "Zona loft e cea mai instagramabilă. Burgerii gourmet sunt excelenti.",
+        "hours": "09:00–23:00",
+        "image": "wagners_loft.jpg"
+      },
+      "bistro_de_larte": {
+        "id": "bistro_de_larte",
+        "name": "Bistro de l'Arte",
+        "cuisine": "Internațională-Fusion",
+        "shortDescription": "Bistro boem – muzică jazz live, expoziții artă, preparate europene centrale.",
+        "description": "Deschis în 2000 într-una dintre cele mai vechi clădiri din Brașov. Sute de expoziții, concerte jazz, recitaluri. Bucătărie europeană centrală și românească reinterpretată.",
+        "address": "Piața George Enescu nr. 11, Brașov",
+        "coordinates": {
+          "lat": 45.6423,
+          "lng": 25.5868
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "bistro",
+          "jazz",
+          "artă",
+          "boem",
+          "european"
+        ],
+        "tip": "Verifică programul de concerte jazz live! Seara atmosfera e magică.",
+        "hours": "10:00–00:00",
+        "image": "bistro_de_larte.jpg"
+      },
+      "le_petit_bistro": {
+        "id": "le_petit_bistro",
+        "name": "Le Petit Bistro",
+        "cuisine": "Internațională-Fusion",
+        "shortDescription": "Bistro intim lângă Biserica Neagră – brunch, carne premium, deserturi artizanale.",
+        "description": "Micuț dar imens în preferințe. Meniu versatil: brunch, avocado toast, Pork Tomahawk, obrăjori de vițel, doradă. Deserturi excepționale: tiramisu, panna cotta, mille-feuille.",
+        "address": "Str. Castelului nr. 2, Brașov",
+        "coordinates": {
+          "lat": 45.641,
+          "lng": 25.5875
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "bistro",
+          "brunch",
+          "intim",
+          "deserturi",
+          "franțuzesc"
+        ],
+        "tip": "Tiramisu-ul și panna cotta sunt de vis. Brunch-ul de weekend – rezervă!",
+        "hours": "09:00–22:00",
+        "image": "le_petit_bistro.jpg"
+      },
+      "albert_social": {
+        "id": "albert_social",
+        "name": "Albert Social Bistro",
+        "cuisine": "Internațională-Fusion",
+        "shortDescription": "Bistro cu grădină verde pe Republicii – salate, burgeri, paste, atmosferă relaxată.",
+        "description": "Grădină interioară verde și liniștită pe Strada Republicii. Meniu variat: salate, burgeri, paste, preparate internaționale. Perfect pentru pauza de prânz.",
+        "address": "Str. Republicii nr. 38, Brașov",
+        "coordinates": {
+          "lat": 45.6445,
+          "lng": 25.592
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "bistro",
+          "grădină",
+          "relaxat",
+          "internațional"
+        ],
+        "tip": "Grădina interioară e o oază de liniște. Perfect vara la prânz.",
+        "hours": "10:00–23:00",
+        "image": "albert_social.jpg"
+      },
+      "bloom": {
+        "id": "bloom",
+        "name": "Bloom Restaurant & Bar",
+        "cuisine": "Internațională-Fusion",
+        "shortDescription": "Fine casual cu terasă elegantă, cocktailuri de autor și meniu internațional creativ.",
+        "description": "Terasă elegantă, meniu internațional rafinat, preparate creative, cocktailuri de autor. Atmosferă sofisticată pentru cine speciale sau ieșiri cu prietenii.",
+        "address": "Str. Republicii, Brașov",
+        "coordinates": {
+          "lat": 45.6448,
+          "lng": 25.5918
+        },
+        "priceRange": "80–150 lei",
+        "tags": [
+          "fine casual",
+          "cocktailuri",
+          "terasă",
+          "creativ"
+        ],
+        "tip": "Cocktailurile de autor sunt excelente. Terasa e superb amenajată vara.",
+        "hours": "12:00–00:00",
+        "image": "bloom.jpg"
+      },
+      "terroirs": {
+        "id": "terroirs",
+        "name": "Terroirs Boutique du Vin",
+        "cuisine": "Internațională-Fusion",
+        "shortDescription": "Wine bar cu 500+ vinuri, sommelieri, platouri gourmet – creveți, burgeri, brânzeturi.",
+        "description": "Peste 500 de vinuri selecționate, servite de sommelieri. Platouri cu brânzeturi, prosciutto, creveți, burgeri gourmet. Atmosferă rafinată.",
+        "address": "Str. Republicii nr. 10, Brașov",
+        "coordinates": {
+          "lat": 45.6435,
+          "lng": 25.591
+        },
+        "priceRange": "80–150 lei",
+        "tags": [
+          "wine bar",
+          "sommelier",
+          "gourmet",
+          "rafinat"
+        ],
+        "tip": "Lasă sommelier-ul să aleagă vinul – nu vei regreta!",
+        "hours": "14:00–00:00",
+        "image": "terroirs.jpg"
+      },
+      "belvedere": {
+        "id": "belvedere",
+        "name": "Belvedere",
+        "cuisine": "Internațională-Fusion",
+        "shortDescription": "Fine dining cu panoramă – meniu de autor care se schimbă la 6 luni.",
+        "description": "Situat deasupra orașului pe drumul spre Poiană, cu panoramă asupra Brașovului. Fine cuisine de autor, meniu sezonier, posibilitate de surpriză culinară personalizată de la maestrul bucătar.",
+        "address": "Str. Prundului nr. 23, Brașov",
+        "coordinates": {
+          "lat": 45.652,
+          "lng": 25.585
+        },
+        "priceRange": "Peste 150 lei",
+        "tags": [
+          "fine dining",
+          "panoramă",
+          "meniu de autor",
+          "premium"
+        ],
+        "tip": "Cere surpriza culinară personalizată de la bucătar – experiență unică!",
+        "hours": "12:00–23:00",
+        "image": "belvedere.jpg"
+      },
+      "della_nonna": {
+        "id": "della_nonna",
+        "name": "Pizzeria Della Nonna",
+        "cuisine": "Italiană-Mediteraneană",
+        "shortDescription": "Pizza la cuptor cu lemne în stil italian autentic – considerată cea mai bună din Brașov.",
+        "description": "Della Nonna este votată de mulți brașoveni drept cea mai bună pizzerie din oraș. Pizza la cuptor cu lemne, blat subțire și crocant, ingrediente proaspete.",
+        "address": "Str. Dr. Ioan Cantacuzino nr. 1, Brașov",
+        "coordinates": {
+          "lat": 45.646,
+          "lng": 25.594
+        },
+        "priceRange": "Sub 40 lei",
+        "tags": [
+          "pizza",
+          "cuptor lemne",
+          "italian autentic",
+          "accesibil"
+        ],
+        "tip": "Mergi devreme – se umple repede! Pizza quattro formaggi e legendară.",
+        "hours": "11:00–22:00",
+        "image": "della_nonna.jpg"
+      },
+      "trattoria_pocol": {
+        "id": "trattoria_pocol",
+        "name": "Trattoria Pocol",
+        "cuisine": "Italiană-Mediteraneană",
+        "shortDescription": "Pizza la cuptor, vinuri locale, fructe de mare – atmosferă italiană elegantă.",
+        "description": "Trattoria Pocol oferă o experiență italiană upscale: pizza, paste, pește și fructe de mare. Vitrină cu pește proaspăt de captură. Vinuri românești și italiene.",
+        "address": "Str. Michael Weiss, Brașov",
+        "coordinates": {
+          "lat": 45.6415,
+          "lng": 25.5895
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "italian",
+          "fructe de mare",
+          "pește proaspăt",
+          "elegant"
+        ],
+        "tip": "Alege peștele din vitrină și îl prepară pentru tine pe loc. Experiență deosebită!",
+        "hours": "11:00–23:00",
+        "image": "trattoria_pocol.jpg"
+      },
+      "antreu_focaccerie": {
+        "id": "antreu_focaccerie",
+        "name": "AntreU Focaccerie",
+        "cuisine": "Italiană-Mediteraneană",
+        "shortDescription": "Focaccia artizanală și specialități italiene de stradă – rapid, bun, accesibil.",
+        "description": "Focaccia artizanală în diverse combinații, panini și specialități italiene de stradă. Servire rapidă, ingrediente proaspete, prețuri mici.",
+        "address": "Centru, Brașov",
+        "coordinates": {
+          "lat": 45.6438,
+          "lng": 25.5905
+        },
+        "priceRange": "Sub 40 lei",
+        "tags": [
+          "focaccia",
+          "italian street food",
+          "rapid",
+          "accesibil"
+        ],
+        "tip": "Focaccia cu prosciutto e bestială! Perfect pentru prânz rapid.",
+        "hours": "10:00–20:00",
+        "image": "antreu_focaccerie.jpg"
+      },
+      "al_centro": {
+        "id": "al_centro",
+        "name": "Al Centro",
+        "cuisine": "Italiană-Mediteraneană",
+        "shortDescription": "Pizza cu maia, paste, burgeri, meniuri complete – pe strada Lungă.",
+        "description": "Al Centro oferă pizza cu aluat natural, paste proaspete, antipasti, mic dejun italian și deserturi. Totul făcut la comandă. Livrare și telefonic.",
+        "address": "Str. Lungă nr. 66-68, Brașov",
+        "coordinates": {
+          "lat": 45.645,
+          "lng": 25.5945
+        },
+        "priceRange": "Sub 40 lei",
+        "tags": [
+          "pizza",
+          "paste",
+          "casual",
+          "maia",
+          "livrare"
+        ],
+        "tip": "Meniul zilei e foarte avantajos. Pizza cu maia – altfel decât restul.",
+        "hours": "10:00–22:00",
+        "image": "al_centro.jpg"
+      },
+      "dei_frati": {
+        "id": "dei_frati",
+        "name": "Dei Frati",
+        "cuisine": "Italiană-Mediteraneană",
+        "shortDescription": "Cele bine paste din Brașov – trattoria de familie, premiat Horeca Awards 2025.",
+        "description": "Restaurant de familie, doi frați cu 10+ ani în bucătăriile Italiei. Premiul Cel mai bun restaurant mediteranean (Horeca Awards 2025). Paste homemade, pește, fructe de mare.",
+        "address": "Piața George Enescu nr. 16, Brașov",
+        "coordinates": {
+          "lat": 45.6424,
+          "lng": 25.5869
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "italian",
+          "paste homemade",
+          "premiat",
+          "trattoria"
+        ],
+        "tip": "Tagliatele cu trufe sunt legendare! Locul e mic – rezervă obligatoriu.",
+        "hours": "12:00–22:00",
+        "image": "dei_frati.jpg"
+      },
+      "prato": {
+        "id": "prato",
+        "name": "Prato Restaurant",
+        "cuisine": "Italiană-Mediteraneană",
+        "shortDescription": "Restaurant italian-mediteranean din 2008 – 240 locuri, Michael Weiss.",
+        "description": "Din 2008, Prato oferă preparate italiene și mediteraneene într-un cadru plăcut pe Michael Weiss. 240 locuri în sală și terasă de vară. Muzică, ambient, atmosferă caldă.",
+        "address": "Str. Michael Weiss nr. 11, Brașov",
+        "coordinates": {
+          "lat": 45.6412,
+          "lng": 25.5892
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "italian",
+          "mediteranean",
+          "spațios",
+          "terasă",
+          "Michael Weiss"
+        ],
+        "tip": "Ideal pentru grupuri mari – 240 de locuri! Pizza și pastele sunt foarte bune.",
+        "hours": "11:00–23:00",
+        "image": "prato.jpg"
+      },
+      "cucinino": {
+        "id": "cucinino",
+        "name": "Cucinino – Pasta Bar",
+        "cuisine": "Italiană-Mediteraneană",
+        "shortDescription": "Pasta bar modern – paste proaspete, rețete creative, servire rapidă și stylish.",
+        "description": "Cucinino e un pasta bar modern cu paste proaspete gătite pe loc. Rețete clasice și creative italiene, ingrediente fresh. Servire rapidă în stil newyorkez, dar cu gust italian.",
+        "address": "Str. Diaconu Coresi nr. 6, Brașov",
+        "coordinates": {
+          "lat": 45.643,
+          "lng": 25.5895
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "pasta bar",
+          "paste proaspete",
+          "modern",
+          "rapid"
+        ],
+        "tip": "Chess wheel pasta (în roată de parmezan) e spectaculoasă! Rating 4.9 pe Google.",
+        "hours": "11:00–22:00",
+        "image": "cucinino.jpg"
+      },
+      "amo_brasov": {
+        "id": "amo_brasov",
+        "name": "AMO Brașov",
+        "cuisine": "Italiană-Mediteraneană",
+        "shortDescription": "All Made to Order – pizza cu maia, paste proaspete, preparate la comandă.",
+        "description": "AMO (All Made to Order) pregătește fiecare pizza proaspăt, cu aluat cu maia. Paste bune, atmosferă modernă. Livrare prin Glovo, Tazz și Bolt.",
+        "address": "Str. 1 Decembrie 1918 nr. 34, Brașov",
+        "coordinates": {
+          "lat": 45.649,
+          "lng": 25.598
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "pizza maia",
+          "paste",
+          "la comandă",
+          "modern"
+        ],
+        "tip": "Aluatul cu maia face diferența. Livrare gratuită în Tractorul.",
+        "hours": "11:00–22:00",
+        "image": "amo_brasov.jpg"
+      },
+      "artegianale": {
+        "id": "artegianale",
+        "name": "Artegianale",
+        "cuisine": "Italiană-Mediteraneană",
+        "shortDescription": "Wine bar & bistro italian premium – paste homemade, pizza napoletană, vinuri fine.",
+        "description": "Pasiune pentru vin și gastronomie italiană. Paste homemade, pizza napoletană, burrata, risotto, charcuterie. Vinuri din Italia, Franța, România. Clădire sec. XIX, grădină, evenimente culturale.",
+        "address": "Str. Mureșenilor nr. 27, Brașov",
+        "coordinates": {
+          "lat": 45.6418,
+          "lng": 25.5888
+        },
+        "priceRange": "80–150 lei",
+        "tags": [
+          "italian premium",
+          "wine bar",
+          "paste homemade",
+          "pizza napoletană"
+        ],
+        "tip": "Au 3 locații: Mureșenilor, AFI Brașov, Poiana Brașov (Swissotel).",
+        "hours": "12:00–23:00",
+        "image": "artegianale.jpg"
+      },
+      "juno_wine": {
+        "id": "juno_wine",
+        "name": "Juno Wine Garden",
+        "cuisine": "Italiană-Mediteraneană",
+        "shortDescription": "Grădină magică între zidurile cetății – vinuri, pizza pe vatră, atmosferă de basm.",
+        "description": "Amenajată între zidurile de incintă ale cetății. Vinuri locale și internaționale, pizza pe vatră, focaccia. Atmosferă magică cu copaci și muzică. Sezonier: primăvara-toamna.",
+        "address": "Aleea După Ziduri, Brașov",
+        "coordinates": {
+          "lat": 45.643,
+          "lng": 25.586
+        },
+        "priceRange": "80–150 lei",
+        "tags": [
+          "wine garden",
+          "ziduri cetate",
+          "pizza",
+          "romantic",
+          "sezonier"
+        ],
+        "tip": "Deschis doar primăvara-toamna! Magic seara cu luminițe.",
+        "hours": "16:00–00:00 (sezonier)",
+        "image": "juno_wine.jpg"
+      },
+      "vino_e_sapori": {
+        "id": "vino_e_sapori",
+        "name": "Vino e Sapori",
+        "cuisine": "Italiană-Mediteraneană",
+        "shortDescription": "Restaurant premium mediteranean – vinuri italiene și românești, preparate rafinate.",
+        "description": "Vino e Sapori combină vinuri italiene și românești cu preparate mediteraneene rafinate. Cadru elegant, ingrediente de calitate superioară, selecție de vinuri atent curatoriată.",
+        "address": "Centru, Brașov",
+        "coordinates": {
+          "lat": 45.642,
+          "lng": 25.5885
+        },
+        "priceRange": "Peste 150 lei",
+        "tags": [
+          "mediteranean premium",
+          "vinuri",
+          "rafinat",
+          "italian"
+        ],
+        "tip": "Solicită recomandarea de vin de la sommelier pentru a completa experiența.",
+        "hours": "12:00–23:00",
+        "image": "vino_e_sapori.jpg"
+      },
+      "old_jack": {
+        "id": "old_jack",
+        "name": "Old Jack Burger House",
+        "cuisine": "Street food-Casual",
+        "shortDescription": "Burgeri suculenți pe grătar în Piața Sfatului – rapid, bun, accesibil.",
+        "description": "Destinația pentru burgeri în Piața Sfatului. Burgeri pe grătar, cartofi crocanți, atmosferă casual. Masă rapidă dar satisfăcătoare.",
+        "address": "Piața Sfatului, Brașov",
+        "coordinates": {
+          "lat": 45.6428,
+          "lng": 25.5885
+        },
+        "priceRange": "Sub 40 lei",
+        "tags": [
+          "burgeri",
+          "Piața Sfatului",
+          "casual",
+          "rapid"
+        ],
+        "tip": "Burgerul clasic cu bacon și cheddar e cel mai cerut.",
+        "hours": "10:00–22:00",
+        "image": "old_jack.jpg"
+      },
+      "vivo_food": {
+        "id": "vivo_food",
+        "name": "VIVO Food Bar",
+        "cuisine": "Street food-Casual",
+        "shortDescription": "Burgeri creativi, cartofi excelenți, opțiuni vegetariene – urban și rapid.",
+        "description": "Burgeri suculenți cu combinații creative, cartofi prăjiți excelenți și opțiuni vegetariene/vegane. Atmosferă urbană. Adesea aglomerat – rezervare recomandată.",
+        "address": "Str. Nicolae Bălcescu nr. 62, Brașov",
+        "coordinates": {
+          "lat": 45.6475,
+          "lng": 25.5935
+        },
+        "priceRange": "Sub 40 lei",
+        "tags": [
+          "burgeri creativi",
+          "vegetarian",
+          "urban",
+          "cartofi trufe"
+        ],
+        "tip": "Cartofi prăjiți cu trufe – must try! Au și opțiuni vegane.",
+        "hours": "11:00–22:00",
+        "image": "vivo_food.jpg"
+      },
+      "street_food_lab": {
+        "id": "street_food_lab",
+        "name": "Street Food Lab",
+        "cuisine": "Street food-Casual",
+        "shortDescription": "Street food creativ în centrul istoric – wrap-uri, bowluri, snackuri sănătoase.",
+        "description": "Mâncare de stradă creativă și sănătoasă în centrul istoric. Wrap-uri, bowluri, burgeri, snackuri. Prețuri foarte accesibile. Pauză rapidă între vizite.",
+        "address": "Str. Republicii, Brașov",
+        "coordinates": {
+          "lat": 45.644,
+          "lng": 25.5915
+        },
+        "priceRange": "Sub 40 lei",
+        "tags": [
+          "street food",
+          "sănătos",
+          "bowluri",
+          "rapid",
+          "centru"
+        ],
+        "tip": "Perfect pentru pauza de prânz rapidă între obiectivele turistice.",
+        "hours": "10:00–21:00",
+        "image": "street_food_lab.jpg"
+      },
+      "simone": {
+        "id": "simone",
+        "name": "Simone",
+        "cuisine": "Street food-Casual",
+        "shortDescription": "Mâncare rapidă gustoasă – meniuri variate, opțiuni vegane și vegetariene, accesibil.",
+        "description": "Simone este popular pentru mâncare rapidă și gustoasă: meniuri variate, opțiuni vegetariene și vegane. Servire rapidă, prețuri accesibile, atmosferă casual.",
+        "address": "Centru, Brașov",
+        "coordinates": {
+          "lat": 45.644,
+          "lng": 25.591
+        },
+        "priceRange": "Sub 40 lei",
+        "tags": [
+          "rapid",
+          "vegan",
+          "vegetarian",
+          "accesibil",
+          "casual"
+        ],
+        "tip": "Opțiunile vegane sunt surprinzător de bune. Prânz rapid ideal.",
+        "hours": "09:00–21:00",
+        "image": "simone.jpg"
+      },
+      "kasho_lounge": {
+        "id": "kasho_lounge",
+        "name": "Kasho Lounge",
+        "cuisine": "Street food-Casual",
+        "shortDescription": "Lounge casual cu burgeri, paste, cocktailuri – atmosferă relaxată, prețuri corecte.",
+        "description": "Kasho Lounge e un loc casual cu mâncare bună la prețuri decente. Cunoscut pentru burgeri și preparate internaționale. Atmosferă relaxată, muzică bună.",
+        "address": "Centru, Brașov",
+        "coordinates": {
+          "lat": 45.6435,
+          "lng": 25.5905
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "lounge",
+          "burgeri",
+          "casual",
+          "cocktailuri",
+          "muzică"
+        ],
+        "tip": "Seara atmosfera de lounge cu muzică e foarte plăcută.",
+        "hours": "11:00–00:00",
+        "image": "kasho_lounge.jpg"
+      },
+      "pofta_sau_foame": {
+        "id": "pofta_sau_foame",
+        "name": "Berăria Poftă sau Foame",
+        "cuisine": "Street food-Casual",
+        "shortDescription": "Berărie cu mâncare consistentă – burgeri, coaste, aripioare, bere artizanală.",
+        "description": "Berărie cu meniu de pub: burgeri, coaste, aripioare, platouri de bere. Selecție de beri artizanale și de import. Atmosferă de pub englezesc, porții mari.",
+        "address": "Brașov",
+        "coordinates": {
+          "lat": 45.6445,
+          "lng": 25.5925
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "berărie",
+          "pub",
+          "burgeri",
+          "coaste",
+          "bere artizanală"
+        ],
+        "tip": "Platoul de coaste cu bere artizanală e combinația perfectă.",
+        "hours": "12:00–00:00",
+        "image": "pofta_sau_foame.jpg"
+      },
+      "deane_pub": {
+        "id": "deane_pub",
+        "name": "Deane's Irish Pub & Grill",
+        "cuisine": "Street food-Casual",
+        "shortDescription": "Pub irlandez autentic – burgeri, fish & chips, steak, bere Guinness, atmosferă vie.",
+        "description": "Pub irlandez cu meniu de pub food: burgeri premium, fish & chips, steakuri. Bere Guinness la draft, whiskey, cocktailuri. Atmosferă vie cu muzică.",
+        "address": "Str. Republicii nr. 19, Brașov",
+        "coordinates": {
+          "lat": 45.6442,
+          "lng": 25.5915
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "pub",
+          "irish",
+          "burgeri premium",
+          "Guinness",
+          "fish&chips"
+        ],
+        "tip": "Fish & Chips-ul e autentic. Guinness la draft – ca în Irlanda.",
+        "hours": "12:00–02:00",
+        "image": "deane_pub.jpg"
+      },
+      "gastropub_casual": {
+        "id": "gastropub_casual",
+        "name": "Oficiul de Degustare",
+        "cuisine": "Street food-Casual",
+        "shortDescription": "Gastropub cu mâncare comfort food, cocktailuri creative și bere craft.",
+        "description": "Gastropub modern cu comfort food de calitate: burgeri gourmet, platouri, snackuri premium. Cocktailuri creative și selecție de bere craft. Atmosferă casual-premium.",
+        "address": "Centru, Brașov",
+        "coordinates": {
+          "lat": 45.644,
+          "lng": 25.592
+        },
+        "priceRange": "80–150 lei",
+        "tags": [
+          "gastropub",
+          "comfort food",
+          "craft beer",
+          "cocktailuri",
+          "premium casual"
+        ],
+        "tip": "Burgerul gourmet cu bluecheese e o experiență. Cocktailurile sunt creative.",
+        "hours": "12:00–00:00",
+        "image": "gastropub_casual.jpg"
+      }
+    },
+    "results": {
+      "a-a-a": {
+        "combination": {
+          "q1": "Tradițională",
+          "q2": "Singur",
+          "q3": "Sub 40 lei"
+        },
+        "recommendations": [
+          "la_ceaun",
+          "haplea",
+          "ceasu_rau"
+        ]
+      },
+      "a-a-b": {
+        "combination": {
+          "q1": "Tradițională",
+          "q2": "Singur",
+          "q3": "40–80 lei"
+        },
+        "recommendations": [
+          "sergiana",
+          "ograda",
+          "pilvax"
+        ]
+      },
+      "a-a-c": {
+        "combination": {
+          "q1": "Tradițională",
+          "q2": "Singur",
+          "q3": "80–150 lei"
+        },
+        "recommendations": [
+          "sub_tampa_rest",
+          "pilvax",
+          "sergiana"
+        ]
+      },
+      "a-a-d": {
+        "combination": {
+          "q1": "Tradițională",
+          "q2": "Singur",
+          "q3": "Peste 150 lei"
+        },
+        "recommendations": [
+          "panoramic",
+          "sub_tampa_rest",
+          "bella_muzica"
+        ]
+      },
+      "a-b-a": {
+        "combination": {
+          "q1": "Tradițională",
+          "q2": "Cuplu",
+          "q3": "Sub 40 lei"
+        },
+        "recommendations": [
+          "la_ceaun",
+          "haplea",
+          "ceasu_rau"
+        ]
+      },
+      "a-b-b": {
+        "combination": {
+          "q1": "Tradițională",
+          "q2": "Cuplu",
+          "q3": "40–80 lei"
+        },
+        "recommendations": [
+          "pilvax",
+          "sergiana",
+          "bella_muzica"
+        ]
+      },
+      "a-b-c": {
+        "combination": {
+          "q1": "Tradițională",
+          "q2": "Cuplu",
+          "q3": "80–150 lei"
+        },
+        "recommendations": [
+          "sub_tampa_rest",
+          "pilvax",
+          "ograda"
+        ]
+      },
+      "a-b-d": {
+        "combination": {
+          "q1": "Tradițională",
+          "q2": "Cuplu",
+          "q3": "Peste 150 lei"
+        },
+        "recommendations": [
+          "panoramic",
+          "sub_tampa_rest",
+          "bella_muzica"
+        ]
+      },
+      "a-c-a": {
+        "combination": {
+          "q1": "Tradițională",
+          "q2": "Grup",
+          "q3": "Sub 40 lei"
+        },
+        "recommendations": [
+          "ceasu_rau",
+          "la_ceaun",
+          "haplea"
+        ]
+      },
+      "a-c-b": {
+        "combination": {
+          "q1": "Tradițională",
+          "q2": "Grup",
+          "q3": "40–80 lei"
+        },
+        "recommendations": [
+          "sergiana",
+          "bella_muzica",
+          "casa_tudor"
+        ]
+      },
+      "a-c-c": {
+        "combination": {
+          "q1": "Tradițională",
+          "q2": "Grup",
+          "q3": "80–150 lei"
+        },
+        "recommendations": [
+          "sub_tampa_rest",
+          "sergiana",
+          "pilvax"
+        ]
+      },
+      "a-c-d": {
+        "combination": {
+          "q1": "Tradițională",
+          "q2": "Grup",
+          "q3": "Peste 150 lei"
+        },
+        "recommendations": [
+          "panoramic",
+          "sub_tampa_rest",
+          "sergiana"
+        ]
+      },
+      "a-d-a": {
+        "combination": {
+          "q1": "Tradițională",
+          "q2": "Familie",
+          "q3": "Sub 40 lei"
+        },
+        "recommendations": [
+          "haplea",
+          "ceasu_rau",
+          "la_ceaun"
+        ]
+      },
+      "a-d-b": {
+        "combination": {
+          "q1": "Tradițională",
+          "q2": "Familie",
+          "q3": "40–80 lei"
+        },
+        "recommendations": [
+          "sergiana",
+          "ograda",
+          "casa_tudor"
+        ]
+      },
+      "a-d-c": {
+        "combination": {
+          "q1": "Tradițională",
+          "q2": "Familie",
+          "q3": "80–150 lei"
+        },
+        "recommendations": [
+          "sub_tampa_rest",
+          "casa_tudor",
+          "sergiana"
+        ]
+      },
+      "a-d-d": {
+        "combination": {
+          "q1": "Tradițională",
+          "q2": "Familie",
+          "q3": "Peste 150 lei"
+        },
+        "recommendations": [
+          "panoramic",
+          "sub_tampa_rest",
+          "sergiana"
+        ]
+      },
+      "b-a-a": {
+        "combination": {
+          "q1": "Internațională-Fusion",
+          "q2": "Singur",
+          "q3": "Sub 40 lei"
+        },
+        "recommendations": [
+          "fract",
+          "dze_best",
+          "albert_social"
+        ]
+      },
+      "b-a-b": {
+        "combination": {
+          "q1": "Internațională-Fusion",
+          "q2": "Singur",
+          "q3": "40–80 lei"
+        },
+        "recommendations": [
+          "le_petit_bistro",
+          "wagners_loft",
+          "albert_social"
+        ]
+      },
+      "b-a-c": {
+        "combination": {
+          "q1": "Internațională-Fusion",
+          "q2": "Singur",
+          "q3": "80–150 lei"
+        },
+        "recommendations": [
+          "bloom",
+          "terroirs",
+          "le_petit_bistro"
+        ]
+      },
+      "b-a-d": {
+        "combination": {
+          "q1": "Internațională-Fusion",
+          "q2": "Singur",
+          "q3": "Peste 150 lei"
+        },
+        "recommendations": [
+          "belvedere",
+          "bloom",
+          "terroirs"
+        ]
+      },
+      "b-b-a": {
+        "combination": {
+          "q1": "Internațională-Fusion",
+          "q2": "Cuplu",
+          "q3": "Sub 40 lei"
+        },
+        "recommendations": [
+          "dze_best",
+          "fract",
+          "albert_social"
+        ]
+      },
+      "b-b-b": {
+        "combination": {
+          "q1": "Internațională-Fusion",
+          "q2": "Cuplu",
+          "q3": "40–80 lei"
+        },
+        "recommendations": [
+          "bistro_de_larte",
+          "le_petit_bistro",
+          "wagners_loft"
+        ]
+      },
+      "b-b-c": {
+        "combination": {
+          "q1": "Internațională-Fusion",
+          "q2": "Cuplu",
+          "q3": "80–150 lei"
+        },
+        "recommendations": [
+          "terroirs",
+          "bloom",
+          "bistro_de_larte"
+        ]
+      },
+      "b-b-d": {
+        "combination": {
+          "q1": "Internațională-Fusion",
+          "q2": "Cuplu",
+          "q3": "Peste 150 lei"
+        },
+        "recommendations": [
+          "belvedere",
+          "bloom",
+          "terroirs"
+        ]
+      },
+      "b-c-a": {
+        "combination": {
+          "q1": "Internațională-Fusion",
+          "q2": "Grup",
+          "q3": "Sub 40 lei"
+        },
+        "recommendations": [
+          "dze_best",
+          "fract",
+          "albert_social"
+        ]
+      },
+      "b-c-b": {
+        "combination": {
+          "q1": "Internațională-Fusion",
+          "q2": "Grup",
+          "q3": "40–80 lei"
+        },
+        "recommendations": [
+          "wagners_loft",
+          "bistro_de_larte",
+          "albert_social"
+        ]
+      },
+      "b-c-c": {
+        "combination": {
+          "q1": "Internațională-Fusion",
+          "q2": "Grup",
+          "q3": "80–150 lei"
+        },
+        "recommendations": [
+          "bloom",
+          "terroirs",
+          "wagners_loft"
+        ]
+      },
+      "b-c-d": {
+        "combination": {
+          "q1": "Internațională-Fusion",
+          "q2": "Grup",
+          "q3": "Peste 150 lei"
+        },
+        "recommendations": [
+          "belvedere",
+          "bloom",
+          "terroirs"
+        ]
+      },
+      "b-d-a": {
+        "combination": {
+          "q1": "Internațională-Fusion",
+          "q2": "Familie",
+          "q3": "Sub 40 lei"
+        },
+        "recommendations": [
+          "fract",
+          "dze_best",
+          "albert_social"
+        ]
+      },
+      "b-d-b": {
+        "combination": {
+          "q1": "Internațională-Fusion",
+          "q2": "Familie",
+          "q3": "40–80 lei"
+        },
+        "recommendations": [
+          "wagners_loft",
+          "albert_social",
+          "le_petit_bistro"
+        ]
+      },
+      "b-d-c": {
+        "combination": {
+          "q1": "Internațională-Fusion",
+          "q2": "Familie",
+          "q3": "80–150 lei"
+        },
+        "recommendations": [
+          "bloom",
+          "wagners_loft",
+          "albert_social"
+        ]
+      },
+      "b-d-d": {
+        "combination": {
+          "q1": "Internațională-Fusion",
+          "q2": "Familie",
+          "q3": "Peste 150 lei"
+        },
+        "recommendations": [
+          "belvedere",
+          "bloom",
+          "wagners_loft"
+        ]
+      },
+      "c-a-a": {
+        "combination": {
+          "q1": "Italiană-Mediteraneană",
+          "q2": "Singur",
+          "q3": "Sub 40 lei"
+        },
+        "recommendations": [
+          "della_nonna",
+          "al_centro",
+          "antreu_focaccerie"
+        ]
+      },
+      "c-a-b": {
+        "combination": {
+          "q1": "Italiană-Mediteraneană",
+          "q2": "Singur",
+          "q3": "40–80 lei"
+        },
+        "recommendations": [
+          "dei_frati",
+          "cucinino",
+          "amo_brasov"
+        ]
+      },
+      "c-a-c": {
+        "combination": {
+          "q1": "Italiană-Mediteraneană",
+          "q2": "Singur",
+          "q3": "80–150 lei"
+        },
+        "recommendations": [
+          "artegianale",
+          "juno_wine",
+          "trattoria_pocol"
+        ]
+      },
+      "c-a-d": {
+        "combination": {
+          "q1": "Italiană-Mediteraneană",
+          "q2": "Singur",
+          "q3": "Peste 150 lei"
+        },
+        "recommendations": [
+          "vino_e_sapori",
+          "artegianale",
+          "juno_wine"
+        ]
+      },
+      "c-b-a": {
+        "combination": {
+          "q1": "Italiană-Mediteraneană",
+          "q2": "Cuplu",
+          "q3": "Sub 40 lei"
+        },
+        "recommendations": [
+          "della_nonna",
+          "al_centro",
+          "antreu_focaccerie"
+        ]
+      },
+      "c-b-b": {
+        "combination": {
+          "q1": "Italiană-Mediteraneană",
+          "q2": "Cuplu",
+          "q3": "40–80 lei"
+        },
+        "recommendations": [
+          "dei_frati",
+          "cucinino",
+          "trattoria_pocol"
+        ]
+      },
+      "c-b-c": {
+        "combination": {
+          "q1": "Italiană-Mediteraneană",
+          "q2": "Cuplu",
+          "q3": "80–150 lei"
+        },
+        "recommendations": [
+          "artegianale",
+          "juno_wine",
+          "dei_frati"
+        ]
+      },
+      "c-b-d": {
+        "combination": {
+          "q1": "Italiană-Mediteraneană",
+          "q2": "Cuplu",
+          "q3": "Peste 150 lei"
+        },
+        "recommendations": [
+          "vino_e_sapori",
+          "artegianale",
+          "juno_wine"
+        ]
+      },
+      "c-c-a": {
+        "combination": {
+          "q1": "Italiană-Mediteraneană",
+          "q2": "Grup",
+          "q3": "Sub 40 lei"
+        },
+        "recommendations": [
+          "della_nonna",
+          "al_centro",
+          "antreu_focaccerie"
+        ]
+      },
+      "c-c-b": {
+        "combination": {
+          "q1": "Italiană-Mediteraneană",
+          "q2": "Grup",
+          "q3": "40–80 lei"
+        },
+        "recommendations": [
+          "prato",
+          "dei_frati",
+          "amo_brasov"
+        ]
+      },
+      "c-c-c": {
+        "combination": {
+          "q1": "Italiană-Mediteraneană",
+          "q2": "Grup",
+          "q3": "80–150 lei"
+        },
+        "recommendations": [
+          "artegianale",
+          "juno_wine",
+          "trattoria_pocol"
+        ]
+      },
+      "c-c-d": {
+        "combination": {
+          "q1": "Italiană-Mediteraneană",
+          "q2": "Grup",
+          "q3": "Peste 150 lei"
+        },
+        "recommendations": [
+          "vino_e_sapori",
+          "artegianale",
+          "prato"
+        ]
+      },
+      "c-d-a": {
+        "combination": {
+          "q1": "Italiană-Mediteraneană",
+          "q2": "Familie",
+          "q3": "Sub 40 lei"
+        },
+        "recommendations": [
+          "della_nonna",
+          "al_centro",
+          "antreu_focaccerie"
+        ]
+      },
+      "c-d-b": {
+        "combination": {
+          "q1": "Italiană-Mediteraneană",
+          "q2": "Familie",
+          "q3": "40–80 lei"
+        },
+        "recommendations": [
+          "prato",
+          "dei_frati",
+          "amo_brasov"
+        ]
+      },
+      "c-d-c": {
+        "combination": {
+          "q1": "Italiană-Mediteraneană",
+          "q2": "Familie",
+          "q3": "80–150 lei"
+        },
+        "recommendations": [
+          "artegianale",
+          "prato",
+          "dei_frati"
+        ]
+      },
+      "c-d-d": {
+        "combination": {
+          "q1": "Italiană-Mediteraneană",
+          "q2": "Familie",
+          "q3": "Peste 150 lei"
+        },
+        "recommendations": [
+          "vino_e_sapori",
+          "artegianale",
+          "prato"
+        ]
+      },
+      "d-a-a": {
+        "combination": {
+          "q1": "Street food-Casual",
+          "q2": "Singur",
+          "q3": "Sub 40 lei"
+        },
+        "recommendations": [
+          "street_food_lab",
+          "old_jack",
+          "simone"
+        ]
+      },
+      "d-a-b": {
+        "combination": {
+          "q1": "Street food-Casual",
+          "q2": "Singur",
+          "q3": "40–80 lei"
+        },
+        "recommendations": [
+          "kasho_lounge",
+          "deane_pub",
+          "pofta_sau_foame"
+        ]
+      },
+      "d-a-c": {
+        "combination": {
+          "q1": "Street food-Casual",
+          "q2": "Singur",
+          "q3": "80–150 lei"
+        },
+        "recommendations": [
+          "gastropub_casual",
+          "deane_pub",
+          "kasho_lounge"
+        ]
+      },
+      "d-a-d": {
+        "combination": {
+          "q1": "Street food-Casual",
+          "q2": "Singur",
+          "q3": "Peste 150 lei"
+        },
+        "recommendations": [
+          "gastropub_casual",
+          "deane_pub",
+          "pofta_sau_foame"
+        ]
+      },
+      "d-b-a": {
+        "combination": {
+          "q1": "Street food-Casual",
+          "q2": "Cuplu",
+          "q3": "Sub 40 lei"
+        },
+        "recommendations": [
+          "old_jack",
+          "vivo_food",
+          "simone"
+        ]
+      },
+      "d-b-b": {
+        "combination": {
+          "q1": "Street food-Casual",
+          "q2": "Cuplu",
+          "q3": "40–80 lei"
+        },
+        "recommendations": [
+          "kasho_lounge",
+          "deane_pub",
+          "pofta_sau_foame"
+        ]
+      },
+      "d-b-c": {
+        "combination": {
+          "q1": "Street food-Casual",
+          "q2": "Cuplu",
+          "q3": "80–150 lei"
+        },
+        "recommendations": [
+          "gastropub_casual",
+          "kasho_lounge",
+          "deane_pub"
+        ]
+      },
+      "d-b-d": {
+        "combination": {
+          "q1": "Street food-Casual",
+          "q2": "Cuplu",
+          "q3": "Peste 150 lei"
+        },
+        "recommendations": [
+          "gastropub_casual",
+          "deane_pub",
+          "pofta_sau_foame"
+        ]
+      },
+      "d-c-a": {
+        "combination": {
+          "q1": "Street food-Casual",
+          "q2": "Grup",
+          "q3": "Sub 40 lei"
+        },
+        "recommendations": [
+          "old_jack",
+          "vivo_food",
+          "street_food_lab"
+        ]
+      },
+      "d-c-b": {
+        "combination": {
+          "q1": "Street food-Casual",
+          "q2": "Grup",
+          "q3": "40–80 lei"
+        },
+        "recommendations": [
+          "pofta_sau_foame",
+          "deane_pub",
+          "kasho_lounge"
+        ]
+      },
+      "d-c-c": {
+        "combination": {
+          "q1": "Street food-Casual",
+          "q2": "Grup",
+          "q3": "80–150 lei"
+        },
+        "recommendations": [
+          "gastropub_casual",
+          "pofta_sau_foame",
+          "deane_pub"
+        ]
+      },
+      "d-c-d": {
+        "combination": {
+          "q1": "Street food-Casual",
+          "q2": "Grup",
+          "q3": "Peste 150 lei"
+        },
+        "recommendations": [
+          "gastropub_casual",
+          "deane_pub",
+          "pofta_sau_foame"
+        ]
+      },
+      "d-d-a": {
+        "combination": {
+          "q1": "Street food-Casual",
+          "q2": "Familie",
+          "q3": "Sub 40 lei"
+        },
+        "recommendations": [
+          "old_jack",
+          "simone",
+          "vivo_food"
+        ]
+      },
+      "d-d-b": {
+        "combination": {
+          "q1": "Street food-Casual",
+          "q2": "Familie",
+          "q3": "40–80 lei"
+        },
+        "recommendations": [
+          "kasho_lounge",
+          "pofta_sau_foame",
+          "deane_pub"
+        ]
+      },
+      "d-d-c": {
+        "combination": {
+          "q1": "Street food-Casual",
+          "q2": "Familie",
+          "q3": "80–150 lei"
+        },
+        "recommendations": [
+          "gastropub_casual",
+          "kasho_lounge",
+          "pofta_sau_foame"
+        ]
+      },
+      "d-d-d": {
+        "combination": {
+          "q1": "Street food-Casual",
+          "q2": "Familie",
+          "q3": "Peste 150 lei"
+        },
+        "recommendations": [
+          "gastropub_casual",
+          "deane_pub",
+          "pofta_sau_foame"
+        ]
+      }
+    }
+  },
+  "cafenele": {
+    "categoryId": "cafenele",
+    "categoryLabel": "Cafenele",
+    "categoryIcon": "mug-hot",
+    "questions": [
+      {
+        "id": "q1",
+        "text": "Ce atmosferă cauți?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Cozy",
+            "icon": "mug-hot"
+          },
+          {
+            "id": "b",
+            "label": "Modern",
+            "icon": "bolt"
+          },
+          {
+            "id": "c",
+            "label": "Liniștită",
+            "icon": "leaf"
+          },
+          {
+            "id": "d",
+            "label": "Terasă",
+            "icon": "umbrella-beach"
+          }
+        ]
+      },
+      {
+        "id": "q2",
+        "text": "Buget per persoană?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Sub 20 lei",
+            "icon": "coins"
+          },
+          {
+            "id": "b",
+            "label": "20–40 lei",
+            "icon": "wallet"
+          },
+          {
+            "id": "c",
+            "label": "Peste 40 lei",
+            "icon": "gem"
+          }
+        ]
+      },
+      {
+        "id": "q3",
+        "text": "Cu cine ești?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Singur",
+            "icon": "person"
+          },
+          {
+            "id": "b",
+            "label": "Cuplu",
+            "icon": "heart"
+          },
+          {
+            "id": "c",
+            "label": "Prieteni",
+            "icon": "people-group"
+          },
+          {
+            "id": "d",
+            "label": "Familie cu copii",
+            "icon": "children"
+          }
+        ]
+      }
+    ],
+    "places": {
+      "ch9": {
+        "id": "ch9",
+        "name": "CH9 Specialty Coffee",
+        "atmosphere": [
+          "Liniștită",
+          "Terasă"
+        ],
+        "shortDescription": "Specialty coffee în fața Bisericii Negre – clădire sec. XVII, cafea prăjită local, terasă unică.",
+        "description": "CH9 se află în Curtea Johannes Honterus nr. 9, în inima istorică a Brașovului, fix în față la intrarea în Biserica Neagră. Clădirea datează din sec. XVII și a fost locuită de paracliserul Bisericii Negre. Cafeaua e prăjită mediu de prăjitorii autohtone printr-o metodă unică în România. Pe lângă espresso și filtre, au ceaiuri fine și produse proaspete. Terasa oferă un view direct spre semnul Brașov pe Tâmpa.",
+        "address": "Curtea Johannes Honterus nr. 9, Brașov",
+        "coordinates": {
+          "lat": 45.6413,
+          "lng": 25.5882
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "specialty coffee",
+          "liniștit",
+          "terasă",
+          "Biserica Neagră",
+          "istoric"
+        ],
+        "tip": "Singurul loc din Brașov de unde poți fotografia Biserica Neagră savurând o cafea de specialitate. Terasa e magică dimineața.",
+        "hours": "L-J: 08:00–19:00 / V: 08:00–20:00 / S-D: 09:00–20:00",
+        "image": "ch9.jpg"
+      },
+      "croitoria_cafea": {
+        "id": "croitoria_cafea",
+        "name": "Croitoria de Cafea",
+        "atmosphere": [
+          "Cozy",
+          "Liniștită"
+        ],
+        "shortDescription": "Cafenea-prăjitorie cozy pe Iuliu Maniu – specialty coffee proaspăt prăjit, vedere spre Tâmpa.",
+        "description": "Amenajată într-o fostă croitorie de pe Bulevardul Iuliu Maniu, Croitoria de Cafea este una dintre cele mai iubite cafenele specialty din Brașov. Cafeaua arabica e selecționată și proaspăt prăjită de Mugur Treschi, maestru prăjitor cu pasiune. Fereastra mare la stradă oferă o vedere extraordinară spre muntele Tâmpa. Ideal pentru cei care vor să evite agitația din centrul vechi.",
+        "address": "Bd. Iuliu Maniu nr. 17, Brașov",
+        "coordinates": {
+          "lat": 45.6468,
+          "lng": 25.5953
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "specialty coffee",
+          "cozy",
+          "prăjitorie",
+          "Tâmpa",
+          "liniștit"
+        ],
+        "tip": "Biscuiții home-made sunt legendari. Locul preferat al cunoscătorilor de specialty coffee din Brașov.",
+        "hours": "08:00–20:00",
+        "image": "croitoria_cafea.jpg"
+      },
+      "tipografia": {
+        "id": "tipografia",
+        "name": "Tipografia",
+        "atmosphere": [
+          "Cozy"
+        ],
+        "shortDescription": "Hub cultural cozy în centrul vechi – cafea, bere artizanală, concerte live, lansări de carte.",
+        "description": "Situată la intersecția dintre Str. Diaconu Coresi și Str. Postăvarului, Tipografia este un loc special pentru brașovenii de toate vârstele. Dimineața e perfectă pentru cafea și lucru la laptop, seara devine hub cultural: concerte live (rock, jazz, blues, folk), lansări de carte, proiecții de film, expoziții. Sortimente variate de cafea, ceai și bere artizanală.",
+        "address": "Str. Postăvarului nr. 1 (colț cu Str. Diaconu Coresi), Brașov",
+        "coordinates": {
+          "lat": 45.6432,
+          "lng": 25.5896
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "cozy",
+          "cultural",
+          "concerte",
+          "bere artizanală",
+          "centru vechi",
+          "laptop-friendly"
+        ],
+        "tip": "Verifică programul de evenimente – seara are o energie aparte. Dimineața e perfect liniștit pentru lucrat.",
+        "hours": "08:00–00:00",
+        "image": "tipografia.jpg"
+      },
+      "book_coffee": {
+        "id": "book_coffee",
+        "name": "Book Coffee Shop",
+        "atmosphere": [
+          "Cozy",
+          "Liniștită"
+        ],
+        "shortDescription": "Cea mai cozy cafenea din Brașov – cărți, specialty coffee, rating 4.9 pe Google, Recenzie de Aur.",
+        "description": "Ascuns pe strada Sfântul Ioan, lângă o veche mănăstire franciscană, Book Coffee Shop este una din cele mai apreciate cafenele de specialitate din Brașov. Rating 4.9 pe Google și Recenzie de Aur din partea Google România. Ambient cozy cu cărți și plante, personal amabil și pasionat, specialty coffee cu origini etiopiene și alte single origin. Terasă mică și intimă pe o stradă pietonală liniștită.",
+        "address": "Str. Sfântul Ioan nr. 24, Brașov",
+        "coordinates": {
+          "lat": 45.6435,
+          "lng": 25.5902
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "cozy",
+          "liniștit",
+          "specialty coffee",
+          "cărți",
+          "rating 4.9",
+          "terasă intimă"
+        ],
+        "tip": "Cere originea etiopiană dacă e disponibilă – e senzațională. Terasa mică e superb pe timp bun.",
+        "hours": "09:00–20:00",
+        "image": "book_coffee.jpg"
+      },
+      "tekafe": {
+        "id": "tekafe",
+        "name": "Tekafe",
+        "atmosphere": [
+          "Liniștită",
+          "Modern"
+        ],
+        "shortDescription": "Specialty coffee scandinav în centrul vechi – filtre alternative (V60, aeropress, syphon), ceaiuri premium.",
+        "description": "Tekafe se află în inima Brașovului, pe Str. Apollonia Hirscher nr. 10. Design minimalist cu influențe scandinavice, ceaiuri din cele mai renumite plantații din lume și cafea preparată exclusiv prin metode alternative: syphon, V60, aeropress, ibric sau espresso. Fără siropuri, fără condimente – cafea pură și onestă.",
+        "address": "Str. Apollonia Hirscher nr. 10, Brașov",
+        "coordinates": {
+          "lat": 45.6422,
+          "lng": 25.588
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "specialty coffee",
+          "scandinav",
+          "filtre alternative",
+          "liniștit",
+          "ceaiuri premium"
+        ],
+        "tip": "Dacă ești curios de cafea la filtru, Tekafe e locul ideal – barista îți va explica fiecare metodă.",
+        "hours": "09:00–21:00",
+        "image": "tekafe.jpg"
+      },
+      "opus9": {
+        "id": "opus9",
+        "name": "Opus 9",
+        "atmosphere": [
+          "Cozy",
+          "Terasă"
+        ],
+        "shortDescription": "Cafenea cozy în Piața George Enescu – latte excepțional, atmosferă caldă, în inima centrului vechi.",
+        "description": "Opus 9 este o cafenea cu personalitate în Piața George Enescu, la câțiva pași de Bistro de l'Arte și de pietonala Republicii. Latte excepțional, atmosferă caldă, personal prietenos. Locul preferat al brașovenilor pentru o cafea de dimineață sau o pauză în timpul plimbării prin centrul vechi.",
+        "address": "Piața George Enescu nr. 9, Brașov",
+        "coordinates": {
+          "lat": 45.6423,
+          "lng": 25.5868
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "cozy",
+          "latte",
+          "centru vechi",
+          "Piața George Enescu",
+          "terasă"
+        ],
+        "tip": "Latte-ul este considerat printre cele mai bune din Brașov. Piața George Enescu e superb dimineața.",
+        "hours": "08:00–21:00",
+        "image": "opus9.jpg"
+      },
+      "nola_coffee": {
+        "id": "nola_coffee",
+        "name": "Nola Coffee Shop",
+        "atmosphere": [
+          "Liniștită"
+        ],
+        "shortDescription": "Specialty coffee de nișă – arabica proaspăt prăjit, single origin, latte art, atmosferă intimă.",
+        "description": "Nola Coffee Shop este dedicată pasionaților de cafea proaspăt prăjită. Aduce permanent origini noi de arabica pentru a stârni curiozitatea. Spațiu mic și intim, cu scaune la geam. Barista extrem de prietenoasă și amabilă. Rating înalt pe toate platformele. Ideal pentru un cortado sau espresso liniștit.",
+        "address": "Str. Hans Benkner nr. 6, Brașov",
+        "coordinates": {
+          "lat": 45.6417,
+          "lng": 25.5878
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "specialty coffee",
+          "liniștit",
+          "single origin",
+          "latte art",
+          "intim"
+        ],
+        "tip": "Cere origini etiopiene sau din America Centrală. Barista e pasionată și îți va povesti fiecare bob.",
+        "hours": "08:30–18:00",
+        "image": "nola_coffee.jpg"
+      },
+      "breakaway": {
+        "id": "breakaway",
+        "name": "Breakaway Coffee",
+        "atmosphere": [
+          "Modern",
+          "Liniștită"
+        ],
+        "shortDescription": "Prăjitorie și cafenea specialty pe pietonala Coresi – cafea prăjită local, design scandinav curat.",
+        "description": "Breakaway este genul de loc care vorbește despre esență: fără artificii, doar cafea de specialitate făcută impecabil. Atmosfera e curată și modernă, cu un aer scandinav. Cafeaua e prăjită local, în propria prăjitorie din Brașov. Selecția de origini se schimbă periodic, cu accent pe prospețime. Espresso clar, filtru impecabil. Pe pietonala Coresi, la nr. 3.",
+        "address": "Str. Camil Petrescu nr. 3, Brașov (Pietonala Coresi)",
+        "coordinates": {
+          "lat": 45.639,
+          "lng": 25.602
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "specialty coffee",
+          "prăjitorie proprie",
+          "modern",
+          "scandinav",
+          "Coresi"
+        ],
+        "tip": "Poți cumpăra și boabe de cafea de la prăjitoria lor. Filtru-ul e cel mai bun din Brașov pentru mulți.",
+        "hours": "08:00–20:00",
+        "image": "breakaway.jpg"
+      },
+      "lavender_cafe": {
+        "id": "lavender_cafe",
+        "name": "Lavender Café & Wine Bar",
+        "atmosphere": [
+          "Cozy",
+          "Terasă"
+        ],
+        "shortDescription": "Cafenea elegantă la poalele Tâmpei – eclere artizanale, Pavlova, vinuri moldovenești, loc de joacă copii.",
+        "description": "Lavender Café e o oază elegantă la poalele muntelui Tâmpa. Premiată de mai multe reviste de turism drept cel mai bun loc pentru cafea și prăjituri din Brașov. Cheesecake cu Gorgonzola, macarons, Pavlova, eclere variate. Cafea de specialitate, limonadă cu lavandă, vinuri moldovenești selecționate. Are și loc de joacă pentru copii și parcare proprie.",
+        "address": "Str. Calcarului nr. 19B, Brașov",
+        "coordinates": {
+          "lat": 45.6395,
+          "lng": 25.5878
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "cozy",
+          "deserturi artizanale",
+          "Tâmpa",
+          "copii",
+          "vinuri",
+          "terasă"
+        ],
+        "tip": "Pavlova și eclerele sunt de neratat. Au loc de joacă pentru copii – ideal pentru familiști.",
+        "hours": "L-V: 09:00–21:00 / S-D: 10:00–22:00",
+        "image": "lavender_cafe.jpg"
+      },
+      "moa_bakery": {
+        "id": "moa_bakery",
+        "name": "MOA Bakery",
+        "atmosphere": [
+          "Cozy"
+        ],
+        "shortDescription": "Brutărie-cafenea lângă Piața Sfatului – covrigi umpluți (Dubai, pesto, Nutella), cafea grecească.",
+        "description": "MOA Bakery este locul unde poți savura o cafea bună în compania celor mai buni covrigi din Brașov. Covrigi umpluți sărați sau dulci: roșii uscate cu pesto, Dubai (cu kataifi și cremă de pistacchio), Nutella și altele. Aluatul e proaspăt fără aditivi. Cafeaua grecească este senzațională. La câteva minute de Piața Sfatului.",
+        "address": "Str. Mureșenilor nr. 5, Brașov",
+        "coordinates": {
+          "lat": 45.6418,
+          "lng": 25.5886
+        },
+        "priceRange": "Sub 20 lei",
+        "tags": [
+          "cozy",
+          "covrigi umpluți",
+          "cafea grecească",
+          "ieftin",
+          "centru"
+        ],
+        "tip": "Covrigul Dubai și cel cu roșii uscate și pesto sunt top. Dimineața cozii se face repede!",
+        "hours": "08:00–21:00",
+        "image": "moa_bakery.jpg"
+      },
+      "cafeteca": {
+        "id": "cafeteca",
+        "name": "Cafeteca",
+        "atmosphere": [
+          "Modern"
+        ],
+        "shortDescription": "Brandul brașovean de referință al cafelei – specialty coffee, ceaiuri premium, produse locale. Mai multe locații.",
+        "description": "Cafeteca este unul dintre cele mai cunoscute branduri brașovene, cu mai multe locații în centru. Specialty coffee, ceaiuri fine, băuturi artizanale calde și reci, sandwichuri cu producători locali. Design modern și primitor. Punct de referință al comunității locale pentru o cafea de calitate la prețul corect.",
+        "address": "Str. Republicii nr. 13, Brașov (locație centrală)",
+        "coordinates": {
+          "lat": 45.6439,
+          "lng": 25.5912
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "modern",
+          "specialty coffee",
+          "ceaiuri",
+          "local",
+          "mai multe locații"
+        ],
+        "tip": "Are mai multe locații în centru. Locația de pe Republicii e cea mai animată.",
+        "hours": "08:00–22:00",
+        "image": "cafeteca.jpg"
+      },
+      "kaffeine": {
+        "id": "kaffeine",
+        "name": "Kaffeine Brașov",
+        "atmosphere": [
+          "Modern",
+          "Terasă"
+        ],
+        "shortDescription": "Specialty coffee cu imprimare foto pe cafea – latte art digital unic în Brașov, centrul orașului.",
+        "description": "Kaffeine este o cafenea de specialitate din centrul Brașovului cu un serviciu unic în oraș: imprimare foto pe cafea și latte art digital. Cafea de calitate superioară, băuturi de sezon, atmosferă modernă. Perfectă pentru o cafea originală sau un cadou inedit sub forma unui latte cu fotografia ta.",
+        "address": "Str. Nicolae Bălcescu nr. 10, Brașov",
+        "coordinates": {
+          "lat": 45.6451,
+          "lng": 25.592
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "modern",
+          "latte art digital",
+          "foto pe cafea",
+          "specialty",
+          "unic"
+        ],
+        "tip": "Încearcă imprimarea foto pe cafea – e un suvenir inedit din Brașov!",
+        "hours": "09:00–21:00",
+        "image": "kaffeine.jpg"
+      },
+      "shake_coffee": {
+        "id": "shake_coffee",
+        "name": "Shake Coffee",
+        "atmosphere": [
+          "Cozy",
+          "Terasă"
+        ],
+        "shortDescription": "Cafenea cozy cu vibe prietenos – latte-uri vegane, smoothies, jucării pentru copii, personal calduros.",
+        "description": "Shake Coffee este una dintre cafenelele cu cel mai prietenos vibe din Brașov. Personal amabil care lasă uneori mesaje personalizate lângă cafea. Smoothie-uri naturale, latte-uri vegane, băuturi creative. Are o cutiuță cu jucării pentru copii. Clienții revin în primul rând pentru atmosferă și servire.",
+        "address": "Str. Sfântul Ioan nr. 30, Brașov",
+        "coordinates": {
+          "lat": 45.6433,
+          "lng": 25.59
+        },
+        "priceRange": "20–40 lei",
+        "tags": [
+          "cozy",
+          "vegan",
+          "smoothies",
+          "copii",
+          "prietenos",
+          "latte art"
+        ],
+        "tip": "Cere un latte vegan cu lapte de ovăz – e excepțional. Personalul e cel mai primitor din Brașov.",
+        "hours": "08:30–20:00",
+        "image": "shake_coffee.jpg"
+      }
+    },
+    "results": {
+      "a-a-a": {
+        "combination": {
+          "q1": "Cozy",
+          "q2": "Sub 20 lei",
+          "q3": "Singur"
+        },
+        "recommendations": [
+          "moa_bakery",
+          "tipografia",
+          "book_coffee"
+        ]
+      },
+      "a-a-b": {
+        "combination": {
+          "q1": "Cozy",
+          "q2": "Sub 20 lei",
+          "q3": "Cuplu"
+        },
+        "recommendations": [
+          "moa_bakery",
+          "opus9",
+          "tipografia"
+        ]
+      },
+      "a-a-c": {
+        "combination": {
+          "q1": "Cozy",
+          "q2": "Sub 20 lei",
+          "q3": "Prieteni"
+        },
+        "recommendations": [
+          "moa_bakery",
+          "tipografia",
+          "opus9"
+        ]
+      },
+      "a-a-d": {
+        "combination": {
+          "q1": "Cozy",
+          "q2": "Sub 20 lei",
+          "q3": "Familie cu copii"
+        },
+        "recommendations": [
+          "moa_bakery",
+          "shake_coffee",
+          "tipografia"
+        ]
+      },
+      "a-b-a": {
+        "combination": {
+          "q1": "Cozy",
+          "q2": "20–40 lei",
+          "q3": "Singur"
+        },
+        "recommendations": [
+          "book_coffee",
+          "croitoria_cafea",
+          "tipografia"
+        ]
+      },
+      "a-b-b": {
+        "combination": {
+          "q1": "Cozy",
+          "q2": "20–40 lei",
+          "q3": "Cuplu"
+        },
+        "recommendations": [
+          "opus9",
+          "book_coffee",
+          "tipografia"
+        ]
+      },
+      "a-b-c": {
+        "combination": {
+          "q1": "Cozy",
+          "q2": "20–40 lei",
+          "q3": "Prieteni"
+        },
+        "recommendations": [
+          "tipografia",
+          "opus9",
+          "book_coffee"
+        ]
+      },
+      "a-b-d": {
+        "combination": {
+          "q1": "Cozy",
+          "q2": "20–40 lei",
+          "q3": "Familie cu copii"
+        },
+        "recommendations": [
+          "lavender_cafe",
+          "shake_coffee",
+          "opus9"
+        ]
+      },
+      "a-c-a": {
+        "combination": {
+          "q1": "Cozy",
+          "q2": "Peste 40 lei",
+          "q3": "Singur"
+        },
+        "recommendations": [
+          "croitoria_cafea",
+          "book_coffee",
+          "nola_coffee"
+        ]
+      },
+      "a-c-b": {
+        "combination": {
+          "q1": "Cozy",
+          "q2": "Peste 40 lei",
+          "q3": "Cuplu"
+        },
+        "recommendations": [
+          "lavender_cafe",
+          "opus9",
+          "croitoria_cafea"
+        ]
+      },
+      "a-c-c": {
+        "combination": {
+          "q1": "Cozy",
+          "q2": "Peste 40 lei",
+          "q3": "Prieteni"
+        },
+        "recommendations": [
+          "tipografia",
+          "lavender_cafe",
+          "opus9"
+        ]
+      },
+      "a-c-d": {
+        "combination": {
+          "q1": "Cozy",
+          "q2": "Peste 40 lei",
+          "q3": "Familie cu copii"
+        },
+        "recommendations": [
+          "lavender_cafe",
+          "shake_coffee",
+          "opus9"
+        ]
+      },
+      "b-a-a": {
+        "combination": {
+          "q1": "Modern",
+          "q2": "Sub 20 lei",
+          "q3": "Singur"
+        },
+        "recommendations": [
+          "cafeteca",
+          "kaffeine",
+          "breakaway"
+        ]
+      },
+      "b-a-b": {
+        "combination": {
+          "q1": "Modern",
+          "q2": "Sub 20 lei",
+          "q3": "Cuplu"
+        },
+        "recommendations": [
+          "kaffeine",
+          "cafeteca",
+          "breakaway"
+        ]
+      },
+      "b-a-c": {
+        "combination": {
+          "q1": "Modern",
+          "q2": "Sub 20 lei",
+          "q3": "Prieteni"
+        },
+        "recommendations": [
+          "cafeteca",
+          "kaffeine",
+          "breakaway"
+        ]
+      },
+      "b-a-d": {
+        "combination": {
+          "q1": "Modern",
+          "q2": "Sub 20 lei",
+          "q3": "Familie cu copii"
+        },
+        "recommendations": [
+          "cafeteca",
+          "shake_coffee",
+          "kaffeine"
+        ]
+      },
+      "b-b-a": {
+        "combination": {
+          "q1": "Modern",
+          "q2": "20–40 lei",
+          "q3": "Singur"
+        },
+        "recommendations": [
+          "breakaway",
+          "tekafe",
+          "cafeteca"
+        ]
+      },
+      "b-b-b": {
+        "combination": {
+          "q1": "Modern",
+          "q2": "20–40 lei",
+          "q3": "Cuplu"
+        },
+        "recommendations": [
+          "kaffeine",
+          "cafeteca",
+          "breakaway"
+        ]
+      },
+      "b-b-c": {
+        "combination": {
+          "q1": "Modern",
+          "q2": "20–40 lei",
+          "q3": "Prieteni"
+        },
+        "recommendations": [
+          "cafeteca",
+          "kaffeine",
+          "tipografia"
+        ]
+      },
+      "b-b-d": {
+        "combination": {
+          "q1": "Modern",
+          "q2": "20–40 lei",
+          "q3": "Familie cu copii"
+        },
+        "recommendations": [
+          "cafeteca",
+          "shake_coffee",
+          "kaffeine"
+        ]
+      },
+      "b-c-a": {
+        "combination": {
+          "q1": "Modern",
+          "q2": "Peste 40 lei",
+          "q3": "Singur"
+        },
+        "recommendations": [
+          "breakaway",
+          "tekafe",
+          "cafeteca"
+        ]
+      },
+      "b-c-b": {
+        "combination": {
+          "q1": "Modern",
+          "q2": "Peste 40 lei",
+          "q3": "Cuplu"
+        },
+        "recommendations": [
+          "kaffeine",
+          "breakaway",
+          "cafeteca"
+        ]
+      },
+      "b-c-c": {
+        "combination": {
+          "q1": "Modern",
+          "q2": "Peste 40 lei",
+          "q3": "Prieteni"
+        },
+        "recommendations": [
+          "cafeteca",
+          "tipografia",
+          "kaffeine"
+        ]
+      },
+      "b-c-d": {
+        "combination": {
+          "q1": "Modern",
+          "q2": "Peste 40 lei",
+          "q3": "Familie cu copii"
+        },
+        "recommendations": [
+          "cafeteca",
+          "shake_coffee",
+          "breakaway"
+        ]
+      },
+      "c-a-a": {
+        "combination": {
+          "q1": "Liniștită",
+          "q2": "Sub 20 lei",
+          "q3": "Singur"
+        },
+        "recommendations": [
+          "nola_coffee",
+          "book_coffee",
+          "croitoria_cafea"
+        ]
+      },
+      "c-a-b": {
+        "combination": {
+          "q1": "Liniștită",
+          "q2": "Sub 20 lei",
+          "q3": "Cuplu"
+        },
+        "recommendations": [
+          "book_coffee",
+          "nola_coffee",
+          "tekafe"
+        ]
+      },
+      "c-a-c": {
+        "combination": {
+          "q1": "Liniștită",
+          "q2": "Sub 20 lei",
+          "q3": "Prieteni"
+        },
+        "recommendations": [
+          "book_coffee",
+          "croitoria_cafea",
+          "nola_coffee"
+        ]
+      },
+      "c-a-d": {
+        "combination": {
+          "q1": "Liniștită",
+          "q2": "Sub 20 lei",
+          "q3": "Familie cu copii"
+        },
+        "recommendations": [
+          "book_coffee",
+          "shake_coffee",
+          "nola_coffee"
+        ]
+      },
+      "c-b-a": {
+        "combination": {
+          "q1": "Liniștită",
+          "q2": "20–40 lei",
+          "q3": "Singur"
+        },
+        "recommendations": [
+          "ch9",
+          "nola_coffee",
+          "tekafe"
+        ]
+      },
+      "c-b-b": {
+        "combination": {
+          "q1": "Liniștită",
+          "q2": "20–40 lei",
+          "q3": "Cuplu"
+        },
+        "recommendations": [
+          "ch9",
+          "tekafe",
+          "croitoria_cafea"
+        ]
+      },
+      "c-b-c": {
+        "combination": {
+          "q1": "Liniștită",
+          "q2": "20–40 lei",
+          "q3": "Prieteni"
+        },
+        "recommendations": [
+          "book_coffee",
+          "nola_coffee",
+          "ch9"
+        ]
+      },
+      "c-b-d": {
+        "combination": {
+          "q1": "Liniștită",
+          "q2": "20–40 lei",
+          "q3": "Familie cu copii"
+        },
+        "recommendations": [
+          "lavender_cafe",
+          "book_coffee",
+          "shake_coffee"
+        ]
+      },
+      "c-c-a": {
+        "combination": {
+          "q1": "Liniștită",
+          "q2": "Peste 40 lei",
+          "q3": "Singur"
+        },
+        "recommendations": [
+          "breakaway",
+          "nola_coffee",
+          "ch9"
+        ]
+      },
+      "c-c-b": {
+        "combination": {
+          "q1": "Liniștită",
+          "q2": "Peste 40 lei",
+          "q3": "Cuplu"
+        },
+        "recommendations": [
+          "ch9",
+          "tekafe",
+          "breakaway"
+        ]
+      },
+      "c-c-c": {
+        "combination": {
+          "q1": "Liniștită",
+          "q2": "Peste 40 lei",
+          "q3": "Prieteni"
+        },
+        "recommendations": [
+          "ch9",
+          "book_coffee",
+          "nola_coffee"
+        ]
+      },
+      "c-c-d": {
+        "combination": {
+          "q1": "Liniștită",
+          "q2": "Peste 40 lei",
+          "q3": "Familie cu copii"
+        },
+        "recommendations": [
+          "lavender_cafe",
+          "ch9",
+          "shake_coffee"
+        ]
+      },
+      "d-a-a": {
+        "combination": {
+          "q1": "Terasă",
+          "q2": "Sub 20 lei",
+          "q3": "Singur"
+        },
+        "recommendations": [
+          "moa_bakery",
+          "opus9",
+          "ch9"
+        ]
+      },
+      "d-a-b": {
+        "combination": {
+          "q1": "Terasă",
+          "q2": "Sub 20 lei",
+          "q3": "Cuplu"
+        },
+        "recommendations": [
+          "opus9",
+          "ch9",
+          "moa_bakery"
+        ]
+      },
+      "d-a-c": {
+        "combination": {
+          "q1": "Terasă",
+          "q2": "Sub 20 lei",
+          "q3": "Prieteni"
+        },
+        "recommendations": [
+          "opus9",
+          "moa_bakery",
+          "ch9"
+        ]
+      },
+      "d-a-d": {
+        "combination": {
+          "q1": "Terasă",
+          "q2": "Sub 20 lei",
+          "q3": "Familie cu copii"
+        },
+        "recommendations": [
+          "moa_bakery",
+          "lavender_cafe",
+          "opus9"
+        ]
+      },
+      "d-b-a": {
+        "combination": {
+          "q1": "Terasă",
+          "q2": "20–40 lei",
+          "q3": "Singur"
+        },
+        "recommendations": [
+          "ch9",
+          "opus9",
+          "book_coffee"
+        ]
+      },
+      "d-b-b": {
+        "combination": {
+          "q1": "Terasă",
+          "q2": "20–40 lei",
+          "q3": "Cuplu"
+        },
+        "recommendations": [
+          "ch9",
+          "opus9",
+          "kaffeine"
+        ]
+      },
+      "d-b-c": {
+        "combination": {
+          "q1": "Terasă",
+          "q2": "20–40 lei",
+          "q3": "Prieteni"
+        },
+        "recommendations": [
+          "opus9",
+          "ch9",
+          "cafeteca"
+        ]
+      },
+      "d-b-d": {
+        "combination": {
+          "q1": "Terasă",
+          "q2": "20–40 lei",
+          "q3": "Familie cu copii"
+        },
+        "recommendations": [
+          "lavender_cafe",
+          "opus9",
+          "shake_coffee"
+        ]
+      },
+      "d-c-a": {
+        "combination": {
+          "q1": "Terasă",
+          "q2": "Peste 40 lei",
+          "q3": "Singur"
+        },
+        "recommendations": [
+          "ch9",
+          "kaffeine",
+          "opus9"
+        ]
+      },
+      "d-c-b": {
+        "combination": {
+          "q1": "Terasă",
+          "q2": "Peste 40 lei",
+          "q3": "Cuplu"
+        },
+        "recommendations": [
+          "ch9",
+          "lavender_cafe",
+          "opus9"
+        ]
+      },
+      "d-c-c": {
+        "combination": {
+          "q1": "Terasă",
+          "q2": "Peste 40 lei",
+          "q3": "Prieteni"
+        },
+        "recommendations": [
+          "opus9",
+          "ch9",
+          "cafeteca"
+        ]
+      },
+      "d-c-d": {
+        "combination": {
+          "q1": "Terasă",
+          "q2": "Peste 40 lei",
+          "q3": "Familie cu copii"
+        },
+        "recommendations": [
+          "lavender_cafe",
+          "ch9",
+          "shake_coffee"
+        ]
+      }
+    }
+  }
+}
