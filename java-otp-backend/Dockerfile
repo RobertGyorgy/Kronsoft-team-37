@@ -1,11 +1,13 @@
-# Build stage
-FROM maven:3.8.4-openjdk-17-slim AS build
-COPY . /app
-WORKDIR /app
-RUN mvn clean package -DskipTests
+FROM node:18-alpine
 
-# Run stage
-FROM openjdk:17-jdk-slim
-COPY --from=build /app/target/*.jar /app/app.jar
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install --only=production
+
+COPY pwa-bridge.js ./
+
 EXPOSE 8081
+
+CMD ["node", "pwa-bridge.js"]
