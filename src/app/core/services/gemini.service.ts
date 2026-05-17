@@ -8,6 +8,7 @@ export class GeminiService {
   // Folosim API-ul Groq (ultra-rapid)
   private apiUrl = 'https://api.groq.com/openai/v1/chat/completions';
   private apiKey: string | null = null;
+  private decisionTree: any = null;
 
   private async loadConfig() {
     if (this.apiKey) return;
@@ -20,11 +21,90 @@ export class GeminiService {
     }
   }
 
+  private async loadDecisionTree() {
+    if (this.decisionTree) return;
+    try {
+      const res = await fetch('/decision_tree.json');
+      this.decisionTree = await res.json();
+      console.log('🌳 Decision Tree loaded successfully:', this.decisionTree);
+    } catch (e) {
+      console.error('❌ Eșec la încărcarea decision_tree.json:', e);
+    }
+  }
+
   async getRecommendation(category: string, answers: any) {
+    // 1. Încercăm mai întâi să încărcăm Arborele de Decizie local
+    await this.loadDecisionTree();
+
+    const categoryMap: { [key: string]: string } = {
+      'Natură': 'natura',
+      'Artă și istorie': 'arta',
+      'Restaurante': 'restaurante',
+      'Cafenele': 'cafenele',
+      'Plimbări urbane': 'plimbari',
+      'Experiențe inedite': 'experiente'
+    };
+
+    const catId = categoryMap[category] || category.toLowerCase();
+
+    // 2. Dacă avem categoria definită în arborele de decizie, facem un lookup direct
+    if (this.decisionTree && this.decisionTree[catId]) {
+      console.log(`🎯 Performăm lookup direct în Arborele de Decizie pentru categoria: ${catId}`);
+      const catTree = this.decisionTree[catId];
+      const combinationParts: string[] = [];
+
+      for (const q of catTree.questions) {
+        const answerLabel = answers[q.text];
+        if (!answerLabel) {
+          console.warn(`Answer for question "${q.text}" not found in`, answers);
+          continue;
+        }
+
+        const clean = (s: string) => s.replace(/[\s\u2013\u2014-]/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+        const cleanAnswer = clean(answerLabel);
+
+        const option = q.options.find((o: any) => clean(o.label) === cleanAnswer);
+        if (option) {
+          combinationParts.push(option.id);
+        } else {
+          // Fallback pe incluziune
+          const subOption = q.options.find((o: any) => cleanAnswer.includes(clean(o.label)) || clean(o.label).includes(cleanAnswer));
+          if (subOption) {
+            combinationParts.push(subOption.id);
+          } else {
+            console.warn(`Option ID not found for label "${answerLabel}" in question`, q);
+          }
+        }
+      }
+
+      const combinationKey = combinationParts.join('-');
+      console.log(`🔑 Cheie combinație generată: "${combinationKey}"`);
+
+      const result = catTree.results[combinationKey];
+      if (result) {
+        const placesList = result.recommendations.map((placeId: string) => {
+          const place = catTree.places[placeId];
+          if (place) {
+            return {
+              name: place.name,
+              description: place.description || place.shortDescription,
+              tip: place.tip
+            };
+          }
+          return null;
+        }).filter((p: any) => p !== null);
+
+        console.log('✅ Rezultate extrase direct din JSON:', placesList);
+        return { recommendations: placesList };
+      } else {
+        console.warn(`⚠️ Combinația "${combinationKey}" nu a fost găsită în tabela de rezultate. Fallback pe AI.`);
+      }
+    }
+
+    // 3. Fallback pe AI (Groq) dacă nu avem categoria în JSON sau combinația nu există
     await this.loadConfig();
     if (!this.apiKey) throw new Error('API Key missing. Check config.json');
 
-    // Construim un context clar din răspunsurile sondajului
     const userProfile = Object.entries(answers)
       .map(([q, a]) => `- ${q}: ${a}`)
       .join('\n');
@@ -43,7 +123,7 @@ export class GeminiService {
     Reguli stricte:
     1. Doar locații care există în realitate (restaurante, parcuri, muzee etc.) și pot fi găsite pe Google Maps.
     2. Descrierea să fie atractivă și utilă (aprox. 25 cuvinte).
-    3. Sfatul (tip) să fie unul practic și specific acelei locații.
+    3. Sfatul (tip) să fie unul practical și specific acelei locații.
     4. Formatul JSON trebuie să fie:
     {
       "recommendations": [
@@ -64,7 +144,7 @@ export class GeminiService {
             { role: 'system', content: systemMsg },
             { role: 'user', content: userMsg }
           ],
-          temperature: 0.8, // Puțin mai mare pentru varietate, dar controlat
+          temperature: 0.8,
           response_format: { type: 'json_object' }
         })
       });
@@ -76,11 +156,8 @@ export class GeminiService {
       console.log('🤖 AI Raw Output:', rawContent); 
       
       const parsed = JSON.parse(rawContent);
-      
-      // Robustete: Căutăm lista de recomandări indiferent de numele cheii
       const list = parsed.recommendations || parsed.recomandari || Object.values(parsed).find(v => Array.isArray(v)) || [];
       
-      // Ne asigurăm că avem exact 3
       return { recommendations: list.slice(0, 3) };
     } catch (error) {
       console.error('❌ Groq Error:', error);
@@ -88,3 +165,4 @@ export class GeminiService {
     }
   }
 }
+
