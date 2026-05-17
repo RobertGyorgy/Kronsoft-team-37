@@ -597,6 +597,7 @@ export class WeekendComponent implements AfterViewInit {
         { 
           id: 'activitate', text: 'Ce nivel de activitate preferi?', 
           options: [
+            { label: 'Contemplativ – foto, observare', icon: 'photo_camera' },
             { label: 'Relaxat – plimbări, natură', icon: 'nature_people' },
             { label: 'Activ – drumeții, ciclism', icon: 'directions_run' },
             { label: 'Aventuros – sport, adrenalină', icon: 'explore' }
