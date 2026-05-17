@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, AfterViewInit, ElementRef, ViewChild, inject, signal, afterNextRender } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { gsap } from 'gsap';
+import { UserService } from '../../../../core/services/user.service';
+import { AuthService } from '../../../auth/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,7 +15,7 @@ import { gsap } from 'gsap';
       <header class="dashboard-header">
         <div class="greeting-wrapper">
           <h1 class="hello-text line-mask">
-            @for (word of helloWords; track word) {
+            @for (word of helloWords(); track word) {
               <span class="word">
                 @for (char of word.split(''); track char) {
                   <span class="char">{{ char }}</span>
@@ -254,12 +256,27 @@ import { gsap } from 'gsap';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent implements AfterViewInit {
+  private userService = inject(UserService);
+  private authService = inject(AuthService);
+
   @ViewChild('container') container!: ElementRef;
   @ViewChild('grid') grid!: ElementRef;
   @ViewChild('footer') footer!: ElementRef;
 
-  helloWords = 'Salut, Ion'.split(' ');
+  helloWords = signal<string[]>(['Salut,', '']);
   interestWords = 'Cu ce te putem ajuta astăzi?'.split(' ');
+
+  constructor() {
+    afterNextRender(() => this.loadUserName());
+  }
+
+  private async loadUserName() {
+    // Try backend profile first, fallback to session
+    const profile = await this.userService.loadProfile();
+    const name = profile?.fullName || this.authService.getUserName() || 'Utilizator';
+    const firstName = name.split(' ')[0];
+    this.helloWords.set(`Salut, ${firstName}`.split(' '));
+  }
 
   ngAfterViewInit() {
     const tl = gsap.timeline({ 
