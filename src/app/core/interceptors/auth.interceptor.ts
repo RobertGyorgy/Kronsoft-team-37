@@ -18,7 +18,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req);
   }
 
-  const token = sessionStorage.getItem('smart_city_access_token');
+  const token = localStorage.getItem('smart_city_access_token');
 
   if (token) {
     const authReq = req.clone({
