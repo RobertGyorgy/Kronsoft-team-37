@@ -657,29 +657,30 @@ export class WeekendComponent implements AfterViewInit {
       color: '#ff4500', shadow: '0 10px 20px rgba(255,69,0,0.15)',
       questions: [
         { 
-          id: 'mancare', text: 'Ce mâncare preferi?', 
+          id: 'mancare', text: 'Ce tip de mâncare preferi?', 
           options: [
-            { label: 'Românească', icon: 'restaurant' },
-            { label: 'Internațională', icon: 'public' },
-            { label: 'Vegană', icon: 'eco' },
-            { label: 'Fast food', icon: 'fastfood' }
+            { label: 'Tradițională', icon: 'restaurant' },
+            { label: 'Internațională-Fusion', icon: 'public' },
+            { label: 'Italiană-Mediteraneană', icon: 'dinner_dining' },
+            { label: 'Street food-Casual', icon: 'fastfood' }
           ] 
         },
         { 
-          id: 'atmosfera', text: 'Ce atmosferă cauți?', 
+          id: 'grup', text: 'Cu cine ești?', 
           options: [
-            { label: 'Cozy', icon: 'weekend' },
-            { label: 'Modern', icon: 'lightbulb' },
-            { label: 'Rustic', icon: 'cottage' },
-            { label: 'Terasă', icon: 'deck' }
+            { label: 'Singur', icon: 'person' },
+            { label: 'Cuplu', icon: 'favorite' },
+            { label: 'Grup', icon: 'groups' },
+            { label: 'Familie', icon: 'family_restroom' }
           ] 
         },
         { 
-          id: 'buget', text: 'Buget per persoană?', 
+          id: 'buget', text: 'Ce buget ai?', 
           options: [
-            { label: 'Sub 40 lei', icon: 'currency_exchange' },
+            { label: 'Sub 40 lei', icon: 'payments' },
             { label: '40-80 lei', icon: 'local_atm' },
-            { label: 'Peste 80 lei', icon: 'diamond' }
+            { label: '80-150 lei', icon: 'savings' },
+            { label: 'Peste 150 lei', icon: 'diamond' }
           ] 
         }
       ]
