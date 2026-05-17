@@ -805,30 +805,38 @@ export class WeekendComponent implements AfterViewInit {
   }
 
   async fetchResults() {
-    const now = Date.now();
-    const timeRemaining = 5000 - (now - this.lastRequest);
-    if (timeRemaining > 0) {
-      alert(`Te rugăm să aștepți încă ${Math.ceil(timeRemaining / 1000)} secunde înainte de o nouă căutare.`);
-      return;
+    const categoryName = this.activeCategory()?.name || '';
+    const isLocal = this.geminiService.isLocalCategory(categoryName);
+
+    if (!isLocal) {
+      const now = Date.now();
+      const timeRemaining = 5000 - (now - this.lastRequest);
+      if (timeRemaining > 0) {
+        alert(`Te rugăm să aștepți încă ${Math.ceil(timeRemaining / 1000)} secunde înainte de o nouă căutare.`);
+        return;
+      }
+      this.lastRequest = now;
     }
-    this.lastRequest = now;
-    
-    // Resetăm rezultatele anterioare pentru a asigura re-randarea și feedback-ul vizual
+
+    // Resetăm rezultatele anterioare
     this.recs.set([]);
-    
-    setTimeout(() => {
-      this.zone.run(() => {
-        this.view.set('loading');
-      });
-    }, 20);
+
+    if (!isLocal) {
+      setTimeout(() => {
+        this.zone.run(() => {
+          this.view.set('loading');
+        });
+      }, 20);
+    }
 
     try {
       const data = await this.geminiService.getRecommendation(
-        this.activeCategory()?.name || '',
+        categoryName,
         this.answers()
       );
 
       this.zone.run(() => {
+        const transitionDelay = isLocal ? 0 : 10;
         setTimeout(() => {
           this.recs.set(data.recommendations || []);
           this.view.set('results');
@@ -859,15 +867,15 @@ export class WeekendComponent implements AfterViewInit {
                 }
               });
             }
-          }, 100);
-        }, 10);
+          }, isLocal ? 30 : 100);
+        }, transitionDelay);
       });
     } catch (err: any) {
       console.error('Eroare AI Finală:', err);
       const errorMsg = err?.error?.message || err?.message || 'Eroare necunoscută';
       
       this.zone.run(() => {
-        alert(`Eroare AI Live: ${errorMsg}. Verifică dacă cheia API este validă și ai internet.`);
+        alert(`Eroare la obținerea recomandărilor: ${errorMsg}.`);
         this.view.set('menu');
       });
     }

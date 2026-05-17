@@ -10,6 +10,23 @@ export class GeminiService {
   private apiKey: string | null = null;
   private decisionTree: any = null;
 
+  constructor() {
+    this.loadDecisionTree();
+  }
+
+  isLocalCategory(category: string): boolean {
+    const categoryMap: { [key: string]: string } = {
+      'Natură': 'natura',
+      'Artă și istorie': 'arta',
+      'Restaurante': 'restaurante',
+      'Cafenele': 'cafenele',
+      'Plimbări urbane': 'plimbari',
+      'Experiențe inedite': 'experiente'
+    };
+    const catId = categoryMap[category] || category.toLowerCase();
+    return this.decisionTree ? !!this.decisionTree[catId] : catId === 'natura';
+  }
+
   private async loadConfig() {
     if (this.apiKey) return;
     try {
