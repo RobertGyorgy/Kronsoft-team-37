@@ -25,6 +25,8 @@ export class ReportFormComponent {
   now = new Date();
 
   formData = {
+    title: '',
+    address: '',
     description: '',
     categoryId: 0,
     latitude: 45.6427, // Default Brasov
@@ -35,7 +37,6 @@ export class ReportFormComponent {
   photoFile: File | null = null;
   isCameraActive = signal<boolean>(false);
   showActionSheet = signal<boolean>(false);
-  isPreviewMode = signal<boolean>(false);
   stream: MediaStream | null = null;
 
   constructor() {
@@ -65,24 +66,26 @@ export class ReportFormComponent {
     
     const chars = container.querySelectorAll('.char');
     const inputs = container.querySelectorAll('.input-group');
-    const photos = container.querySelector('.photos-list-container');
-    const submit = container.querySelector('.submit-btn-premium');
 
-    gsap.set(chars, { y: 30, opacity: 0 });
-    gsap.set(inputs, { y: 20, opacity: 0 });
+    if (chars.length) gsap.set(chars, { y: 30, opacity: 0 });
+    if (inputs.length) gsap.set(inputs, { y: 20, opacity: 0 });
     
     const tl = gsap.timeline({ defaults: { ease: 'power2.out', duration: 0.8 } });
     
-    tl.to(chars, {
-      y: 0,
-      opacity: 1,
-      stagger: 0.02,
-    })
-    .to(inputs, {
-      y: 0,
-      opacity: 1,
-      stagger: 0.1
-    }, '-=0.5');
+    if (chars.length) {
+      tl.to(chars, {
+        y: 0,
+        opacity: 1,
+        stagger: 0.02,
+      });
+    }
+    if (inputs.length) {
+      tl.to(inputs, {
+        y: 0,
+        opacity: 1,
+        stagger: 0.1
+      }, '-=0.5');
+    }
   }
 
   goBack() {
@@ -185,25 +188,29 @@ export class ReportFormComponent {
   }
 
   onSubmit() {
+    if (!this.formData.title) {
+      alert('Te rugăm să completezi numele problemei!');
+      return;
+    }
     if (!this.formData.description) {
       alert('Te rugăm să completezi descrierea!');
       return;
     }
-    this.isPreviewMode.set(true);
-    setTimeout(() => {
-      gsap.fromTo('.pdf-preview-container', 
-        { y: 50, opacity: 0 }, 
-        { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }
-      );
-    }, 0);
-  }
+    if (!this.formData.categoryId) {
+      alert('Te rugăm să selectezi o categorie!');
+      return;
+    }
 
-  cancelPreview() {
-    this.isPreviewMode.set(false);
-  }
+    const finalDescription = `[${this.formData.title}] ${this.formData.address ? 'Locație: ' + this.formData.address + '. ' : ''}${this.formData.description}`;
 
-  confirmSubmit() {
-    this.reportService.addReport(this.formData, this.photoFile || undefined);
+    const payload = {
+      description: finalDescription,
+      categoryId: this.formData.categoryId,
+      latitude: this.formData.latitude,
+      longitude: this.formData.longitude
+    };
+
+    this.reportService.addReport(payload, this.photoFile || undefined);
     this.router.navigate(['/report']);
   }
 }
