@@ -83,1514 +83,8 @@
         ]
       }
     ],
-    "places": {
-      "parc_central": {
-        "id": "parc_central",
-        "name": "Parcul Central Brașov",
-        "shortDescription": "Parc urban cu lac, lebede și alei umbroase – inima verde a orașului.",
-        "description": "Parcul Central este cel mai cunoscut spațiu verde din Brașov, cu un lac artificial cu lebede, terase, locuri de joacă și alei perfecte pentru plimbări liniștite.",
-        "address": "Bulevardul Eroilor, Brașov",
-        "coordinates": {
-          "lat": 45.6512,
-          "lng": 25.609
-        },
-        "duration": "1-2 ore",
-        "difficulty": "Ușor",
-        "tags": [
-          "parc",
-          "lac",
-          "urban",
-          "familie",
-          "relaxare"
-        ],
-        "tip": "Terasele din jurul lacului sunt perfecte pentru o cafea. Seara parcul este iluminat frumos.",
-        "bestSeason": [
-          "primăvară",
-          "vară",
-          "toamnă"
-        ],
-        "image": "parc_central.jpg"
-      },
-      "parc_sub_tampa": {
-        "id": "parc_sub_tampa",
-        "name": "Parcul Sub Tâmpa",
-        "shortDescription": "Parc liniștit la poalele muntelui Tâmpa, cu alei prin pădure și aer curat.",
-        "description": "Parcul Sub Tâmpa este o oaza de verdeață chiar la baza muntelui, cu alei pietruite prin pădure, bănci și o atmosferă liniștită. Dimineața devreme poți vedea căprioare.",
-        "address": "Aleea Tiberiu Brediceanu, Brașov",
-        "coordinates": {
-          "lat": 45.6427,
-          "lng": 25.5905
-        },
-        "duration": "1-2 ore",
-        "difficulty": "Ușor",
-        "tags": [
-          "parc",
-          "plimbare",
-          "pădure",
-          "liniște"
-        ],
-        "tip": "Vizitează dimineața devreme – aerul este proaspăt și poți surprinde fauna sălbatică.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "parc_sub_tampa.jpg"
-      },
-      "lacul_noua": {
-        "id": "lacul_noua",
-        "name": "Lacul Noua & Parcul Noua",
-        "shortDescription": "Lac natural înconjurat de pădure, cu pistă de alergare, bărci și zone de picnic.",
-        "description": "Lacul Noua este unul dintre cele mai populare locuri de relaxare din Brașov. Pista de alergare/ciclism din jurul lacului, zona de picnic și posibilitatea de a închiria bărci îl fac ideal pentru orice tip de ieșire.",
-        "address": "Calea București / Cartier Noua, Brașov",
-        "coordinates": {
-          "lat": 45.625,
-          "lng": 25.601
-        },
-        "duration": "2-4 ore",
-        "difficulty": "Ușor",
-        "tags": [
-          "lac",
-          "picnic",
-          "bicicletă",
-          "plimbare",
-          "bărci"
-        ],
-        "tip": "Zona de picnic din nord-vest este cea mai umbrită. Poți închiria bărci cu pedale pe lac.",
-        "bestSeason": [
-          "primăvară",
-          "vară",
-          "toamnă"
-        ],
-        "image": "lacul_noua.jpg"
-      },
-      "dealul_melcilor": {
-        "id": "dealul_melcilor",
-        "name": "Dealul Melcilor",
-        "shortDescription": "Deal ușor de urcat cu panoramă superbă asupra Brașovului – ideal pentru apus.",
-        "description": "Dealul Melcilor oferă una dintre cele mai frumoase priveliști asupra orașului și a munților din jur. Potecile sunt accesibile, iar apusul de soare văzut de sus este spectaculos.",
-        "address": "Cartier Astra, Brașov",
-        "coordinates": {
-          "lat": 45.652,
-          "lng": 25.578
-        },
-        "duration": "2-3 ore",
-        "difficulty": "Ușor-Moderat",
-        "tags": [
-          "panoramă",
-          "apus",
-          "fotografie",
-          "deal"
-        ],
-        "tip": "Mergi spre seară pentru golden hour – panorama la apus este de vis. Ia un termos cu ceai!",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "dealul_melcilor.jpg"
-      },
-      "varful_tampa": {
-        "id": "varful_tampa",
-        "name": "Vârful Tâmpa – traseu pe jos",
-        "shortDescription": "Drumeție clasică brașoveană – 45 min urcuș, vedere panoramică la 960 m.",
-        "description": "Tâmpa este muntele-simbol al Brașovului. Traseul principal (triunghi roșu) pornește din Parcul Sub Tâmpa și urcă în ~45 min până la vârf, de unde vezi tot orașul și literele BRAȘOV.",
-        "address": "Start: Parcul Sub Tâmpa / Aleea Brediceanu",
-        "coordinates": {
-          "lat": 45.638,
-          "lng": 25.596
-        },
-        "duration": "2-3 ore (dus-întors)",
-        "difficulty": "Moderat",
-        "tags": [
-          "drumeție",
-          "panoramă",
-          "munte",
-          "traseu marcat"
-        ],
-        "tip": "Dimineața devreme sau seara pentru apus – evită orele de vârf din weekend.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "varful_tampa.jpg"
-      },
-      "tampa_telecabina": {
-        "id": "tampa_telecabina",
-        "name": "Telecabina Tâmpa – panoramă rapidă",
-        "shortDescription": "Urcă cu telecabina pe Tâmpa în 3 minute – vedere panoramică fără efort.",
-        "description": "Telecabina Tâmpa oferă acces rapid la vârful muntelui. Sus există o terasă, alei amenajate și una dintre cele mai frumoase panorame asupra Brașovului – accesibilă inclusiv familiilor cu copii mici.",
-        "address": "Aleea Tiberiu Brediceanu, Brașov",
-        "coordinates": {
-          "lat": 45.6415,
-          "lng": 25.5895
-        },
-        "duration": "1-2 ore",
-        "difficulty": "Ușor",
-        "tags": [
-          "telecabină",
-          "panoramă",
-          "familie",
-          "accesibil"
-        ],
-        "tip": "Urcă cu telecabina și coboară pe poteca prin pădure – combini vederea cu o plimbare.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "tampa_telecabina.jpg"
-      },
-      "pietrele_solomon": {
-        "id": "pietrele_solomon",
-        "name": "Pietrele lui Solomon",
-        "shortDescription": "Formațiuni stâncoase impresionante pe versantul Postăvarului, traseu moderat.",
-        "description": "Pietrele lui Solomon sunt niște stânci spectaculoase pe culmea Postăvarului. Traseul pornește din Poiana Brașov prin păduri de conifere și oferă peisaje deosebite. Popular și pentru escaladă.",
-        "address": "Poiana Brașov (punct de start)",
-        "coordinates": {
-          "lat": 45.599,
-          "lng": 25.557
-        },
-        "duration": "3-4 ore",
-        "difficulty": "Moderat",
-        "tags": [
-          "drumeție",
-          "stânci",
-          "pădure",
-          "Postăvarul"
-        ],
-        "tip": "Traseul este marcat cu cruce roșie. Ia bocanci – poteca poate fi alunecoasă.",
-        "bestSeason": [
-          "primăvară",
-          "vară",
-          "toamnă"
-        ],
-        "image": "pietrele_solomon.jpg"
-      },
-      "poiana_brasov": {
-        "id": "poiana_brasov",
-        "name": "Poiana Brașov – plimbare & natură",
-        "shortDescription": "Stațiunea montană a Brașovului – aer curat, păduri, lac artificial și cabane.",
-        "description": "Poiana Brașov oferă un cadru montan superb la doar 12 km de centrul orașului. Vara poți face plimbări pe potecile din pădure, picnic lângă lacul artificial sau drumeții ușoare spre cabane.",
-        "address": "Poiana Brașov, DN1A",
-        "coordinates": {
-          "lat": 45.593,
-          "lng": 25.556
-        },
-        "duration": "3-5 ore",
-        "difficulty": "Ușor-Moderat",
-        "tags": [
-          "munte",
-          "stațiune",
-          "pădure",
-          "lac",
-          "cabane"
-        ],
-        "tip": "Vara, lacul artificial din Poiană este perfect pentru picnic. Cabanele au terase cu vedere.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "poiana_brasov.jpg"
-      },
-      "postavarul": {
-        "id": "postavarul",
-        "name": "Vârful Postăvarul – 1799 m",
-        "shortDescription": "Cel mai înalt vârf accesibil direct din Brașov – drumeție completă de o zi.",
-        "description": "Postăvarul domină Poiana Brașov și oferă o drumeție de o zi cu 700 m diferență de nivel. La vârf găsești cabana Postăvarul și o panoramă 360° spre Bucegi, Piatra Craiului și Munții Perșani.",
-        "address": "Start: Poiana Brașov / Telecabina",
-        "coordinates": {
-          "lat": 45.589,
-          "lng": 25.549
-        },
-        "duration": "5-7 ore",
-        "difficulty": "Dificil",
-        "tags": [
-          "drumeție",
-          "vârf",
-          "cabană",
-          "panoramă 360°"
-        ],
-        "tip": "Cabana Postăvarul servește mâncare bună. Verifică prognoza meteo – la vârf poate fi vânt puternic.",
-        "bestSeason": [
-          "vară",
-          "toamnă"
-        ],
-        "image": "postavarul.jpg"
-      },
-      "cascada_urlatoarea": {
-        "id": "cascada_urlatoarea",
-        "name": "Cascada Urlătoarea – Bușteni",
-        "shortDescription": "Cascadă spectaculoasă de 10 m, accesibilă printr-o drumeție de ~1.5 ore din Bușteni.",
-        "description": "Urlătoarea este una dintre cele mai vizitate cascade din Carpați. Traseul pornește din Bușteni prin pădure și durează ~1.5 ore dus. Cascada de 10 m și zona din jur oferă un cadru natural deosebit.",
-        "address": "Bușteni (30 km de Brașov)",
-        "coordinates": {
-          "lat": 45.418,
-          "lng": 25.535
-        },
-        "duration": "3-4 ore",
-        "difficulty": "Moderat",
-        "tags": [
-          "cascadă",
-          "drumeție",
-          "Bușteni",
-          "pădure"
-        ],
-        "tip": "Combină cu o vizită la Castelul Peleș sau Cantacuzino din apropiere.",
-        "bestSeason": [
-          "primăvară",
-          "vară"
-        ],
-        "image": "cascada_urlatoarea.jpg"
-      },
-      "cheile_rasnoavei": {
-        "id": "cheile_rasnoavei",
-        "name": "Cheile Râșnoavei",
-        "shortDescription": "Chei spectaculoase cu pereți de calcar de 200-300 m, la 12 km de Brașov.",
-        "description": "Cheile Râșnoavei sunt unele dintre cele mai accesibile și impresionante chei din România. Traseul merge de-a lungul pârâului Ghimbășel printre pereți verticali de stâncă.",
-        "address": "Râșnov (12 km de Brașov)",
-        "coordinates": {
-          "lat": 45.575,
-          "lng": 25.461
-        },
-        "duration": "4-5 ore (dus-întors)",
-        "difficulty": "Moderat-Dificil",
-        "tags": [
-          "chei",
-          "stânci",
-          "drumeție",
-          "escaladă"
-        ],
-        "tip": "Start de la Cabana Cheile Râșnoavei. Traseul complet dus-întors durează ~4 ore.",
-        "bestSeason": [
-          "primăvară",
-          "vară",
-          "toamnă"
-        ],
-        "image": "cheile_rasnoavei.jpg"
-      },
-      "prapastiile_zarnesti": {
-        "id": "prapastiile_zarnesti",
-        "name": "Prăpăstiile Zărneștilor",
-        "shortDescription": "Cele mai spectaculoase chei din România – pereți de 200 m, traseu sălbatic.",
-        "description": "Prăpăstiile Zărneștilor sunt considerate cele mai frumoase chei din România. Traseul de 4 km trece printre pereți imenși de calcar, cu pasaje înguste. Traseu spre Cabana Curmătura.",
-        "address": "Zărnești (28 km de Brașov)",
-        "coordinates": {
-          "lat": 45.5568,
-          "lng": 25.315
-        },
-        "duration": "5-7 ore",
-        "difficulty": "Dificil",
-        "tags": [
-          "chei",
-          "aventură",
-          "sălbăticie",
-          "Piatra Craiului"
-        ],
-        "tip": "Fii atent la urși – zona este cunoscută. Pornește devreme dimineața.",
-        "bestSeason": [
-          "vară",
-          "toamnă"
-        ],
-        "image": "prapastiile_zarnesti.jpg"
-      },
-      "piatra_craiului": {
-        "id": "piatra_craiului",
-        "name": "Piatra Craiului – Creasta & Cabana Curmătura",
-        "shortDescription": "Cel mai spectaculos masiv calcaros din România – creastă de 25 km la 2200 m.",
-        "description": "Piatra Craiului oferă cea mai lungă creastă calcaroasă din România. Cabana Curmătura (1470 m) este baza ideală. Trasee de la moderate la extreme, cu peisaje alpine extraordinare.",
-        "address": "Zărnești / Bran (25-35 km de Brașov)",
-        "coordinates": {
-          "lat": 45.505,
-          "lng": 25.231
-        },
-        "duration": "1-2 zile",
-        "difficulty": "Dificil-Foarte Dificil",
-        "tags": [
-          "creastă",
-          "alpinism",
-          "parc național",
-          "cabană",
-          "weekend"
-        ],
-        "tip": "Cabana Curmătura trebuie rezervată în avans! Creasta necesită experiență alpină.",
-        "bestSeason": [
-          "vară",
-          "toamnă"
-        ],
-        "image": "piatra_craiului.jpg"
-      },
-      "bucegi": {
-        "id": "bucegi",
-        "name": "Masivul Bucegi – Babele & Sfinxul",
-        "shortDescription": "Platoul Bucegi cu formațiuni legendare – accesibil cu telecabina din Bușteni.",
-        "description": "Platoul Bucegi este accesibil cu telecabina din Bușteni și oferă trasee pentru toate nivelurile. Babele, Sfinxul și Crucea Eroilor de pe Caraiman sunt atracții iconice ale munților românești.",
-        "address": "Bușteni / Sinaia (30-40 km de Brașov)",
-        "coordinates": {
-          "lat": 45.405,
-          "lng": 25.472
-        },
-        "duration": "1-2 zile",
-        "difficulty": "Moderat-Dificil",
-        "tags": [
-          "platou",
-          "Sfinx",
-          "Babele",
-          "telecabină",
-          "weekend"
-        ],
-        "tip": "Telecabina Bușteni te duce direct pe platou. Vremea se schimbă rapid – ia haine calde.",
-        "bestSeason": [
-          "vară",
-          "toamnă"
-        ],
-        "image": "bucegi.jpg"
-      },
-      "canionul_7_scari": {
-        "id": "canionul_7_scari",
-        "name": "Canionul 7 Scări & Tiroliana",
-        "shortDescription": "Defileu spectaculos cu 9 scări metalice, cascade și cea mai lungă tiroliană din România (4 km).",
-        "description": "Canionul 7 Scări este una dintre cele mai populare atracții din zona Brașovului. Defileul de 160 m cu 9 scări metalice pe lângă cascade oferă o experiență unică. Tiroliana de 4 km cu 37 tronsoane adaugă adrenalină pură.",
-        "address": "Dâmbul Morii, Săcele (10 km de Brașov, DN1 spre Predeal)",
-        "coordinates": {
-          "lat": 45.582,
-          "lng": 25.638
-        },
-        "duration": "3-5 ore",
-        "difficulty": "Moderat",
-        "tags": [
-          "canion",
-          "scări",
-          "tiroliană",
-          "cascade",
-          "aventură"
-        ],
-        "tip": "Pleacă devreme – parcarea se umple rapid în weekend. Brățara de acces: 20 lei adulți. Cash only! Tiroliana: 120 lei/pers.",
-        "bestSeason": [
-          "aprilie-octombrie"
-        ],
-        "image": "canionul_7_scari.jpg"
-      },
-      "lacul_sfanta_ana": {
-        "id": "lacul_sfanta_ana",
-        "name": "Lacul Sfânta Ana & Tinovul Mohoș",
-        "shortDescription": "Singurul lac vulcanic din România – peisaj unic, apă smaraldină, excursie de weekend.",
-        "description": "Lacul Sfânta Ana este singurul lac vulcanic din sud-estul Europei, situat în craterul unui vulcan stins. Alături se află Tinovul Mohoș, o mlaștină cu plante carnivore. Peisaj absolut unic.",
-        "address": "Tușnad / Harghita (~160 km de Brașov)",
-        "coordinates": {
-          "lat": 46.128,
-          "lng": 25.887
-        },
-        "duration": "1-2 zile (excursie weekend)",
-        "difficulty": "Ușor",
-        "tags": [
-          "lac vulcanic",
-          "weekend",
-          "natură rară",
-          "peisaj unic"
-        ],
-        "tip": "Scăldatul este interzis. Combină cu Băile Tușnad pentru o experiență completă de weekend.",
-        "bestSeason": [
-          "vară",
-          "toamnă"
-        ],
-        "image": "lacul_sfanta_ana.jpg"
-      },
-      "poiana_narcise": {
-        "id": "poiana_narcise",
-        "name": "Poiana cu Narcise – Dumbrava Vadului",
-        "shortDescription": "Câmp natural cu narcise sălbatice, spectacol floral unic în mai – la 20 km de Brașov.",
-        "description": "Poiana cu Narcise de la Dumbrava Vadului este una dintre cele mai mari poieni cu narcise sălbatice din Europa. În luna mai, câmpul se transformă într-un covor alb spectaculos.",
-        "address": "Dumbrava Vadului, comuna Veneția de Jos (20 km de Brașov)",
-        "coordinates": {
-          "lat": 45.771,
-          "lng": 25.463
-        },
-        "duration": "2-3 ore",
-        "difficulty": "Ușor",
-        "tags": [
-          "narcise",
-          "flori",
-          "sezonier",
-          "fotografie",
-          "rezervație"
-        ],
-        "tip": "Vizitează doar în luna mai, la înflorire! Nu rupe narcisele – sunt protejate prin lege.",
-        "bestSeason": [
-          "mai"
-        ],
-        "image": "poiana_narcise.jpg"
-      },
-      "gradina_zoo": {
-        "id": "gradina_zoo",
-        "name": "Grădina Zoologică Brașov",
-        "shortDescription": "Zoo cu animale locale și exotice, loc de joacă – perfect pentru familii cu copii.",
-        "description": "Grădina Zoologică din Brașov găzduiește o varietate de animale și oferă un mediu educativ pentru copii. Situată pe Dealul Noua, combină natura cu învățarea.",
-        "address": "Str. Brazilor, Brașov (Dealul Noua)",
-        "coordinates": {
-          "lat": 45.629,
-          "lng": 25.608
-        },
-        "duration": "2-3 ore",
-        "difficulty": "Ușor",
-        "tags": [
-          "zoo",
-          "familie",
-          "copii",
-          "educativ",
-          "animale"
-        ],
-        "tip": "Combină cu o plimbare la Lacul Noua, care este foarte aproape.",
-        "bestSeason": [
-          "primăvară",
-          "vară",
-          "toamnă"
-        ],
-        "image": "gradina_zoo.jpg"
-      },
-      "dino_parc": {
-        "id": "dino_parc",
-        "name": "Dino Parc Râșnov",
-        "shortDescription": "Parc tematic cu dinozauri la scară reală în natură – ideal pentru familii.",
-        "description": "Dino Parc Râșnov este cel mai mare parc cu dinozauri din sud-estul Europei. Machetele la scară reală și zonele interactive fac din vizită o aventură educativă pentru copii.",
-        "address": "Râșnov (15 km de Brașov)",
-        "coordinates": {
-          "lat": 45.592,
-          "lng": 25.465
-        },
-        "duration": "2-3 ore",
-        "difficulty": "Ușor",
-        "tags": [
-          "dinozauri",
-          "familie",
-          "copii",
-          "parc tematic",
-          "educativ"
-        ],
-        "tip": "Combină cu Cetatea Râșnov, aflată la câteva minute distanță.",
-        "bestSeason": [
-          "primăvară",
-          "vară",
-          "toamnă"
-        ],
-        "image": "dino_parc.jpg"
-      },
-      "parcul_aventura": {
-        "id": "parcul_aventura",
-        "name": "Parcul Aventura Brașov",
-        "shortDescription": "Trasee de aventură în copaci – tiroliană, obstacole, pentru copii și adulți.",
-        "description": "Parcul Aventura oferă trasee suspendate în copaci cu diferite grade de dificultate, tiroliană și obstacole. Trasee separate pentru copii și adulți.",
-        "address": "Zona Dâmbul Morii / aproape de Canionul 7 Scări",
-        "coordinates": {
-          "lat": 45.583,
-          "lng": 25.635
-        },
-        "duration": "2-3 ore",
-        "difficulty": "Moderat",
-        "tags": [
-          "aventură",
-          "tiroliană",
-          "copaci",
-          "copii",
-          "adrenalină"
-        ],
-        "tip": "Există trasee de dificultate diferită – de la copii mici la adulți experimentați.",
-        "bestSeason": [
-          "aprilie-octombrie"
-        ],
-        "image": "parcul_aventura.jpg"
-      },
-      "valea_cetatii": {
-        "id": "valea_cetatii",
-        "name": "Valea Cetății – Râșnov",
-        "shortDescription": "Vale pitorească cu peșteră și priveliște spre Cetatea Râșnov – drumeție ușoară.",
-        "description": "Valea Cetății din Râșnov oferă o plimbare relaxantă prin natură, cu acces la Peștera Valea Cetății (cu fosile unice) și priveliște spre Cetatea Râșnov.",
-        "address": "Râșnov (12 km de Brașov)",
-        "coordinates": {
-          "lat": 45.587,
-          "lng": 25.459
-        },
-        "duration": "2-4 ore",
-        "difficulty": "Ușor",
-        "tags": [
-          "vale",
-          "peșteră",
-          "cetate",
-          "plimbare",
-          "familie"
-        ],
-        "tip": "Peștera Valea Cetății are fosile de urs de peșteră. Combină cu Cetatea Râșnov și Dino Parc.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "valea_cetatii.jpg"
-      },
-      "turnul_alb": {
-        "id": "turnul_alb",
-        "name": "Turnul Alb & Turnul Negru – potecă panoramică",
-        "shortDescription": "Potecă scurtă prin pădure spre turnurile medievale cu vedere asupra orașului vechi.",
-        "description": "Traseul scurt de la Turnul Alb și Turnul Negru oferă o plimbare prin pădure la marginea orașului vechi, cu puncte panoramice excelente asupra Brașovului.",
-        "address": "Str. După Ziduri, Brașov",
-        "coordinates": {
-          "lat": 45.643,
-          "lng": 25.587
-        },
-        "duration": "1-1.5 ore",
-        "difficulty": "Ușor",
-        "tags": [
-          "turnuri",
-          "panoramă",
-          "medieval",
-          "potecă",
-          "fotografie"
-        ],
-        "tip": "Unul dintre cele mai bune puncte pentru fotografii cu orașul vechi și Tâmpa în fundal.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "turnul_alb.jpg"
-      },
-      "sanctuarul_ursi": {
-        "id": "sanctuarul_ursi",
-        "name": "Sanctuarul de Urși LiBEARty – Zărnești",
-        "shortDescription": "Cea mai mare rezervație de urși bruni din lume – 69 de hectare de pădure.",
-        "description": "Sanctuarul LiBEARty din Zărnești găzduiește peste 100 de urși bruni salvați din captivitate. Vizita ghidată de ~1.5 ore te plimbă prin pădurea de 69 ha unde urșii trăiesc în condiții naturale.",
-        "address": "Zărnești (28 km de Brașov)",
-        "coordinates": {
-          "lat": 45.568,
-          "lng": 25.342
-        },
-        "duration": "2-3 ore",
-        "difficulty": "Ușor",
-        "tags": [
-          "urși",
-          "rezervație",
-          "natură",
-          "educativ",
-          "familie"
-        ],
-        "tip": "Rezervă vizita în avans pe site-ul oficial. Vizitele sunt ghidate și au program fix.",
-        "bestSeason": [
-          "aprilie-noiembrie"
-        ],
-        "image": "sanctuarul_ursi.jpg"
-      },
-      "magura_pestera": {
-        "id": "magura_pestera",
-        "name": "Satele Măgura & Peștera – natură rurală",
-        "shortDescription": "Sate autentice sub Piatra Craiului cu priveliști spectaculoase și liniște totală.",
-        "description": "Măgura și Peștera sunt sate tradiționale în culoarul Rucăr-Bran, pe dealuri sub Piatra Craiului. Peisajele sunt de vis: văi largi, păduri, fânețe și priveliște directă spre Bucegi.",
-        "address": "Măgura / Peștera, com. Moieciu (30 km de Brașov)",
-        "coordinates": {
-          "lat": 45.514,
-          "lng": 25.285
-        },
-        "duration": "1 zi – 1 weekend",
-        "difficulty": "Ușor-Moderat",
-        "tags": [
-          "sat",
-          "rural",
-          "autentic",
-          "priveliște",
-          "Piatra Craiului"
-        ],
-        "tip": "Cazare la pensiuni locale pentru experiența completă. Drumul spre Măgura nu este asfaltat.",
-        "bestSeason": [
-          "primăvară",
-          "vară",
-          "toamnă"
-        ],
-        "image": "magura_pestera.jpg"
-      },
-      "tampa_traseu_dificil": {
-        "id": "tampa_traseu_dificil",
-        "name": "Tâmpa – traseul de creastă (dificil)",
-        "shortDescription": "Traseul neamenajat prin stânci pe creasta Tâmpei – pentru aventurieri.",
-        "description": "Pe lângă traseul clasic, Tâmpa oferă și poteci neamenajate pe creastă, printre stânci și prin vegetație densă. Traseu scurt dar intens, recomandat celor cu experiență.",
-        "address": "Start: Parcul Sub Tâmpa, Brașov",
-        "coordinates": {
-          "lat": 45.637,
-          "lng": 25.597
-        },
-        "duration": "2-3 ore",
-        "difficulty": "Dificil",
-        "tags": [
-          "creastă",
-          "stânci",
-          "aventură",
-          "Tâmpa"
-        ],
-        "tip": "Nu este marcat oficial – mergi doar dacă ai experiență. Poartă bocanci cu aderență bună.",
-        "bestSeason": [
-          "vară",
-          "toamnă"
-        ],
-        "image": "tampa_traseu_dificil.jpg"
-      },
-      "escalada_solomon": {
-        "id": "escalada_solomon",
-        "name": "Escaladă – Pietrele lui Solomon",
-        "shortDescription": "Trasee de escaladă sportivă pe stâncile de la Pietrele lui Solomon – diverse grade.",
-        "description": "Pietrele lui Solomon sunt unul dintre cele mai populare sectoare de escaladă din zona Brașov. Există trasee de la grad 4 la 7+, pe stâncă solidă, cu acces relativ ușor din Poiana Brașov.",
-        "address": "Poiana Brașov (punct de start)",
-        "coordinates": {
-          "lat": 45.5995,
-          "lng": 25.5575
-        },
-        "duration": "4-6 ore",
-        "difficulty": "Dificil",
-        "tags": [
-          "escaladă",
-          "stânci",
-          "sport",
-          "adrenalină"
-        ],
-        "tip": "Echipament propriu sau ghid autorizat obligatoriu. Verifică starea traseelor înainte.",
-        "bestSeason": [
-          "primăvară",
-          "vară",
-          "toamnă"
-        ],
-        "image": "escalada_solomon.jpg"
-      },
-      "postavarul_telecabina": {
-        "id": "postavarul_telecabina",
-        "name": "Postăvarul cu telecabina – panoramă ușoară",
-        "shortDescription": "Telecabina din Poiana Brașov te duce la 1400 m – de acolo 1 oră lejeră până la vârf.",
-        "description": "Dacă vrei panorama Postăvarului fără urcușul greu, telecabina din Poiana Brașov te duce la 1400 m. De acolo, un traseu ușor de 1 oră ajunge la vârf (1799 m) și la cabana cu vedere 360°.",
-        "address": "Telecabina Poiana Brașov",
-        "coordinates": {
-          "lat": 45.592,
-          "lng": 25.554
-        },
-        "duration": "3-4 ore",
-        "difficulty": "Ușor-Moderat",
-        "tags": [
-          "telecabină",
-          "Postăvarul",
-          "panoramă",
-          "cabană"
-        ],
-        "tip": "Prețul telecabinei: ~35 lei adulți dus-întors. La cabană poți mânca supă caldă și papanași.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "postavarul_telecabina.jpg"
-      },
-      "drumul_vechi_poiana": {
-        "id": "drumul_vechi_poiana",
-        "name": "Drumul Vechi – Brașov → Poiana Brașov",
-        "shortDescription": "Traseu clasic de drumeție prin pădure care leagă Brașovul de Poiana Brașov – ~2 ore.",
-        "description": "Drumul Vechi este cel mai popular traseu de drumeție din Brașov spre Poiana Brașov. Marcat cu dungă galbenă, trece prin păduri de fag și conifere.",
-        "address": "Start: Cartier Noua / Pietrele lui Solomon, Brașov",
-        "coordinates": {
-          "lat": 45.612,
-          "lng": 25.575
-        },
-        "duration": "3-4 ore (dus-întors)",
-        "difficulty": "Moderat",
-        "tags": [
-          "drumeție",
-          "pădure",
-          "traseu clasic",
-          "Poiana Brașov"
-        ],
-        "tip": "Marcat cu dungă galbenă. Poți combina cu masa la o cabană din Poiana Brașov.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "drumul_vechi_poiana.jpg"
-      },
-      "bran_natura": {
-        "id": "bran_natura",
-        "name": "Zona Bran – natură rurală & priveliști",
-        "shortDescription": "Peisaje rurale spectaculoase la poalele Bucegilor și Pietrei Craiului.",
-        "description": "Zona Bran oferă un mix unic de natură rurală, fânețe cu flori, păduri și priveliști montane. Perfect pentru plimbări liniștite în natură autentică.",
-        "address": "Bran (25 km de Brașov)",
-        "coordinates": {
-          "lat": 45.515,
-          "lng": 25.367
-        },
-        "duration": "1 zi – 1 weekend",
-        "difficulty": "Ușor",
-        "tags": [
-          "rural",
-          "natură",
-          "priveliști",
-          "fânețe",
-          "Bran"
-        ],
-        "tip": "Evită doar castelul dacă vrei liniște – explorează drumurile laterale spre Moieciu și Șimon.",
-        "bestSeason": [
-          "primăvară",
-          "vară",
-          "toamnă"
-        ],
-        "image": "bran_natura.jpg"
-      }
-    },
-    "results": {
-      "a-a-a": {
-        "combination": {
-          "q1": "Relaxat",
-          "q2": "Singur",
-          "q3": "1-2 ore"
-        },
-        "recommendations": [
-          "parc_sub_tampa",
-          "turnul_alb",
-          "parc_central"
-        ]
-      },
-      "a-a-b": {
-        "combination": {
-          "q1": "Relaxat",
-          "q2": "Singur",
-          "q3": "Jumătate de zi"
-        },
-        "recommendations": [
-          "dealul_melcilor",
-          "lacul_noua",
-          "tampa_telecabina"
-        ]
-      },
-      "a-a-c": {
-        "combination": {
-          "q1": "Relaxat",
-          "q2": "Singur",
-          "q3": "O zi întreagă"
-        },
-        "recommendations": [
-          "poiana_brasov",
-          "valea_cetatii",
-          "lacul_noua"
-        ]
-      },
-      "a-a-d": {
-        "combination": {
-          "q1": "Relaxat",
-          "q2": "Singur",
-          "q3": "Un weekend"
-        },
-        "recommendations": [
-          "lacul_sfanta_ana",
-          "magura_pestera",
-          "bran_natura"
-        ]
-      },
-      "a-b-a": {
-        "combination": {
-          "q1": "Relaxat",
-          "q2": "Cuplu",
-          "q3": "1-2 ore"
-        },
-        "recommendations": [
-          "parc_central",
-          "parc_sub_tampa",
-          "tampa_telecabina"
-        ]
-      },
-      "a-b-b": {
-        "combination": {
-          "q1": "Relaxat",
-          "q2": "Cuplu",
-          "q3": "Jumătate de zi"
-        },
-        "recommendations": [
-          "lacul_noua",
-          "dealul_melcilor",
-          "poiana_brasov"
-        ]
-      },
-      "a-b-c": {
-        "combination": {
-          "q1": "Relaxat",
-          "q2": "Cuplu",
-          "q3": "O zi întreagă"
-        },
-        "recommendations": [
-          "poiana_brasov",
-          "valea_cetatii",
-          "sanctuarul_ursi"
-        ]
-      },
-      "a-b-d": {
-        "combination": {
-          "q1": "Relaxat",
-          "q2": "Cuplu",
-          "q3": "Un weekend"
-        },
-        "recommendations": [
-          "lacul_sfanta_ana",
-          "magura_pestera",
-          "bran_natura"
-        ]
-      },
-      "a-c-a": {
-        "combination": {
-          "q1": "Relaxat",
-          "q2": "Grup",
-          "q3": "1-2 ore"
-        },
-        "recommendations": [
-          "parc_central",
-          "parc_sub_tampa",
-          "lacul_noua"
-        ]
-      },
-      "a-c-b": {
-        "combination": {
-          "q1": "Relaxat",
-          "q2": "Grup",
-          "q3": "Jumătate de zi"
-        },
-        "recommendations": [
-          "lacul_noua",
-          "poiana_brasov",
-          "dealul_melcilor"
-        ]
-      },
-      "a-c-c": {
-        "combination": {
-          "q1": "Relaxat",
-          "q2": "Grup",
-          "q3": "O zi întreagă"
-        },
-        "recommendations": [
-          "poiana_brasov",
-          "valea_cetatii",
-          "bran_natura"
-        ]
-      },
-      "a-c-d": {
-        "combination": {
-          "q1": "Relaxat",
-          "q2": "Grup",
-          "q3": "Un weekend"
-        },
-        "recommendations": [
-          "lacul_sfanta_ana",
-          "bran_natura",
-          "poiana_narcise"
-        ]
-      },
-      "a-d-a": {
-        "combination": {
-          "q1": "Relaxat",
-          "q2": "Familie",
-          "q3": "1-2 ore"
-        },
-        "recommendations": [
-          "parc_central",
-          "gradina_zoo",
-          "parc_sub_tampa"
-        ]
-      },
-      "a-d-b": {
-        "combination": {
-          "q1": "Relaxat",
-          "q2": "Familie",
-          "q3": "Jumătate de zi"
-        },
-        "recommendations": [
-          "lacul_noua",
-          "dino_parc",
-          "gradina_zoo"
-        ]
-      },
-      "a-d-c": {
-        "combination": {
-          "q1": "Relaxat",
-          "q2": "Familie",
-          "q3": "O zi întreagă"
-        },
-        "recommendations": [
-          "poiana_brasov",
-          "dino_parc",
-          "sanctuarul_ursi"
-        ]
-      },
-      "a-d-d": {
-        "combination": {
-          "q1": "Relaxat",
-          "q2": "Familie",
-          "q3": "Un weekend"
-        },
-        "recommendations": [
-          "lacul_sfanta_ana",
-          "bran_natura",
-          "poiana_brasov"
-        ]
-      },
-      "b-a-a": {
-        "combination": {
-          "q1": "Activ",
-          "q2": "Singur",
-          "q3": "1-2 ore"
-        },
-        "recommendations": [
-          "varful_tampa",
-          "dealul_melcilor",
-          "turnul_alb"
-        ]
-      },
-      "b-a-b": {
-        "combination": {
-          "q1": "Activ",
-          "q2": "Singur",
-          "q3": "Jumătate de zi"
-        },
-        "recommendations": [
-          "pietrele_solomon",
-          "drumul_vechi_poiana",
-          "varful_tampa"
-        ]
-      },
-      "b-a-c": {
-        "combination": {
-          "q1": "Activ",
-          "q2": "Singur",
-          "q3": "O zi întreagă"
-        },
-        "recommendations": [
-          "postavarul",
-          "cheile_rasnoavei",
-          "cascada_urlatoarea"
-        ]
-      },
-      "b-a-d": {
-        "combination": {
-          "q1": "Activ",
-          "q2": "Singur",
-          "q3": "Un weekend"
-        },
-        "recommendations": [
-          "piatra_craiului",
-          "bucegi",
-          "prapastiile_zarnesti"
-        ]
-      },
-      "b-b-a": {
-        "combination": {
-          "q1": "Activ",
-          "q2": "Cuplu",
-          "q3": "1-2 ore"
-        },
-        "recommendations": [
-          "varful_tampa",
-          "dealul_melcilor",
-          "pietrele_solomon"
-        ]
-      },
-      "b-b-b": {
-        "combination": {
-          "q1": "Activ",
-          "q2": "Cuplu",
-          "q3": "Jumătate de zi"
-        },
-        "recommendations": [
-          "cascada_urlatoarea",
-          "drumul_vechi_poiana",
-          "pietrele_solomon"
-        ]
-      },
-      "b-b-c": {
-        "combination": {
-          "q1": "Activ",
-          "q2": "Cuplu",
-          "q3": "O zi întreagă"
-        },
-        "recommendations": [
-          "postavarul",
-          "prapastiile_zarnesti",
-          "cheile_rasnoavei"
-        ]
-      },
-      "b-b-d": {
-        "combination": {
-          "q1": "Activ",
-          "q2": "Cuplu",
-          "q3": "Un weekend"
-        },
-        "recommendations": [
-          "bucegi",
-          "piatra_craiului",
-          "lacul_sfanta_ana"
-        ]
-      },
-      "b-c-a": {
-        "combination": {
-          "q1": "Activ",
-          "q2": "Grup",
-          "q3": "1-2 ore"
-        },
-        "recommendations": [
-          "varful_tampa",
-          "dealul_melcilor",
-          "lacul_noua"
-        ]
-      },
-      "b-c-b": {
-        "combination": {
-          "q1": "Activ",
-          "q2": "Grup",
-          "q3": "Jumătate de zi"
-        },
-        "recommendations": [
-          "drumul_vechi_poiana",
-          "pietrele_solomon",
-          "cascada_urlatoarea"
-        ]
-      },
-      "b-c-c": {
-        "combination": {
-          "q1": "Activ",
-          "q2": "Grup",
-          "q3": "O zi întreagă"
-        },
-        "recommendations": [
-          "postavarul",
-          "prapastiile_zarnesti",
-          "cheile_rasnoavei"
-        ]
-      },
-      "b-c-d": {
-        "combination": {
-          "q1": "Activ",
-          "q2": "Grup",
-          "q3": "Un weekend"
-        },
-        "recommendations": [
-          "piatra_craiului",
-          "bucegi",
-          "magura_pestera"
-        ]
-      },
-      "b-d-a": {
-        "combination": {
-          "q1": "Activ",
-          "q2": "Familie",
-          "q3": "1-2 ore"
-        },
-        "recommendations": [
-          "tampa_telecabina",
-          "dealul_melcilor",
-          "lacul_noua"
-        ]
-      },
-      "b-d-b": {
-        "combination": {
-          "q1": "Activ",
-          "q2": "Familie",
-          "q3": "Jumătate de zi"
-        },
-        "recommendations": [
-          "postavarul_telecabina",
-          "poiana_brasov",
-          "lacul_noua"
-        ]
-      },
-      "b-d-c": {
-        "combination": {
-          "q1": "Activ",
-          "q2": "Familie",
-          "q3": "O zi întreagă"
-        },
-        "recommendations": [
-          "cascada_urlatoarea",
-          "canionul_7_scari",
-          "cheile_rasnoavei"
-        ]
-      },
-      "b-d-d": {
-        "combination": {
-          "q1": "Activ",
-          "q2": "Familie",
-          "q3": "Un weekend"
-        },
-        "recommendations": [
-          "poiana_brasov",
-          "bran_natura",
-          "lacul_sfanta_ana"
-        ]
-      },
-      "c-a-a": {
-        "combination": {
-          "q1": "Aventuros",
-          "q2": "Singur",
-          "q3": "1-2 ore"
-        },
-        "recommendations": [
-          "tampa_traseu_dificil",
-          "varful_tampa",
-          "dealul_melcilor"
-        ]
-      },
-      "c-a-b": {
-        "combination": {
-          "q1": "Aventuros",
-          "q2": "Singur",
-          "q3": "Jumătate de zi"
-        },
-        "recommendations": [
-          "canionul_7_scari",
-          "cheile_rasnoavei",
-          "tampa_traseu_dificil"
-        ]
-      },
-      "c-a-c": {
-        "combination": {
-          "q1": "Aventuros",
-          "q2": "Singur",
-          "q3": "O zi întreagă"
-        },
-        "recommendations": [
-          "prapastiile_zarnesti",
-          "cheile_rasnoavei",
-          "postavarul"
-        ]
-      },
-      "c-a-d": {
-        "combination": {
-          "q1": "Aventuros",
-          "q2": "Singur",
-          "q3": "Un weekend"
-        },
-        "recommendations": [
-          "piatra_craiului",
-          "bucegi",
-          "prapastiile_zarnesti"
-        ]
-      },
-      "c-b-a": {
-        "combination": {
-          "q1": "Aventuros",
-          "q2": "Cuplu",
-          "q3": "1-2 ore"
-        },
-        "recommendations": [
-          "tampa_traseu_dificil",
-          "canionul_7_scari",
-          "escalada_solomon"
-        ]
-      },
-      "c-b-b": {
-        "combination": {
-          "q1": "Aventuros",
-          "q2": "Cuplu",
-          "q3": "Jumătate de zi"
-        },
-        "recommendations": [
-          "canionul_7_scari",
-          "cheile_rasnoavei",
-          "escalada_solomon"
-        ]
-      },
-      "c-b-c": {
-        "combination": {
-          "q1": "Aventuros",
-          "q2": "Cuplu",
-          "q3": "O zi întreagă"
-        },
-        "recommendations": [
-          "prapastiile_zarnesti",
-          "postavarul",
-          "cheile_rasnoavei"
-        ]
-      },
-      "c-b-d": {
-        "combination": {
-          "q1": "Aventuros",
-          "q2": "Cuplu",
-          "q3": "Un weekend"
-        },
-        "recommendations": [
-          "piatra_craiului",
-          "bucegi",
-          "magura_pestera"
-        ]
-      },
-      "c-c-a": {
-        "combination": {
-          "q1": "Aventuros",
-          "q2": "Grup",
-          "q3": "1-2 ore"
-        },
-        "recommendations": [
-          "canionul_7_scari",
-          "tampa_traseu_dificil",
-          "escalada_solomon"
-        ]
-      },
-      "c-c-b": {
-        "combination": {
-          "q1": "Aventuros",
-          "q2": "Grup",
-          "q3": "Jumătate de zi"
-        },
-        "recommendations": [
-          "cheile_rasnoavei",
-          "canionul_7_scari",
-          "escalada_solomon"
-        ]
-      },
-      "c-c-c": {
-        "combination": {
-          "q1": "Aventuros",
-          "q2": "Grup",
-          "q3": "O zi întreagă"
-        },
-        "recommendations": [
-          "prapastiile_zarnesti",
-          "postavarul",
-          "cheile_rasnoavei"
-        ]
-      },
-      "c-c-d": {
-        "combination": {
-          "q1": "Aventuros",
-          "q2": "Grup",
-          "q3": "Un weekend"
-        },
-        "recommendations": [
-          "piatra_craiului",
-          "bucegi",
-          "prapastiile_zarnesti"
-        ]
-      },
-      "c-d-a": {
-        "combination": {
-          "q1": "Aventuros",
-          "q2": "Familie",
-          "q3": "1-2 ore"
-        },
-        "recommendations": [
-          "parcul_aventura",
-          "tampa_telecabina",
-          "dealul_melcilor"
-        ]
-      },
-      "c-d-b": {
-        "combination": {
-          "q1": "Aventuros",
-          "q2": "Familie",
-          "q3": "Jumătate de zi"
-        },
-        "recommendations": [
-          "canionul_7_scari",
-          "parcul_aventura",
-          "poiana_brasov"
-        ]
-      },
-      "c-d-c": {
-        "combination": {
-          "q1": "Aventuros",
-          "q2": "Familie",
-          "q3": "O zi întreagă"
-        },
-        "recommendations": [
-          "canionul_7_scari",
-          "cheile_rasnoavei",
-          "cascada_urlatoarea"
-        ]
-      },
-      "c-d-d": {
-        "combination": {
-          "q1": "Aventuros",
-          "q2": "Familie",
-          "q3": "Un weekend"
-        },
-        "recommendations": [
-          "poiana_brasov",
-          "bran_natura",
-          "canionul_7_scari"
-        ]
-      },
-      "d-a-a": {
-        "combination": {
-          "q1": "Contemplativ",
-          "q2": "Singur",
-          "q3": "1-2 ore"
-        },
-        "recommendations": [
-          "turnul_alb",
-          "parc_sub_tampa",
-          "dealul_melcilor"
-        ]
-      },
-      "d-a-b": {
-        "combination": {
-          "q1": "Contemplativ",
-          "q2": "Singur",
-          "q3": "Jumătate de zi"
-        },
-        "recommendations": [
-          "dealul_melcilor",
-          "varful_tampa",
-          "lacul_noua"
-        ]
-      },
-      "d-a-c": {
-        "combination": {
-          "q1": "Contemplativ",
-          "q2": "Singur",
-          "q3": "O zi întreagă"
-        },
-        "recommendations": [
-          "poiana_narcise",
-          "sanctuarul_ursi",
-          "postavarul_telecabina"
-        ]
-      },
-      "d-a-d": {
-        "combination": {
-          "q1": "Contemplativ",
-          "q2": "Singur",
-          "q3": "Un weekend"
-        },
-        "recommendations": [
-          "lacul_sfanta_ana",
-          "magura_pestera",
-          "bucegi"
-        ]
-      },
-      "d-b-a": {
-        "combination": {
-          "q1": "Contemplativ",
-          "q2": "Cuplu",
-          "q3": "1-2 ore"
-        },
-        "recommendations": [
-          "turnul_alb",
-          "parc_sub_tampa",
-          "parc_central"
-        ]
-      },
-      "d-b-b": {
-        "combination": {
-          "q1": "Contemplativ",
-          "q2": "Cuplu",
-          "q3": "Jumătate de zi"
-        },
-        "recommendations": [
-          "dealul_melcilor",
-          "varful_tampa",
-          "lacul_noua"
-        ]
-      },
-      "d-b-c": {
-        "combination": {
-          "q1": "Contemplativ",
-          "q2": "Cuplu",
-          "q3": "O zi întreagă"
-        },
-        "recommendations": [
-          "poiana_narcise",
-          "sanctuarul_ursi",
-          "bran_natura"
-        ]
-      },
-      "d-b-d": {
-        "combination": {
-          "q1": "Contemplativ",
-          "q2": "Cuplu",
-          "q3": "Un weekend"
-        },
-        "recommendations": [
-          "lacul_sfanta_ana",
-          "magura_pestera",
-          "bucegi"
-        ]
-      },
-      "d-c-a": {
-        "combination": {
-          "q1": "Contemplativ",
-          "q2": "Grup",
-          "q3": "1-2 ore"
-        },
-        "recommendations": [
-          "turnul_alb",
-          "parc_sub_tampa",
-          "dealul_melcilor"
-        ]
-      },
-      "d-c-b": {
-        "combination": {
-          "q1": "Contemplativ",
-          "q2": "Grup",
-          "q3": "Jumătate de zi"
-        },
-        "recommendations": [
-          "dealul_melcilor",
-          "varful_tampa",
-          "lacul_noua"
-        ]
-      },
-      "d-c-c": {
-        "combination": {
-          "q1": "Contemplativ",
-          "q2": "Grup",
-          "q3": "O zi întreagă"
-        },
-        "recommendations": [
-          "poiana_narcise",
-          "sanctuarul_ursi",
-          "postavarul_telecabina"
-        ]
-      },
-      "d-c-d": {
-        "combination": {
-          "q1": "Contemplativ",
-          "q2": "Grup",
-          "q3": "Un weekend"
-        },
-        "recommendations": [
-          "bucegi",
-          "lacul_sfanta_ana",
-          "magura_pestera"
-        ]
-      },
-      "d-d-a": {
-        "combination": {
-          "q1": "Contemplativ",
-          "q2": "Familie",
-          "q3": "1-2 ore"
-        },
-        "recommendations": [
-          "parc_central",
-          "parc_sub_tampa",
-          "gradina_zoo"
-        ]
-      },
-      "d-d-b": {
-        "combination": {
-          "q1": "Contemplativ",
-          "q2": "Familie",
-          "q3": "Jumătate de zi"
-        },
-        "recommendations": [
-          "lacul_noua",
-          "dealul_melcilor",
-          "postavarul_telecabina"
-        ]
-      },
-      "d-d-c": {
-        "combination": {
-          "q1": "Contemplativ",
-          "q2": "Familie",
-          "q3": "O zi întreagă"
-        },
-        "recommendations": [
-          "poiana_brasov",
-          "sanctuarul_ursi",
-          "dino_parc"
-        ]
-      },
-      "d-d-d": {
-        "combination": {
-          "q1": "Contemplativ",
-          "q2": "Familie",
-          "q3": "Un weekend"
-        },
-        "recommendations": [
-          "lacul_sfanta_ana",
-          "bran_natura",
-          "poiana_brasov"
-        ]
-      }
-    }
+    "places": {},
+    "results": {}
   },
   "arta": {
     "categoryId": "arta",
@@ -1661,691 +155,13 @@
         ]
       }
     ],
-    "places": {
-      "biserica_neagra": {
-        "id": "biserica_neagra",
-        "name": "Biserica Neagră",
-        "shortDescription": "Cea mai mare și mai importantă biserică gotică din România – simbol al Brașovului.",
-        "description": "Biserica Neagră este monument-simbol al Brașovului, construită în secolul XIV-XV. Denumirea vine de la incendiul din 1689. Interiorul conține orgă celebră, vitralii și o colecție de covoare orientale. Turnul de 65 m oferă acces la o platformă cu panoramă ciudată.",
-        "address": "Piața Sfatului, Brașov",
-        "coordinates": {
-          "lat": 45.6437,
-          "lng": 25.5946
-        },
-        "duration": "1.5-2 ore",
-        "difficulty": "Ușor",
-        "tags": [
-          "Biserica Neagră",
-          "gotic",
-          "monument",
-          "simbol",
-          "arhitectură"
-        ],
-        "tip": "Urcare pe turn (65 m): 10 lei, view extraordinar peste oraș. Cumpărătele de flori și cărți în piață lângă intrare.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "biserica_neagra.jpg"
-      },
-      "muzeum_brasovului": {
-        "id": "muzeum_brasovului",
-        "name": "Muzeum Brașovului",
-        "shortDescription": "Istorie și cultură Brașovului de-a lungul centuries – din perioada medievală la contemporan.",
-        "description": "Muzeum Brașovului găzduiește colecții de istorie locală, artă decorativă, costume tradiționale și obiecte din perioada medievală. Exponatele sunt prezentate în Casa Goiana și alte spații din Piața Sfatului. Expoziții temporare frecvente.",
-        "address": "Piața Sfatului 2, Brașov",
-        "coordinates": {
-          "lat": 45.6432,
-          "lng": 25.5956
-        },
-        "duration": "1-2 ore",
-        "difficulty": "Ușor",
-        "tags": [
-          "muzeu",
-          "istorie",
-          "Brașov",
-          "colecții",
-          "cultura"
-        ],
-        "tip": "Program: marți-duminică 10:00-18:00. Intrare: 15 lei adulți. Ghizi disponibili pentru grupuri.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "muzeum_brasovului.jpg"
-      },
-      "brasov_medieval": {
-        "id": "brasov_medieval",
-        "name": "Brașov Medieval Museum – Casa Sfatului",
-        "shortDescription": "Experiență interactivă a Brașovului medieval – reconstrucții 3D, costume și povești de epocă.",
-        "description": "Brașov Medieval Museum oferă o cale modernă de a descoperi istoria medievală a orașului. Exponatele includ arte și meșteșuguri din perioadă, cu interactive 3D și reconstrucții ale unor secțiuni ale orașului medieval.",
-        "address": "Piața Sfatului 1, Brașov",
-        "coordinates": {
-          "lat": 45.6436,
-          "lng": 25.5944
-        },
-        "duration": "1-1.5 ore",
-        "difficulty": "Ușor",
-        "tags": [
-          "muzeu",
-          "medieval",
-          "interactiv",
-          "3D",
-          "Brașov"
-        ],
-        "tip": "Intrare: 20 lei. Ideal pentru turiști care vor o introducere rapidă în istorie Brașovului.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "brasov_medieval.jpg"
-      },
-      "piata_sfatului": {
-        "id": "piata_sfatului",
-        "name": "Piața Sfatului – Inima Brașovului",
-        "shortDescription": "Piața principală cu Fiларарul de 60 m, clădiri renascentiste și atracții touriste.",
-        "description": "Piața Sfatului este centrul istoric și comercial al Brașovului. Zidurile din jur sunt pline de clădiri renascentiste și baroce, iar în mijlocul pieței se ridică filarelul de 60 m. Restaurante, magazine și cafenele pe tot perimetrul.",
-        "address": "Piața Sfatului, Brașov",
-        "coordinates": {
-          "lat": 45.6435,
-          "lng": 25.5949
-        },
-        "duration": "0.5-2 ore",
-        "difficulty": "Ușor",
-        "tags": [
-          "piață",
-          "renascentist",
-          "baroc",
-          "centru istoric",
-          "restaurante"
-        ],
-        "tip": "Seara, piața se iluminează frumos. Cafenele și restaurantele sunt perfecte pentru observare de oameni.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "piata_sfatului.jpg"
-      },
-      "galeria_arta_brasov": {
-        "id": "galeria_arta_brasov",
-        "name": "Galeria de Artă Brașov",
-        "shortDescription": "Operele artiștilor contemporani și clasici – expoziții rotative și artă locală.",
-        "description": "Galeria de Artă Brașov prezintă operele de artă ale unor artiști locali și naționali. Spațiul găzduiește expoziții rotative de pictură, sculptură și fotografie. Ideal pentru cei interesați de arta modernă.",
-        "address": "Str. Nicolae Balcescu 9, Brașov",
-        "coordinates": {
-          "lat": 45.648,
-          "lng": 25.592
-        },
-        "duration": "1-1.5 ore",
-        "difficulty": "Ușor",
-        "tags": [
-          "galerie",
-          "artă contemporană",
-          "expoziții",
-          "local",
-          "pictură"
-        ],
-        "tip": "Intrare: 10 lei. Vernisaje și evenimente culturale în lunile martie și septembrie.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "galeria_arta_brasov.jpg"
-      },
-      "turnul_negru": {
-        "id": "turnul_negru",
-        "name": "Turnul Negru – Zidul Fortificat",
-        "shortDescription": "Rămășițe ale fortificațiilor medievale – acces la zidul străvechi de pe Viața Cotei.",
-        "description": "Turnul Negru este una dintre cele mai vechi clădiri din Brașov, datând din secolul XIV. Faz part din sistemul fortificării orașului. Astăzi, accesibil pentru turiști cu poduri și intrări organizate.",
-        "address": "Str. Apelor, Brașov",
-        "coordinates": {
-          "lat": 45.642,
-          "lng": 25.598
-        },
-        "duration": "1 oră",
-        "difficulty": "Ușor",
-        "tags": [
-          "fortificații",
-          "medieval",
-          "zidul",
-          "istorie",
-          "turnul"
-        ],
-        "tip": "Intrare: 5 lei. Vederi bune din turn spre orașul vechi – ideal pentru fotografii.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "turnul_negru.jpg"
-      },
-      "turnul_alb": {
-        "id": "turnul_alb_cultura",
-        "name": "Turnul Alb – Potecă Panoramică",
-        "shortDescription": "Turnul medieval cu vederi asupra orașului – combinație de cultură și natură.",
-        "description": "Turnul Alb este al doilea turn major din fortificația Brașovului. Poteca spre el trece prin pădure și oferă vederi spectaculoase asupra orașului și munților. Cel mai bun punct pentru fotografii cu Tâmpa și Biserica Neagră.",
-        "address": "Str. După Ziduri, Brașov",
-        "coordinates": {
-          "lat": 45.643,
-          "lng": 25.587
-        },
-        "duration": "1.5-2 ore",
-        "difficulty": "Ușor",
-        "tags": [
-          "turnul",
-          "medieval",
-          "panoramă",
-          "potecă",
-          "fotografie"
-        ],
-        "tip": "Gratuit. Cel mai frumos apus din spatele Brașovului vechi – mergi seara pentru light-uri galbene.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "turnul_alb_cultura.jpg"
-      },
-      "Biserica_evanghelica": {
-        "id": "Biserica_evanghelica",
-        "name": "Biserica Evanghelică – Hartie & Vitralii",
-        "shortDescription": "Biserică luterană din perioada Reformei cu arhitectură renascentistă și vitralii impresionante.",
-        "description": "Biserica Evanghelică din Brașov este o construcție renascentistă din 1542. Interiorul este decorat cu vitralii, picturi și orgă. Arhitectura și detaliile sunt reprezentative pentru perioada Reformei Protestante din România.",
-        "address": "Str. Șagului 1, Brașov",
-        "coordinates": {
-          "lat": 45.646,
-          "lng": 25.59
-        },
-        "duration": "1 oră",
-        "difficulty": "Ușor",
-        "tags": [
-          "biserică",
-          "luterană",
-          "renascentist",
-          "vitralii",
-          "istorie"
-        ],
-        "tip": "Vizite ghidate disponibile. Programul depinde de slujbe. Telefon: verifică site-ul parohiei.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "Biserica_evanghelica.jpg"
-      },
-      "cetatea_rasnov": {
-        "id": "cetatea_rasnov",
-        "name": "Cetatea Râșnov – Fortăreață Medievală Impresionantă",
-        "shortDescription": "Fortăreață din perioada feudalității pe deal – vederi spre Carpați și istoria unui imperiu Saxon.",
-        "description": "Cetatea Râșnov este una dintre cele mai impresionante fortificații din Brașov, construită în perioada medievală pentru protecție împotriva invaziilor. Conservată și restaurată, oferă o cale în timp în istoria militară medievală a Transilvaniei.",
-        "address": "Râșnov (12 km sud de Brașov)",
-        "coordinates": {
-          "lat": 45.592,
-          "lng": 25.465
-        },
-        "duration": "2-3 ore",
-        "difficulty": "Moderat",
-        "tags": [
-          "cetate",
-          "medieval",
-          "fortăreață",
-          "Râșnov",
-          "architect",
-          "armament"
-        ],
-        "tip": "Intrare: 20 lei. Combine cu Dino Parc și Valea Cetății. Muzeu militar și colecții de arme în cetate.",
-        "bestSeason": [
-          "aprilie-octombrie"
-        ],
-        "image": "cetatea_rasnov.jpg"
-      },
-      "castelul_bran": {
-        "id": "castelul_bran",
-        "name": "Castelul Bran – Legendele & Istoria",
-        "shortDescription": "Castel fortificat cu legende despre Vlad Țepeș – colecții medievale și istoria Vlacilor.",
-        "description": "Castelul Bran este unu dintre cele mai cunoscute casteluri din România, asociat legendei Vlad Țepeș. Construcția datează din perioada medievală și a servit ca punte între Valahia și Transilvania. Colecții de mobilă veche și exponatele de epocă.",
-        "address": "Bran (30 km sud de Brașov)",
-        "coordinates": {
-          "lat": 45.515,
-          "lng": 25.367
-        },
-        "duration": "2-3 ore",
-        "difficulty": "Ușor",
-        "tags": [
-          "castel",
-          "Vlad",
-          "medieval",
-          "legende",
-          "Bran",
-          "Valahia"
-        ],
-        "tip": "Intrare: 50 lei. Ghizi disponibili. Combină cu Piatra Brașov și crama tradițională din Bran.",
-        "bestSeason": [
-          "aprilie-noiembrie"
-        ],
-        "image": "castelul_bran.jpg"
-      },
-      "strada_sforii": {
-        "id": "strada_sforii",
-        "name": "Strada Sforii – Cea Mai Îngustă Stradă",
-        "shortDescription": "Cea mai îngustă stradă din Europa (1.32 m) – legendă și fotografie medievală.",
-        "description": "Strada Sforii este o stradă medievală celebră, ușoară, de doar 1.32 m lărgime. Conectează două piețe și este plină de restaurante și magazine. Legendă spune că se numea așa pentru că tăiatorii de pânze ațipeau funia în stradă.",
-        "address": "Str. Sforii (intre Piața Sfatului și Str. Apelor), Brașov",
-        "coordinates": {
-          "lat": 45.643,
-          "lng": 25.593
-        },
-        "duration": "0.5 ore",
-        "difficulty": "Ușor",
-        "tags": [
-          "stradă",
-          "medieval",
-          "cel mai îngust",
-          "Brașov",
-          "fotografie"
-        ],
-        "tip": "Gratuit. Cea mai fotogeniă stradă din Brașov – plin de turiști în zile de vârf. Mergi devreme dimineața.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "strada_sforii.jpg"
-      },
-      "gheorghe_dima_music": {
-        "id": "gheorghe_dima_music",
-        "name": "Muzeum Gheorghe Dima – Colecția de Instrumente Muzicale",
-        "shortDescription": "Colecție de instrumente muzicale rare și istorice din різне culturi și perioade.",
-        "description": "Muzeum Gheorghe Dima găzduiește o colecție impresionantă de instrumente muzicale din lume. Include viori celebre, piane istorice și instrumente tradiționale românești. Colecția a fost adunată de Gheorghe Dima, compozitor eminență din Brașov.",
-        "address": "Str. Donath Miklós 1, Brașov",
-        "coordinates": {
-          "lat": 45.647,
-          "lng": 25.591
-        },
-        "duration": "1-1.5 ore",
-        "difficulty": "Ușor",
-        "tags": [
-          "muzeu",
-          "instrumente",
-          "muzică",
-          "Gheorghe Dima",
-          "cultură"
-        ],
-        "tip": "Intrare: 10 lei. Recitale și concerte cu frecvență. Verifică calendar pe site.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "gheorghe_dima_music.jpg"
-      },
-      "casa_muresan": {
-        "id": "casa_muresan",
-        "name": "Casa Mureșanului – Moșie Tradițională",
-        "shortDescription": "Conac tradițional brașovean cu mobilă veche și colecții de vie din perioada feudală.",
-        "description": "Casa Mureșanului este un conac tradițional, construit în stil brașovean din perioada feudală. Oferă o perspectivă autentică asupra vieții aristocrației locale. Mobilă și exponatele sunt prezentate în context original.",
-        "address": "Poarta Șchei, Brașov",
-        "coordinates": {
-          "lat": 45.65,
-          "lng": 25.585
-        },
-        "duration": "1 oră",
-        "difficulty": "Ușor",
-        "tags": [
-          "casă",
-          "tradițională",
-          "mobilă",
-          "aristocrație",
-          "Brașov"
-        ],
-        "tip": "Intrare: 15 lei. Vizite ghidate disponibile. Parte din circuitul Brașovului medieval.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "casa_muresan.jpg"
-      },
-      "poarta_schei": {
-        "id": "poarta_schei",
-        "name": "Poarta Șchei – Zidurile Fortificațiilor",
-        "shortDescription": "Poarta principală a Brașovului medieval – rămășițe ale sistemului fortificării orașului.",
-        "description": "Poarta Șchei este una dintre cele șapte porți ale fortificării medievale a Brașovului. Zidurile din jur sunt bine conservate și oferă o perspectivă asupra sistemului de protecție. Zona din jur este plin de clădiri istorice și curți medievale.",
-        "address": "Str. Șchei, Brașov",
-        "coordinates": {
-          "lat": 45.649,
-          "lng": 25.582
-        },
-        "duration": "1 oră",
-        "difficulty": "Ușor",
-        "tags": [
-          "poartă",
-          "fortificații",
-          "medieval",
-          "ziduri",
-          "Brașov"
-        ],
-        "tip": "Gratuit. Parte din ruta medievală a Brașovului. Muzeum Brașovului are panouri informative.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "poarta_schei.jpg"
-      }
-    },
-    "results": {
-      "a-a-a": {
-        "combination": {
-          "q1": "Muzee",
-          "q2": "Cu ghid",
-          "q3": "Gratuit"
-        },
-        "recommendations": [
-          "piata_sfatului",
-          "strada_sforii",
-          "poarta_schei"
-        ]
-      },
-      "a-a-b": {
-        "combination": {
-          "q1": "Muzee",
-          "q2": "Cu ghid",
-          "q3": "Până la 30 lei"
-        },
-        "recommendations": [
-          "muzeum_brasovului",
-          "brasov_medieval",
-          "turnul_negru"
-        ]
-      },
-      "a-a-c": {
-        "combination": {
-          "q1": "Muzee",
-          "q2": "Cu ghid",
-          "q3": "Peste 30 lei"
-        },
-        "recommendations": [
-          "cetatea_rasnov",
-          "castelul_bran",
-          "gheorghe_dima_music"
-        ]
-      },
-      "a-b-a": {
-        "combination": {
-          "q1": "Muzee",
-          "q2": "Singur",
-          "q3": "Gratuit"
-        },
-        "recommendations": [
-          "piata_sfatului",
-          "strada_sforii",
-          "poarta_schei"
-        ]
-      },
-      "a-b-b": {
-        "combination": {
-          "q1": "Muzee",
-          "q2": "Singur",
-          "q3": "Până la 30 lei"
-        },
-        "recommendations": [
-          "muzeum_brasovului",
-          "brasov_medieval",
-          "gheorghe_dima_music"
-        ]
-      },
-      "a-b-c": {
-        "combination": {
-          "q1": "Muzee",
-          "q2": "Singur",
-          "q3": "Peste 30 lei"
-        },
-        "recommendations": [
-          "castelul_bran",
-          "cetatea_rasnov",
-          "gheorghe_dima_music"
-        ]
-      },
-      "a-c-a": {
-        "combination": {
-          "q1": "Muzee",
-          "q2": "Cu audioghid",
-          "q3": "Gratuit"
-        },
-        "recommendations": [
-          "piata_sfatului",
-          "strada_sforii",
-          "poarta_schei"
-        ]
-      },
-      "a-c-b": {
-        "combination": {
-          "q1": "Muzee",
-          "q2": "Cu audioghid",
-          "q3": "Până la 30 lei"
-        },
-        "recommendations": [
-          "brasov_medieval",
-          "muzeum_brasovului",
-          "turnul_negru"
-        ]
-      },
-      "a-c-c": {
-        "combination": {
-          "q1": "Muzee",
-          "q2": "Cu audioghid",
-          "q3": "Peste 30 lei"
-        },
-        "recommendations": [
-          "cetatea_rasnov",
-          "castelul_bran",
-          "gheorghe_dima_music"
-        ]
-      },
-      "b-a-a": {
-        "combination": {
-          "q1": "Clădiri istorice",
-          "q2": "Cu ghid",
-          "q3": "Gratuit"
-        },
-        "recommendations": [
-          "Biserica_evanghelica",
-          "turnul_alb_cultura",
-          "poarta_schei"
-        ]
-      },
-      "b-a-b": {
-        "combination": {
-          "q1": "Clădiri istorice",
-          "q2": "Cu ghid",
-          "q3": "Până la 30 lei"
-        },
-        "recommendations": [
-          "Biserica_neagra",
-          "casa_muresan",
-          "turnul_negru"
-        ]
-      },
-      "b-a-c": {
-        "combination": {
-          "q1": "Clădiri istorice",
-          "q2": "Cu ghid",
-          "q3": "Peste 30 lei"
-        },
-        "recommendations": [
-          "cetatea_rasnov",
-          "castelul_bran",
-          "Biserica_evanghelica"
-        ]
-      },
-      "b-b-a": {
-        "combination": {
-          "q1": "Clădiri istorice",
-          "q2": "Singur",
-          "q3": "Gratuit"
-        },
-        "recommendations": [
-          "turnul_alb_cultura",
-          "poarta_schei",
-          "strada_sforii"
-        ]
-      },
-      "b-b-b": {
-        "combination": {
-          "q1": "Clădiri istorice",
-          "q2": "Singur",
-          "q3": "Până la 30 lei"
-        },
-        "recommendations": [
-          "Biserica_neagra",
-          "turnul_negru",
-          "casa_muresan"
-        ]
-      },
-      "b-b-c": {
-        "combination": {
-          "q1": "Clădiri istorice",
-          "q2": "Singur",
-          "q3": "Peste 30 lei"
-        },
-        "recommendations": [
-          "cetatea_rasnov",
-          "castelul_bran",
-          "Biserica_evanghelica"
-        ]
-      },
-      "b-c-a": {
-        "combination": {
-          "q1": "Clădiri istorice",
-          "q2": "Cu audioghid",
-          "q3": "Gratuit"
-        },
-        "recommendations": [
-          "turnul_alb_cultura",
-          "poarta_schei",
-          "piata_sfatului"
-        ]
-      },
-      "b-c-b": {
-        "combination": {
-          "q1": "Clădiri istorice",
-          "q2": "Cu audioghid",
-          "q3": "Până la 30 lei"
-        },
-        "recommendations": [
-          "Biserica_neagra",
-          "casa_muresan",
-          "turnul_negru"
-        ]
-      },
-      "b-c-c": {
-        "combination": {
-          "q1": "Clădiri istorice",
-          "q2": "Cu audioghid",
-          "q3": "Peste 30 lei"
-        },
-        "recommendations": [
-          "cetatea_rasnov",
-          "castelul_bran",
-          "Biserica_evanghelica"
-        ]
-      },
-      "c-a-a": {
-        "combination": {
-          "q1": "Galerii de artă",
-          "q2": "Cu ghid",
-          "q3": "Gratuit"
-        },
-        "recommendations": [
-          "piata_sfatului",
-          "strada_sforii",
-          "galeria_arta_brasov"
-        ]
-      },
-      "c-a-b": {
-        "combination": {
-          "q1": "Galerii de artă",
-          "q2": "Cu ghid",
-          "q3": "Până la 30 lei"
-        },
-        "recommendations": [
-          "galeria_arta_brasov",
-          "gheorghe_dima_music",
-          "brasov_medieval"
-        ]
-      },
-      "c-a-c": {
-        "combination": {
-          "q1": "Galerii de artă",
-          "q2": "Cu ghid",
-          "q3": "Peste 30 lei"
-        },
-        "recommendations": [
-          "galeria_arta_brasov",
-          "gheorghe_dima_music",
-          "castelul_bran"
-        ]
-      },
-      "c-b-a": {
-        "combination": {
-          "q1": "Galerii de artă",
-          "q2": "Singur",
-          "q3": "Gratuit"
-        },
-        "recommendations": [
-          "piata_sfatului",
-          "strada_sforii",
-          "galeria_arta_brasov"
-        ]
-      },
-      "c-b-b": {
-        "combination": {
-          "q1": "Galerii de artă",
-          "q2": "Singur",
-          "q3": "Până la 30 lei"
-        },
-        "recommendations": [
-          "galeria_arta_brasov",
-          "gheorghe_dima_music",
-          "brasov_medieval"
-        ]
-      },
-      "c-b-c": {
-        "combination": {
-          "q1": "Galerii de artă",
-          "q2": "Singur",
-          "q3": "Peste 30 lei"
-        },
-        "recommendations": [
-          "galeria_arta_brasov",
-          "gheorghe_dima_music",
-          "castelul_bran"
-        ]
-      },
-      "c-c-a": {
-        "combination": {
-          "q1": "Galerii de artă",
-          "q2": "Cu audioghid",
-          "q3": "Gratuit"
-        },
-        "recommendations": [
-          "piata_sfatului",
-          "strada_sforii",
-          "galeria_arta_brasov"
-        ]
-      },
-      "c-c-b": {
-        "combination": {
-          "q1": "Galerii de artă",
-          "q2": "Cu audioghid",
-          "q3": "Până la 30 lei"
-        },
-        "recommendations": [
-          "galeria_arta_brasov",
-          "gheorghe_dima_music",
-          "brasov_medieval"
-        ]
-      },
-      "c-c-c": {
-        "combination": {
-          "q1": "Galerii de artă",
-          "q2": "Cu audioghid",
-          "q3": "Peste 30 lei"
-        },
-        "recommendations": [
-          "galeria_arta_brasov",
-          "gheorghe_dima_music",
-          "castelul_bran"
-        ]
-      }
-    }
+    "places": {},
+    "results": {}
   },
   "restaurante": {
     "categoryId": "restaurante",
     "categoryLabel": "Restaurante",
-    "categoryIcon": "restaurant",
+    "categoryIcon": "utensils",
     "questions": [
       {
         "id": "q1",
@@ -2354,22 +170,22 @@
           {
             "id": "a",
             "label": "Tradițională",
-            "icon": "restaurant"
+            "icon": "bowl-food"
           },
           {
             "id": "b",
             "label": "Internațională-Fusion",
-            "icon": "public"
+            "icon": "globe"
           },
           {
             "id": "c",
             "label": "Italiană-Mediteraneană",
-            "icon": "dinner_dining"
+            "icon": "pizza-slice"
           },
           {
             "id": "d",
             "label": "Street food-Casual",
-            "icon": "fastfood"
+            "icon": "burger"
           }
         ]
       },
@@ -2385,17 +201,17 @@
           {
             "id": "b",
             "label": "Cuplu",
-            "icon": "favorite"
+            "icon": "heart"
           },
           {
             "id": "c",
             "label": "Grup",
-            "icon": "groups"
+            "icon": "people-group"
           },
           {
             "id": "d",
             "label": "Familie",
-            "icon": "family_restroom"
+            "icon": "family"
           }
         ]
       },
@@ -2406,22 +222,22 @@
           {
             "id": "a",
             "label": "Sub 40 lei",
-            "icon": "payments"
+            "icon": "coins"
           },
           {
             "id": "b",
-            "label": "40-80 lei",
-            "icon": "local_atm"
+            "label": "40–80 lei",
+            "icon": "wallet"
           },
           {
             "id": "c",
-            "label": "80-150 lei",
-            "icon": "savings"
+            "label": "80–150 lei",
+            "icon": "gem"
           },
           {
             "id": "d",
             "label": "Peste 150 lei",
-            "icon": "diamond"
+            "icon": "crown"
           }
         ]
       }
@@ -2429,378 +245,854 @@
     "places": {
       "la_ceaun": {
         "id": "la_ceaun",
-        "name": "La Ceaun – Piața Sfatului",
-        "shortDescription": "Ceaune aburinde de ciorbă în pâine, sarmale și tocănițe tradiționale delicioase.",
-        "description": "La Ceaun oferă gustul autentic al bucătăriei românești, preparat la ceaun cu ingrediente proaspete locale: ciorbe acrite cu borș, tochituri calde și mămăligă caldă chiar în centrul vechi.",
-        "address": "Piața Sfatului nr. 11-12, Brașov",
+        "name": "La Ceaun",
+        "cuisine": "Tradițională",
+        "shortDescription": "Bucate tradiționale în oale de lut, chiar în Piața Sfatului.",
+        "description": "Preparate tradiționale servite în oale de lut, atmosferă rustică și prețuri accesibile. Ciorbele și sarmalele sunt hit-ul casei.",
+        "address": "Piața Sfatului nr. 14, Brașov",
         "coordinates": {
-          "lat": 45.6421,
-          "lng": 25.5891
+          "lat": 45.6427,
+          "lng": 25.5886
         },
-        "duration": "1-2 ore",
-        "difficulty": "Ușor",
+        "priceRange": "Sub 40 lei",
         "tags": [
           "tradițional",
-          "românesc",
-          "ceaun",
-          "sarmale",
-          "mămăligă"
+          "oale de lut",
+          "Piața Sfatului",
+          "accesibil"
         ],
-        "tip": "Încearcă ciorba de fasole în pâine și tocănița de hribi cu mămăligă! Locurile de la terasă sunt ideale.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
+        "tip": "Meniul de prânz e foarte avantajos. Ciorbele sunt oase.",
+        "hours": "10:00–22:00",
         "image": "la_ceaun.jpg"
+      },
+      "haplea": {
+        "id": "haplea",
+        "name": "Haplea d'ale Gurii",
+        "cuisine": "Tradițională",
+        "shortDescription": "Mâncare tradițională ca pe vremuri – ciorbe, sarmale, porții mari, prețuri mici.",
+        "description": "Haplea este nostalgia copilăriei pe farfurie. Ciorbă de perișoare, sarmale, mâncare de fasole, tocăniță. Porții generoase la prețuri foarte accesibile. Mai multe locații: Michael Weiss, Iuliu Maniu, Magnolia.",
+        "address": "Str. Michael Weiss / Str. Iuliu Maniu, Brașov",
+        "coordinates": {
+          "lat": 45.6435,
+          "lng": 25.59
+        },
+        "priceRange": "Sub 40 lei",
+        "tags": [
+          "tradițional",
+          "ieftin",
+          "porții mari",
+          "nostalgic"
+        ],
+        "tip": "Ciorbele și sarmalele sunt excelente. Cel mai bun raport calitate-preț din Brașov.",
+        "hours": "10:00–21:00",
+        "image": "haplea.jpg"
+      },
+      "ceasu_rau": {
+        "id": "ceasu_rau",
+        "name": "Ceasu' Rău",
+        "cuisine": "Tradițională",
+        "shortDescription": "Mâncare tradițională ca la mama acasă – ingrediente de la Poiana Mărului.",
+        "description": "Parte din familia Sergiana, cu ingrediente proaspete de la Poiana Mărului. Porții generoase, gust autentic, prețuri foarte accesibile. Recomandat pe TripAdvisor.",
+        "address": "Str. Iuliu Maniu nr. 56, Brașov",
+        "coordinates": {
+          "lat": 45.647,
+          "lng": 25.596
+        },
+        "priceRange": "Sub 40 lei",
+        "tags": [
+          "tradițional",
+          "Sergiana",
+          "accesibil",
+          "porții mari"
+        ],
+        "tip": "Raport calitate-preț excelent. Meniurile de prânz sunt foarte avantajoase.",
+        "hours": "11:00–22:00",
+        "image": "ceasu_rau.jpg"
       },
       "sergiana": {
         "id": "sergiana",
-        "name": "Restaurant Sergiana – Cramă",
-        "shortDescription": "Cramă rustică legendară cu preparate tradiționale ardelenești ca la mama acasă.",
-        "description": "Unul dintre cele mai renumite restaurante tradiționale din Brașov, renumit pentru atmosfera de cramă transilvăneană, servirea impecabilă și jumările calde cu ceapă roșie servite din partea casei.",
-        "address": "Strada Mureșenilor nr. 28, Brașov",
+        "name": "Sergiana Mureșenilor",
+        "cuisine": "Tradițională",
+        "shortDescription": "Instituție brașoveană – mâncare ardelenească cu ingrediente de la ferma proprie.",
+        "description": "Sergiana este o instituție în Brașov. Subsolul unei clădiri istorice, decor tradițional, ospătari în port popular. Jumări și pâine cu ceapă din partea casei. Ingrediente de la ferma proprie.",
+        "address": "Str. Mureșenilor nr. 28, Brașov",
         "coordinates": {
-          "lat": 45.6438,
-          "lng": 25.5878
+          "lat": 45.642,
+          "lng": 25.589
         },
-        "duration": "2 ore",
-        "difficulty": "Moderat",
+        "priceRange": "40–80 lei",
         "tags": [
           "tradițional",
           "ardelenesc",
-          "cramă",
-          "carne",
-          "jumări"
+          "ferma proprie",
+          "centru vechi"
         ],
-        "tip": "Rezervă o masă în avans, mai ales seara. Nu rata Tochitura Ardeleană sau Ciolanul de porc cu sos de hrean!",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
+        "tip": "Rezervă masă – e mereu plin! Încearcă tochitura ardelenească și papanașii.",
+        "hours": "12:00–23:00",
         "image": "sergiana.jpg"
-      },
-      "sub_tampa": {
-        "id": "sub_tampa",
-        "name": "Sub Tâmpa – Neo-Românesc",
-        "shortDescription": "Restaurant premium la poalele Tâmpei care reinventează genial bucătăria românească.",
-        "description": "Sub Tâmpa combină tehnicile moderne de gătit cu ingredientele arhaice românești. Situat chiar sub munte, oferă o atmosferă selectă, vederi spectaculoase și o experiență culinară de neegalat.",
-        "address": "Aleea Tiberiu Brediceanu, Brașov",
-        "coordinates": {
-          "lat": 45.6425,
-          "lng": 25.59
-        },
-        "duration": "2 ore",
-        "difficulty": "Premium",
-        "tags": [
-          "fine dining",
-          "neo-românesc",
-          "munte",
-          "premium",
-          "design"
-        ],
-        "tip": "Perfect pentru o cină romantică sau o ocazie specială. Deserturile lor reinterpretate sunt adevărate opere de artă.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "sub_tampa.jpg"
       },
       "ograda": {
         "id": "ograda",
-        "name": "Ograda – local & artizanal",
-        "shortDescription": "Bistro gourmet premium în Piața Sfatului, axat pe ingrediente 100% locale transilvănene.",
-        "description": "Ograda este un loc cald și elegant dedicat produselor românești curate. De la brânzeturi artizanale la carne bio din munții Carpați, meniul lor îmbină tradiția locală cu prezentarea modernă.",
-        "address": "Piața Sfatului nr. 14, Brașov",
+        "name": "Ograda din Piața Sfatului",
+        "cuisine": "Tradițională",
+        "shortDescription": "Ca în ograda bunicii – preparate autentice, cafea de specialitate excelentă.",
+        "description": "Ograda aduce autenticitatea gastronomiei românești chiar în Piața Sfatului. Preparate tradiționale făcute cu suflet, cafea de specialitate remarcabilă.",
+        "address": "Piața Sfatului, Brașov",
         "coordinates": {
-          "lat": 45.6423,
-          "lng": 25.5894
+          "lat": 45.6426,
+          "lng": 25.5888
         },
-        "duration": "2 ore",
-        "difficulty": "Premium",
+        "priceRange": "40–80 lei",
         "tags": [
-          "local",
-          "artizanal",
-          "gourmet",
-          "ferme",
-          "premium"
+          "tradițional",
+          "autentic",
+          "Piața Sfatului",
+          "cafea"
         ],
-        "tip": "Încearcă platoul de brânzeturi transilvănene și vinurile românești artizanale. Priveliștea spre Piață este superbă.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
+        "tip": "Neapărat încearcă și cafeaua de specialitate – e remarcabilă!",
+        "hours": "09:00–22:00",
         "image": "ograda.jpg"
       },
-      "prato": {
-        "id": "prato",
-        "name": "Prato – Mediteranean Elegant",
-        "shortDescription": "Restaurant elegant cu bucătărie italiană și mediteraneană de înaltă clasă.",
-        "description": "Prato este un etalon al eleganței în Brașov. Cu un meniu mediteranean bogat în fructe de mare proaspete, paste artizanale, fripturi premium și o listă impresionantă de vinuri internaționale.",
-        "address": "Strada Michael Weiss nr. 11, Brașov",
+      "casa_tudor": {
+        "id": "casa_tudor",
+        "name": "Casa Tudor",
+        "cuisine": "Tradițională",
+        "shortDescription": "Restaurant Sergiana – prospețime, gust și rafinament tradițional.",
+        "description": "Parte a Grupului Sergiana, Casa Tudor combină prospețime și rafinament. Ingrediente de la ferma proprie, preparate tradiționale executate cu grijă.",
+        "address": "Str. Avram Iancu nr. 58, Brașov",
         "coordinates": {
-          "lat": 45.6432,
-          "lng": 25.5912
+          "lat": 45.644,
+          "lng": 25.594
         },
-        "duration": "2 ore",
-        "difficulty": "Premium",
+        "priceRange": "40–80 lei",
         "tags": [
-          "italian",
-          "mediteranean",
-          "fructe de mare",
-          "premium",
-          "elegant"
+          "tradițional",
+          "rafinat",
+          "Sergiana",
+          "ingrediente proaspete"
         ],
-        "tip": "Recomandăm risotto-ul cu creveți sau mușchiul de vită premium. Rezervarea pe seară este ideală.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "prato.jpg"
-      },
-      "dei_frati": {
-        "id": "dei_frati",
-        "name": "Bistro Dei Frati – Paste proaspete",
-        "shortDescription": "Mic bistro italian intim condus de doi frați pasionați de paste făcute de casă.",
-        "description": "Dei Frati este un loc cald și extrem de popular. Prepară paste proaspete zilnic, sosuri aromate mediteraneene și specialități din nordul Italiei, totul într-un stil extrem de autentic și cozy.",
-        "address": "Strada Diaconu Coresi nr. 4, Brașov",
-        "coordinates": {
-          "lat": 45.6425,
-          "lng": 25.588
-        },
-        "duration": "1.5 ore",
-        "difficulty": "Moderat",
-        "tags": [
-          "paste de casă",
-          "italian",
-          "bistro",
-          "intim",
-          "trattoria"
-        ],
-        "tip": "Pastele cu trufe sau gnocchi cu hribi sunt geniale! Rezervarea este obligatorie cu cel puțin 1-2 zile înainte.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "dei_frati.jpg"
-      },
-      "cucinino": {
-        "id": "cucinino",
-        "name": "Cucinino – Pasta & Pizza Bar",
-        "shortDescription": "Pasta bar mediteranean tineresc, cu pizza cu maia și paste proaspete rapide.",
-        "description": "Cucinino oferă o experiență mediteraneană modernă și relaxată. Paste excelente preparate pe loc în bucătăria deschisă, pizza aromată cu ingrediente premium italienești și un design tineresc.",
-        "address": "Strada Sfântul Ioan nr. 4, Brașov",
-        "coordinates": {
-          "lat": 45.6443,
-          "lng": 25.5895
-        },
-        "duration": "1-2 ore",
-        "difficulty": "Ușor",
-        "tags": [
-          "pizza",
-          "pasta",
-          "casual",
-          "mediteranean",
-          "tineresc"
-        ],
-        "tip": "Încearcă pizza cu prosciutto crudo și smochine sau pastele carbonara cremoase preparate sub ochii tăi.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "cucinino.jpg"
-      },
-      "bistro_de_l_arte": {
-        "id": "bistro_de_l_arte",
-        "name": "Bistro de l'Arte – Slow Food",
-        "shortDescription": "Renumitul bistro slow-food condus de Chef Oana Coantă, într-o clădire din secolul XVI.",
-        "description": "Bistro de l'Arte promovează conceptul de Slow Food, folosind rețete vechi transilvănene reinterpretate cu ingrediente locale de sezon. Localizat într-o clădire istorică fermecătoare.",
-        "address": "Piața Enescu nr. 11, Brașov",
-        "coordinates": {
-          "lat": 45.6429,
-          "lng": 25.5885
-        },
-        "duration": "2 ore",
-        "difficulty": "Premium",
-        "tags": [
-          "slow food",
-          "bistro",
-          "transilvănean",
-          "gourmet",
-          "istoric"
-        ],
-        "tip": "Mâncarea se prepară lent și cinstit, deci vino cu timp de relaxare. Pâinea prăjită cu icre sau budinca sunt fantastice.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "bistro_de_l_arte.jpg"
+        "tip": "Pasta de jumări și preparatele la ceaun sunt de neratat.",
+        "hours": "12:00–22:00",
+        "image": "casa_tudor.jpg"
       },
       "pilvax": {
         "id": "pilvax",
-        "name": "Bistro Pilvax – Specific Maghiar",
-        "shortDescription": "Bistro elegant cu specialități ungurești transilvănene și gulyas aromat.",
-        "description": "Pilvax readuce farmecul bistourilor de odinioară, oferind specialități ungurești autentice: gulyas cald la ceaun mic, paprikaș delicios de pui, deserturi transilvănene și vinuri ungurești de Tokaj.",
-        "address": "Strada Michael Weiss nr. 16, Brașov",
+        "name": "Pilvax",
+        "cuisine": "Tradițională",
+        "shortDescription": "Specific unguresc-transilvănean – gulaș, supă de pește, gomboți cu prune, 100+ vinuri.",
+        "description": "Pilvax poartă numele celebrei cafenele din Budapesta. Gulaș, supă de pește, gomboți cu prune. Peste 100 de vinuri ungurești. Menționat de The Guardian în top 20 restaurante din Europa.",
+        "address": "Str. Nicolae Bălcescu nr. 26, Brașov",
         "coordinates": {
-          "lat": 45.6434,
-          "lng": 25.5915
+          "lat": 45.645,
+          "lng": 25.592
         },
-        "duration": "2 ore",
-        "difficulty": "Moderat",
+        "priceRange": "40–80 lei",
         "tags": [
           "unguresc",
-          "gulyas",
-          "bistro",
           "transilvănean",
-          "elegant"
+          "gulaș",
+          "vinuri",
+          "The Guardian"
         ],
-        "tip": "Gulyas-ul servit cald la masă este spectaculos. Excelent în zilele mai răcoroase!",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
+        "tip": "Gomboții cu prune sunt un must! Lista de vinuri ungurești este excepțională.",
+        "hours": "12:00–23:00",
         "image": "pilvax.jpg"
       },
-      "tipografia": {
-        "id": "tipografia",
-        "name": "Tipografia – Tea, Coffee & Food",
-        "shortDescription": "Concept cafe&bistro hipster urban cu quiche-uri, sandwich-uri gourmet și beri artizanale.",
-        "description": "Tipografia este hub-ul casual cultural al Brașovului. Un loc ideal pentru tineri, cupluri și grupuri, oferind cafea de specialitate, quiche-uri delicioase, burgeri casual și deserturi apetisante.",
-        "address": "Strada Postăvarului nr. 1, Brașov",
+      "bella_muzica": {
+        "id": "bella_muzica",
+        "name": "Bella Muzica",
+        "cuisine": "Tradițională",
+        "shortDescription": "Restaurant medieval în Piața Sfatului – arcade de cărămidă, bucătărie tradițională și ungurească.",
+        "description": "Clădire medievală din sec. XVI cu arcade de cărămidă și piatră. Bucătărie tradițională românească și ungurească. Atmosferă fancy într-un cadru istoric la subsol. Buton la masă pentru a chema ospătarul.",
+        "address": "Piața Sfatului nr. 19, Brașov",
+        "coordinates": {
+          "lat": 45.6428,
+          "lng": 25.5883
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "medieval",
+          "tradițional",
+          "unguresc",
+          "Piața Sfatului",
+          "atmospheric"
+        ],
+        "tip": "Atmosfera de pivniță medievală e unică. Servirea cu buton la masă e un plus amuzant.",
+        "hours": "12:00–23:00",
+        "image": "bella_muzica.jpg"
+      },
+      "sub_tampa_rest": {
+        "id": "sub_tampa_rest",
+        "name": "Sub Tâmpa",
+        "cuisine": "Tradițională",
+        "shortDescription": "Gastronomie neo-tradițională – rețete din 1600-1900, reinterpretate modern.",
+        "description": "Concept unic: rețete vechi românești (1600-1900) reinterpretate cu tehnici moderne. Burger din carne de urs, burtă de vită crocantă, budincă de cozonac. Cadru elegant la poalele Tâmpei.",
+        "address": "Aleea Tiberiu Brediceanu nr. 1, Brașov",
+        "coordinates": {
+          "lat": 45.64,
+          "lng": 25.588
+        },
+        "priceRange": "80–150 lei",
+        "tags": [
+          "neo-tradițional",
+          "rețete istorice",
+          "elegant",
+          "premium"
+        ],
+        "tip": "Meniul se schimbă sezonier. Experiența culinară e unică în Brașov.",
+        "hours": "12:00–23:00",
+        "image": "sub_tampa_rest.jpg"
+      },
+      "panoramic": {
+        "id": "panoramic",
+        "name": "Panoramic – pe Vârful Tâmpei",
+        "cuisine": "Tradițională",
+        "shortDescription": "Fine dining pe Tâmpa la 960 m – redeschis 2025, gastronomie contemporană transilvăneană.",
+        "description": "Redeschis după renovare completă, Panoramic e accesibil cu telecabina. Gastronomie contemporană cu rădăcini transilvănene, rafinament și ingrediente locale. Panoramă unică asupra Brașovului.",
+        "address": "Vârful Tâmpa (telecabina), Brașov",
+        "coordinates": {
+          "lat": 45.638,
+          "lng": 25.596
+        },
+        "priceRange": "Peste 150 lei",
+        "tags": [
+          "fine dining",
+          "panoramă",
+          "telecabină",
+          "premium",
+          "transilvănean"
+        ],
+        "tip": "Urcarea cu telecabina face parte din experiență. Perfect pentru ocazii speciale.",
+        "hours": "12:00–22:00",
+        "image": "panoramic.jpg"
+      },
+      "fract": {
+        "id": "fract",
+        "name": "Fract Restaurant",
+        "cuisine": "Internațională-Fusion",
+        "shortDescription": "Restaurant social – responsabilitate socială + mâncare internațională bună, prețuri mici.",
+        "description": "Fract combină un proiect social cu gastronomie de calitate. Preparate internaționale, meniu zilnic care se schimbă, ingrediente proaspete. Concept unic în Brașov.",
+        "address": "Str. Războieni nr. 5, Brașov",
+        "coordinates": {
+          "lat": 45.6455,
+          "lng": 25.5925
+        },
+        "priceRange": "Sub 40 lei",
+        "tags": [
+          "social dining",
+          "internațional",
+          "accesibil",
+          "concept unic"
+        ],
+        "tip": "Susții o cauză bună mâncând bine. Meniul zilei e mereu o surpriză plăcută.",
+        "hours": "10:00–20:00",
+        "image": "fract.jpg"
+      },
+      "dze_best": {
+        "id": "dze_best",
+        "name": "Dze Best – Restaurant Georgian",
+        "cuisine": "Internațională-Fusion",
+        "shortDescription": "Bucătărie georgiană autentică – khachapuri, khinkali – la 10 min de centru.",
+        "description": "Deschis de o familie din Republica Moldova pasionată de gastronomia georgiană. Khachapuri, khinkali și alte specialități autentice. Prețuri foarte bune.",
+        "address": "Str. Lungă, Brașov",
+        "coordinates": {
+          "lat": 45.6465,
+          "lng": 25.595
+        },
+        "priceRange": "Sub 40 lei",
+        "tags": [
+          "georgian",
+          "khachapuri",
+          "khinkali",
+          "accesibil"
+        ],
+        "tip": "Khachapuri-ul Acharuli (cu ou) e o experiență! Fă rezervare în weekend.",
+        "hours": "11:00–22:00",
+        "image": "dze_best.jpg"
+      },
+      "wagners_loft": {
+        "id": "wagners_loft",
+        "name": "Wagner's Loft",
+        "cuisine": "Internațională-Fusion",
+        "shortDescription": "Restaurant elegant – burgeri gourmet, paste, vegane – 60+ locuri, centrul vechi.",
+        "description": "În incinta Hotelului Casa Wagner, la pași de Piața Sfatului. Decor industrial-chic. Peste 60 de locuri în 4 zone. Meniu internațional: burgeri gourmet, paste, salate, preparate vegane.",
+        "address": "Piața George Enescu nr. 16, Brașov",
+        "coordinates": {
+          "lat": 45.6425,
+          "lng": 25.587
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "internațional",
+          "burgeri gourmet",
+          "vegan",
+          "centru vechi",
+          "spațios"
+        ],
+        "tip": "Zona loft e cea mai instagramabilă. Burgerii gourmet sunt excelenti.",
+        "hours": "09:00–23:00",
+        "image": "wagners_loft.jpg"
+      },
+      "bistro_de_larte": {
+        "id": "bistro_de_larte",
+        "name": "Bistro de l'Arte",
+        "cuisine": "Internațională-Fusion",
+        "shortDescription": "Bistro boem – muzică jazz live, expoziții artă, preparate europene centrale.",
+        "description": "Deschis în 2000 într-una dintre cele mai vechi clădiri din Brașov. Sute de expoziții, concerte jazz, recitaluri. Bucătărie europeană centrală și românească reinterpretată.",
+        "address": "Piața George Enescu nr. 11, Brașov",
+        "coordinates": {
+          "lat": 45.6423,
+          "lng": 25.5868
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "bistro",
+          "jazz",
+          "artă",
+          "boem",
+          "european"
+        ],
+        "tip": "Verifică programul de concerte jazz live! Seara atmosfera e magică.",
+        "hours": "10:00–00:00",
+        "image": "bistro_de_larte.jpg"
+      },
+      "le_petit_bistro": {
+        "id": "le_petit_bistro",
+        "name": "Le Petit Bistro",
+        "cuisine": "Internațională-Fusion",
+        "shortDescription": "Bistro intim lângă Biserica Neagră – brunch, carne premium, deserturi artizanale.",
+        "description": "Micuț dar imens în preferințe. Meniu versatil: brunch, avocado toast, Pork Tomahawk, obrăjori de vițel, doradă. Deserturi excepționale: tiramisu, panna cotta, mille-feuille.",
+        "address": "Str. Castelului nr. 2, Brașov",
+        "coordinates": {
+          "lat": 45.641,
+          "lng": 25.5875
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "bistro",
+          "brunch",
+          "intim",
+          "deserturi",
+          "franțuzesc"
+        ],
+        "tip": "Tiramisu-ul și panna cotta sunt de vis. Brunch-ul de weekend – rezervă!",
+        "hours": "09:00–22:00",
+        "image": "le_petit_bistro.jpg"
+      },
+      "albert_social": {
+        "id": "albert_social",
+        "name": "Albert Social Bistro",
+        "cuisine": "Internațională-Fusion",
+        "shortDescription": "Bistro cu grădină verde pe Republicii – salate, burgeri, paste, atmosferă relaxată.",
+        "description": "Grădină interioară verde și liniștită pe Strada Republicii. Meniu variat: salate, burgeri, paste, preparate internaționale. Perfect pentru pauza de prânz.",
+        "address": "Str. Republicii nr. 38, Brașov",
+        "coordinates": {
+          "lat": 45.6445,
+          "lng": 25.592
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "bistro",
+          "grădină",
+          "relaxat",
+          "internațional"
+        ],
+        "tip": "Grădina interioară e o oază de liniște. Perfect vara la prânz.",
+        "hours": "10:00–23:00",
+        "image": "albert_social.jpg"
+      },
+      "bloom": {
+        "id": "bloom",
+        "name": "Bloom Restaurant & Bar",
+        "cuisine": "Internațională-Fusion",
+        "shortDescription": "Fine casual cu terasă elegantă, cocktailuri de autor și meniu internațional creativ.",
+        "description": "Terasă elegantă, meniu internațional rafinat, preparate creative, cocktailuri de autor. Atmosferă sofisticată pentru cine speciale sau ieșiri cu prietenii.",
+        "address": "Str. Republicii, Brașov",
+        "coordinates": {
+          "lat": 45.6448,
+          "lng": 25.5918
+        },
+        "priceRange": "80–150 lei",
+        "tags": [
+          "fine casual",
+          "cocktailuri",
+          "terasă",
+          "creativ"
+        ],
+        "tip": "Cocktailurile de autor sunt excelente. Terasa e superb amenajată vara.",
+        "hours": "12:00–00:00",
+        "image": "bloom.jpg"
+      },
+      "terroirs": {
+        "id": "terroirs",
+        "name": "Terroirs Boutique du Vin",
+        "cuisine": "Internațională-Fusion",
+        "shortDescription": "Wine bar cu 500+ vinuri, sommelieri, platouri gourmet – creveți, burgeri, brânzeturi.",
+        "description": "Peste 500 de vinuri selecționate, servite de sommelieri. Platouri cu brânzeturi, prosciutto, creveți, burgeri gourmet. Atmosferă rafinată.",
+        "address": "Str. Republicii nr. 10, Brașov",
+        "coordinates": {
+          "lat": 45.6435,
+          "lng": 25.591
+        },
+        "priceRange": "80–150 lei",
+        "tags": [
+          "wine bar",
+          "sommelier",
+          "gourmet",
+          "rafinat"
+        ],
+        "tip": "Lasă sommelier-ul să aleagă vinul – nu vei regreta!",
+        "hours": "14:00–00:00",
+        "image": "terroirs.jpg"
+      },
+      "belvedere": {
+        "id": "belvedere",
+        "name": "Belvedere",
+        "cuisine": "Internațională-Fusion",
+        "shortDescription": "Fine dining cu panoramă – meniu de autor care se schimbă la 6 luni.",
+        "description": "Situat deasupra orașului pe drumul spre Poiană, cu panoramă asupra Brașovului. Fine cuisine de autor, meniu sezonier, posibilitate de surpriză culinară personalizată de la maestrul bucătar.",
+        "address": "Str. Prundului nr. 23, Brașov",
+        "coordinates": {
+          "lat": 45.652,
+          "lng": 25.585
+        },
+        "priceRange": "Peste 150 lei",
+        "tags": [
+          "fine dining",
+          "panoramă",
+          "meniu de autor",
+          "premium"
+        ],
+        "tip": "Cere surpriza culinară personalizată de la bucătar – experiență unică!",
+        "hours": "12:00–23:00",
+        "image": "belvedere.jpg"
+      },
+      "della_nonna": {
+        "id": "della_nonna",
+        "name": "Pizzeria Della Nonna",
+        "cuisine": "Italiană-Mediteraneană",
+        "shortDescription": "Pizza la cuptor cu lemne în stil italian autentic – considerată cea mai bună din Brașov.",
+        "description": "Della Nonna este votată de mulți brașoveni drept cea mai bună pizzerie din oraș. Pizza la cuptor cu lemne, blat subțire și crocant, ingrediente proaspete.",
+        "address": "Str. Dr. Ioan Cantacuzino nr. 1, Brașov",
+        "coordinates": {
+          "lat": 45.646,
+          "lng": 25.594
+        },
+        "priceRange": "Sub 40 lei",
+        "tags": [
+          "pizza",
+          "cuptor lemne",
+          "italian autentic",
+          "accesibil"
+        ],
+        "tip": "Mergi devreme – se umple repede! Pizza quattro formaggi e legendară.",
+        "hours": "11:00–22:00",
+        "image": "della_nonna.jpg"
+      },
+      "trattoria_pocol": {
+        "id": "trattoria_pocol",
+        "name": "Trattoria Pocol",
+        "cuisine": "Italiană-Mediteraneană",
+        "shortDescription": "Pizza la cuptor, vinuri locale, fructe de mare – atmosferă italiană elegantă.",
+        "description": "Trattoria Pocol oferă o experiență italiană upscale: pizza, paste, pește și fructe de mare. Vitrină cu pește proaspăt de captură. Vinuri românești și italiene.",
+        "address": "Str. Michael Weiss, Brașov",
+        "coordinates": {
+          "lat": 45.6415,
+          "lng": 25.5895
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "italian",
+          "fructe de mare",
+          "pește proaspăt",
+          "elegant"
+        ],
+        "tip": "Alege peștele din vitrină și îl prepară pentru tine pe loc. Experiență deosebită!",
+        "hours": "11:00–23:00",
+        "image": "trattoria_pocol.jpg"
+      },
+      "antreu_focaccerie": {
+        "id": "antreu_focaccerie",
+        "name": "AntreU Focaccerie",
+        "cuisine": "Italiană-Mediteraneană",
+        "shortDescription": "Focaccia artizanală și specialități italiene de stradă – rapid, bun, accesibil.",
+        "description": "Focaccia artizanală în diverse combinații, panini și specialități italiene de stradă. Servire rapidă, ingrediente proaspete, prețuri mici.",
+        "address": "Centru, Brașov",
+        "coordinates": {
+          "lat": 45.6438,
+          "lng": 25.5905
+        },
+        "priceRange": "Sub 40 lei",
+        "tags": [
+          "focaccia",
+          "italian street food",
+          "rapid",
+          "accesibil"
+        ],
+        "tip": "Focaccia cu prosciutto e bestială! Perfect pentru prânz rapid.",
+        "hours": "10:00–20:00",
+        "image": "antreu_focaccerie.jpg"
+      },
+      "al_centro": {
+        "id": "al_centro",
+        "name": "Al Centro",
+        "cuisine": "Italiană-Mediteraneană",
+        "shortDescription": "Pizza cu maia, paste, burgeri, meniuri complete – pe strada Lungă.",
+        "description": "Al Centro oferă pizza cu aluat natural, paste proaspete, antipasti, mic dejun italian și deserturi. Totul făcut la comandă. Livrare și telefonic.",
+        "address": "Str. Lungă nr. 66-68, Brașov",
+        "coordinates": {
+          "lat": 45.645,
+          "lng": 25.5945
+        },
+        "priceRange": "Sub 40 lei",
+        "tags": [
+          "pizza",
+          "paste",
+          "casual",
+          "maia",
+          "livrare"
+        ],
+        "tip": "Meniul zilei e foarte avantajos. Pizza cu maia – altfel decât restul.",
+        "hours": "10:00–22:00",
+        "image": "al_centro.jpg"
+      },
+      "dei_frati": {
+        "id": "dei_frati",
+        "name": "Dei Frati",
+        "cuisine": "Italiană-Mediteraneană",
+        "shortDescription": "Cele bine paste din Brașov – trattoria de familie, premiat Horeca Awards 2025.",
+        "description": "Restaurant de familie, doi frați cu 10+ ani în bucătăriile Italiei. Premiul Cel mai bun restaurant mediteranean (Horeca Awards 2025). Paste homemade, pește, fructe de mare.",
+        "address": "Piața George Enescu nr. 16, Brașov",
+        "coordinates": {
+          "lat": 45.6424,
+          "lng": 25.5869
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "italian",
+          "paste homemade",
+          "premiat",
+          "trattoria"
+        ],
+        "tip": "Tagliatele cu trufe sunt legendare! Locul e mic – rezervă obligatoriu.",
+        "hours": "12:00–22:00",
+        "image": "dei_frati.jpg"
+      },
+      "prato": {
+        "id": "prato",
+        "name": "Prato Restaurant",
+        "cuisine": "Italiană-Mediteraneană",
+        "shortDescription": "Restaurant italian-mediteranean din 2008 – 240 locuri, Michael Weiss.",
+        "description": "Din 2008, Prato oferă preparate italiene și mediteraneene într-un cadru plăcut pe Michael Weiss. 240 locuri în sală și terasă de vară. Muzică, ambient, atmosferă caldă.",
+        "address": "Str. Michael Weiss nr. 11, Brașov",
+        "coordinates": {
+          "lat": 45.6412,
+          "lng": 25.5892
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "italian",
+          "mediteranean",
+          "spațios",
+          "terasă",
+          "Michael Weiss"
+        ],
+        "tip": "Ideal pentru grupuri mari – 240 de locuri! Pizza și pastele sunt foarte bune.",
+        "hours": "11:00–23:00",
+        "image": "prato.jpg"
+      },
+      "cucinino": {
+        "id": "cucinino",
+        "name": "Cucinino – Pasta Bar",
+        "cuisine": "Italiană-Mediteraneană",
+        "shortDescription": "Pasta bar modern – paste proaspete, rețete creative, servire rapidă și stylish.",
+        "description": "Cucinino e un pasta bar modern cu paste proaspete gătite pe loc. Rețete clasice și creative italiene, ingrediente fresh. Servire rapidă în stil newyorkez, dar cu gust italian.",
+        "address": "Str. Diaconu Coresi nr. 6, Brașov",
+        "coordinates": {
+          "lat": 45.643,
+          "lng": 25.5895
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "pasta bar",
+          "paste proaspete",
+          "modern",
+          "rapid"
+        ],
+        "tip": "Chess wheel pasta (în roată de parmezan) e spectaculoasă! Rating 4.9 pe Google.",
+        "hours": "11:00–22:00",
+        "image": "cucinino.jpg"
+      },
+      "amo_brasov": {
+        "id": "amo_brasov",
+        "name": "AMO Brașov",
+        "cuisine": "Italiană-Mediteraneană",
+        "shortDescription": "All Made to Order – pizza cu maia, paste proaspete, preparate la comandă.",
+        "description": "AMO (All Made to Order) pregătește fiecare pizza proaspăt, cu aluat cu maia. Paste bune, atmosferă modernă. Livrare prin Glovo, Tazz și Bolt.",
+        "address": "Str. 1 Decembrie 1918 nr. 34, Brașov",
+        "coordinates": {
+          "lat": 45.649,
+          "lng": 25.598
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "pizza maia",
+          "paste",
+          "la comandă",
+          "modern"
+        ],
+        "tip": "Aluatul cu maia face diferența. Livrare gratuită în Tractorul.",
+        "hours": "11:00–22:00",
+        "image": "amo_brasov.jpg"
+      },
+      "artegianale": {
+        "id": "artegianale",
+        "name": "Artegianale",
+        "cuisine": "Italiană-Mediteraneană",
+        "shortDescription": "Wine bar & bistro italian premium – paste homemade, pizza napoletană, vinuri fine.",
+        "description": "Pasiune pentru vin și gastronomie italiană. Paste homemade, pizza napoletană, burrata, risotto, charcuterie. Vinuri din Italia, Franța, România. Clădire sec. XIX, grădină, evenimente culturale.",
+        "address": "Str. Mureșenilor nr. 27, Brașov",
         "coordinates": {
           "lat": 45.6418,
-          "lng": 25.5898
+          "lng": 25.5888
         },
-        "duration": "1-2 ore",
-        "difficulty": "Ușor",
+        "priceRange": "80–150 lei",
         "tags": [
-          "casual",
-          "cafea de specialitate",
-          "artizanal",
-          "tineresc",
-          "sandwich-uri"
+          "italian premium",
+          "wine bar",
+          "paste homemade",
+          "pizza napoletană"
         ],
-        "tip": "Quiche-urile sunt proaspete zilnic și merg de minune cu o bere artizanală locală (Mustață sau Czell).",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "tipografia.jpg"
+        "tip": "Au 3 locații: Mureșenilor, AFI Brașov, Poiana Brașov (Swissotel).",
+        "hours": "12:00–23:00",
+        "image": "artegianale.jpg"
       },
-      "deans_pub": {
-        "id": "deans_pub",
-        "name": "Dean's Irish Pub & Grill",
-        "shortDescription": "Pub irlandez cu burgeri excelenți, coaste de porc și o atmosferă vibrantă.",
-        "description": "Dean's Pub este inima vie a străzii Republicii. Un pub autentic cu mâncare casual delicioasă, porții generoase de burgeri, coaste glazurate, pește cu cartofi prăjiți (fish & chips) și bere rece la draft.",
-        "address": "Strada Republicii nr. 19, Brașov",
+      "juno_wine": {
+        "id": "juno_wine",
+        "name": "Juno Wine Garden",
+        "cuisine": "Italiană-Mediteraneană",
+        "shortDescription": "Grădină magică între zidurile cetății – vinuri, pizza pe vatră, atmosferă de basm.",
+        "description": "Amenajată între zidurile de incintă ale cetății. Vinuri locale și internaționale, pizza pe vatră, focaccia. Atmosferă magică cu copaci și muzică. Sezonier: primăvara-toamna.",
+        "address": "Aleea După Ziduri, Brașov",
+        "coordinates": {
+          "lat": 45.643,
+          "lng": 25.586
+        },
+        "priceRange": "80–150 lei",
+        "tags": [
+          "wine garden",
+          "ziduri cetate",
+          "pizza",
+          "romantic",
+          "sezonier"
+        ],
+        "tip": "Deschis doar primăvara-toamna! Magic seara cu luminițe.",
+        "hours": "16:00–00:00 (sezonier)",
+        "image": "juno_wine.jpg"
+      },
+      "vino_e_sapori": {
+        "id": "vino_e_sapori",
+        "name": "Vino e Sapori",
+        "cuisine": "Italiană-Mediteraneană",
+        "shortDescription": "Restaurant premium mediteranean – vinuri italiene și românești, preparate rafinate.",
+        "description": "Vino e Sapori combină vinuri italiene și românești cu preparate mediteraneene rafinate. Cadru elegant, ingrediente de calitate superioară, selecție de vinuri atent curatoriată.",
+        "address": "Centru, Brașov",
+        "coordinates": {
+          "lat": 45.642,
+          "lng": 25.5885
+        },
+        "priceRange": "Peste 150 lei",
+        "tags": [
+          "mediteranean premium",
+          "vinuri",
+          "rafinat",
+          "italian"
+        ],
+        "tip": "Solicită recomandarea de vin de la sommelier pentru a completa experiența.",
+        "hours": "12:00–23:00",
+        "image": "vino_e_sapori.jpg"
+      },
+      "old_jack": {
+        "id": "old_jack",
+        "name": "Old Jack Burger House",
+        "cuisine": "Street food-Casual",
+        "shortDescription": "Burgeri suculenți pe grătar în Piața Sfatului – rapid, bun, accesibil.",
+        "description": "Destinația pentru burgeri în Piața Sfatului. Burgeri pe grătar, cartofi crocanți, atmosferă casual. Masă rapidă dar satisfăcătoare.",
+        "address": "Piața Sfatului, Brașov",
+        "coordinates": {
+          "lat": 45.6428,
+          "lng": 25.5885
+        },
+        "priceRange": "Sub 40 lei",
+        "tags": [
+          "burgeri",
+          "Piața Sfatului",
+          "casual",
+          "rapid"
+        ],
+        "tip": "Burgerul clasic cu bacon și cheddar e cel mai cerut.",
+        "hours": "10:00–22:00",
+        "image": "old_jack.jpg"
+      },
+      "vivo_food": {
+        "id": "vivo_food",
+        "name": "VIVO Food Bar",
+        "cuisine": "Street food-Casual",
+        "shortDescription": "Burgeri creativi, cartofi excelenți, opțiuni vegetariene – urban și rapid.",
+        "description": "Burgeri suculenți cu combinații creative, cartofi prăjiți excelenți și opțiuni vegetariene/vegane. Atmosferă urbană. Adesea aglomerat – rezervare recomandată.",
+        "address": "Str. Nicolae Bălcescu nr. 62, Brașov",
+        "coordinates": {
+          "lat": 45.6475,
+          "lng": 25.5935
+        },
+        "priceRange": "Sub 40 lei",
+        "tags": [
+          "burgeri creativi",
+          "vegetarian",
+          "urban",
+          "cartofi trufe"
+        ],
+        "tip": "Cartofi prăjiți cu trufe – must try! Au și opțiuni vegane.",
+        "hours": "11:00–22:00",
+        "image": "vivo_food.jpg"
+      },
+      "street_food_lab": {
+        "id": "street_food_lab",
+        "name": "Street Food Lab",
+        "cuisine": "Street food-Casual",
+        "shortDescription": "Street food creativ în centrul istoric – wrap-uri, bowluri, snackuri sănătoase.",
+        "description": "Mâncare de stradă creativă și sănătoasă în centrul istoric. Wrap-uri, bowluri, burgeri, snackuri. Prețuri foarte accesibile. Pauză rapidă între vizite.",
+        "address": "Str. Republicii, Brașov",
+        "coordinates": {
+          "lat": 45.644,
+          "lng": 25.5915
+        },
+        "priceRange": "Sub 40 lei",
+        "tags": [
+          "street food",
+          "sănătos",
+          "bowluri",
+          "rapid",
+          "centru"
+        ],
+        "tip": "Perfect pentru pauza de prânz rapidă între obiectivele turistice.",
+        "hours": "10:00–21:00",
+        "image": "street_food_lab.jpg"
+      },
+      "simone": {
+        "id": "simone",
+        "name": "Simone",
+        "cuisine": "Street food-Casual",
+        "shortDescription": "Mâncare rapidă gustoasă – meniuri variate, opțiuni vegane și vegetariene, accesibil.",
+        "description": "Simone este popular pentru mâncare rapidă și gustoasă: meniuri variate, opțiuni vegetariene și vegane. Servire rapidă, prețuri accesibile, atmosferă casual.",
+        "address": "Centru, Brașov",
+        "coordinates": {
+          "lat": 45.644,
+          "lng": 25.591
+        },
+        "priceRange": "Sub 40 lei",
+        "tags": [
+          "rapid",
+          "vegan",
+          "vegetarian",
+          "accesibil",
+          "casual"
+        ],
+        "tip": "Opțiunile vegane sunt surprinzător de bune. Prânz rapid ideal.",
+        "hours": "09:00–21:00",
+        "image": "simone.jpg"
+      },
+      "kasho_lounge": {
+        "id": "kasho_lounge",
+        "name": "Kasho Lounge",
+        "cuisine": "Street food-Casual",
+        "shortDescription": "Lounge casual cu burgeri, paste, cocktailuri – atmosferă relaxată, prețuri corecte.",
+        "description": "Kasho Lounge e un loc casual cu mâncare bună la prețuri decente. Cunoscut pentru burgeri și preparate internaționale. Atmosferă relaxată, muzică bună.",
+        "address": "Centru, Brașov",
         "coordinates": {
           "lat": 45.6435,
           "lng": 25.5905
         },
-        "duration": "2 ore",
-        "difficulty": "Ușor",
+        "priceRange": "40–80 lei",
         "tags": [
+          "lounge",
+          "burgeri",
+          "casual",
+          "cocktailuri",
+          "muzică"
+        ],
+        "tip": "Seara atmosfera de lounge cu muzică e foarte plăcută.",
+        "hours": "11:00–00:00",
+        "image": "kasho_lounge.jpg"
+      },
+      "pofta_sau_foame": {
+        "id": "pofta_sau_foame",
+        "name": "Berăria Poftă sau Foame",
+        "cuisine": "Street food-Casual",
+        "shortDescription": "Berărie cu mâncare consistentă – burgeri, coaste, aripioare, bere artizanală.",
+        "description": "Berărie cu meniu de pub: burgeri, coaste, aripioare, platouri de bere. Selecție de beri artizanale și de import. Atmosferă de pub englezesc, porții mari.",
+        "address": "Brașov",
+        "coordinates": {
+          "lat": 45.6445,
+          "lng": 25.5925
+        },
+        "priceRange": "40–80 lei",
+        "tags": [
+          "berărie",
           "pub",
           "burgeri",
-          "casual",
-          "bere",
-          "grupuri"
+          "coaste",
+          "bere artizanală"
         ],
-        "tip": "Încearcă Burgerul clasic Dean's cu cartofi condimentați calzi. Atmosfera de seară în grup este fantastică.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "deans_pub.jpg"
+        "tip": "Platoul de coaste cu bere artizanală e combinația perfectă.",
+        "hours": "12:00–00:00",
+        "image": "pofta_sau_foame.jpg"
       },
-      "cartofisserie": {
-        "id": "cartofisserie",
-        "name": "Cartofisserie – Street Food rapid",
-        "shortDescription": "Cei mai buni cartofi prăjiți din cartofi proaspeți, cu toppinguri calde de brânză.",
-        "description": "Dacă vrei o gustare super rapidă și delicioasă în timp ce explorezi orașul vechi pe jos, Cartofisserie oferă cartofi prăjiți belgieni fierbinți cu o varietate de sosuri aromate gourmet.",
-        "address": "Strada Republicii nr. 6, Brașov",
+      "deane_pub": {
+        "id": "deane_pub",
+        "name": "Deane's Irish Pub & Grill",
+        "cuisine": "Street food-Casual",
+        "shortDescription": "Pub irlandez autentic – burgeri, fish & chips, steak, bere Guinness, atmosferă vie.",
+        "description": "Pub irlandez cu meniu de pub food: burgeri premium, fish & chips, steakuri. Bere Guinness la draft, whiskey, cocktailuri. Atmosferă vie cu muzică.",
+        "address": "Str. Republicii nr. 19, Brașov",
         "coordinates": {
-          "lat": 45.6428,
-          "lng": 25.5892
+          "lat": 45.6442,
+          "lng": 25.5915
         },
-        "duration": "20 minute",
-        "difficulty": "Ușor",
+        "priceRange": "40–80 lei",
         "tags": [
-          "street food",
-          "cartofi prăjiți",
-          "rapid",
-          "ieftin",
-          "sosuri"
+          "pub",
+          "irish",
+          "burgeri premium",
+          "Guinness",
+          "fish&chips"
         ],
-        "tip": "Adaugă topping cald de brânză Cheddar topită! Ideal de luat la pachet în timp ce te plimbi.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "cartofisserie.jpg"
+        "tip": "Fish & Chips-ul e autentic. Guinness la draft – ca în Irlanda.",
+        "hours": "12:00–02:00",
+        "image": "deane_pub.jpg"
       },
-      "monark": {
-        "id": "monark",
-        "name": "Monark – Fine Dining & Fusion",
-        "shortDescription": "Restaurant exclusivist cu un design rafinat și meniuri gastronomice de lux.",
-        "description": "Monark este o destinație gourmet de lux din Brașov. O bucătărie fusion modernă care îmbină ingrediente exotice cu tehnici avangardiste, totul într-un cadru intim și excepțional.",
-        "address": "Strada Dealul Morii nr. 7, Brașov",
+      "gastropub_casual": {
+        "id": "gastropub_casual",
+        "name": "Oficiul de Degustare",
+        "cuisine": "Street food-Casual",
+        "shortDescription": "Gastropub cu mâncare comfort food, cocktailuri creative și bere craft.",
+        "description": "Gastropub modern cu comfort food de calitate: burgeri gourmet, platouri, snackuri premium. Cocktailuri creative și selecție de bere craft. Atmosferă casual-premium.",
+        "address": "Centru, Brașov",
         "coordinates": {
-          "lat": 45.655,
-          "lng": 25.598
+          "lat": 45.644,
+          "lng": 25.592
         },
-        "duration": "2-3 ore",
-        "difficulty": "Premium",
+        "priceRange": "80–150 lei",
         "tags": [
-          "fine dining",
-          "lux",
-          "fusion",
-          "exclusiv",
-          "premium"
+          "gastropub",
+          "comfort food",
+          "craft beer",
+          "cocktailuri",
+          "premium casual"
         ],
-        "tip": "Perfect pentru o cină romantică selectă. Rezervarea prealabilă este esențială.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "monark.jpg"
-      },
-      "albert_bistro": {
-        "id": "albert_bistro",
-        "name": "Albert Bistro – Elegant Confort Food",
-        "shortDescription": "Bistro elegant cu un ambient șic parizian și preparate internaționale selecte.",
-        "description": "Albert Bistro oferă o atmosferă caldă și oază de relaxare pe strada principală pietonală. Meniul conține clasice internaționale pregătite cu ingrediente de înaltă calitate și deserturi rafinate.",
-        "address": "Strada Republicii nr. 38, Brașov",
-        "coordinates": {
-          "lat": 45.6441,
-          "lng": 25.5912
-        },
-        "duration": "2 ore",
-        "difficulty": "Moderat",
-        "tags": [
-          "bistro",
-          "internațional",
-          "romantic",
-          "confort food",
-          "elegant"
-        ],
-        "tip": "Locurile de la etaj de la geam sunt minunate pentru cupluri și oferă o vedere superbă asupra pietonalei.",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "albert_bistro.jpg"
-      },
-      "social_pub": {
-        "id": "social_pub",
-        "name": "Social Pub – Casual Pizza & Grill",
-        "shortDescription": "Pub urban modern foarte iubit de localnici, cu pizza cu crustă crocantă și burgeri.",
-        "description": "Social Pub este recunoscut pentru designul tineresc, atmosfera primitoare și porțiile generoase de pizza crocantă, burgeri suculenți și limonade uriașe, totul la un preț excelent.",
-        "address": "Bulevardul Eroilor nr. 29, Brașov",
-        "coordinates": {
-          "lat": 45.645,
-          "lng": 25.593
-        },
-        "duration": "2 ore",
-        "difficulty": "Ușor",
-        "tags": [
-          "casual",
-          "pizza",
-          "burgeri",
-          "limonade",
-          "grupuri"
-        ],
-        "tip": "Limonadele mari cu mentă și fructe proaspete sunt incredibile vara pe terasă. Porții mari de pizza!",
-        "bestSeason": [
-          "toate anotimpurile"
-        ],
-        "image": "social_pub.jpg"
+        "tip": "Burgerul gourmet cu bluecheese e o experiență. Cocktailurile sunt creative.",
+        "hours": "12:00–00:00",
+        "image": "gastropub_casual.jpg"
       }
     },
     "results": {
@@ -2812,32 +1104,32 @@
         },
         "recommendations": [
           "la_ceaun",
-          "cartofisserie",
-          "social_pub"
+          "haplea",
+          "ceasu_rau"
         ]
       },
       "a-a-b": {
         "combination": {
           "q1": "Tradițională",
           "q2": "Singur",
-          "q3": "40-80 lei"
+          "q3": "40–80 lei"
         },
         "recommendations": [
-          "la_ceaun",
           "sergiana",
-          "dei_frati"
+          "ograda",
+          "pilvax"
         ]
       },
       "a-a-c": {
         "combination": {
           "q1": "Tradițională",
           "q2": "Singur",
-          "q3": "80-150 lei"
+          "q3": "80–150 lei"
         },
         "recommendations": [
-          "sergiana",
-          "ograda",
-          "sub_tampa"
+          "sub_tampa_rest",
+          "pilvax",
+          "sergiana"
         ]
       },
       "a-a-d": {
@@ -2847,9 +1139,9 @@
           "q3": "Peste 150 lei"
         },
         "recommendations": [
-          "sub_tampa",
-          "ograda",
-          "monark"
+          "panoramic",
+          "sub_tampa_rest",
+          "bella_muzica"
         ]
       },
       "a-b-a": {
@@ -2860,32 +1152,32 @@
         },
         "recommendations": [
           "la_ceaun",
-          "cartofisserie",
-          "social_pub"
+          "haplea",
+          "ceasu_rau"
         ]
       },
       "a-b-b": {
         "combination": {
           "q1": "Tradițională",
           "q2": "Cuplu",
-          "q3": "40-80 lei"
+          "q3": "40–80 lei"
         },
         "recommendations": [
-          "la_ceaun",
+          "pilvax",
           "sergiana",
-          "dei_frati"
+          "bella_muzica"
         ]
       },
       "a-b-c": {
         "combination": {
           "q1": "Tradițională",
           "q2": "Cuplu",
-          "q3": "80-150 lei"
+          "q3": "80–150 lei"
         },
         "recommendations": [
-          "sergiana",
-          "ograda",
-          "sub_tampa"
+          "sub_tampa_rest",
+          "pilvax",
+          "ograda"
         ]
       },
       "a-b-d": {
@@ -2895,9 +1187,9 @@
           "q3": "Peste 150 lei"
         },
         "recommendations": [
-          "sub_tampa",
-          "ograda",
-          "monark"
+          "panoramic",
+          "sub_tampa_rest",
+          "bella_muzica"
         ]
       },
       "a-c-a": {
@@ -2907,33 +1199,33 @@
           "q3": "Sub 40 lei"
         },
         "recommendations": [
+          "ceasu_rau",
           "la_ceaun",
-          "cartofisserie",
-          "social_pub"
+          "haplea"
         ]
       },
       "a-c-b": {
         "combination": {
           "q1": "Tradițională",
           "q2": "Grup",
-          "q3": "40-80 lei"
+          "q3": "40–80 lei"
         },
         "recommendations": [
-          "la_ceaun",
           "sergiana",
-          "dei_frati"
+          "bella_muzica",
+          "casa_tudor"
         ]
       },
       "a-c-c": {
         "combination": {
           "q1": "Tradițională",
           "q2": "Grup",
-          "q3": "80-150 lei"
+          "q3": "80–150 lei"
         },
         "recommendations": [
+          "sub_tampa_rest",
           "sergiana",
-          "ograda",
-          "sub_tampa"
+          "pilvax"
         ]
       },
       "a-c-d": {
@@ -2943,9 +1235,9 @@
           "q3": "Peste 150 lei"
         },
         "recommendations": [
-          "sub_tampa",
-          "ograda",
-          "monark"
+          "panoramic",
+          "sub_tampa_rest",
+          "sergiana"
         ]
       },
       "a-d-a": {
@@ -2955,33 +1247,33 @@
           "q3": "Sub 40 lei"
         },
         "recommendations": [
-          "la_ceaun",
-          "cartofisserie",
-          "social_pub"
+          "haplea",
+          "ceasu_rau",
+          "la_ceaun"
         ]
       },
       "a-d-b": {
         "combination": {
           "q1": "Tradițională",
           "q2": "Familie",
-          "q3": "40-80 lei"
+          "q3": "40–80 lei"
         },
         "recommendations": [
-          "la_ceaun",
           "sergiana",
-          "dei_frati"
+          "ograda",
+          "casa_tudor"
         ]
       },
       "a-d-c": {
         "combination": {
           "q1": "Tradițională",
           "q2": "Familie",
-          "q3": "80-150 lei"
+          "q3": "80–150 lei"
         },
         "recommendations": [
-          "sergiana",
-          "ograda",
-          "sub_tampa"
+          "sub_tampa_rest",
+          "casa_tudor",
+          "sergiana"
         ]
       },
       "a-d-d": {
@@ -2991,9 +1283,9 @@
           "q3": "Peste 150 lei"
         },
         "recommendations": [
-          "sub_tampa",
-          "ograda",
-          "monark"
+          "panoramic",
+          "sub_tampa_rest",
+          "sergiana"
         ]
       },
       "b-a-a": {
@@ -3003,33 +1295,33 @@
           "q3": "Sub 40 lei"
         },
         "recommendations": [
-          "tipografia",
-          "cartofisserie",
-          "la_ceaun"
+          "fract",
+          "dze_best",
+          "albert_social"
         ]
       },
       "b-a-b": {
         "combination": {
           "q1": "Internațională-Fusion",
           "q2": "Singur",
-          "q3": "40-80 lei"
+          "q3": "40–80 lei"
         },
         "recommendations": [
-          "pilvax",
-          "albert_bistro",
-          "tipografia"
+          "le_petit_bistro",
+          "wagners_loft",
+          "albert_social"
         ]
       },
       "b-a-c": {
         "combination": {
           "q1": "Internațională-Fusion",
           "q2": "Singur",
-          "q3": "80-150 lei"
+          "q3": "80–150 lei"
         },
         "recommendations": [
-          "bistro_de_l_arte",
-          "albert_bistro",
-          "pilvax"
+          "bloom",
+          "terroirs",
+          "le_petit_bistro"
         ]
       },
       "b-a-d": {
@@ -3039,9 +1331,9 @@
           "q3": "Peste 150 lei"
         },
         "recommendations": [
-          "monark",
-          "bistro_de_l_arte",
-          "prato"
+          "belvedere",
+          "bloom",
+          "terroirs"
         ]
       },
       "b-b-a": {
@@ -3051,33 +1343,33 @@
           "q3": "Sub 40 lei"
         },
         "recommendations": [
-          "tipografia",
-          "cartofisserie",
-          "la_ceaun"
+          "dze_best",
+          "fract",
+          "albert_social"
         ]
       },
       "b-b-b": {
         "combination": {
           "q1": "Internațională-Fusion",
           "q2": "Cuplu",
-          "q3": "40-80 lei"
+          "q3": "40–80 lei"
         },
         "recommendations": [
-          "pilvax",
-          "albert_bistro",
-          "tipografia"
+          "bistro_de_larte",
+          "le_petit_bistro",
+          "wagners_loft"
         ]
       },
       "b-b-c": {
         "combination": {
           "q1": "Internațională-Fusion",
           "q2": "Cuplu",
-          "q3": "80-150 lei"
+          "q3": "80–150 lei"
         },
         "recommendations": [
-          "bistro_de_l_arte",
-          "albert_bistro",
-          "pilvax"
+          "terroirs",
+          "bloom",
+          "bistro_de_larte"
         ]
       },
       "b-b-d": {
@@ -3087,9 +1379,9 @@
           "q3": "Peste 150 lei"
         },
         "recommendations": [
-          "monark",
-          "bistro_de_l_arte",
-          "prato"
+          "belvedere",
+          "bloom",
+          "terroirs"
         ]
       },
       "b-c-a": {
@@ -3099,33 +1391,33 @@
           "q3": "Sub 40 lei"
         },
         "recommendations": [
-          "tipografia",
-          "cartofisserie",
-          "la_ceaun"
+          "dze_best",
+          "fract",
+          "albert_social"
         ]
       },
       "b-c-b": {
         "combination": {
           "q1": "Internațională-Fusion",
           "q2": "Grup",
-          "q3": "40-80 lei"
+          "q3": "40–80 lei"
         },
         "recommendations": [
-          "pilvax",
-          "albert_bistro",
-          "tipografia"
+          "wagners_loft",
+          "bistro_de_larte",
+          "albert_social"
         ]
       },
       "b-c-c": {
         "combination": {
           "q1": "Internațională-Fusion",
           "q2": "Grup",
-          "q3": "80-150 lei"
+          "q3": "80–150 lei"
         },
         "recommendations": [
-          "bistro_de_l_arte",
-          "albert_bistro",
-          "pilvax"
+          "bloom",
+          "terroirs",
+          "wagners_loft"
         ]
       },
       "b-c-d": {
@@ -3135,9 +1427,9 @@
           "q3": "Peste 150 lei"
         },
         "recommendations": [
-          "monark",
-          "bistro_de_l_arte",
-          "prato"
+          "belvedere",
+          "bloom",
+          "terroirs"
         ]
       },
       "b-d-a": {
@@ -3147,33 +1439,33 @@
           "q3": "Sub 40 lei"
         },
         "recommendations": [
-          "tipografia",
-          "cartofisserie",
-          "la_ceaun"
+          "fract",
+          "dze_best",
+          "albert_social"
         ]
       },
       "b-d-b": {
         "combination": {
           "q1": "Internațională-Fusion",
           "q2": "Familie",
-          "q3": "40-80 lei"
+          "q3": "40–80 lei"
         },
         "recommendations": [
-          "pilvax",
-          "albert_bistro",
-          "tipografia"
+          "wagners_loft",
+          "albert_social",
+          "le_petit_bistro"
         ]
       },
       "b-d-c": {
         "combination": {
           "q1": "Internațională-Fusion",
           "q2": "Familie",
-          "q3": "80-150 lei"
+          "q3": "80–150 lei"
         },
         "recommendations": [
-          "bistro_de_l_arte",
-          "albert_bistro",
-          "pilvax"
+          "bloom",
+          "wagners_loft",
+          "albert_social"
         ]
       },
       "b-d-d": {
@@ -3183,9 +1475,9 @@
           "q3": "Peste 150 lei"
         },
         "recommendations": [
-          "monark",
-          "bistro_de_l_arte",
-          "prato"
+          "belvedere",
+          "bloom",
+          "wagners_loft"
         ]
       },
       "c-a-a": {
@@ -3195,33 +1487,33 @@
           "q3": "Sub 40 lei"
         },
         "recommendations": [
-          "cucinino",
-          "cartofisserie",
-          "social_pub"
+          "della_nonna",
+          "al_centro",
+          "antreu_focaccerie"
         ]
       },
       "c-a-b": {
         "combination": {
           "q1": "Italiană-Mediteraneană",
           "q2": "Singur",
-          "q3": "40-80 lei"
+          "q3": "40–80 lei"
         },
         "recommendations": [
-          "cucinino",
           "dei_frati",
-          "social_pub"
+          "cucinino",
+          "amo_brasov"
         ]
       },
       "c-a-c": {
         "combination": {
           "q1": "Italiană-Mediteraneană",
           "q2": "Singur",
-          "q3": "80-150 lei"
+          "q3": "80–150 lei"
         },
         "recommendations": [
-          "dei_frati",
-          "prato",
-          "cucinino"
+          "artegianale",
+          "juno_wine",
+          "trattoria_pocol"
         ]
       },
       "c-a-d": {
@@ -3231,9 +1523,9 @@
           "q3": "Peste 150 lei"
         },
         "recommendations": [
-          "prato",
-          "monark",
-          "dei_frati"
+          "vino_e_sapori",
+          "artegianale",
+          "juno_wine"
         ]
       },
       "c-b-a": {
@@ -3243,33 +1535,33 @@
           "q3": "Sub 40 lei"
         },
         "recommendations": [
-          "cucinino",
-          "cartofisserie",
-          "social_pub"
+          "della_nonna",
+          "al_centro",
+          "antreu_focaccerie"
         ]
       },
       "c-b-b": {
         "combination": {
           "q1": "Italiană-Mediteraneană",
           "q2": "Cuplu",
-          "q3": "40-80 lei"
+          "q3": "40–80 lei"
         },
         "recommendations": [
-          "cucinino",
           "dei_frati",
-          "social_pub"
+          "cucinino",
+          "trattoria_pocol"
         ]
       },
       "c-b-c": {
         "combination": {
           "q1": "Italiană-Mediteraneană",
           "q2": "Cuplu",
-          "q3": "80-150 lei"
+          "q3": "80–150 lei"
         },
         "recommendations": [
-          "dei_frati",
-          "prato",
-          "cucinino"
+          "artegianale",
+          "juno_wine",
+          "dei_frati"
         ]
       },
       "c-b-d": {
@@ -3279,9 +1571,9 @@
           "q3": "Peste 150 lei"
         },
         "recommendations": [
-          "prato",
-          "monark",
-          "dei_frati"
+          "vino_e_sapori",
+          "artegianale",
+          "juno_wine"
         ]
       },
       "c-c-a": {
@@ -3291,33 +1583,33 @@
           "q3": "Sub 40 lei"
         },
         "recommendations": [
-          "cucinino",
-          "cartofisserie",
-          "social_pub"
+          "della_nonna",
+          "al_centro",
+          "antreu_focaccerie"
         ]
       },
       "c-c-b": {
         "combination": {
           "q1": "Italiană-Mediteraneană",
           "q2": "Grup",
-          "q3": "40-80 lei"
+          "q3": "40–80 lei"
         },
         "recommendations": [
-          "cucinino",
+          "prato",
           "dei_frati",
-          "social_pub"
+          "amo_brasov"
         ]
       },
       "c-c-c": {
         "combination": {
           "q1": "Italiană-Mediteraneană",
           "q2": "Grup",
-          "q3": "80-150 lei"
+          "q3": "80–150 lei"
         },
         "recommendations": [
-          "dei_frati",
-          "prato",
-          "cucinino"
+          "artegianale",
+          "juno_wine",
+          "trattoria_pocol"
         ]
       },
       "c-c-d": {
@@ -3327,9 +1619,9 @@
           "q3": "Peste 150 lei"
         },
         "recommendations": [
-          "prato",
-          "monark",
-          "dei_frati"
+          "vino_e_sapori",
+          "artegianale",
+          "prato"
         ]
       },
       "c-d-a": {
@@ -3339,33 +1631,33 @@
           "q3": "Sub 40 lei"
         },
         "recommendations": [
-          "cucinino",
-          "cartofisserie",
-          "social_pub"
+          "della_nonna",
+          "al_centro",
+          "antreu_focaccerie"
         ]
       },
       "c-d-b": {
         "combination": {
           "q1": "Italiană-Mediteraneană",
           "q2": "Familie",
-          "q3": "40-80 lei"
+          "q3": "40–80 lei"
         },
         "recommendations": [
-          "cucinino",
+          "prato",
           "dei_frati",
-          "social_pub"
+          "amo_brasov"
         ]
       },
       "c-d-c": {
         "combination": {
           "q1": "Italiană-Mediteraneană",
           "q2": "Familie",
-          "q3": "80-150 lei"
+          "q3": "80–150 lei"
         },
         "recommendations": [
-          "dei_frati",
+          "artegianale",
           "prato",
-          "cucinino"
+          "dei_frati"
         ]
       },
       "c-d-d": {
@@ -3375,9 +1667,9 @@
           "q3": "Peste 150 lei"
         },
         "recommendations": [
-          "prato",
-          "monark",
-          "dei_frati"
+          "vino_e_sapori",
+          "artegianale",
+          "prato"
         ]
       },
       "d-a-a": {
@@ -3387,33 +1679,33 @@
           "q3": "Sub 40 lei"
         },
         "recommendations": [
-          "cartofisserie",
-          "tipografia",
-          "la_ceaun"
+          "street_food_lab",
+          "old_jack",
+          "simone"
         ]
       },
       "d-a-b": {
         "combination": {
           "q1": "Street food-Casual",
           "q2": "Singur",
-          "q3": "40-80 lei"
+          "q3": "40–80 lei"
         },
         "recommendations": [
-          "deans_pub",
-          "social_pub",
-          "tipografia"
+          "kasho_lounge",
+          "deane_pub",
+          "pofta_sau_foame"
         ]
       },
       "d-a-c": {
         "combination": {
           "q1": "Street food-Casual",
           "q2": "Singur",
-          "q3": "80-150 lei"
+          "q3": "80–150 lei"
         },
         "recommendations": [
-          "deans_pub",
-          "social_pub",
-          "albert_bistro"
+          "gastropub_casual",
+          "deane_pub",
+          "kasho_lounge"
         ]
       },
       "d-a-d": {
@@ -3423,9 +1715,9 @@
           "q3": "Peste 150 lei"
         },
         "recommendations": [
-          "monark",
-          "prato",
-          "sub_tampa"
+          "gastropub_casual",
+          "deane_pub",
+          "pofta_sau_foame"
         ]
       },
       "d-b-a": {
@@ -3435,33 +1727,33 @@
           "q3": "Sub 40 lei"
         },
         "recommendations": [
-          "cartofisserie",
-          "tipografia",
-          "la_ceaun"
+          "old_jack",
+          "vivo_food",
+          "simone"
         ]
       },
       "d-b-b": {
         "combination": {
           "q1": "Street food-Casual",
           "q2": "Cuplu",
-          "q3": "40-80 lei"
+          "q3": "40–80 lei"
         },
         "recommendations": [
-          "deans_pub",
-          "social_pub",
-          "tipografia"
+          "kasho_lounge",
+          "deane_pub",
+          "pofta_sau_foame"
         ]
       },
       "d-b-c": {
         "combination": {
           "q1": "Street food-Casual",
           "q2": "Cuplu",
-          "q3": "80-150 lei"
+          "q3": "80–150 lei"
         },
         "recommendations": [
-          "deans_pub",
-          "social_pub",
-          "albert_bistro"
+          "gastropub_casual",
+          "kasho_lounge",
+          "deane_pub"
         ]
       },
       "d-b-d": {
@@ -3471,9 +1763,9 @@
           "q3": "Peste 150 lei"
         },
         "recommendations": [
-          "monark",
-          "prato",
-          "sub_tampa"
+          "gastropub_casual",
+          "deane_pub",
+          "pofta_sau_foame"
         ]
       },
       "d-c-a": {
@@ -3483,33 +1775,33 @@
           "q3": "Sub 40 lei"
         },
         "recommendations": [
-          "cartofisserie",
-          "tipografia",
-          "la_ceaun"
+          "old_jack",
+          "vivo_food",
+          "street_food_lab"
         ]
       },
       "d-c-b": {
         "combination": {
           "q1": "Street food-Casual",
           "q2": "Grup",
-          "q3": "40-80 lei"
+          "q3": "40–80 lei"
         },
         "recommendations": [
-          "deans_pub",
-          "social_pub",
-          "tipografia"
+          "pofta_sau_foame",
+          "deane_pub",
+          "kasho_lounge"
         ]
       },
       "d-c-c": {
         "combination": {
           "q1": "Street food-Casual",
           "q2": "Grup",
-          "q3": "80-150 lei"
+          "q3": "80–150 lei"
         },
         "recommendations": [
-          "deans_pub",
-          "social_pub",
-          "albert_bistro"
+          "gastropub_casual",
+          "pofta_sau_foame",
+          "deane_pub"
         ]
       },
       "d-c-d": {
@@ -3519,9 +1811,9 @@
           "q3": "Peste 150 lei"
         },
         "recommendations": [
-          "monark",
-          "prato",
-          "sub_tampa"
+          "gastropub_casual",
+          "deane_pub",
+          "pofta_sau_foame"
         ]
       },
       "d-d-a": {
@@ -3531,33 +1823,33 @@
           "q3": "Sub 40 lei"
         },
         "recommendations": [
-          "cartofisserie",
-          "tipografia",
-          "la_ceaun"
+          "old_jack",
+          "simone",
+          "vivo_food"
         ]
       },
       "d-d-b": {
         "combination": {
           "q1": "Street food-Casual",
           "q2": "Familie",
-          "q3": "40-80 lei"
+          "q3": "40–80 lei"
         },
         "recommendations": [
-          "deans_pub",
-          "social_pub",
-          "tipografia"
+          "kasho_lounge",
+          "pofta_sau_foame",
+          "deane_pub"
         ]
       },
       "d-d-c": {
         "combination": {
           "q1": "Street food-Casual",
           "q2": "Familie",
-          "q3": "80-150 lei"
+          "q3": "80–150 lei"
         },
         "recommendations": [
-          "deans_pub",
-          "social_pub",
-          "albert_bistro"
+          "gastropub_casual",
+          "kasho_lounge",
+          "pofta_sau_foame"
         ]
       },
       "d-d-d": {
@@ -3567,9 +1859,9 @@
           "q3": "Peste 150 lei"
         },
         "recommendations": [
-          "monark",
-          "prato",
-          "sub_tampa"
+          "gastropub_casual",
+          "deane_pub",
+          "pofta_sau_foame"
         ]
       }
     }

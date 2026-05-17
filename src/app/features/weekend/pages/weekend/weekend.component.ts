@@ -72,7 +72,7 @@ interface Recommendation {
           <section class="interaction-grid">
             @for (cat of categories; track $index) {
               <div class="grid-card" [style.background]="cat.color" [style.box-shadow]="cat.shadow" (click)="pickCategory(cat)">
-                <span class="material-icons card-bg-icon">{{ cat.icon }}</span>
+                <span class="material-icons card-bg-icon">{{ getIcon(cat.icon) }}</span>
                 <span class="card-title">{{ cat.name }}</span>
               </div>
             }
@@ -110,7 +110,7 @@ interface Recommendation {
               @for (opt of activeCategory()?.questions?.[step() - 1]?.options; track $index) {
                 <button class="answer-btn" [style.border-color]="activeCategory()?.color" (click)="answer(opt.label)">
                   <div class="answer-left">
-                    <span class="material-icons opt-icon" [style.color]="activeCategory()?.color">{{ opt.icon }}</span>
+                    <span class="material-icons opt-icon" [style.color]="activeCategory()?.color">{{ getIcon(opt.icon) }}</span>
                     <span class="answer-label">{{ opt.label }}</span>
                   </div>
                   <span class="material-icons answer-arrow" [style.color]="activeCategory()?.color">east</span>
@@ -653,34 +653,34 @@ export class WeekendComponent implements AfterViewInit {
       ]
     },
     {
-      id: 'restaurante', name: 'Restaurante', icon: 'restaurant',
+      id: 'restaurante', name: 'Restaurante', icon: 'utensils',
       color: '#ff4500', shadow: '0 10px 20px rgba(255,69,0,0.15)',
       questions: [
         { 
-          id: 'mancare', text: 'Ce tip de mâncare preferi?', 
+          id: 'q1', text: 'Ce tip de mâncare preferi?', 
           options: [
-            { label: 'Tradițională', icon: 'restaurant' },
-            { label: 'Internațională-Fusion', icon: 'public' },
-            { label: 'Italiană-Mediteraneană', icon: 'dinner_dining' },
-            { label: 'Street food-Casual', icon: 'fastfood' }
+            { label: 'Tradițională', icon: 'bowl-food' },
+            { label: 'Internațională-Fusion', icon: 'globe' },
+            { label: 'Italiană-Mediteraneană', icon: 'pizza-slice' },
+            { label: 'Street food-Casual', icon: 'burger' }
           ] 
         },
         { 
-          id: 'grup', text: 'Cu cine ești?', 
+          id: 'q2', text: 'Cu cine ești?', 
           options: [
             { label: 'Singur', icon: 'person' },
-            { label: 'Cuplu', icon: 'favorite' },
-            { label: 'Grup', icon: 'groups' },
-            { label: 'Familie', icon: 'family_restroom' }
+            { label: 'Cuplu', icon: 'heart' },
+            { label: 'Grup', icon: 'people-group' },
+            { label: 'Familie', icon: 'family' }
           ] 
         },
         { 
-          id: 'buget', text: 'Ce buget ai?', 
+          id: 'q3', text: 'Ce buget ai?', 
           options: [
-            { label: 'Sub 40 lei', icon: 'payments' },
-            { label: '40-80 lei', icon: 'local_atm' },
-            { label: '80-150 lei', icon: 'savings' },
-            { label: 'Peste 150 lei', icon: 'diamond' }
+            { label: 'Sub 40 lei', icon: 'coins' },
+            { label: '40–80 lei', icon: 'wallet' },
+            { label: '80–150 lei', icon: 'gem' },
+            { label: 'Peste 150 lei', icon: 'crown' }
           ] 
         }
       ]
@@ -884,6 +884,25 @@ export class WeekendComponent implements AfterViewInit {
 
   splitText(text: string): string[][] {
     return text.split(' ').map(word => word.split(''));
+  }
+
+  getIcon(iconName: string): string {
+    const iconMap: { [key: string]: string } = {
+      'bowl-food': 'soup_kitchen',
+      'globe': 'public',
+      'pizza-slice': 'local_pizza',
+      'burger': 'lunch_dining',
+      'person': 'person',
+      'heart': 'favorite',
+      'people-group': 'groups',
+      'family': 'family_restroom',
+      'coins': 'payments',
+      'wallet': 'wallet',
+      'gem': 'diamond',
+      'crown': 'workspace_premium',
+      'utensils': 'restaurant'
+    };
+    return iconMap[iconName] || iconName;
   }
 
   private animateIn() {
