@@ -526,6 +526,20 @@ export class BusProgramComponent implements OnInit {
           if (res?.[0]) this.userLocationName.set(res[0].formatted_address.split(',')[0]);
         });
       }
+
+      // Automatically calculate route if we already have a destination loaded!
+      if (this.destination()) {
+        this.calculateRoute();
+      }
+    }, err => {
+      console.warn('Geolocation denied or timed out. Falling back to default center [Brasov Center] for routing tests.');
+      const fallbackPos = { lat: 45.6483, lng: 25.5891 };
+      this.userCoords.set(fallbackPos);
+      this.map.setCenter([fallbackPos.lng, fallbackPos.lat]);
+      
+      if (this.destination()) {
+        this.calculateRoute();
+      }
     });
   }
 
