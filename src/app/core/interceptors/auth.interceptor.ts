@@ -4,11 +4,11 @@ import { HttpInterceptorFn } from '@angular/common/http';
  * Functional HTTP interceptor that attaches the JWT access token
  * to every outgoing request targeting `/api/`.
  *
- * The token is read from sessionStorage where AuthService persists it.
+ * The token is read from localStorage where AuthService persists it.
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   // Only attach token to our backend API calls
-  if (!req.url.startsWith('/api/')) {
+  if (!req.url.includes('/api/')) {
     return next(req);
   }
 
