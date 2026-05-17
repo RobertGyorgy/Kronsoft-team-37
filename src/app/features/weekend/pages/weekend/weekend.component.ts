@@ -617,7 +617,8 @@ export class WeekendComponent implements AfterViewInit {
           options: [
             { label: '1-2 ore', icon: 'schedule' },
             { label: 'Jumătate de zi', icon: 'wb_sunny' },
-            { label: 'O zi', icon: 'event_available' }
+            { label: 'O zi', icon: 'event_available' },
+            { label: 'Un weekend', icon: 'date_range' }
           ] 
         }
       ]

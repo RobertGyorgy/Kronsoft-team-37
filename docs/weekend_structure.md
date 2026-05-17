@@ -21,6 +21,7 @@ Acest document conține ierarhia completă a categoriilor, întrebărilor și op
     *   1-2 ore (`schedule`)
     *   Jumătate de zi (`wb_sunny`)
     *   O zi (`event_available`)
+    *   Un weekend (`date_range`)
 
 ---
 
