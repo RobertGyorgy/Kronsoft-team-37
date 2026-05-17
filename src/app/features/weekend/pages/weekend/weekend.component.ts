@@ -834,15 +834,32 @@ export class WeekendComponent implements AfterViewInit {
           this.view.set('results');
           
           setTimeout(() => {
-            gsap.from('.result-card', {
-              y: 40,
-              opacity: 0,
-              duration: 0.8,
-              stagger: 0.15,
-              ease: 'power3.out',
-              clearProps: 'all'
-            });
-          }, 50);
+            const cards = document.querySelectorAll('.result-card');
+            if (cards.length > 0) {
+              gsap.from(cards, {
+                y: 40,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.15,
+                ease: 'power3.out',
+                clearProps: 'all'
+              });
+            } else {
+              requestAnimationFrame(() => {
+                const retryCards = document.querySelectorAll('.result-card');
+                if (retryCards.length > 0) {
+                  gsap.from(retryCards, {
+                    y: 40,
+                    opacity: 0,
+                    duration: 0.8,
+                    stagger: 0.15,
+                    ease: 'power3.out',
+                    clearProps: 'all'
+                  });
+                }
+              });
+            }
+          }, 100);
         }, 10);
       });
     } catch (err: any) {
