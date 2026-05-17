@@ -8,6 +8,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const OTP_BASE_URL = process.env.OTP_URL || 'http://localhost:8080/otp/routers/default';
+const GTFS_DATA_PATH = process.env.GTFS_DATA_PATH || path.resolve(__dirname, '../public/gtfs_transit_data.json');
+
 // --- Load .env manually for AI Keys ---
 const envPath = path.resolve(__dirname, '../.env');
 const env = {};
@@ -207,16 +210,19 @@ app.post('/api/v1/reports', (req, res) => {
 // --- TRANSIT DATA ENDPOINT ---
 app.get('/api/v1/transit/data', async (req, res) => {
     try {
-        // Try to load from the root of the project or current folder
-        const fs = require('fs');
-        const path = require('path');
-        const dataPath = path.resolve(__dirname, '../public/gtfs_transit_data.json');
+        const dataPath = GTFS_DATA_PATH;
         
         if (fs.existsSync(dataPath)) {
             const data = fs.readFileSync(dataPath, 'utf8');
             res.json(JSON.parse(data));
         } else {
-            res.status(404).json({ error: 'Transit data not found' });
+            // Also search inside current folder as absolute fallback if mounted locally
+            const localFallbackPath = path.resolve(__dirname, 'gtfs_transit_data.json');
+            if (fs.existsSync(localFallbackPath)) {
+                const data = fs.readFileSync(localFallbackPath, 'utf8');
+                return res.json(JSON.parse(data));
+            }
+            res.status(404).json({ error: 'Transit data not found inside Docker. Make sure to mount public folder or set GTFS_DATA_PATH.' });
         }
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -237,7 +243,7 @@ app.post('/api/v1/routing/plan', async (req, res) => {
         const dateStr = now.toISOString().split('T')[0];
         const timeStr = `${now.getHours()}:${now.getMinutes()}`;
         
-        const otpUrl = `http://localhost:8080/otp/routers/default/plan`;
+        const otpUrl = `${OTP_BASE_URL}/plan`;
         const response = await axios.get(otpUrl, {
             params: {
                 fromPlace: `${fromLat},${fromLon}`,

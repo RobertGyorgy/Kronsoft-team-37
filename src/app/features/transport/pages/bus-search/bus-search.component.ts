@@ -460,7 +460,11 @@ export class BusSearchComponent implements OnInit, OnDestroy {
       center: center,
       zoom: initialCoords ? 16 : 14,
       maxBounds: bounds,
-      attributionControl: false
+      attributionControl: false,
+      pitch: 0,
+      bearing: 0,
+      pitchWithRotate: false,
+      dragRotate: false
     });
     return true;
   }

@@ -397,7 +397,11 @@ export class BusProgramComponent implements OnInit {
       style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
       center: [25.5891, 45.6483],
       zoom: 13,
-      maxBounds: [25.0, 45.4, 26.5, 46.0]
+      maxBounds: [25.0, 45.4, 26.5, 46.0],
+      pitch: 0,
+      bearing: 0,
+      pitchWithRotate: false,
+      dragRotate: false
     });
 
     this.map.on('load', () => {
