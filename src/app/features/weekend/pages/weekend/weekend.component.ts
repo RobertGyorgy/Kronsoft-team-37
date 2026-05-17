@@ -430,11 +430,14 @@ interface Recommendation {
       border: 1px solid rgba(0,0,0,0.04);
       position: relative;
       overflow: hidden;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      /* Evităm conflictul de tranziție cu GSAP la încărcarea inițială */
+      transition: box-shadow 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.4s ease;
     }
     .result-card:hover { 
       transform: translateY(-8px) scale(1.01); 
       box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+      /* Activăm tranziția de transformare doar la hover pentru a asigura un efect fluid de ridicare */
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
     
     .card-accent {
@@ -840,7 +843,8 @@ export class WeekendComponent implements AfterViewInit {
               opacity: 0,
               duration: 0.8,
               stagger: 0.15,
-              ease: 'power3.out'
+              ease: 'power3.out',
+              clearProps: 'all'
             });
           }, 50);
         }, 10);
