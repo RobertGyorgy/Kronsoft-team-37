@@ -44,7 +44,7 @@ export class ReportService {
   async loadCategories(): Promise<void> {
     try {
       const data = await firstValueFrom(
-        this.http.get<ReportCategory[]>('/api/report-categories')
+        this.http.get<ReportCategory[]>('http://localhost:8083/api/report-categories')
       );
       this.categories.set(data);
     } catch (err) {
@@ -59,7 +59,7 @@ export class ReportService {
   async loadReports(page = 0, size = 50): Promise<void> {
     try {
       const res = await firstValueFrom(
-        this.http.get<any>(`${this.apiUrl}?page=${page}&size=${size}&sort=createdAt,desc`)
+        this.http.get<any>(`http://localhost:8083${this.apiUrl}?page=${page}&size=${size}&sort=createdAt,desc`)
       );
       this.reports.set(res.content || []);
     } catch (err) {

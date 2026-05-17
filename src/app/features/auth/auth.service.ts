@@ -47,7 +47,7 @@ export interface AuthResponse {
 
 // ── Session Keys ───────────────────────────────────────────────
 
-const ACCESS_TOKEN_KEY = 'smart_city_access_token';
+export const ACCESS_TOKEN_KEY = 'smart_city_access_token';
 const REFRESH_TOKEN_KEY = 'smart_city_refresh_token';
 const USER_NAME_KEY = 'smart_city_user_name';
 const USER_ROLE_KEY = 'smart_city_user_role';
@@ -105,7 +105,10 @@ export class AuthService {
   // ── Session Helpers ──────────────────────────────────────────
 
   public getAccessToken(): string | null {
-    return localStorage.getItem(ACCESS_TOKEN_KEY);
+    return (
+      localStorage.getItem(ACCESS_TOKEN_KEY) ??
+      sessionStorage.getItem(ACCESS_TOKEN_KEY)
+    );
   }
 
   public getRefreshToken(): string | null {

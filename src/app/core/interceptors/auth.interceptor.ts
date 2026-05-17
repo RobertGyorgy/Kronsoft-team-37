@@ -1,32 +1,58 @@
 import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { AuthService } from '../../features/auth/auth.service';
+
+/** Proxied to the PWA bridge on port 8081 — no JWT required. */
+const BRIDGE_API_PREFIX = '/api/v1';
+
+const PUBLIC_AUTH_PATHS = [
+  '/api/auth/login',
+  '/api/auth/register',
+  '/api/auth/google',
+  '/api/auth/forgot-password',
+  '/api/auth/reset-password',
+];
+
+function requestPath(url: string): string {
+  if (url.startsWith('/')) {
+    return url;
+  }
+  try {
+    return new URL(url).pathname;
+  } catch {
+    return url;
+  }
+}
 
 /**
- * Functional HTTP interceptor that attaches the JWT access token
- * to every outgoing request targeting `/api/`.
- *
- * The token is read from sessionStorage where AuthService persists it.
+ * Attaches the JWT access token from localStorage/sessionStorage to backend
+ * API calls (port 8083 via proxy). Skips the PWA bridge on 8081 (/api/v1).
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  // Only attach token to our backend API calls
-  if (!req.url.startsWith('/api/')) {
+  const path = requestPath(req.url);
+
+  if (!path.startsWith('/api/')) {
     return next(req);
   }
 
-  // Skip auth endpoints that don't need a token
-  const publicPaths = ['/api/auth/login', '/api/auth/register', '/api/auth/google', '/api/auth/forgot-password', '/api/auth/reset-password'];
-  if (publicPaths.some(path => req.url.includes(path))) {
+  if (path.startsWith(BRIDGE_API_PREFIX)) {
     return next(req);
   }
 
-  const token = localStorage.getItem('smart_city_access_token');
+  if (PUBLIC_AUTH_PATHS.some((publicPath) => path.includes(publicPath))) {
+    return next(req);
+  }
+
+  const token = inject(AuthService).getAccessToken();
 
   if (token) {
-    const authReq = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-    return next(authReq);
+    return next(
+      req.clone({
+        setHeaders: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+    );
   }
 
   return next(req);
