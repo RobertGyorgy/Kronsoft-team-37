@@ -250,12 +250,42 @@ app.post('/api/v1/routing/plan', async (req, res) => {
             }
         });
 
-        if (!response.data.plan || !response.data.plan.itineraries.length) {
-            return res.status(404).json({ error: 'No route found' });
+        let routeData = response.data;
+
+        if (!routeData.plan || !routeData.plan.itineraries || !routeData.plan.itineraries.length) {
+            console.log(`[Proxy] No active routes found for tonight. Trying tomorrow morning at 07:00 AM...`);
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowDateStr = tomorrow.toISOString().split('T')[0];
+            const tomorrowTimeStr = "07:00";
+            
+            try {
+                const fallbackResponse = await axios.get(otpUrl, {
+                    params: {
+                        fromPlace: `${fromLat},${fromLon}`,
+                        toPlace: `${toLat},${toLon}`,
+                        mode: otpMode,
+                        date: tomorrowDateStr,
+                        time: tomorrowTimeStr,
+                        numItineraries: 10,
+                        maxWalkDistance: 2000
+                    }
+                });
+                
+                if (fallbackResponse.data.plan && fallbackResponse.data.plan.itineraries && fallbackResponse.data.plan.itineraries.length) {
+                    console.log(`[Proxy] Successfully found fallback itineraries for tomorrow morning!`);
+                    routeData = fallbackResponse.data;
+                } else {
+                    return res.status(404).json({ error: 'No route found' });
+                }
+            } catch (err) {
+                console.error('[Proxy] Fallback routing query failed:', err.message);
+                return res.status(404).json({ error: 'No route found' });
+            }
         }
 
         // Find itineraries that actually HAVE transit
-        let transitItineraries = response.data.plan.itineraries.filter(it => it.legs.some(leg => leg.mode !== 'WALK'));
+        let transitItineraries = routeData.plan.itineraries.filter(it => it.legs.some(leg => leg.mode !== 'WALK'));
         
         let itinerary;
         if (transitItineraries.length > 0) {
@@ -263,7 +293,7 @@ app.post('/api/v1/routing/plan', async (req, res) => {
             transitItineraries.sort((a, b) => a.legs.length - b.legs.length);
             itinerary = transitItineraries[0];
         } else {
-            itinerary = response.data.plan.itineraries[0];
+            itinerary = routeData.plan.itineraries[0];
         }
         
         const features = itinerary.legs.map(leg => ({
