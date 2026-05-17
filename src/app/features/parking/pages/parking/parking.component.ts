@@ -311,11 +311,23 @@ export class ParkingComponent implements OnInit, OnDestroy {
 
   private async loadParkingData() {
     try {
-      // Fetch Production Zones from Java Backend (8083)
-      const zoneRes = await firstValueFrom(this.http.get<any>('/api/parking/zones?page=0&size=50'));
+      // Fetch Production Zones from Java Backend (8083) with fallback
+      let zoneRes: any;
+      try {
+        zoneRes = await firstValueFrom(this.http.get<any>('/api/parking/zones?page=0&size=50'));
+      } catch (err) {
+        console.warn('Could not fetch zones from Java backend, using static fallback zones:', err);
+        zoneRes = {
+          content: [
+            { zone: 'Zona 0 - Centru Vechi', tariffPerHour: 0.60, tariffPerDay: 3.00 },
+            { zone: 'Zona 1 - Centrul Civic', tariffPerHour: 0.40, tariffPerDay: 2.00 },
+            { zone: 'Zona 2 - Periferie', tariffPerHour: 0.30, tariffPerDay: 1.50 }
+          ]
+        };
+      }
       
-      // Fetch Neighborhoods from Bridge (8081)
-      const bridgeData = await firstValueFrom(this.http.get<any>('/api/v1/parking/data'));
+      // Fetch Neighborhoods directly from the static GeoJSON asset (served from public/)
+      const neighborhoods = await firstValueFrom(this.http.get<any[]>('/brasov_neighborhoods.json'));
 
       this.PARKING_ZONES = zoneRes.content.map((z: any, idx: number) => ({
         id: idx,
@@ -325,7 +337,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
         tariffPerDay: z.tariffPerDay
       }));
 
-      this.neighborhoodData = bridgeData.neighborhoods;
+      this.neighborhoodData = neighborhoods;
       
       if (!this.map) return;
 
