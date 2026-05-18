@@ -84,7 +84,7 @@ interface EventItem {
                 <span class="material-icons">campaign</span>
               </div>
               <div class="card-details">
-                <h2>Promovează Evenimentul Tău</h2>
+                <h2>Promovează evenimentul tău</h2>
                 <p class="gold-desc">
                   Transformă-ți evenimentul într-un succes local! Promovează-l în rândul comunității cu pachetele noastre Premium sau Elite și atrage vizitatori instant.
                 </p>
@@ -180,7 +180,7 @@ interface EventItem {
         <div class="promote-modal-card" (click)="$event.stopPropagation()">
           <header class="modal-header">
             <div class="modal-header-title">
-              <h2>Promovează Eveniment</h2>
+              <h2>Promovează eveniment</h2>
             </div>
             <button class="close-modal-btn" (click)="closePromoteModal()">
               <span class="material-icons">close</span>
@@ -229,10 +229,7 @@ interface EventItem {
                   <span class="plan-price-mini">{{ planCost }}</span>
                 </div>
                 <ul class="plan-features-mini">
-                  <li *ngIf="formModel.plan === 'BASIC'">
-                    <span class="material-icons">check_circle</span>
-                    <span>Afișare simplă în listă</span>
-                  </li>
+
                   <li *ngIf="formModel.plan === 'PREMIUM'">
                     <span class="material-icons">check_circle</span>
                     <span>Afișare prioritară în fața evenimentelor Basic</span>
@@ -287,7 +284,7 @@ interface EventItem {
             <footer class="modal-footer">
               <button type="submit" class="submit-prom-btn" [disabled]="submitting">
                 <span class="spinner" *ngIf="submitting"></span>
-                <span>{{ submitting ? 'Se procesează...' : 'Activează Promovarea' }}</span>
+                <span>{{ submitting ? 'Se procesează...' : 'Activează promovarea' }}</span>
               </button>
             </footer>
           </form>
