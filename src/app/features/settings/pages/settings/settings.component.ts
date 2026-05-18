@@ -273,7 +273,7 @@ export class SettingsComponent implements OnInit {
   }
 
   private async loadUserProfile() {
-    const profile = await this.userService.loadProfile();
+    const profile = this.userService.profile() ?? (await this.userService.loadProfile());
     if (profile) {
       this.userName = profile.fullName;
       this.userEmail = profile.email;
