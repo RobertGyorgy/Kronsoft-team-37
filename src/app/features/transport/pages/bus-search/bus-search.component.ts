@@ -8,7 +8,7 @@ import { TransitService } from '../../services/transit.service';
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-    <main class="bus-shell" [style.--bus-theme-color]="selectedBus()?.color || '#188038'">
+    <main class="bus-shell" [style.--bus-theme-color]="selectedBus()?.color || '#188038'" [style.--bus-theme-text-color]="selectedBus()?.textColor || '#ffffff'">
       <!-- Header Area -->
       <header class="top-nav-modern" [class.themed-nav]="selectedBus()">
         <div class="nav-card">
@@ -187,19 +187,20 @@ import { TransitService } from '../../services/transit.service';
     
     /* Themed Header */
     .top-nav-modern.themed-nav .nav-card {
-      background: linear-gradient(135deg, var(--bus-theme-color) 0%, rgba(20,20,20,0.95) 100%);
-      border-color: rgba(255,255,255,0.08);
-      color: #ffffff;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      background: var(--bus-theme-color);
+      border-color: rgba(255,255,255,0.15);
+      color: var(--bus-theme-text-color);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
     }
     .top-nav-modern.themed-nav .minimal-back-btn {
-      color: #ffffff;
+      color: var(--bus-theme-text-color);
     }
     .top-nav-modern.themed-nav .minimal-back-btn:active {
-      background: rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.15);
     }
     .top-nav-modern.themed-nav .subtitle-text {
-      color: rgba(255,255,255,0.7);
+      color: var(--bus-theme-text-color);
+      opacity: 0.85;
     }
     
     .header-title-box { display: flex; flex-direction: column; }
