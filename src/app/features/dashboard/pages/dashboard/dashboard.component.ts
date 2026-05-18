@@ -61,7 +61,7 @@ import { AuthService } from '../../../auth/auth.service';
 
         <div class="grid-card purple" routerLink="/events">
           <span class="material-icons card-bg-icon">event</span>
-          <span class="card-title">Evenimente Oraș</span>
+          <span class="card-title">Evenimente și Știri</span>
         </div>
 
         <div class="grid-card teal" routerLink="/weekend">

@@ -4,12 +4,18 @@ import { provideRouter, withViewTransitions } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { LOCALE_ID } from '@angular/core';
+import localeRo from '@angular/common/locales/ro';
+import { registerLocaleData } from '@angular/common';
+
+registerLocaleData(localeRo);
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideRouter(routes, withViewTransitions()),
-    provideAnimations()
+    provideAnimations(),
+    { provide: LOCALE_ID, useValue: 'ro-RO' }
   ]
 };

@@ -1,0 +1,41 @@
+[
+  {
+    "id": "promoted-1778684446728",
+    "title": "Festivalul Berii Brașov 2026 - Oktoberfest Reimagined",
+    "description": "Cel mai mare festival din Transilvania revine în Brașov cu delicii tradiționale, muzică de excepție și concerte live incendiare!",
+    "category": "FESTIVAL",
+    "imageUrl": "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&w=800&q=80",
+    "when": "2026-05-28T18:00:00.000Z",
+    "location": "Piața Sfatului, Brașov",
+    "link": "https://oktoberfestromania.ro",
+    "promotedBy": "Kronsoft Team 37",
+    "plan": "ELITE",
+    "isPromoted": true
+  },
+  {
+    "id": "promoted-1779127632000",
+    "title": "sdcs",
+    "description": "scdsd",
+    "category": "CONCERT",
+    "imageUrl": "https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=800&q=80",
+    "when": "2026-05-20T09:10:00.000Z",
+    "location": "vsd",
+    "link": "sscddc",
+    "promotedBy": "Vizitator Demo 🚀 (Mod Simulare)",
+    "plan": "BASIC",
+    "isPromoted": true
+  },
+  {
+    "id": "promoted-1779129867784",
+    "title": "kkkk",
+    "description": "uu",
+    "category": "CONCERT",
+    "imageUrl": "https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=800&q=80",
+    "when": "2026-05-28T18:48:00.000Z",
+    "location": "kkkk",
+    "link": "hhhhh",
+    "promotedBy": "Vizitator Demo 🚀 (Mod Simulare)",
+    "plan": "BASIC",
+    "isPromoted": true
+  }
+]
