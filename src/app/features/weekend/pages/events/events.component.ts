@@ -477,30 +477,6 @@ interface EventItem {
     }
     .search-box input::placeholder { color: var(--text-secondary); opacity: 0.6; font-weight: 500; }
 
-    /* ---- OLD stack kept for modal compatibility, new clean list below ---- */
-    .events-stack { display: flex; flex-direction: column; gap: 1.5rem; margin-top: -1rem; }
-    .event-card-premium { background: var(--bg-card); border-radius: 36px; overflow: hidden; border: 1px solid var(--border-color); cursor: pointer; display: flex; flex-direction: column; }
-    .image-box { height: 240px; width: 100%; position: relative; overflow: hidden; }
-    .event-img { width: 100%; height: 100%; object-fit: cover; }
-    .img-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.4)); }
-    .cat-chip { position: absolute; top: 1.25rem; left: 1.25rem; background: rgba(165,94,234,0.95); backdrop-filter: blur(15px); color: #fff; padding: 0.5rem 1.1rem; border-radius: 50px; font-size: 0.75rem; font-weight: 900; letter-spacing: 0.05em; }
-    .event-date-badge { position: absolute; top: 1.25rem; right: 1.25rem; background: var(--bg-card); border: 1px solid var(--border-color); padding: 0.6rem 0.8rem; border-radius: 18px; display: flex; flex-direction: column; align-items: center; line-height: 1; }
-    .event-date-badge .d-val { font-size: 1.2rem; font-weight: 950; color: var(--text-primary); }
-    .event-date-badge .d-mo { font-size: 0.65rem; font-weight: 800; color: #a55eea; text-transform: uppercase; margin-top: 0.2rem; }
-    .details-box { padding: 1.75rem; }
-    .meta-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; gap: 0.5rem; flex-wrap: wrap; }
-    .date-time-box { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
-    .date-info { display: flex; align-items: center; gap: 0.35rem; font-size: 0.82rem; font-weight: 800; color: var(--text-secondary); text-transform: capitalize; }
-    .date-info .material-icons { font-size: 1rem; color: #a55eea; }
-    .time-info { display: flex; align-items: center; gap: 0.35rem; font-size: 0.82rem; font-weight: 900; color: #a55eea; }
-    .time-info .material-icons { font-size: 1rem; }
-    .price-info { font-size: 0.85rem; font-weight: 900; color: var(--text-primary); background: var(--bg-secondary); padding: 0.4rem 0.9rem; border-radius: 12px; }
-    .details-box h3 { font-size: 1.6rem; font-weight: 950; margin: 0 0 0.75rem; line-height: 1.1; letter-spacing: -0.04em; color: var(--text-primary); }
-    .location-info { display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 1.25rem; }
-    .location-info .material-icons { color: #a55eea; font-size: 1.2rem; }
-    .card-action { display: flex; justify-content: flex-start; border-top: 1px solid var(--border-color); padding-top: 1.5rem; }
-    .view-tag { font-size: 0.7rem; font-weight: 900; color: #a55eea; letter-spacing: 0.1em; background: rgba(165,94,234,0.08); padding: 0.4rem 1rem; border-radius: 50px; }
-
     /* ====================== CLEAN EDITORIAL LIST STYLES ====================== */
 
     /* Section header */
