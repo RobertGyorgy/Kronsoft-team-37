@@ -154,7 +154,7 @@ import { TransitService } from '../../services/transit.service';
                     
                     <div class="group-routes-list">
                       @for (route of group.routes; track route.origin + '_' + route.target) {
-                        <button class="route-select-row" (click)="selectBus(route)" [style.border-left-color]="group.color + '60'">
+                        <button class="route-select-row" (click)="selectBus(route)">
                           <div class="route-left">
                             <span class="material-icons route-icon" [style.color]="group.color">swap_calls</span>
                             <span class="route-path">{{ route.origin }} ➔ {{ route.target }}</span>
@@ -255,24 +255,26 @@ import { TransitService } from '../../services/transit.service';
     .buses-grid { display: flex; flex-direction: column; gap: 1rem; }
     
     /* Grouped Bus Layout Styles */
-    .bus-group-card { background: var(--bg-secondary); border: 1px solid var(--border-color); border-left: 6px solid transparent; border-radius: 24px; padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; box-shadow: 0 6px 24px rgba(0,0,0,0.02); transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); }
-    .bus-group-card:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.04); }
-    .group-header { display: flex; align-items: center; gap: 1rem; border-bottom: 1px dashed var(--border-color); padding-bottom: 0.75rem; }
-    .bus-badge { font-size: 1.1rem; font-weight: 800; width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); flex-shrink: 0; }
+    .bus-group-card { background: var(--bg-secondary); border: 1px solid var(--border-color); border-left: 6px solid transparent; border-radius: 24px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.85rem; box-shadow: 0 4px 20px rgba(0,0,0,0.01); transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .bus-group-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.03); }
+    .group-header { display: flex; align-items: center; gap: 1rem; padding-bottom: 0.25rem; }
+    .bus-badge { font-size: 1.2rem; font-weight: 900; width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(0,0,0,0.08); flex-shrink: 0; border: 2px solid rgba(255, 255, 255, 0.15); }
     .group-info { display: flex; flex-direction: column; }
-    .group-title { font-size: 1.25rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; }
+    .group-title { font-size: 1.2rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; }
     .group-subtitle { font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; }
-    .group-routes-list { display: flex; flex-direction: column; gap: 0.5rem; }
     
-    .route-select-row { width: 100%; display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); border: 1px solid var(--border-color); border-left: 4px solid transparent; padding: 0.85rem 1rem; border-radius: 16px; text-align: left; cursor: pointer; transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
-    .route-select-row:hover { background: rgba(0,0,0,0.01); transform: translateX(2px); }
-    .route-select-row:active { transform: scale(0.98); background: rgba(0,0,0,0.02); }
+    .group-routes-list { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 0 1.25rem; display: flex; flex-direction: column; }
+    .route-select-row { width: 100%; display: flex; justify-content: space-between; align-items: center; background: transparent; border: none; border-bottom: 1px dashed var(--border-color); padding: 1rem 0; text-align: left; cursor: pointer; transition: all 0.2s ease; }
+    .route-select-row:last-child { border-bottom: none; }
+    .route-select-row:hover { transform: translateX(4px); }
+    .route-select-row:active { opacity: 0.7; }
     .route-left { display: flex; align-items: center; gap: 0.75rem; min-width: 0; flex: 1; }
     .route-icon { opacity: 0.85; font-size: 1.1rem; }
     .route-path { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .route-right { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
-    .route-stations-count { font-size: 0.75rem; color: var(--text-secondary); font-weight: 600; background: var(--bg-primary); padding: 4px 8px; border-radius: 99px; border: 1px solid var(--border-color); }
-    .route-arrow { color: var(--text-secondary); opacity: 0.5; font-size: 1.2rem; }
+    .route-stations-count { font-size: 0.75rem; color: var(--text-secondary); font-weight: 700; background: var(--bg-secondary); padding: 4px 10px; border-radius: 99px; border: 1px solid var(--border-color); }
+    .route-arrow { color: var(--text-secondary); opacity: 0.4; font-size: 1.2rem; transition: transform 0.2s ease; }
+    .route-select-row:hover .route-arrow { transform: translateX(2px); opacity: 0.8; }
     
     .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem 1.5rem; text-align: center; color: var(--text-secondary); }
     .empty-state .material-icons { font-size: 3rem; margin-bottom: 0.75rem; }
