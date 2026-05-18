@@ -147,11 +147,19 @@ interface Recommendation {
                 <div class="result-body">
                   <div class="result-header-row">
                     <h3 class="result-name">{{ rec.name }}</h3>
-                    <a [href]="'https://www.google.com/maps/search/?api=1&query=' + rec.name + ' Brasov'" 
-                       target="_blank" class="location-link" [style.color]="activeCategory()?.color">
-                      <span class="material-icons">near_me</span>
-                      MAPS
-                    </a>
+                    <div class="card-actions-row">
+                      <a [href]="'https://www.google.com/maps/search/?api=1&query=' + rec.name + ' Brasov'" 
+                         target="_blank" class="location-link" [style.color]="activeCategory()?.color">
+                        <span class="material-icons">near_me</span>
+                        MAPS
+                      </a>
+                      <button (click)="planRouteTo(rec)" class="route-link" 
+                              [style.background]="activeCategory()?.color + '12'" 
+                              [style.color]="activeCategory()?.color">
+                        <span class="material-icons">directions_bus</span>
+                        RUTĂ
+                      </button>
+                    </div>
                   </div>
                   <p class="result-desc">{{ rec.description }}</p>
                   <div class="result-tip" [style.background]="activeCategory()?.color + '12'">
@@ -417,72 +425,131 @@ interface Recommendation {
     }
     .result-card {
       background: #ffffff;
-      border-radius: 32px;
-      padding: 2rem;
+      border-radius: 24px;
+      padding: 1.25rem;
       display: flex;
-      gap: 1.5rem;
+      gap: 1rem;
       align-items: flex-start;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.03);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.02);
       border: 1px solid rgba(0,0,0,0.04);
       position: relative;
       overflow: hidden;
-      /* Evităm conflictul de tranziție cu GSAP la încărcarea inițială */
       transition: box-shadow 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.4s ease;
     }
     .result-card:hover { 
-      transform: translateY(-8px) scale(1.01); 
-      box-shadow: 0 30px 60px rgba(0,0,0,0.08);
-      /* Activăm tranziția de transformare doar la hover pentru a asigura un efect fluid de ridicare */
+      transform: translateY(-4px); 
+      box-shadow: 0 20px 40px rgba(0,0,0,0.06);
       transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @media (min-width: 480px) {
+      .result-card {
+        border-radius: 32px;
+        padding: 2rem;
+        gap: 1.5rem;
+      }
+      .result-card:hover { 
+        transform: translateY(-8px) scale(1.01); 
+        box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+      }
     }
     
     .card-accent {
       position: absolute;
       top: 0;
       left: 0;
-      width: 8px;
+      width: 6px;
       height: 100%;
       opacity: 0.8;
     }
 
     .result-number {
-      width: 48px;
-      height: 48px;
-      border-radius: 18px;
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #fff;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       font-weight: 900;
       flex-shrink: 0;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.08);
     }
-    .result-body { flex: 1; }
+    @media (min-width: 480px) {
+      .result-number {
+        width: 48px;
+        height: 48px;
+        border-radius: 18px;
+        font-size: 1.2rem;
+      }
+    }
+    .result-body { flex: 1; min-width: 0; }
     .result-header-row {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
       margin-bottom: 1rem;
     }
-    .location-link {
+    @media (min-width: 480px) {
+      .result-header-row {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+    .card-actions-row {
+      display: flex;
+      gap: 0.4rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .location-link, .route-link {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      font-size: 0.75rem;
+      gap: 0.35rem;
+      font-size: 0.68rem;
       font-weight: 900;
       text-decoration: none;
       letter-spacing: 0.05em;
-      padding: 0.7rem 1.2rem;
-      background: #f8f9fa;
+      padding: 0.5rem 0.9rem;
       border-radius: 100px;
       transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+      border: none;
+      cursor: pointer;
+    }
+    .location-link .material-icons, .route-link .material-icons {
+      font-size: 1rem;
+    }
+    .location-link {
+      background: #f8f9fa;
+    }
+    .route-link {
       box-shadow: 0 4px 10px rgba(0,0,0,0.02);
     }
     .location-link:hover { 
       background: #1a1a1a; 
       color: #fff !important;
       transform: rotate(3deg);
+    }
+    .route-link:hover { 
+      background: #1a1a1a !important; 
+      color: #fff !important;
+      transform: rotate(-3deg);
+    }
+    @media (min-width: 480px) {
+      .location-link, .route-link {
+        font-size: 0.75rem;
+        padding: 0.7rem 1.2rem;
+        gap: 0.5rem;
+      }
+      .location-link .material-icons, .route-link .material-icons {
+        font-size: 1.1rem;
+      }
+      .card-actions-row {
+        gap: 0.5rem;
+      }
     }
     .result-name {
       font-size: 1.6rem;
