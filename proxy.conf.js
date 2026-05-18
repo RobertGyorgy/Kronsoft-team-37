@@ -58,51 +58,63 @@ console.log(`   - Transit/OTP APIs  (8081): ${backend8081}\n`);
 const PROXY_CONFIG = {
   "/api/auth": {
     "target": backend8083,
-    "secure": false
+    "secure": false,
+    "changeOrigin": true
   },
   "/api/user": {
     "target": backend8083,
-    "secure": false
+    "secure": false,
+    "changeOrigin": true
   },
   "/api/users": {
     "target": backend8083,
-    "secure": false
+    "secure": false,
+    "changeOrigin": true
   },
   "/api/reports": {
     "target": backend8083,
-    "secure": false
+    "secure": false,
+    "changeOrigin": true
   },
   "/api/report-categories": {
     "target": backend8083,
-    "secure": false
+    "secure": false,
+    "changeOrigin": true
   },
   "/api/events": {
     "target": backend8081,
-    "secure": false
+    "secure": false,
+    "changeOrigin": true
   },
   "/api/parking": {
     "target": backend8083,
-    "secure": false
+    "secure": false,
+    "changeOrigin": true
   },
   "/api/recommendations": {
     "target": backend8083,
-    "secure": false
+    "secure": false,
+    "changeOrigin": true
   },
   "/api/recommendation": {
     "target": backend8083,
-    "secure": false
+    "secure": false,
+    "changeOrigin": true
   },
   "/api/notifications": {
     "target": backend8083,
-    "secure": false
+    "secure": false,
+    "changeOrigin": true
   },
   "/api/images": {
     "target": backend8083,
-    "secure": false
+    "secure": false,
+    "changeOrigin": true
   },
   "/api/v1": {
     "target": backend8081,
-    "secure": false
+    "secure": false,
+    "changeOrigin": true
   }
 };
 
