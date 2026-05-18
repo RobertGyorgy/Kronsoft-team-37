@@ -175,13 +175,15 @@ import { TransitService } from '../../services/transit.service';
                       
                       <div class="swiss-routes-list" [style.border-top-color]="group.textColor + '30'">
                         @for (route of group.routes; track route.origin + '_' + route.target) {
-                          <button class="swiss-route-row" (click)="selectBus(route)" [style.color]="group.textColor">
+                          <button class="swiss-route-tile" (click)="selectBus(route)" 
+                                  [style.color]="group.textColor"
+                                  [style.background]="group.textColor === '#ffffff' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.06)'">
                             <div class="swiss-route-left">
                               <span class="material-icons swiss-route-icon">swap_calls</span>
                               <span class="swiss-route-path-text">{{ route.origin }} ➔ {{ route.target }}</span>
                             </div>
                             <div class="swiss-route-right">
-                              <span class="swiss-stations-badge" [style.background]="group.textColor + '15'">
+                              <span class="swiss-stations-badge" [style.background]="group.textColor === '#ffffff' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.08)'">
                                 {{ route.stations.length }} stații
                               </span>
                               <span class="material-icons swiss-arrow">arrow_forward</span>
@@ -297,9 +299,10 @@ import { TransitService } from '../../services/transit.service';
     .swiss-arrow { font-size: 1.3rem; transition: transform 0.2s; }
     .bus-group-card.swiss-plate-card:hover .swiss-arrow { transform: translateX(3px); }
     
-    .swiss-routes-list { display: flex; flex-direction: column; border-top: 1px solid transparent; padding-top: 0.5rem; margin-top: 0.15rem; }
-    .swiss-route-row { width: 100%; background: transparent; border: none; display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 0; cursor: pointer; text-align: left; font-family: inherit; transition: transform 0.2s; }
-    .swiss-route-row:hover { transform: translateX(4px); }
+    .swiss-routes-list { display: flex; flex-direction: column; gap: 0.65rem; border-top: 1px solid transparent; padding-top: 1rem; margin-top: 0.25rem; }
+    .swiss-route-tile { width: 100%; border: none; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; cursor: pointer; text-align: left; font-family: inherit; transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .swiss-route-tile:hover { transform: translateX(4px); filter: brightness(1.08); }
+    .swiss-route-tile:active { transform: scale(0.98); opacity: 0.85; }
     .swiss-route-left { display: flex; align-items: center; gap: 0.75rem; min-width: 0; flex: 1; }
     .swiss-route-icon { font-size: 1.15rem; opacity: 0.9; }
     .swiss-route-path-text { font-size: 0.95rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
