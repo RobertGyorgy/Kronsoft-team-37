@@ -8,13 +8,13 @@ import { TransitService } from '../../services/transit.service';
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-    <main class="bus-shell">
+    <main class="bus-shell" [style.--bus-theme-color]="selectedBus()?.color || '#188038'">
       <!-- Header Area -->
-      <header class="top-nav-modern">
+      <header class="top-nav-modern" [class.themed-nav]="selectedBus()">
         <div class="nav-card">
           <div class="nav-header-row">
             @if (selectedBus()) {
-              <button class="minimal-back-btn" (click)="selectedBus.set(null)">
+              <button class="minimal-back-btn" (click)="selectBus(null)">
                 <span class="material-icons">arrow_back</span>
               </button>
               <div class="bus-badge-container">
@@ -65,7 +65,9 @@ import { TransitService } from '../../services/transit.service';
               <!-- Stations Timeline List -->
               <div class="stations-timeline">
                 @for (station of selectedBus()?.stations; track station.stationId; let idx = $index) {
-                  <div class="timeline-station-card">
+                  <div class="timeline-station-card" 
+                       [class.expanded]="expandedStationId() === station.stationId"
+                       (click)="toggleStation(station.stationId)">
                     <div class="timeline-indicator">
                       <div class="node-badge" [style.background]="selectedBus()?.color" [style.color]="selectedBus()?.textColor">
                         {{ idx + 1 }}
@@ -77,29 +79,38 @@ import { TransitService } from '../../services/transit.service';
                     
                     <div class="station-details">
                       <div class="station-header-row">
-                        <h3 class="station-name">{{ station.stationName }}</h3>
-                        <button class="navigate-to-station-btn" (click)="planRouteTo(station)" title="Planifică traseu până aici">
+                        <div class="station-title-col">
+                          <h3 class="station-name">{{ station.stationName }}</h3>
+                          @if (expandedStationId() !== station.stationId) {
+                            <span class="station-click-hint">Apasă pentru orar complet</span>
+                          }
+                        </div>
+                        <button class="navigate-to-station-btn" (click)="planRouteTo(station); $event.stopPropagation()" title="Planifică traseu până aici">
                           <span class="material-icons">directions</span>
                         </button>
                       </div>
                       
-                      <!-- Timetable Horizontal Scroll -->
-                      <div class="times-horizontal-scroll">
-                        @for (time of getTimetableTimes(station, selectedDayType()); track time) {
-                          @if (time === '–') {
-                            <span class="time-pill empty-pill" title="Autobuzul nu oprește în această cursă">
-                              –
-                            </span>
-                          } @else {
-                            <span class="time-pill">
-                              <span class="material-icons">access_time</span>
-                              {{ time }}
-                            </span>
+                      <!-- Timetable Accordion Expanded Content -->
+                      @if (expandedStationId() === station.stationId) {
+                        <div class="hourly-schedule-grid" (click)="$event.stopPropagation()">
+                          @for (group of getTimesGroupedByHour(station, selectedDayType()); track group.hour) {
+                            <div class="hourly-row">
+                              <div class="hour-cell" [style.background]="selectedBus()?.color + '15'" [style.color]="selectedBus()?.color">
+                                {{ group.hour }}
+                              </div>
+                              <div class="minutes-cell">
+                                @for (min of group.minutes; track min) {
+                                  <span class="minute-pill" [style.border-color]="selectedBus()?.color + '30'">
+                                    {{ min }}
+                                  </span>
+                                }
+                              </div>
+                            </div>
+                          } @empty {
+                            <div class="no-service-pill">Nu sunt plecări în această zi</div>
                           }
-                        } @empty {
-                          <span class="no-service-pill">Nu circulă în această zi</span>
-                        }
-                      </div>
+                        </div>
+                      }
                     </div>
                   </div>
                 }
@@ -138,7 +149,7 @@ import { TransitService } from '../../services/transit.service';
                     
                     <div class="group-routes-list">
                       @for (route of group.routes; track route.origin + '_' + route.target) {
-                        <button class="route-select-row" (click)="selectedBus.set(route)">
+                        <button class="route-select-row" (click)="selectBus(route)">
                           <div class="route-left">
                             <span class="material-icons route-icon">swap_calls</span>
                             <span class="route-path">{{ route.origin }} ➔ {{ route.target }}</span>
@@ -169,10 +180,27 @@ import { TransitService } from '../../services/transit.service';
     .bus-shell { height: 100dvh; width: 100%; overflow: hidden; background: var(--bg-primary); font-family: 'Outfit', sans-serif; color: var(--text-primary); display: flex; flex-direction: column; position: relative; }
     
     .top-nav-modern { padding: calc(var(--safe-top) + 1rem) 1rem 0.5rem; z-index: 100; background: var(--bg-primary); }
-    .nav-card { background: var(--bg-secondary); border-radius: 24px; border: 1px solid var(--border-color); padding: 1rem 1.25rem; box-shadow: 0 8px 32px rgba(0,0,0,0.02); }
+    .nav-card { background: var(--bg-secondary); border-radius: 24px; border: 1px solid var(--border-color); padding: 1rem 1.25rem; box-shadow: 0 8px 32px rgba(0,0,0,0.02); transition: all 0.3s ease; }
     .nav-header-row { display: flex; align-items: center; gap: 1rem; }
     .minimal-back-btn { background: transparent; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-primary); cursor: pointer; transition: background 0.2s; }
     .minimal-back-btn:active { background: rgba(0,0,0,0.05); }
+    
+    /* Themed Header */
+    .top-nav-modern.themed-nav .nav-card {
+      background: linear-gradient(135deg, var(--bus-theme-color) 0%, rgba(20,20,20,0.95) 100%);
+      border-color: rgba(255,255,255,0.08);
+      color: #ffffff;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    }
+    .top-nav-modern.themed-nav .minimal-back-btn {
+      color: #ffffff;
+    }
+    .top-nav-modern.themed-nav .minimal-back-btn:active {
+      background: rgba(255,255,255,0.1);
+    }
+    .top-nav-modern.themed-nav .subtitle-text {
+      color: rgba(255,255,255,0.7);
+    }
     
     .header-title-box { display: flex; flex-direction: column; }
     .header-title { font-size: 1.6rem; font-weight: 800; margin: 0; letter-spacing: -0.03em; line-height: 1.1; }
@@ -222,33 +250,81 @@ import { TransitService } from '../../services/transit.service';
     .empty-state p { font-size: 0.9rem; margin: 0.25rem 0 0; }
     
     /* Timetable Page */
-    .timetable-page { display: flex; flex-direction: column; gap: 1.25rem; }
-    .tabs-switcher { display: grid; grid-template-columns: 1fr 1fr; background: var(--bg-secondary); border-radius: 999px; border: 1px solid var(--border-color); padding: 4px; gap: 4px; }
-    .tabs-switcher button { border: none; background: transparent; padding: 0.75rem; border-radius: 999px; font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer; transition: all 0.2s; }
-    .tabs-switcher button.active { background: var(--bg-card); color: var(--text-primary); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+    .timetable-page { display: flex; flex-direction: column; gap: 1.25rem; position: relative; }
+    .timetable-page::before { content: ''; position: absolute; top: -40px; left: 50%; transform: translateX(-50%); width: 300px; height: 300px; background: var(--bus-theme-color); filter: blur(150px); opacity: 0.15; pointer-events: none; z-index: 0; }
     
-    .stations-timeline { display: flex; flex-direction: column; position: relative; padding-left: 0.5rem; }
-    .timeline-station-card { display: flex; gap: 1.25rem; position: relative; }
+    .tabs-switcher { display: grid; grid-template-columns: 1fr 1fr; background: var(--bg-secondary); border-radius: 999px; border: 1px solid var(--border-color); padding: 4px; gap: 4px; z-index: 10; position: relative; }
+    .tabs-switcher button { border: none; background: transparent; padding: 0.75rem; border-radius: 999px; font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer; transition: all 0.2s; }
+    .tabs-switcher button.active { background: var(--bus-theme-color); color: #ffffff; box-shadow: 0 4px 14px rgba(0,0,0,0.1); }
+    
+    /* Accordion Timeline List */
+    .stations-timeline { display: flex; flex-direction: column; position: relative; padding-left: 0.25rem; z-index: 10; }
+    .timeline-station-card { display: flex; gap: 1.25rem; position: relative; cursor: pointer; border-radius: 20px; padding: 0.85rem 1rem; border: 1px solid transparent; transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .timeline-station-card:hover { background: rgba(0,0,0,0.02); }
+    .timeline-station-card.expanded { background: var(--bg-secondary); border: 1px solid var(--border-color); box-shadow: 0 8px 30px rgba(0,0,0,0.02); margin-bottom: 0.75rem; padding: 1.25rem; }
     
     .timeline-indicator { display: flex; flex-direction: column; align-items: center; width: 32px; flex-shrink: 0; position: relative; }
-    .node-badge { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 800; z-index: 5; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-    .connector-line { width: 3px; position: absolute; top: 32px; bottom: -12px; left: 50%; transform: translateX(-50%); z-index: 2; opacity: 0.6; }
+    .node-badge { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 800; z-index: 5; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: transform 0.2s; }
+    .timeline-station-card.expanded .node-badge { transform: scale(1.1); }
+    .connector-line { width: 3px; position: absolute; top: 32px; bottom: -16px; left: 50%; transform: translateX(-50%); z-index: 2; opacity: 0.6; }
     
-    .station-details { flex: 1; min-width: 0; padding-bottom: 2.2rem; }
+    .station-details { flex: 1; min-width: 0; }
     
-    .station-header-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin: 4px 0 0.75rem; }
-    .station-name { font-size: 1.05rem; font-weight: 800; color: var(--text-primary); margin: 0; }
-    .navigate-to-station-btn { background: var(--bg-primary); border: 1px solid var(--border-color); color: #188038; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+    .station-header-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .station-title-col { display: flex; flex-direction: column; min-width: 0; }
+    .station-name { font-size: 1.05rem; font-weight: 800; color: var(--text-primary); margin: 0; line-height: 1.2; }
+    .station-click-hint { font-size: 0.75rem; color: var(--text-secondary); opacity: 0.6; font-weight: 600; margin-top: 2px; }
+    .navigate-to-station-btn { background: var(--bg-primary); border: 1px solid var(--border-color); color: #188038; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0; }
     .navigate-to-station-btn:active { transform: scale(0.9); background: rgba(0,0,0,0.05); }
     
-    .times-horizontal-scroll { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem; -webkit-overflow-scrolling: touch; width: 100%; scrollbar-width: none; }
-    .times-horizontal-scroll::-webkit-scrollbar { display: none; }
+    /* Hourly Grid Schedule Styling */
+    .hourly-schedule-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      margin-top: 1.25rem;
+      border-top: 1px solid var(--border-color);
+      padding-top: 1rem;
+      animation: slideDown 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+    .hourly-row {
+      display: flex;
+      align-items: center;
+    }
+    .hour-cell {
+      font-size: 0.95rem;
+      font-weight: 900;
+      width: 38px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 0.85rem;
+      flex-shrink: 0;
+    }
+    .minutes-cell {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+    .minute-pill {
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
     
-    .time-pill { font-size: 0.8rem; font-weight: 700; padding: 6px 12px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 999px; display: flex; align-items: center; gap: 0.25rem; flex-shrink: 0; color: var(--text-primary); }
-    .time-pill.empty-pill { background: rgba(0,0,0,0.02); color: var(--text-secondary); opacity: 0.4; border-style: dashed; padding: 6px 16px; font-weight: 800; }
-    .time-pill .material-icons { font-size: 0.95rem; color: var(--text-secondary); }
-    .no-service-pill { font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; padding: 6px 12px; background: rgba(0,0,0,0.02); border-radius: 999px; }
+    .no-service-pill { font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; padding: 6px 12px; background: rgba(0,0,0,0.02); border-radius: 999px; margin-top: 0.5rem; text-align: center; }
     
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
     @keyframes spin { to { transform: rotate(360deg); } }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -261,6 +337,7 @@ export class BusSearchComponent implements OnInit, OnDestroy {
   selectedBus = signal<any>(null);
   selectedDayType = signal<'weekday' | 'weekend'>('weekday');
   busSearchQuery = signal('');
+  expandedStationId = signal<string | null>(null);
 
   // Compute all unique bus lines and directions strictly how the GTFS/database defines them
   allBuses = computed(() => {
@@ -537,6 +614,37 @@ export class BusSearchComponent implements OnInit, OnDestroy {
   onSearchInput(event: Event) {
     const input = event.target as HTMLInputElement;
     this.busSearchQuery.set(input.value);
+  }
+
+  selectBus(bus: any) {
+    this.selectedBus.set(bus);
+    if (bus && bus.stations.length > 0) {
+      this.expandedStationId.set(bus.stations[0].stationId);
+    } else {
+      this.expandedStationId.set(null);
+    }
+  }
+
+  toggleStation(stationId: string) {
+    if (this.expandedStationId() === stationId) {
+      this.expandedStationId.set(null);
+    } else {
+      this.expandedStationId.set(stationId);
+    }
+  }
+
+  getTimesGroupedByHour(station: any, dayType: 'weekday' | 'weekend'): { hour: string, minutes: string[] }[] {
+    const times = this.getTimetableTimes(station, dayType).filter(t => t !== '–');
+    const groups: { [hour: string]: string[] } = {};
+    times.forEach(t => {
+      const [h, m] = t.split(':');
+      if (!groups[h]) groups[h] = [];
+      groups[h].push(m);
+    });
+    return Object.keys(groups).sort().map(h => ({
+      hour: h,
+      minutes: groups[h].sort()
+    }));
   }
 
   planRouteTo(station: any) {
