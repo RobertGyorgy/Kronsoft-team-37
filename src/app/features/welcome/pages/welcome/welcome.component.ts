@@ -39,7 +39,7 @@ import { gsap } from 'gsap';
         <footer class="bottom-action-zone">
           <div class="action-container">
             <a routerLink="/login" class="theme-action-btn">
-              <span class="btn-label">Începe Acum</span>
+              <span class="btn-label">Începe acum</span>
               <div class="arrow-ico">
                 <span class="material-icons">east</span>
               </div>
