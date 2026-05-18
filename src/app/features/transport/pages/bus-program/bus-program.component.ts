@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal, OnInit, afterNextRender, ElementRef, ViewChild, inject, computed, effect, ChangeDetectorRef, NgZone } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, OnInit, OnDestroy, afterNextRender, ElementRef, ViewChild, inject, computed, effect, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { TransitService } from '../../services/transit.service';
@@ -277,7 +277,7 @@ declare const google: any;
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BusProgramComponent implements OnInit {
+export class BusProgramComponent implements OnInit, OnDestroy {
   @ViewChild('mapContainer') mapContainer!: ElementRef;
   @ViewChild('topNav') topNav!: ElementRef;
   @ViewChild('destInput') destInput!: ElementRef;
@@ -369,9 +369,9 @@ export class BusProgramComponent implements OnInit {
 
   constructor() {
     if (typeof window !== 'undefined') {
-      const hasRefreshed = sessionStorage.getItem('transport_first_load_refreshed');
-      if (!hasRefreshed) {
-        sessionStorage.setItem('transport_first_load_refreshed', 'true');
+      const justEntered = sessionStorage.getItem('just_entered_transport_program');
+      if (!justEntered) {
+        sessionStorage.setItem('just_entered_transport_program', 'true');
         window.location.reload();
         return;
       }
@@ -399,6 +399,12 @@ export class BusProgramComponent implements OnInit {
   }
 
   ngOnInit() {}
+
+  ngOnDestroy() {
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('just_entered_transport_program');
+    }
+  }
 
   private initMap() {
     this.map = new maplibregl.Map({

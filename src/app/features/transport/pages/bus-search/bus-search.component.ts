@@ -337,9 +337,9 @@ export class BusSearchComponent implements OnInit, OnDestroy {
 
   constructor() {
     if (typeof window !== 'undefined') {
-      const hasRefreshed = sessionStorage.getItem('transport_first_load_refreshed');
-      if (!hasRefreshed) {
-        sessionStorage.setItem('transport_first_load_refreshed', 'true');
+      const justEntered = sessionStorage.getItem('just_entered_transport_search');
+      if (!justEntered) {
+        sessionStorage.setItem('just_entered_transport_search', 'true');
         window.location.reload();
         return;
       }
@@ -369,6 +369,9 @@ export class BusSearchComponent implements OnInit, OnDestroy {
     this.isAlive = false;
     if (this.initTimeout) clearTimeout(this.initTimeout);
     if (this.locationTimeout) clearTimeout(this.locationTimeout);
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('just_entered_transport_search');
+    }
   }
 
   splitByWord(text: string): string[] {
