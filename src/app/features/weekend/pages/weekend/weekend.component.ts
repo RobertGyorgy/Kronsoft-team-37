@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, signal, inject, AfterViewInit, ElementRef, ViewChild, NgZone, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { GeminiService } from '../../../../core/services/gemini.service';
@@ -12,17 +12,22 @@ interface Category {
   icon: string;
   color: string;
   shadow: string;
-  questions: { 
-    id: string; 
-    text: string; 
-    options: { label: string; icon: string }[] 
+  questions: {
+    id: string;
+    text: string;
+    options: { label: string; icon: string }[]
   }[];
 }
 
 interface Recommendation {
+  id?: string;
   name: string;
-  description: string;
-  tip: string;
+  title?: string;
+  description?: string;
+  text?: string;
+  tip?: string;
+  address?: string;
+  coordinates?: { lat: number; lng: number };
   link?: string;
 }
 
@@ -146,18 +151,36 @@ interface Recommendation {
                 <div class="result-number" [style.background]="activeCategory()?.color">{{ i + 1 }}</div>
                 <div class="result-body">
                   <div class="result-header-row">
-                    <h3 class="result-name">{{ rec.name }}</h3>
-                    <a [href]="'https://www.google.com/maps/search/?api=1&query=' + rec.name + ' Brasov'" 
-                       target="_blank" class="location-link" [style.color]="activeCategory()?.color">
-                      <span class="material-icons">near_me</span>
-                      MAPS
-                    </a>
+                    <h3 class="result-name">{{ rec.name || rec.title }}</h3>
+                    <div class="result-actions-row">
+                      @if (rec.coordinates) {
+                        <button class="location-btn" [style.color]="activeCategory()?.color"
+                                [style.border-color]="activeCategory()?.color" (click)="goToLocation(rec)"
+                                title="Navigate to location">
+                          <span class="material-icons">directions</span>
+                          <span>RUTĂ</span>
+                        </button>
+                      }
+                      <a [href]="'https://www.google.com/maps/search/?api=1&query=' + (rec.name || rec.title) + ' Brasov'"
+                         target="_blank" class="location-link" [style.color]="activeCategory()?.color">
+                        <span class="material-icons">near_me</span>
+                        <span>MAPS</span>
+                      </a>
+                    </div>
                   </div>
-                  <p class="result-desc">{{ rec.description }}</p>
-                  <div class="result-tip" [style.background]="activeCategory()?.color + '12'">
-                    <span class="material-icons tip-icon" [style.color]="activeCategory()?.color">lightbulb</span>
-                    <span class="tip-text">{{ rec.tip }}</span>
-                  </div>
+                  <p class="result-desc">{{ rec.description || rec.text }}</p>
+                  @if (rec.address) {
+                    <div class="result-address" [style.color]="activeCategory()?.color">
+                      <span class="material-icons">location_on</span>
+                      <span>{{ rec.address }}</span>
+                    </div>
+                  }
+                  @if (rec.tip) {
+                    <div class="result-tip" [style.background]="activeCategory()?.color + '12'">
+                      <span class="material-icons tip-icon" [style.color]="activeCategory()?.color">lightbulb</span>
+                      <span class="tip-text">{{ rec.tip }}</span>
+                    </div>
+                  }
                 </div>
               </div>
             }
@@ -464,25 +487,62 @@ interface Recommendation {
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1rem;
+      gap: 1rem;
     }
-    .location-link {
+    .result-actions-row {
+      display: flex;
+      gap: 0.7rem;
+      align-items: center;
+    }
+    .location-btn, .location-link {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      font-size: 0.75rem;
+      gap: 0.4rem;
+      font-size: 0.7rem;
       font-weight: 900;
       text-decoration: none;
       letter-spacing: 0.05em;
-      padding: 0.7rem 1.2rem;
+      padding: 0.6rem 1rem;
       background: #f8f9fa;
       border-radius: 100px;
+      border: 2px solid;
       transition: all 0.3s ease;
       box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+      cursor: pointer;
+      white-space: nowrap;
     }
-    .location-link:hover { 
-      background: #1a1a1a; 
+    .location-btn {
+      background: transparent;
+      border: 2px solid;
+    }
+    .location-link {
+      border: 2px solid transparent;
+      color: inherit !important;
+    }
+    .location-btn:hover, .location-link:hover {
+      background: #1a1a1a;
       color: #fff !important;
-      transform: rotate(3deg);
+      border-color: #1a1a1a !important;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .location-btn:active, .location-link:active {
+      transform: scale(0.98);
+    }
+    .result-address {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+      padding: 0.8rem;
+      background: rgba(0,0,0,0.02);
+      border-radius: 12px;
+    }
+    .result-address .material-icons {
+      font-size: 1.1rem;
+      flex-shrink: 0;
     }
     .result-name {
       font-size: 1.6rem;
@@ -564,6 +624,7 @@ export class WeekendComponent implements AfterViewInit {
   private http = inject(HttpClient);
   private geminiService = inject(GeminiService);
   private zone = inject(NgZone);
+  private router = inject(Router);
   @ViewChild('quizBody') quizBody!: ElementRef;
 
   view = signal<'menu' | 'quiz' | 'loading' | 'results'>('menu');
@@ -957,6 +1018,21 @@ export class WeekendComponent implements AfterViewInit {
   }
 
   restart() { this.view.set('menu'); }
+
+  goToLocation(rec: Recommendation) {
+    if (!rec.coordinates) {
+      alert('Coordonate indisponibile pentru această locație.');
+      return;
+    }
+    const { lat, lng } = rec.coordinates;
+    this.router.navigate(['/transport/bus/program'], {
+      queryParams: {
+        destLat: lat,
+        destLon: lng,
+        destName: rec.name || rec.title
+      }
+    });
+  }
 
   openLocation(url: string | undefined) {
     if (url) {

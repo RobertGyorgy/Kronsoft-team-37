@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, signal, OnDestroy, PLATFORM_ID, inject, OnInit, afterNextRender, ViewEncapsulation, DestroyRef, ElementRef, ViewChild, computed } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { TransitService } from '../../services/transit.service';
 import { GeolocationService } from '../../../../core/services/geolocation.service';
 import { gsap } from 'gsap';
@@ -311,6 +311,7 @@ export class BusSearchComponent implements OnInit, OnDestroy {
   private transitService = inject(TransitService);
   private geoService = inject(GeolocationService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
   
   private map: any;
@@ -334,6 +335,7 @@ export class BusSearchComponent implements OnInit, OnDestroy {
   isMinimized = signal<boolean>(false);
 
   private locationTimeout: any;
+  private pendingDestination: { lat: number; lng: number; name?: string } | null = null;
 
   constructor() {
     if (typeof window !== 'undefined') {
@@ -351,6 +353,15 @@ export class BusSearchComponent implements OnInit, OnDestroy {
       const coords = await this.geoService.getCurrentPosition();
       this.initMap(coords || undefined);
       
+      if (this.pendingDestination) {
+        this.setDestinationMarker(
+          this.pendingDestination.lat,
+          this.pendingDestination.lng,
+          this.pendingDestination.name
+        );
+        this.pendingDestination = null;
+      }
+      
       await this.transitService.loadData();
       this.fetchPopularHubs();
       
@@ -364,7 +375,27 @@ export class BusSearchComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    // Read destination from Weekend recommendations (query params)
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(params => {
+        if (params['destination']) {
+          this.searchTerm.set(params['destination']);
+          const lat = parseFloat(params['lat']);
+          const lng = parseFloat(params['lng']);
+          const name = params['name'];
+
+          if (!isNaN(lat) && !isNaN(lng)) {
+            if (this.map) {
+              this.setDestinationMarker(lat, lng, name);
+            } else {
+              this.pendingDestination = { lat, lng, name };
+            }
+          }
+        }
+      });
+  }
   ngOnDestroy() {
     this.isAlive = false;
     if (this.initTimeout) clearTimeout(this.initTimeout);
@@ -655,6 +686,46 @@ export class BusSearchComponent implements OnInit, OnDestroy {
     } else {
       this.map.fitBounds(bounds, { padding: 100 });
     }
+  }
+
+  private destinationMarker: any;
+
+  setDestinationMarker(lat: number, lng: number, name?: string) {
+    if (!this.map) return;
+
+    // Remove old destination marker if exists
+    if (this.destinationMarker) {
+      this.destinationMarker.remove();
+    }
+
+    // Create destination marker element with styling
+    const el = document.createElement('div');
+    el.className = 'destination-marker';
+    el.style.width = '40px';
+    el.style.height = '40px';
+    el.style.background = '#ff4500';
+    el.style.border = '3px solid white';
+    el.style.borderRadius = '50%';
+    el.style.boxShadow = '0 4px 15px rgba(255, 69, 0, 0.4)';
+    el.style.display = 'flex';
+    el.style.alignItems = 'center';
+    el.style.justifyContent = 'center';
+    el.style.color = 'white';
+    el.style.fontSize = '20px';
+    el.style.fontWeight = 'bold';
+    el.innerHTML = '📍';
+
+    this.destinationMarker = new maplibregl.Marker({ element: el })
+      .setLngLat([lng, lat])
+      .addTo(this.map);
+
+    if (name) {
+      const popup = new maplibregl.Popup({ offset: 25 }).setText(name);
+      this.destinationMarker.setPopup(popup).togglePopup();
+    }
+
+    // Fly to destination
+    this.map.flyTo({ center: [lng, lat], zoom: 15, duration: 1500 });
   }
 
   private getCurrentServiceIds(): string[] {

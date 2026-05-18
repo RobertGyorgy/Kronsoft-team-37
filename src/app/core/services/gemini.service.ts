@@ -103,9 +103,12 @@ export class GeminiService {
           const place = catTree.places[placeId];
           if (place) {
             return {
+              id: place.id,
               name: place.name,
               description: place.description || place.shortDescription,
-              tip: place.tip
+              tip: place.tip,
+              address: place.address,
+              coordinates: place.coordinates
             };
           }
           return null;
