@@ -211,7 +211,6 @@ declare const google: any;
     .mode-toggle button { border: none; background: transparent; padding: 0; width: 36px; height: 36px; border-radius: 999px; color: #5f6368; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
     .mode-toggle button.active { background: #fff; color: #1a73e8; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
     
-    
     .predictions-overlay { background: #fff; border-radius: 16px; margin-top: 0.5rem; box-shadow: 0 12px 40px rgba(0,0,0,0.15); overflow: hidden; }
     .prediction-item { width: 100%; display: flex; align-items: center; gap: 1rem; padding: 1rem 1.25rem; border: none; background: transparent; text-align: left; border-bottom: 1px solid #f1f3f4; }
     .prediction-item .material-icons { color: #70757a; }
@@ -307,7 +306,6 @@ export class BusProgramComponent implements OnInit, OnDestroy {
   stepArrivalsMap = signal<Map<string, any[]>>(new Map());
   activeStep = signal<any>(null);
 
-  private routeMarkers: any[] = [];
   private watchId: number | null = null;
   private touchStartY = 0;
 
@@ -342,7 +340,6 @@ export class BusProgramComponent implements OnInit, OnDestroy {
     let currentMs = now.getTime();
     
     return steps.map((step: any) => {
-      // Prioritize Java-provided scheduled time
       if (step.transit?.departure_stop?.timeMs) {
         currentMs = step.transit.departure_stop.timeMs;
       }
@@ -518,7 +515,6 @@ export class BusProgramComponent implements OnInit, OnDestroy {
       this.userCoords.set(pos);
       this.map.setCenter([pos.lng, pos.lat]);
 
-      // Add or update user marker
       if (this.userMarker) {
         this.userMarker.setLngLat([pos.lng, pos.lat]);
       } else {
@@ -542,7 +538,6 @@ export class BusProgramComponent implements OnInit, OnDestroy {
         });
       }
 
-      // Automatically calculate route if we already have a destination loaded!
       if (this.destination()) {
         this.calculateRoute();
       }
@@ -602,7 +597,7 @@ export class BusProgramComponent implements OnInit, OnDestroy {
   getStepIcon(step: any) { return step?.travel_mode === 'TRANSIT' ? 'directions_bus' : 'directions_walk'; }
   getStepStartTime(idx: number) { return this.timelineSteps()[idx]?.start || '--:--'; }
   getStepTitle(step: any, isLast: boolean) { return isLast ? 'Destinație' : (step.travel_mode === 'TRANSIT' ? step.instructions : 'Mergi pe jos'); }
-  getStepArrivals(step: any): any[] { return []; } // Placeholder for live logic
+  getStepArrivals(step: any): any[] { return []; }
   getFinalArrivalTime() { return this.arrivalEstimate(); }
   formatTime(d: Date) { return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`; }
   onViewerScroll(e: any) {}
