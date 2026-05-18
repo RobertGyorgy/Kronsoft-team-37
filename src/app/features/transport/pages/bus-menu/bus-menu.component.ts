@@ -20,7 +20,7 @@ import { gsap } from 'gsap';
           <h1 class="bold-header">
             @for (word of splitByWord('Brașov Transit'); track word) {
               <span class="word">
-                @for (char of word.split(''); track char) {
+                @for (char of word.split(''); track $index) {
                   <span class="char">{{ char }}</span>
                 }
                 <span class="char">&nbsp;</span>

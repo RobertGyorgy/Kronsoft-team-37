@@ -70,12 +70,8 @@ import { gsap } from 'gsap';
               class="input-field"
               autocomplete="current-password"
             />
-            <button
-              type="button"
-              class="password-toggle-btn"
-              (click)="togglePasswordVisibility()"
-            >
-              {{ isPasswordVisible() ? 'Ascunde' : 'Arată' }}
+            <button type="button" class="password-toggle-btn" (click)="togglePasswordVisibility()" tabindex="-1">
+              <span class="material-icons">{{ isPasswordVisible() ? 'visibility_off' : 'visibility' }}</span>
             </button>
           </div>
           @if (passwordControl.touched && passwordControl.invalid) {

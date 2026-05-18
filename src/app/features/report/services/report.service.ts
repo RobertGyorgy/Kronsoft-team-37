@@ -6,7 +6,6 @@ import { firstValueFrom } from 'rxjs';
 
 export interface Report {
   id: number;
-  userId: number;
   userName: string;
   categoryName: string;
   description: string;
@@ -33,7 +32,6 @@ export class ReportService {
   categories = signal<ReportCategory[]>([]);
 
   constructor() {
-    this.loadReports();
     this.loadCategories();
   }
 
@@ -46,7 +44,12 @@ export class ReportService {
       const data = await firstValueFrom(
         this.http.get<ReportCategory[]>('/api/report-categories')
       );
-      this.categories.set(data);
+      
+      const uniqueCats = data.filter((cat, index, self) => 
+        index === self.findIndex((t) => t.id === cat.id)
+      );
+      
+      this.categories.set(uniqueCats);
     } catch (err) {
       console.error('Failed to load categories:', err);
     }
@@ -56,12 +59,22 @@ export class ReportService {
    * GET /api/reports?page=&size=&sort=createdAt,desc
    * Paginated reports, sorted by most recent first.
    */
-  async loadReports(page = 0, size = 50): Promise<void> {
+  async loadReports(categoryId?: number | null, page = 0, size = 50): Promise<void> {
     try {
-      const res = await firstValueFrom(
-        this.http.get<any>(`${this.apiUrl}?page=${page}&size=${size}&sort=createdAt,desc`)
+      let url = `${this.apiUrl}?page=${page}&size=${size}&sort=createdAt,desc`;
+      if (categoryId != null) {
+        url += `&category=${categoryId}`;
+      }
+      const res = await firstValueFrom(this.http.get<any>(url));
+      
+      const reportsList = Array.isArray(res) ? res : (res.content || []);
+      
+      // Deduplicate locally just in case
+      const uniqueReports = reportsList.filter((r: any, index: number, self: any[]) => 
+        index === self.findIndex((t: any) => t.id === r.id)
       );
-      this.reports.set(res.content || []);
+
+      this.reports.set(uniqueReports);
     } catch (err) {
       console.error('Failed to load reports:', err);
     }
@@ -89,7 +102,7 @@ export class ReportService {
    * Backend expects: CityReportRequest { categoryId, description, latitude, longitude, image?, status }
    * Uses @ModelAttribute — all fields are sent as individual form-data parts.
    */
-  async addReport(reportData: { categoryId: number; description: string; latitude: number; longitude: number }, imageFile?: File): Promise<void> {
+  async addReport(reportData: { categoryId: number; description: string; latitude: number; longitude: number; anonymous: boolean }, imageFile?: File): Promise<void> {
     try {
       const formData = new FormData();
 
@@ -97,6 +110,7 @@ export class ReportService {
       formData.append('description', reportData.description);
       formData.append('latitude', reportData.latitude.toString());
       formData.append('longitude', reportData.longitude.toString());
+      formData.append('anonymous', reportData.anonymous.toString());
       formData.append('status', 'NEW');
 
       if (imageFile) {
