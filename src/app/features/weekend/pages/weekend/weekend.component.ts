@@ -718,32 +718,32 @@ export class WeekendComponent implements AfterViewInit {
       ]
     },
     {
-      id: 'plimbari', name: 'Plimbări urbane', icon: 'directions_walk',
+      id: 'plimbari', name: 'Plimbări', icon: 'person-walking',
       color: '#2bcbba', shadow: '0 10px 20px rgba(43,203,186,0.15)',
       questions: [
         { 
-          id: 'viziune', text: 'Ce vrei să vezi?', 
+          id: 'q1', text: 'Ce vrei să vezi?', 
           options: [
-            { label: 'Centrul istoric', icon: 'map' },
-            { label: 'Cartiere locale', icon: 'location_city' },
-            { label: 'Priveliști', icon: 'visibility' },
-            { label: 'Street art', icon: 'brush' }
+            { label: 'Centrul istoric', icon: 'landmark' },
+            { label: 'Cartiere locale', icon: 'city' },
+            { label: 'Priveliști', icon: 'binoculars' },
+            { label: 'Street art', icon: 'palette' }
           ] 
         },
         { 
-          id: 'mers', text: 'Cât de mult mergi pe jos?', 
+          id: 'q2', text: 'Cât de mult mergi pe jos?', 
           options: [
-            { label: 'Puțin', icon: 'blind' },
-            { label: 'Moderat', icon: 'directions_walk' },
-            { label: 'Mult', icon: 'directions_run' }
+            { label: 'Puțin', icon: 'person-walking' },
+            { label: 'Moderat', icon: 'person-hiking' },
+            { label: 'Mult', icon: 'person-running' }
           ] 
         },
         { 
-          id: 'ora', text: 'La ce oră?', 
+          id: 'q3', text: 'La ce oră?', 
           options: [
-            { label: 'Dimineață', icon: 'wb_twilight' },
-            { label: 'Zi', icon: 'wb_sunny' },
-            { label: 'Seară', icon: 'bedtime' }
+            { label: 'Dimineață', icon: 'cloud-sun' },
+            { label: 'Zi', icon: 'sun' },
+            { label: 'Seară', icon: 'moon' }
           ] 
         }
       ]
@@ -907,7 +907,17 @@ export class WeekendComponent implements AfterViewInit {
       'umbrella-beach': 'beach_access',
       'children': 'child_care',
       'wand-magic-sparkles': 'auto_awesome',
-      'coffee': 'coffee'
+      'coffee': 'coffee',
+      'landmark': 'museum',
+      'city': 'location_city',
+      'binoculars': 'visibility',
+      'palette': 'palette',
+      'person-walking': 'directions_walk',
+      'person-hiking': 'hiking',
+      'person-running': 'directions_run',
+      'cloud-sun': 'wb_twilight',
+      'sun': 'wb_sunny',
+      'moon': 'bedtime'
     };
     return iconMap[iconName] || iconName;
   }
