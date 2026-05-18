@@ -22,15 +22,37 @@ export interface UserProfileResponse {
 @Injectable({ providedIn: 'root' })
 export class UserService {
   private readonly http = inject(HttpClient);
+  private profileLoadPromise: Promise<UserProfileResponse | null> | null = null;
 
   /** Reactive user profile signal — consumed by Dashboard, Settings, etc. */
   profile = signal<UserProfileResponse | null>(null);
 
   /**
    * GET /api/user/profile
-   * Fetches the currently authenticated user's profile.
+   * Fetches the profile once per authenticated session (cached in {@link profile}).
    */
-  async loadProfile(): Promise<UserProfileResponse | null> {
+  loadProfile(): Promise<UserProfileResponse | null> {
+    const cached = this.profile();
+    if (cached) {
+      return Promise.resolve(cached);
+    }
+
+    if (this.profileLoadPromise) {
+      return this.profileLoadPromise;
+    }
+
+    this.profileLoadPromise = this.fetchProfile().finally(() => {
+      this.profileLoadPromise = null;
+    });
+    return this.profileLoadPromise;
+  }
+
+  clearProfile(): void {
+    this.profile.set(null);
+    this.profileLoadPromise = null;
+  }
+
+  private async fetchProfile(): Promise<UserProfileResponse | null> {
     try {
       const data = await firstValueFrom(this.http.get<UserProfileResponse>('/api/user/profile'));
       this.profile.set(data);
