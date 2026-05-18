@@ -131,14 +131,6 @@ import { gsap } from 'gsap';
                   />
                 </div>
 
-                <div class="input-group role-selection">
-                  <label>Tip Cont</label>
-                  <div class="role-chips">
-                    <button type="button" class="role-chip" [class.active]="registerForm.value.role === 'CITIZEN'" (click)="registerForm.patchValue({role: 'CITIZEN'})">Cetățean</button>
-                    <button type="button" class="role-chip" [class.active]="registerForm.value.role === 'TOURIST'" (click)="registerForm.patchValue({role: 'TOURIST'})">Turist</button>
-                  </div>
-                </div>
-
                 <label class="checkbox-label">
                   <input type="checkbox" class="checkbox-input" />
                   <span>Am citit și sunt de acord cu <a href="#">Termenii și Condițiile</a></span>

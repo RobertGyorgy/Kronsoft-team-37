@@ -105,7 +105,8 @@ export class GeminiService {
             return {
               name: place.name,
               description: place.description || place.shortDescription,
-              tip: place.tip
+              tip: place.tip,
+              coordinates: place.coordinates
             };
           }
           return null;
@@ -175,7 +176,34 @@ export class GeminiService {
       const parsed = JSON.parse(rawContent);
       const list = parsed.recommendations || parsed.recomandari || Object.values(parsed).find(v => Array.isArray(v)) || [];
       
-      return { recommendations: list.slice(0, 3) };
+      const enrichedList = list.map((item: any) => {
+        let coords = item.coordinates || null;
+        if (!coords && this.decisionTree) {
+          const normName = item.name.toLowerCase().trim();
+          for (const catKey of Object.keys(this.decisionTree)) {
+            const cat = this.decisionTree[catKey];
+            if (cat.places) {
+              const matchedKey = Object.keys(cat.places).find(pk => {
+                const p = cat.places[pk];
+                return p.name.toLowerCase().trim().includes(normName) || normName.includes(p.name.toLowerCase().trim());
+              });
+              if (matchedKey) {
+                coords = cat.places[matchedKey].coordinates;
+                break;
+              }
+            }
+          }
+        }
+        if (!coords) {
+          coords = { lat: 45.6483, lng: 25.5891 };
+        }
+        return {
+          ...item,
+          coordinates: coords
+        };
+      });
+
+      return { recommendations: enrichedList.slice(0, 3) };
     } catch (error) {
       console.error('❌ Groq Error:', error);
       throw error;

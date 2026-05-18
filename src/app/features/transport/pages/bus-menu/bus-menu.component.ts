@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, afterNextRender, ElementRef, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, afterNextRender, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { gsap } from 'gsap';
@@ -111,12 +111,27 @@ import { gsap } from 'gsap';
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BusMenuComponent implements OnInit {
+export class BusMenuComponent implements OnInit, OnDestroy {
   @ViewChild('container') container!: ElementRef;
   
   ngOnInit() {}
 
+  ngOnDestroy() {
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('just_entered_transport_menu');
+    }
+  }
+
   constructor() {
+    if (typeof window !== 'undefined') {
+      const justEntered = sessionStorage.getItem('just_entered_transport_menu');
+      if (!justEntered) {
+        sessionStorage.setItem('just_entered_transport_menu', 'true');
+        window.location.reload();
+        return;
+      }
+    }
+
     afterNextRender(() => {
       this.animateEntrance();
     });

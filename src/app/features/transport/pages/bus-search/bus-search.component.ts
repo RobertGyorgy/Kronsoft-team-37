@@ -1,339 +1,689 @@
-import { ChangeDetectionStrategy, Component, signal, OnDestroy, PLATFORM_ID, inject, OnInit, afterNextRender, ViewEncapsulation, DestroyRef, ElementRef, ViewChild, computed } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, signal, OnInit, OnDestroy, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { TransitService } from '../../services/transit.service';
-import { GeolocationService } from '../../../../core/services/geolocation.service';
-import { gsap } from 'gsap';
-import maplibregl from 'maplibre-gl';
 
 @Component({
   selector: 'app-bus-search',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   template: `
-    <div class="transport-container" #container 
-         [class.minimized-state]="isMinimized() && activeStation()"
-         [class.active-station-state]="activeStation()">
-      <header class="top-nav" [class.active-search]="searchTerm().length > 0">
-        <div class="nav-row pill-header">
-          <button class="minimal-back-btn" (click)="goBack()">
-            <span class="material-icons">arrow_back_ios_new</span>
-          </button>
-          <div class="search-pill">
-            <span class="material-icons search-ico">search</span>
-            <input 
-              type="text" 
-              placeholder="Search station..." 
-              (input)="onSearch($any($event.target).value)"
-              [value]="searchTerm()"
-            />
-            <button class="minimal-locate" (click)="findNearbyStation()" title="Nearby">
-              <span class="material-icons">my_location</span>
-            </button>
+    <main class="bus-shell" [style.--bus-theme-color]="selectedBus()?.color || '#188038'" [style.--bus-theme-text-color]="selectedBus()?.textColor || '#ffffff'">
+      <!-- Header Area -->
+      <header class="top-nav-modern" [class.themed-nav]="selectedBus()">
+        <div class="nav-card">
+          <div class="nav-header-row">
+            @if (selectedBus()) {
+              <button class="minimal-back-btn" (click)="selectBus(null)">
+                <span class="material-icons">arrow_back</span>
+              </button>
+              <div class="bus-badge-container">
+                <span class="bus-badge-pill" [style.background]="selectedBus()?.color" [style.color]="selectedBus()?.textColor">
+                  {{ selectedBus()?.shortName }}
+                </span>
+                <div class="bus-badge-details">
+                  <span class="target-title">{{ selectedBus()?.origin }} ➔ {{ selectedBus()?.target }}</span>
+                  <span class="subtitle-text">Traseu complet</span>
+                </div>
+                @if (hasReturnTrip()) {
+                  <button class="swap-direction-btn" (click)="swapDirection()" title="Schimbă sensul de mers">
+                    <span class="material-icons">swap_vert</span>
+                  </button>
+                }
+              </div>
+            } @else {
+              <button class="minimal-back-btn" routerLink="/transport/bus">
+                <span class="material-icons">arrow_back</span>
+              </button>
+              <div class="header-title-box">
+                <h1 class="header-title">Orar Autobuze</h1>
+                <span class="header-subtitle">Liniile urbane și metropolitane</span>
+              </div>
+            }
           </div>
         </div>
       </header>
 
-      @if (searchResults().length > 0) {
-        <div class="search-overlay">
-          <div class="results-container">
-            @for (station of searchResults(); track station.id) {
-              <div class="result-card" (click)="selectStation(station)">
-                <div class="res-icon">
-                  <span class="material-icons">directions_bus</span>
-                </div>
-                <div class="res-body">
-                  <div class="res-name-row">
-                    <span class="res-name">{{ station.isHub ? station.name : (station.displayName || station.name) }}</span>
-                    @if (station.isHub) { <span class="hub-chip">TERMINAL</span> }
-                  </div>
-                  <div class="res-lines">
-                    @for (lineName of getUniqueLineNames(station.lines); track lineName) {
-                      <span class="mini-line" [style.background]="station.lines[getFirstKey(station.lines, lineName)].color">{{ lineName }}</span>
-                    }
-                  </div>
-                </div>
-                <span class="material-icons chevron">chevron_right</span>
-              </div>
-            }
+      <!-- Main Content Area -->
+      <section class="content-view">
+        @if (isLoading()) {
+          <div class="loading-container">
+            <div class="spinner"></div>
+            <p>Se încarcă baza de date...</p>
           </div>
-        </div>
-      }
-
-      <div class="main-content">
-        <section class="map-section">
-          <div class="map-canvas">
-            <div #mapContainer class="map-element"></div>
-            @if (isLoading()) {
-              <div class="map-overlay-loader">
-                <div class="loader-ring"></div>
+        } @else {
+          @if (selectedBus()) {
+            <!-- Detail Timetable Page -->
+            <div class="timetable-page">
+              <!-- Day Type Tabs Switcher -->
+              <div class="tabs-switcher">
+                <button [class.active]="selectedDayType() === 'weekday'" (click)="selectedDayType.set('weekday')">
+                  <span class="material-icons">work</span>
+                  Luni - Vineri
+                </button>
+                <button [class.active]="selectedDayType() === 'weekend'" (click)="selectedDayType.set('weekend')">
+                  <span class="material-icons">weekend</span>
+                  Sâmbătă - Duminică
+                </button>
               </div>
-            }
-          </div>
-        </section>
 
-        <section class="station-viewer" #viewer 
-                 [class.minimized]="isMinimized()" 
-                 (scroll)="onViewerScroll($event)"
-                 (touchstart)="onTouchStart($event)"
-                 (touchmove)="onTouchMove($event)">
-          @if (activeStation()) {
-            <div class="drag-handle-container" (click)="handleDragClick()">
-              <div class="drag-handle"></div>
-            </div>
-            
-            <header class="station-meta">
-              <div class="meta-left">
-                <h1 class="bold-header">
-                  @for (word of splitByWord(activeStation()?.name || ''); track $index) {
-                    <span class="word">
-                      @for (char of word.split(''); track $index) {
-                        <span class="char">{{ char }}</span>
+              <!-- Stations Timeline List -->
+              <div class="stations-timeline">
+                @for (station of selectedBus()?.stations; track station.stationId; let idx = $index) {
+                  <div class="timeline-station-card" 
+                       [class.expanded]="expandedStationId() === station.stationId"
+                       (click)="toggleStation(station.stationId)">
+                    <div class="timeline-indicator">
+                      <div class="node-badge" 
+                           [class.terminal-badge]="idx === 0 || idx === (selectedBus()?.stations?.length || 0) - 1"
+                           [style.background]="selectedBus()?.color" 
+                           [style.color]="selectedBus()?.textColor">
+                        {{ idx + 1 }}
+                      </div>
+                      @if (idx < (selectedBus()?.stations?.length || 0) - 1) {
+                        <div class="connector-line" [style.background]="selectedBus()?.color"></div>
                       }
-                      <span class="char">&nbsp;</span>
-                    </span>
+                    </div>
+                    
+                    <div class="station-details">
+                      <div class="station-header-row">
+                        <div class="station-title-col">
+                          <h3 class="station-name">{{ station.stationName }}</h3>
+                          @if (expandedStationId() !== station.stationId) {
+                            <span class="station-click-hint">Apasă pentru orar complet</span>
+                          }
+                        </div>
+                        <button class="navigate-to-station-btn" (click)="planRouteTo(station); $event.stopPropagation()" title="Planifică traseu până aici">
+                          <span class="material-icons">directions</span>
+                        </button>
+                      </div>
+                      
+                      <!-- Timetable Accordion Expanded Content -->
+                      @if (expandedStationId() === station.stationId) {
+                        <div class="hourly-schedule-grid" (click)="$event.stopPropagation()">
+                          @for (group of getTimesGroupedByHour(station, selectedDayType()); track group.hour) {
+                            <div class="hourly-row">
+                              <div class="hour-cell" [style.background]="selectedBus()?.color" [style.color]="selectedBus()?.textColor">
+                                {{ group.hour }}
+                              </div>
+                              <div class="minutes-cell">
+                                @for (min of group.minutes; track min) {
+                                  <span class="minute-pill" [style.border-color]="selectedBus()?.color + '40'">
+                                    {{ min }}
+                                  </span>
+                                }
+                              </div>
+                            </div>
+                          } @empty {
+                            <div class="no-service-pill">Nu sunt plecări în această zi</div>
+                          }
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          } @else {
+            <!-- List of All Buses Page -->
+            <div class="bus-list-page">
+              <!-- Search Bar -->
+              <div class="search-bar-box">
+                <span class="material-icons search-icon">search</span>
+                <input type="text" 
+                       placeholder="Caută o linie de autobuz..." 
+                       [value]="busSearchQuery()" 
+                       (input)="onSearchInput($event)">
+                @if (busSearchQuery()) {
+                  <button class="clear-search-btn" (click)="busSearchQuery.set('')">
+                    <span class="material-icons">close</span>
+                  </button>
+                }
+              </div>
+
+              <!-- Grouped Buses Grid -->
+              <div class="buses-grid">
+                @for (group of filteredGroups(); track group.shortName) {
+                  @if (group.routes.length === 1) {
+                    <!-- Single Route Swiss Plate Card -->
+                    <button class="bus-group-card swiss-plate-card" (click)="selectBus(group.routes[0])" 
+                            [style.background]="group.color" 
+                            [style.color]="group.textColor">
+                      <div class="swiss-card-main">
+                        <div class="swiss-line-number">{{ group.shortName }}</div>
+                        <div class="swiss-details">
+                          <span class="swiss-line-label">Linia {{ group.shortName }}</span>
+                          <span class="swiss-route-path">{{ group.routes[0].origin }} ➔ {{ group.routes[0].target }}</span>
+                        </div>
+                      </div>
+                      <div class="swiss-card-footer" [style.border-top-color]="group.textColor + '30'">
+                        <span class="swiss-stations-badge" [style.background]="group.textColor + '15'">
+                          {{ group.routes[0].stations.length }} stații
+                        </span>
+                        <span class="material-icons swiss-arrow">arrow_forward</span>
+                      </div>
+                    </button>
+                  } @else {
+                    <!-- Multi Route Swiss Plate Card -->
+                    <div class="bus-group-card swiss-plate-card" 
+                         [style.background]="group.color" 
+                         [style.color]="group.textColor">
+                      <div class="swiss-card-main">
+                        <div class="swiss-line-number">{{ group.shortName }}</div>
+                        <div class="swiss-details">
+                          <span class="swiss-line-label">Linia {{ group.shortName }}</span>
+                          <span class="swiss-routes-count">{{ group.routes.length }} trasee active</span>
+                        </div>
+                      </div>
+                      
+                      <div class="swiss-routes-list" [style.border-top-color]="group.textColor + '30'">
+                        @for (route of group.routes; track route.origin + '_' + route.target) {
+                          <button class="swiss-route-tile" (click)="selectBus(route)" 
+                                  [style.color]="group.textColor"
+                                  [style.background]="group.textColor === '#ffffff' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.12)'">
+                            <div class="swiss-route-left">
+                              <span class="material-icons swiss-route-icon" [style.color]="group.textColor">swap_calls</span>
+                              <span class="swiss-route-path-text">{{ route.origin }} ➔ {{ route.target }}</span>
+                            </div>
+                            <div class="swiss-route-right">
+                              <span class="swiss-stations-badge" 
+                                    [style.color]="group.textColor"
+                                    [style.background]="group.textColor === '#ffffff' ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.15)'">
+                                {{ route.stations.length }} stații
+                              </span>
+                              <span class="material-icons swiss-arrow">arrow_forward</span>
+                            </div>
+                          </button>
+                        }
+                      </div>
+                    </div>
                   }
-                </h1>
-                
-                <div class="quick-actions">
-                  <button class="primary-bold-btn" (click)="takeMeThere(activeStation())">
-                    <span class="material-icons">near_me</span>
-                    <span>Take me there</span>
-                  </button>
-                </div>
-              </div>
-            </header>
-
-            <div class="section-block">
-              <div class="block-label">Lines at this station</div>
-              <div class="line-scroller">
-                @for (line of activeStation()!.lineDetails || []; track line.name) {
-                  <button class="line-pill-bold" [style.background]="line.color" [style.color]="line.textColor" (click)="openTimetable(line)">
-                    {{ line.name }}
-                  </button>
-                }
-              </div>
-            </div>
-
-            <div class="section-block">
-              <div class="block-label">Upcoming Arrivals</div>
-              <div class="arrivals-list">
-                @for (arr of activeStation()?.arrivals?.slice(0, displayLimit()) || []; track arr.line + arr.eta) {
-                  <div class="arrival-card-bold" (click)="openTimetable(arr)">
-                    <div class="line-tag" [style.background]="arr.color" [style.color]="arr.textColor">
-                      {{ arr.shortLine }}
-                    </div>
-                    <div class="arrival-main">
-                      <span class="arrival-dest">{{ arr.target }}</span>
-                      <span class="arrival-meta">Scheduled at {{ arr.scheduledTime }}</span>
-                    </div>
-                    <div class="arrival-eta">
-                      <span class="eta-val">{{ arr.eta }}</span>
-                      <span class="eta-min">MIN</span>
-                    </div>
-                  </div>
-                }
-
-                @if (activeStation()?.arrivals?.length > displayLimit()) {
-                  <button class="minimal-more-btn" (click)="showMore()">
-                    <span>Load more</span>
-                    <span class="material-icons">expand_more</span>
-                  </button>
-                }
-
-                @if (!isFetchingLines() && activeStation()?.arrivals?.length === 0) {
+                } @empty {
                   <div class="empty-state">
-                    <span class="material-icons">event_busy</span>
-                    <p>No upcoming arrivals found.</p>
+                    <span class="material-icons">directions_bus_filled</span>
+                    <h3>Nu am găsit nicio linie</h3>
+                    <p>Încearcă o altă căutare.</p>
                   </div>
                 }
               </div>
-            </div>
-          } @else if (!isLoading()) {
-            <div class="hero-welcome">
-              <h1 class="bold-header">
-                @for (word of splitByWord('Brașov Transit'); track word) {
-                  <span class="word">
-                    @for (char of word.split(''); track char) {
-                      <span class="char">{{ char }}</span>
-                    }
-                    <span class="char">&nbsp;</span>
-                  </span>
-                }
-              </h1>
-              <p class="hero-subtext">Search for a station or find one nearby to see real-time schedules.</p>
-              <button class="primary-bold-btn" (click)="findNearbyStation()">
-                <span class="material-icons">my_location</span>
-                <span>Find nearby stations</span>
-              </button>
             </div>
           }
-        </section>
-      </div>
-
-      <!-- Timetable Modal -->
-      @if (viewingTimetable()) {
-        <div class="modal-backdrop" (click)="closeTimetable()">
-          <div class="modal-sheet-premium" (click)="$event.stopPropagation()">
-            <header class="sheet-head" [style.background]="viewingTimetable()!.color" [style.color]="viewingTimetable()!.textColor">
-              <div class="sheet-title-wrap">
-                <span class="sheet-line-num">{{ viewingTimetable()!.name }}</span>
-                <span class="sheet-destination">to {{ viewingTimetable()!.target }}</span>
-              </div>
-              <button class="sheet-exit" (click)="closeTimetable()">
-                <span class="material-icons">close</span>
-              </button>
-            </header>
-            
-            <div class="sheet-body">
-              <div class="day-pills">
-                @for (service of getServiceKeys(viewingTimetable()!.timetable); track service) {
-                  <button [class.active]="selectedService() === service" (click)="selectedService.set(service)">
-                    {{ service === 'Mo-Fr' ? 'Weekdays' : (service === 'Sa-Su' ? 'Weekend' : service) }}
-                  </button>
-                }
-              </div>
-
-              <div class="timetable-grid">
-                @for (time of viewingTimetable()!.timetable[selectedService()]; track time) {
-                  <div class="time-slot" [class.is-next]="isNextTime(time)">
-                    {{ time }}
-                  </div>
-                }
-              </div>
-            </div>
-          </div>
-        </div>
-      }
-    </div>
+        }
+      </section>
+    </main>
   `,
   styles: [`
-    .transport-container { height: 100dvh; background: var(--bg-primary); font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; color: var(--text-primary); overflow: hidden; }
+    .bus-shell { height: 100dvh; width: 100%; overflow: hidden; background: var(--bg-primary); font-family: 'Outfit', sans-serif; color: var(--text-primary); display: flex; flex-direction: column; position: relative; }
     
-    .top-nav { position: absolute; top: 0; left: 0; right: 0; padding: calc(var(--safe-top) + 1rem) 1.25rem; z-index: 1000; transition: all 0.4s ease; }
-    .nav-row.pill-header { display: flex; align-items: center; background: var(--bg-card); border-radius: 999px; box-shadow: 0 10px 40px rgba(0,0,0,0.12); border: 1px solid var(--border-color); padding: 0.25rem 0.5rem 0.25rem 0.75rem; max-width: 600px; margin: 0 auto; }
+    .top-nav-modern { padding: calc(var(--safe-top) + 1.2rem) 1rem 0.5rem; z-index: 100; background: var(--bg-primary); }
+    .nav-card { background: var(--bg-card); border-radius: 20px; border: 2px solid var(--border-color); padding: 1.1rem 1.25rem; transition: all 0.3s ease; }
+    .nav-header-row { display: flex; align-items: center; gap: 1.25rem; }
     
-    .minimal-back-btn { background: transparent; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-primary); cursor: pointer; transition: background 0.2s; }
-    .minimal-back-btn:active { background: #f5f5f5; }
-    .search-pill { flex: 1; display: flex; align-items: center; background: transparent; padding: 0 0.5rem; border-radius: 0; box-shadow: none; border: none; }
-    .search-pill input { border: none; background: transparent; flex: 1; padding: 0.8rem 0; outline: none; font-size: 1rem; font-weight: 700; color: var(--text-primary); }
-    .search-ico { color: #ccc; margin-right: 0.5rem; font-size: 1.2rem; }
-    .minimal-locate { background: #f5f5f5; border: none; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #1a1a1a; cursor: pointer; }
-
-    .search-overlay { position: absolute; top: calc(var(--safe-top) + 5rem); left: 1.25rem; right: 1.25rem; background: var(--bg-card); border-radius: 28px; z-index: 1001; box-shadow: 0 20px 50px rgba(0,0,0,0.15); max-height: 60vh; overflow-y: auto; padding: 1rem; border: 1px solid var(--border-color); }
-    .result-card { display: flex; align-items: center; gap: 1rem; padding: 1.2rem; border-radius: 20px; transition: all 0.2s; cursor: pointer; }
-    .result-card:active { background: #f9f9f9; transform: scale(0.98); }
-    .res-icon { width: 48px; height: 48px; background: #f5f5f5; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: #1a1a1a; }
-    .res-body { flex: 1; display: flex; flex-direction: column; gap: 0.25rem; }
-    .res-name { font-weight: 800; font-size: 1.1rem; color: #1a1a1a; }
-    .hub-chip { font-size: 0.6rem; font-weight: 900; background: #1a1a1a; color: #fff; padding: 2px 6px; border-radius: 4px; margin-left: 0.5rem; vertical-align: middle; }
-    .res-lines { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 0.4rem; }
-    .mini-line { font-size: 0.7rem; font-weight: 900; color: #fff; padding: 2px 8px; border-radius: 6px; margin-right: 4px; }
-    .main-content { flex: 1; display: flex; flex-direction: column; position: relative; overflow: hidden; }
-    .map-section { height: 100vh; width: 100%; flex-shrink: 0; transition: height 0.7s cubic-bezier(0.2, 0.8, 0.2, 1); position: relative; z-index: 1; }
-    .active-station-state .map-section { height: 45vh; }
-    .minimized-state .map-section { height: 75vh; }
-    .map-canvas { width: 100%; height: 100%; }
-    .map-element { width: 100%; height: 100%; }
+    .minimal-back-btn { background: var(--bg-secondary); border: 1px solid var(--border-color); width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--text-primary); cursor: pointer; transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .minimal-back-btn:hover { background: var(--border-color); transform: scale(1.05); }
+    .minimal-back-btn:active { transform: scale(0.95); }
     
-    .map-overlay-loader { position: absolute; inset: 0; background: rgba(255,255,255,0.4); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 5; }
-    .loader-ring { width: 32px; height: 32px; border: 3px solid #eee; border-top-color: #1a1a1a; border-radius: 50%; animation: spin 0.8s linear infinite; }
-    
-    .station-viewer { position: absolute; bottom: 0; left: 0; right: 0; height: 70vh; background: var(--bg-card); border-radius: 44px 44px 0 0; z-index: 10; padding: 0 1.5rem 2rem; box-shadow: 0 -25px 60px rgba(0,0,0,0.12); transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1); overflow-y: auto; scroll-behavior: smooth; transform: translateY(0); }
-    .minimized-state .station-viewer { transform: translateY(calc(70vh - 250px)); overflow-y: hidden; }
-
-    
-    .drag-handle-container { padding: 1.25rem 0 1rem; display: flex; justify-content: center; cursor: pointer; position: sticky; top: 0; background: var(--bg-card); z-index: 10; margin: 0 -1.5rem; }
-    .drag-handle { width: 44px; height: 5px; background: #f0f0f0; border-radius: 3px; transition: background 0.3s; }
-    .drag-handle-container:active .drag-handle { background: #e0e0e0; }
-
-    .station-meta { margin-bottom: 2rem; }
-    .bold-header { font-size: 3rem; font-weight: 800; letter-spacing: -0.06em; line-height: 0.85; margin: 0 0 1rem; transition: font-size 0.3s; }
-    .minimized .bold-header { font-size: 2.2rem; }
-    .word { display: inline-block; white-space: nowrap; }
-    .char { display: inline-block; }
-    
-    .primary-bold-btn { background: var(--text-primary); color: var(--bg-primary); border: none; width: 100%; padding: 1.2rem; border-radius: 999px; font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem; letter-spacing: 0.02em; cursor: pointer; }
-    .primary-bold-btn:active { transform: scale(0.97); transition: transform 0.2s; }
-
-    .section-block { margin-bottom: 2.5rem; }
-    .block-label { font-size: 0.8rem; font-weight: 900; color: #bbb; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 1.25rem; padding-left: 0.5rem; }
-    
-    .line-scroller { display: flex; gap: 0.75rem; overflow-x: auto; padding-bottom: 0.5rem; scrollbar-width: none; }
-    .line-scroller::-webkit-scrollbar { display: none; }
-    .line-pill-bold { flex-shrink: 0; padding: 0.8rem 1.5rem; border-radius: 999px; border: none; font-weight: 900; font-size: 1.1rem; cursor: pointer; box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
-
-    .arrivals-list { display: flex; flex-direction: column; gap: 1rem; }
-    .arrival-card-bold { display: flex; align-items: center; gap: 1.25rem; background: var(--bg-secondary); padding: 1.25rem; border-radius: 24px; transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); cursor: pointer; border: 1px solid var(--border-color); }
-    .arrival-card-bold.animated { transform: none !important; opacity: 1 !important; }
-    .arrival-card-bold:active { transform: scale(0.96); background: #f0f0f0; }
-    
-    .line-tag { width: 54px; height: 54px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.2rem; color: #fff; flex-shrink: 0; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-    .arrival-main { flex: 1; display: flex; flex-direction: column; gap: 0.2rem; }
-    .arrival-dest { font-weight: 800; font-size: 1.1rem; color: #1a1a1a; letter-spacing: -0.02em; }
-    .arrival-meta { font-size: 0.85rem; color: #999; font-weight: 600; }
-    .arrival-eta { text-align: right; display: flex; flex-direction: column; align-items: flex-end; }
-    .eta-val { font-size: 1.6rem; font-weight: 950; color: var(--text-primary); line-height: 1; letter-spacing: -0.05em; }
-    .eta-min { font-size: 0.7rem; font-weight: 900; color: #bbb; letter-spacing: 0.1em; }
-
-    .minimal-more-btn { width: 100%; background: var(--bg-card); border: 2px solid var(--border-color); padding: 1rem; border-radius: 999px; font-weight: 800; color: var(--text-primary); margin-top: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
-    
-    .hero-welcome { text-align: center; padding: 3rem 1rem; display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
-    .hero-subtext { color: #666; font-size: 1.1rem; line-height: 1.5; font-weight: 500; margin: 0; }
-
-    .modal-sheet-premium { background: var(--bg-card); width: 100%; border-radius: 40px 40px 0 0; max-height: 85vh; overflow-y: auto; box-shadow: 0 -20px 60px rgba(0,0,0,0.1); }
-    .sheet-head { padding: 2.5rem 2rem; display: flex; justify-content: space-between; align-items: center; }
-    .sheet-line-num { font-size: 3rem; font-weight: 800; line-height: 1; letter-spacing: -0.04em; }
-    .sheet-destination { display: block; font-size: 1.1rem; font-weight: 700; opacity: 0.9; margin-top: 0.5rem; }
-    .sheet-exit { background: rgba(0,0,0,0.1); border: none; width: 44px; height: 44px; border-radius: 50%; color: inherit; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-    .sheet-body { padding: 2.5rem 2rem; }
-    .day-pills { display: flex; background: #f5f5f5; padding: 6px; border-radius: 999px; margin-bottom: 2.5rem; }
-    .day-pills button { flex: 1; border: none; background: transparent; padding: 0.9rem; border-radius: 999px; font-weight: 800; color: #999; cursor: pointer; }
-    .day-pills button.active { background: #fff; color: #1a1a1a; box-shadow: 0 6px 15px rgba(0,0,0,0.05); }
-    .timetable-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 0.75rem; }
-    .time-slot { background: #fafafa; padding: 1rem; border-radius: 999px; font-weight: 700; font-size: 1.1rem; text-align: center; border: 1px solid #f0f0f0; }
-    .time-slot.is-next { background: #1a1a1a; color: #fff; border-color: #1a1a1a; transform: scale(1.05); }
-
-    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-    @media (max-width: 480px) {
-      .bold-header { font-size: 2.4rem; }
-      .primary-bold-btn { width: 100%; }
+    /* Themed Header */
+    .top-nav-modern.themed-nav .nav-card {
+      background: var(--bus-theme-color);
+      border-color: rgba(255,255,255,0.15);
+      color: var(--bus-theme-text-color);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
     }
+    .top-nav-modern.themed-nav .minimal-back-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.2);
+      color: var(--bus-theme-text-color);
+    }
+    .top-nav-modern.themed-nav .minimal-back-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+    .top-nav-modern.themed-nav .minimal-back-btn:active {
+      transform: scale(0.95);
+    }
+    .top-nav-modern.themed-nav .subtitle-text {
+      color: var(--bus-theme-text-color);
+      opacity: 0.85;
+    }
+    .swap-direction-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--bus-theme-text-color);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+      margin-left: auto;
+    }
+    .swap-direction-btn:active {
+      transform: scale(0.9) rotate(180deg);
+      background: rgba(255, 255, 255, 0.25);
+    }
+    .swap-direction-btn .material-icons {
+      font-size: 1.25rem;
+    }
+    
+    .header-title-box { display: flex; flex-direction: column; }
+    .header-title { font-size: 1.5rem; font-weight: 900; margin: 0; letter-spacing: -0.03em; line-height: 1.1; color: var(--text-primary); }
+    .header-subtitle { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 800; color: #188038; margin-top: 2px; }
+    
+    .bus-badge-container { display: flex; align-items: center; gap: 1rem; flex: 1; min-width: 0; }
+    .bus-badge-pill { font-size: 1.3rem; font-weight: 900; padding: 6px 16px; border-radius: 999px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); flex-shrink: 0; }
+    .bus-badge-details { display: flex; flex-direction: column; min-width: 0; }
+    .target-title { font-size: 1.05rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .subtitle-text { font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; }
+    
+    .content-view { flex: 1; overflow-y: auto; padding: 0.5rem 1rem 3rem; -webkit-overflow-scrolling: touch; }
+    
+    .loading-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 50vh; color: var(--text-secondary); }
+    .spinner { width: 36px; height: 36px; border: 3px solid var(--border-color); border-top-color: #188038; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 1rem; }
+    
+    /* Bus List Page */
+    .bus-list-page { display: flex; flex-direction: column; gap: 1.25rem; }
+    .search-bar-box { background: var(--bg-card); border-radius: 16px; border: 2px solid var(--border-color); display: flex; align-items: center; padding: 0 1.25rem; height: 54px; gap: 0.85rem; transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .search-bar-box:focus-within { border-color: #188038; box-shadow: 0 4px 16px rgba(24, 128, 56, 0.08); }
+    .search-icon { color: var(--text-secondary); font-size: 1.35rem; transition: color 0.2s; }
+    .search-bar-box:focus-within .search-icon { color: #188038; }
+    .search-bar-box input { border: none; background: transparent; flex: 1; font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700; outline: none; color: var(--text-primary); }
+    .search-bar-box input::placeholder { color: var(--text-secondary); opacity: 0.7; font-weight: 600; }
+    .clear-search-btn { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; transition: all 0.2s ease; }
+    .clear-search-btn:hover { background: var(--border-color); color: var(--text-primary); transform: scale(1.05); }
+    .clear-search-btn .material-icons { font-size: 1rem; }
+    
+    .buses-grid { display: flex; flex-direction: column; gap: 1rem; }
+    
+    /* Grouped Bus Layout Styles */
+    /* Swiss Bold Flat Color Block Layout */
+    .bus-group-card.swiss-plate-card { border: none; border-radius: 20px; padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); width: 100%; text-align: left; }
+    .bus-group-card.swiss-plate-card:hover { transform: translateY(-2px); }
+    .bus-group-card.swiss-plate-card:active { transform: scale(0.99); }
+    
+    .swiss-card-main { display: flex; align-items: center; gap: 1.25rem; }
+    .swiss-line-number { font-size: 2.8rem; font-weight: 900; letter-spacing: -0.06em; line-height: 1; min-width: 60px; }
+    .swiss-details { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+    .swiss-line-label { font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8; }
+    .swiss-route-path { font-size: 1.05rem; font-weight: 800; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .swiss-routes-count { font-size: 1.05rem; font-weight: 800; margin-top: 2px; }
+    
+    .swiss-card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid transparent; padding-top: 0.85rem; margin-top: 0.15rem; }
+    
+    .swiss-stations-badge { font-size: 0.75rem; font-weight: 800; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.02em; }
+    .swiss-arrow { font-size: 1.3rem; transition: transform 0.2s; }
+    .bus-group-card.swiss-plate-card:hover .swiss-arrow { transform: translateX(3px); }
+    
+    .swiss-routes-list { display: flex; flex-direction: column; gap: 0.65rem; border-top: 1px solid transparent; padding-top: 1rem; margin-top: 0.25rem; }
+    .swiss-route-tile { width: 100%; border: none; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; padding: 0.95rem 1.1rem; cursor: pointer; text-align: left; font-family: inherit; font-weight: 800; transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .swiss-route-tile:hover { transform: translateX(4px); filter: brightness(1.08); }
+    .swiss-route-tile:active { transform: scale(0.98); opacity: 0.85; }
+    .swiss-route-left { display: flex; align-items: center; gap: 0.75rem; min-width: 0; flex: 1; }
+    .swiss-route-icon { font-size: 1.15rem; opacity: 0.9; }
+    .swiss-route-path-text { font-size: 0.95rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .swiss-route-right { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
+    
+    .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem 1.5rem; text-align: center; color: var(--text-secondary); }
+    .empty-state .material-icons { font-size: 3rem; margin-bottom: 0.75rem; }
+    .empty-state h3 { font-size: 1.2rem; font-weight: 800; margin: 0; color: var(--text-primary); }
+    .empty-state p { font-size: 0.9rem; margin: 0.25rem 0 0; }
+    
+    /* Timetable Page */
+    .timetable-page { display: flex; flex-direction: column; gap: 1.25rem; position: relative; }
+    .timetable-page::before { content: ''; position: absolute; top: -40px; left: 50%; transform: translateX(-50%); width: 300px; height: 300px; background: var(--bus-theme-color); filter: blur(150px); opacity: 0.15; pointer-events: none; z-index: 0; }
+    
+    .tabs-switcher { display: grid; grid-template-columns: 1fr 1fr; background: var(--bg-secondary); border-radius: 999px; border: 1px solid var(--border-color); padding: 4px; gap: 4px; z-index: 10; position: relative; }
+    .tabs-switcher button { border: none; background: transparent; padding: 0.75rem; border-radius: 999px; font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer; transition: all 0.2s; }
+    .tabs-switcher button.active { background: var(--bus-theme-color); color: var(--bus-theme-text-color, #ffffff) !important; box-shadow: 0 4px 14px rgba(0,0,0,0.1); }
+    
+    /* Accordion Timeline List */
+    .stations-timeline { display: flex; flex-direction: column; position: relative; padding-left: 0.25rem; z-index: 10; }
+    .timeline-station-card { display: flex; gap: 1.25rem; position: relative; cursor: pointer; border-radius: 20px; padding: 0.85rem 1.25rem; border: 1px solid transparent; transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .timeline-station-card:hover { background: rgba(0,0,0,0.02); }
+    .timeline-station-card.expanded { background: transparent; border: 1px solid transparent; box-shadow: none; margin-bottom: 0; padding: 0.85rem 1.25rem 1.25rem; }
+    
+    .timeline-indicator { display: flex; flex-direction: column; align-items: center; width: 38px; flex-shrink: 0; position: relative; align-self: stretch; min-height: 100%; }
+    .node-badge { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 800; z-index: 5; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: transform 0.2s; }
+    .node-badge.terminal-badge { width: 38px; height: 38px; font-size: 1rem; font-weight: 900; box-shadow: 0 4px 12px rgba(0,0,0,0.12); border: 2.5px solid rgba(255, 255, 255, 0.4); }
+    .timeline-station-card.expanded .node-badge { transform: scale(1.1); }
+    .timeline-station-card.expanded .node-badge.terminal-badge { transform: scale(1.05); }
+    .connector-line { width: 4px; position: absolute; top: 20px; bottom: -32px; left: 50%; transform: translateX(-50%); z-index: 1; opacity: 0.8; }
+    .timeline-station-card.expanded .connector-line { bottom: -50px; }
+    
+    .station-details { flex: 1; min-width: 0; }
+    
+    .station-header-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .station-title-col { display: flex; flex-direction: column; min-width: 0; }
+    .station-name { font-size: 1.05rem; font-weight: 800; color: var(--text-primary); margin: 0; line-height: 1.2; }
+    .station-click-hint { font-size: 0.75rem; color: var(--text-secondary); opacity: 0.6; font-weight: 600; margin-top: 2px; }
+    .navigate-to-station-btn { background: var(--bg-primary); border: 1px solid var(--border-color); color: #188038; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0; }
+    .navigate-to-station-btn:active { transform: scale(0.9); background: rgba(0,0,0,0.05); }
+    
+    /* Hourly Grid Schedule Styling */
+    .hourly-schedule-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      margin-top: 1.25rem;
+      border-top: 1px solid var(--border-color);
+      padding-top: 1rem;
+      animation: slideDown 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+    .hourly-row {
+      display: flex;
+      align-items: center;
+      padding: 0.65rem 0;
+      border-bottom: 1.5px dashed rgba(120, 120, 120, 0.35);
+      width: 100%;
+    }
+    .hourly-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .hourly-row:first-child {
+      padding-top: 0;
+    }
+    .hour-cell {
+      font-size: 0.95rem;
+      font-weight: 900;
+      width: 38px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 0.85rem;
+      flex-shrink: 0;
+    }
+    .minutes-cell {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+    .minute-pill {
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+      transition: all 0.2s ease;
+    }
+    .minute-pill:hover {
+      background: var(--bg-secondary);
+      border-color: var(--bus-theme-color);
+    }
+    
+    .no-service-pill { font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; padding: 6px 12px; background: rgba(0,0,0,0.02); border-radius: 999px; margin-top: 0.5rem; text-align: center; }
+    
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BusSearchComponent implements OnInit, OnDestroy {
-  @ViewChild('mapContainer') mapContainer!: ElementRef;
-  @ViewChild('viewer') viewer!: ElementRef;
-  
   private transitService = inject(TransitService);
-  private geoService = inject(GeolocationService);
   private router = inject(Router);
-  private destroyRef = inject(DestroyRef);
-  
-  private map: any;
-  private markers: any[] = [];
-  private userMarker: any;
-  private initTimeout: any;
-  private isAlive = true;
-  
-  isLoading = signal<boolean>(false);
-  isFetchingLines = signal<boolean>(false);
-  searchTerm = signal<string>('');
-  
-  public allStations: any[] = [];
-  activeStation = signal<any | null>(null);
-  searchResults = signal<any[]>([]);
-  public smartStops = computed(() => this.transitService.smartStops());
 
-  viewingTimetable = signal<any | null>(null);
-  selectedService = signal<string>('Mo-Fr');
+  isLoading = signal(false);
+  selectedBus = signal<any>(null);
+  selectedDayType = signal<'weekday' | 'weekend'>('weekday');
+  busSearchQuery = signal('');
+  expandedStationId = signal<string | null>(null);
 
-  isMinimized = signal<boolean>(false);
+  // Compute all unique bus lines and directions strictly how the GTFS/database defines them
+  allBuses = computed(() => {
+    const stops = this.transitService.smartStops();
+    const busesMap = new Map<string, any>();
+    
+    stops.forEach((stop: any) => {
+      if (!stop.lines) return;
+      Object.keys(stop.lines).forEach((lineKey) => {
+        const line = stop.lines[lineKey];
+        const shortName = line.name || lineKey.split('_')[0];
+        const target = line.target || 'Direcție Urbană';
+        
+        // Group strictly by the GTFS lineKey (e.g. 52_0, 52_1) to match the database exactly
+        const compositeKey = lineKey;
+        
+        if (!busesMap.has(compositeKey)) {
+          busesMap.set(compositeKey, {
+            shortName: shortName,
+            lineKey: lineKey,
+            color: line.color || '#188038',
+            textColor: line.textColor || '#ffffff',
+            target: target,
+            _targetCounts: { [target]: 1 },
+            stations: []
+          });
+        } else {
+          const bus = busesMap.get(compositeKey);
+          bus._targetCounts[target] = (bus._targetCounts[target] || 0) + 1;
+        }
+        
+        const bus = busesMap.get(compositeKey);
+        const alreadyExists = bus.stations.some((s: any) => s.stationName === stop.name);
+        if (!alreadyExists) {
+          bus.stations.push({
+            stationId: stop.id,
+            stationName: stop.name,
+            lat: stop.lat,
+            lon: stop.lon,
+            timetable: line.timetable || {}
+          });
+        }
+      });
+    });
+    
+    // Helper to calculate distance in meters
+    const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+      const R = 6371000;
+      const phi1 = lat1 * Math.PI / 180;
+      const phi2 = lat2 * Math.PI / 180;
+      const deltaPhi = (lat2 - lat1) * Math.PI / 180;
+      const deltaLambda = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
+                Math.cos(phi1) * Math.cos(phi2) *
+                Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    };
 
-  private locationTimeout: any;
+    // Helper to topologically sort stations
+    const sortStationsTopologically = (stations: any[], targetName: string, shortName: string) => {
+      if (stations.length <= 1) return stations;
+
+      // For standard lines, use simple and robust chronological sorting
+      if (shortName !== '52') {
+        const getEarliest = (timetable: any) => {
+          let min = Infinity;
+          Object.values(timetable).forEach((times: any) => {
+            if (Array.isArray(times)) {
+              times.forEach((t: string) => {
+                const [h, m] = t.split(':').map(Number);
+                const val = h * 60 + m;
+                if (val < min) min = val;
+              });
+            }
+          });
+          return min === Infinity ? 9999 : min;
+        };
+        return [...stations].sort((a, b) => getEarliest(a.timetable) - getEarliest(b.timetable));
+      }
+
+      // Spatio-temporal reconstructor ONLY for Line 52
+      const parsedStations = stations.map(s => {
+        const allTimes: number[] = [];
+        Object.values(s.timetable || {}).forEach((times: any) => {
+          if (Array.isArray(times)) {
+            times.forEach((t: string) => {
+              const [h, m] = t.split(':').map(Number);
+              allTimes.push(h * 60 + m);
+            });
+          }
+        });
+        return {
+          ...s,
+          times: Array.from(new Set(allTimes)).sort((a, b) => a - b)
+        };
+      });
+
+      let bestTrace: any[] = [];
+      
+      parsedStations.forEach(startStop => {
+        startStop.times.forEach((startTime: number) => {
+          const trace = [{ ...startStop, time: startTime }];
+          const visited = new Set([startStop.stationName]);
+          let currTime = startTime;
+          
+          while (true) {
+            let nextStop: any = null;
+            let nextTime = 0;
+            let minDiff = Infinity;
+            
+            parsedStations.forEach(s => {
+              if (visited.has(s.stationName)) return;
+              
+              const last = trace[trace.length - 1];
+              const dist = getDistance(last.lat, last.lon, s.lat, s.lon);
+              
+              // Spatial filter: typical adjacent city stops are within 1.6 km
+              if (dist > 1600) return;
+              
+              s.times.forEach((t: number) => {
+                const diff = t - currTime;
+                if (diff >= 1 && diff <= 4 && diff < minDiff) {
+                  // Speed filter: max 12.5 m/s (45 km/h) average speed between stops
+                  const speed = dist / (diff * 60);
+                  if (speed > 12.5) return;
+                  
+                  minDiff = diff;
+                  nextStop = s;
+                  nextTime = t;
+                }
+              });
+            });
+            
+            if (nextStop) {
+              trace.push({ ...nextStop, time: nextTime });
+              visited.add(nextStop.stationName);
+              currTime = nextTime;
+            } else {
+              break;
+            }
+          }
+          
+          if (trace.length > bestTrace.length) {
+            bestTrace = trace;
+          }
+        });
+      });
+
+      const traceNames = new Set(bestTrace.map(t => t.stationName));
+      const missing = parsedStations.filter(s => !traceNames.has(s.stationName));
+      if (missing.length > 0) {
+        const getMinTime = (s: any) => s.times.length > 0 ? s.times[0] : 9999;
+        missing.sort((a, b) => getMinTime(a) - getMinTime(b));
+        bestTrace = [...bestTrace, ...missing];
+      }
+
+      // Rotate loop so that the target stop is at the very end
+      const targetIdx = bestTrace.findIndex(t => 
+        t.stationName.toLowerCase().includes(targetName.toLowerCase()) ||
+        targetName.toLowerCase().includes(t.stationName.toLowerCase())
+      );
+      
+      if (targetIdx !== -1 && targetIdx < bestTrace.length - 1) {
+        const part1 = bestTrace.slice(0, targetIdx + 1);
+        const part2 = bestTrace.slice(targetIdx + 1);
+        bestTrace = [...part2, ...part1];
+      }
+
+      return bestTrace.map(t => {
+        const { times, time, ...rest } = t;
+        return rest;
+      });
+    };
+
+    // Post-process to resolve the most frequent destination string and sort stations chronologically
+    busesMap.forEach((bus) => {
+      let bestTarget = bus.target;
+      let maxCount = 0;
+      Object.keys(bus._targetCounts).forEach(t => {
+        if (bus._targetCounts[t] > maxCount) {
+          maxCount = bus._targetCounts[t];
+          bestTarget = t;
+        }
+      });
+      bus.target = bestTarget;
+
+      bus.stations = sortStationsTopologically(bus.stations, bus.target, bus.shortName);
+      bus.origin = bus.stations.length > 0 ? bus.stations[0].stationName : 'Origine necunoscută';
+      bus.target = bus.stations.length > 0 ? bus.stations[bus.stations.length - 1].stationName : bus.target;
+    });
+
+    // Sort by line number first, then by destination name
+    return Array.from(busesMap.values()).sort((a: any, b: any) => {
+      const aNum = parseInt(a.shortName, 10);
+      const bNum = parseInt(b.shortName, 10);
+      if (!isNaN(aNum) && !isNaN(bNum)) {
+        if (aNum !== bNum) return aNum - bNum;
+        return a.target.localeCompare(b.target);
+      }
+      if (a.shortName !== b.shortName) return a.shortName.localeCompare(b.shortName);
+      return a.target.localeCompare(b.target);
+    });
+  });
+
+  // Group all buses by line name (e.g., shortName) to group both directions in pairs/groups
+  groupedBuses = computed(() => {
+    const buses = this.allBuses();
+    const groupsMap = new Map<string, { shortName: string, color: string, textColor: string, routes: any[] }>();
+    
+    buses.forEach((bus) => {
+      if (!groupsMap.has(bus.shortName)) {
+        groupsMap.set(bus.shortName, {
+          shortName: bus.shortName,
+          color: bus.color,
+          textColor: bus.textColor,
+          routes: []
+        });
+      }
+      groupsMap.get(bus.shortName)!.routes.push(bus);
+    });
+    
+    // Sort groups by shortName (numeric if possible, otherwise string)
+    return Array.from(groupsMap.values()).sort((a, b) => {
+      const aNum = parseInt(a.shortName, 10);
+      const bNum = parseInt(b.shortName, 10);
+      if (!isNaN(aNum) && !isNaN(bNum)) return aNum - bNum;
+      return a.shortName.localeCompare(b.shortName);
+    });
+  });
+
+  // Filter grouped buses based on search bar input
+  filteredGroups = computed(() => {
+    const query = this.busSearchQuery().toLowerCase().trim();
+    const groups = this.groupedBuses();
+    if (!query) return groups;
+    
+    return groups.map(g => {
+      const isLineMatch = g.shortName.toLowerCase().includes(query);
+      if (isLineMatch) {
+        return g;
+      }
+      const matchingRoutes = g.routes.filter(r => 
+        r.origin.toLowerCase().includes(query) || 
+        r.target.toLowerCase().includes(query)
+      );
+      return { ...g, routes: matchingRoutes };
+    }).filter(g => g.routes.length > 0);
+  });
 
   constructor() {
     if (typeof window !== 'undefined') {
@@ -344,508 +694,171 @@ export class BusSearchComponent implements OnInit, OnDestroy {
         return;
       }
     }
+  }
 
-    afterNextRender(async () => {
-      this.isLoading.set(true);
-      
-      const coords = await this.geoService.getCurrentPosition();
-      this.initMap(coords || undefined);
-      
-      await this.transitService.loadData();
-      this.fetchPopularHubs();
-      
-      if (coords) {
-        this.findNearbyStation(true);
-      } else {
-        this.isLoading.set(false);
-      }
-
-      this.setupLocationSync();
+  ngOnInit() {
+    this.isLoading.set(true);
+    this.transitService.loadData().then(() => {
+      this.isLoading.set(false);
     });
   }
 
-  ngOnInit() {}
   ngOnDestroy() {
-    this.isAlive = false;
-    if (this.initTimeout) clearTimeout(this.initTimeout);
-    if (this.locationTimeout) clearTimeout(this.locationTimeout);
     if (typeof window !== 'undefined') {
       sessionStorage.removeItem('just_entered_transport_search');
     }
   }
 
-  splitByWord(text: string): string[] {
-    return text ? text.split(' ') : [];
+  onSearchInput(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.busSearchQuery.set(input.value);
   }
 
-  private entranceTl?: gsap.core.Timeline;
-
-  private animateEntrance() {
-    if (!this.viewer?.nativeElement) return;
-    
-    const container = this.viewer.nativeElement;
-    const chars = container.querySelectorAll('.char');
-    const cards = container.querySelectorAll('.arrival-card-bold');
-    const linePills = container.querySelectorAll('.line-pill-bold');
-    const labels = container.querySelectorAll('.block-label');
-    const actionBtns = container.querySelectorAll('.primary-bold-btn');
-    const dragHandle = container.querySelectorAll('.drag-handle-container');
-
-    if (chars.length === 0 && cards.length === 0) return;
-
-    // Kill any existing animation to prevent "refresh" glitches
-    if (this.entranceTl) this.entranceTl.kill();
-    gsap.killTweensOf([chars, cards, linePills, labels, actionBtns, dragHandle]);
-
-    this.entranceTl = gsap.timeline({ defaults: { ease: 'power4.out', duration: 0.8 } });
-    
-    this.entranceTl.fromTo(chars, 
-      { y: 20, opacity: 0 },
-      { y: 0, opacity: 1, stagger: 0.015 }
-    )
-    .fromTo([dragHandle, actionBtns, labels, linePills],
-      { y: 15, opacity: 0 },
-      { y: 0, opacity: 1, stagger: 0.04 },
-      '-=0.65'
-    )
-    .fromTo(cards,
-      { y: 25, opacity: 0 },
-      { 
-        y: 0, 
-        opacity: 1, 
-        stagger: 0.06,
-        onComplete: () => {
-          cards.forEach((el: any) => el.classList.add('animated'));
-        }
-      },
-      '-=0.6'
-    );
-  }
-
-  private touchStartY = 0;
-  
-  onTouchStart(event: TouchEvent) {
-    this.touchStartY = event.touches[0].clientY;
-  }
-
-  onTouchMove(event: TouchEvent) {
-    const touchY = event.touches[0].clientY;
-    const deltaY = touchY - this.touchStartY;
-    const el = this.viewer?.nativeElement;
-    
-    // Pull down at top to minimize
-    if (el && el.scrollTop <= 0 && deltaY > 60 && !this.isMinimized()) {
-      this.isMinimized.set(true);
-    } 
-    // Pull up anywhere or scroll up to expand
-    else if (el && deltaY < -60 && this.isMinimized()) {
-      this.isMinimized.set(false);
+  selectBus(bus: any) {
+    this.selectedBus.set(bus);
+    if (bus && bus.stations.length > 0) {
+      this.expandedStationId.set(bus.stations[0].stationId);
+    } else {
+      this.expandedStationId.set(null);
     }
   }
 
-  onViewerScroll(event: Event) {
-    const el = event.target as HTMLElement;
-    // If user scrolls up (meaning moving content down) while minimized, expand
-    if (el.scrollTop < -10 && this.isMinimized()) {
-      this.isMinimized.set(false);
-    }
-    // If user scrolls down inside content, ensure expanded
-    if (el.scrollTop > 20 && this.isMinimized()) {
-      this.isMinimized.set(false);
-    }
+  hasReturnTrip(): boolean {
+    const currentBus = this.selectedBus();
+    if (!currentBus) return false;
+    const groups = this.groupedBuses();
+    const group = groups.find(g => g.shortName === currentBus.shortName);
+    return !!(group && group.routes.length > 1);
   }
 
-  handleDragClick() {
-    this.isMinimized.set(!this.isMinimized());
-  }
-
-  private initMap(initialCoords?: { lat: number, lng: number }): boolean {
-    if (this.map) return true;
-    if (!this.mapContainer) return false;
-
-    const bounds: [number, number, number, number] = [25.00, 45.40, 26.50, 46.00];
-    const center: [number, number] = initialCoords ? [initialCoords.lng, initialCoords.lat] : [25.5891, 45.6483];
+  swapDirection() {
+    const currentBus = this.selectedBus();
+    if (!currentBus) return;
     
-    this.map = new maplibregl.Map({
-      container: this.mapContainer.nativeElement,
-      style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
-      center: center,
-      zoom: initialCoords ? 16 : 14,
-      maxBounds: bounds,
-      attributionControl: false,
-      pitch: 0,
-      bearing: 0,
-      pitchWithRotate: false,
-      dragRotate: false
+    const groups = this.groupedBuses();
+    const group = groups.find(g => g.shortName === currentBus.shortName);
+    if (!group || group.routes.length <= 1) return;
+    
+    const currentIndex = group.routes.findIndex(r => r.lineKey === currentBus.lineKey);
+    const nextIndex = (currentIndex + 1) % group.routes.length;
+    const nextBus = group.routes[nextIndex];
+    
+    this.selectBus(nextBus);
+  }
+
+  toggleStation(stationId: string) {
+    if (this.expandedStationId() === stationId) {
+      this.expandedStationId.set(null);
+    } else {
+      this.expandedStationId.set(stationId);
+    }
+  }
+
+  getTimesGroupedByHour(station: any, dayType: 'weekday' | 'weekend'): { hour: string, minutes: string[] }[] {
+    const times = this.getTimetableTimes(station, dayType).filter(t => t !== '–');
+    const groups: { [hour: string]: string[] } = {};
+    times.forEach(t => {
+      const [h, m] = t.split(':');
+      if (!groups[h]) groups[h] = [];
+      groups[h].push(m);
     });
-    return true;
+    return Object.keys(groups).sort().map(h => ({
+      hour: h,
+      minutes: groups[h].sort()
+    }));
   }
 
-  private loadTransitDatabase() {
-    this.transitService.loadData().then(() => {
-      this.fetchPopularHubs();
-      // Initial entrance for hero
-      setTimeout(() => this.animateEntrance(), 200);
-    });
-  }
-
-  private normalizeText(value: string): string {
-    return this.transitService.normalizeText(value);
-  }
-
-  private fetchPopularHubs() {
-    const data = this.smartStops();
-    if (!data || data.length === 0) return;
-    const uniqueNames = new Set<string>();
-    const hubs: any[] = [];
-    data.forEach(stop => {
-      if (!uniqueNames.has(stop.name) && hubs.length < 12) {
-        uniqueNames.add(stop.name);
-        hubs.push({
-          ...stop,
-          id: 'hub-' + stop.id,
-          lineCount: Object.keys(stop.lines || {}).length,
-          address: 'Brașov, România'
-        });
+  planRouteTo(station: any) {
+    this.router.navigate(['/transport/bus/program'], {
+      queryParams: {
+        destLat: station.lat,
+        destLon: station.lon,
+        destName: station.stationName
       }
     });
-    this.allStations = hubs.sort((a, b) => b.lineCount - a.lineCount);
   }
 
-  onSearch(query: string) {
-    this.searchTerm.set(query);
-    if (!query || query.length < 1) { this.searchResults.set([]); return; }
-    const data = this.smartStops();
-    const normalizedQuery = this.normalizeText(query);
-    const resultsMap = new Map<string, any>();
-    data.forEach(stop => {
-      const normalizedName = this.normalizeText(stop.name);
-      const normalizedDisplay = this.normalizeText(stop.displayName || '');
-      const lineNumbers = Object.keys(stop.lines || []);
-      const isHub = !!(stop.parent && stop.parent.startsWith('relation/'));
-      let score = 0;
-      if (normalizedName === normalizedQuery) score += 200;
-      else if (normalizedDisplay === normalizedQuery) score += 180;
-      else if (normalizedName.startsWith(normalizedQuery)) score += 100;
-      else if (normalizedDisplay.startsWith(normalizedQuery)) score += 80;
-      else if (normalizedName.includes(' ' + normalizedQuery)) score += 60;
-      else if (normalizedDisplay.includes(normalizedQuery)) score += 40;
-      else if (normalizedName.includes(normalizedQuery)) score += 20;
-      if (isHub) score += 50;
-      if (lineNumbers.some(l => l.toLowerCase() === normalizedQuery)) score += 70;
-      else if (lineNumbers.some(l => l.toLowerCase().startsWith(normalizedQuery))) score += 30;
-      if (score > 0) {
-        const groupKey = (stop.parent && stop.parent.startsWith('relation/')) ? stop.parent : stop.id;
-        if (!resultsMap.has(groupKey)) {
-          resultsMap.set(groupKey, { ...stop, score, isHub: !!(stop.parent && stop.parent.startsWith('relation/')), allPlatforms: [stop] });
-        } else {
-          const existing = resultsMap.get(groupKey);
-          existing.score = Math.max(existing.score, score);
-          existing.allPlatforms.push(stop);
-          Object.assign(existing.lines, stop.lines);
+  // Resolve and sort times for horizontal scroll
+  getTimetableTimes(station: any, dayType: 'weekday' | 'weekend'): string[] {
+    const bus = this.selectedBus();
+    const timetable = station.timetable || {};
+    const serviceKeys = dayType === 'weekday' 
+      ? ['Mo-Fr', 'TE:Mo-Fr', 'green_fridays'] 
+      : ['Sa-Su', 'Sa', 'Su'];
+
+    const getTimesInMinutes = (st: any) => {
+      let times: string[] = [];
+      serviceKeys.forEach(key => {
+        if (st.timetable && st.timetable[key]) {
+          times = [...times, ...st.timetable[key]];
         }
-      }
-    });
-    this.searchResults.set(Array.from(resultsMap.values()).sort((a, b) => b.score - a.score).slice(0, 15));
-  }
-
-  selectStation(station: any) {
-    this.searchResults.set([]);
-    this.searchTerm.set('');
-    this.isLoading.set(true);
-    this.activeStation.set(null);
-    const uniqueLines = new Map();
-    Object.keys(station.lines).forEach(lKey => {
-      const line = station.lines[lKey];
-      const shortName = line.name || lKey.split('_')[0];
-      if (!uniqueLines.has(shortName)) uniqueLines.set(shortName, { name: shortName, ...line });
-    });
-    const lineDetails = Array.from(uniqueLines.values());
-    const fullStation = { 
-      ...station, 
-      arrivals: [], 
-      lineDetails, 
-      multipleMarkers: !!station.isHub, 
-      name: station.isHub ? station.name : (station.displayName || station.name) 
+      });
+      return Array.from(new Set(times)).map(tStr => {
+        const [h, m] = tStr.split(':').map(Number);
+        return h * 60 + m;
+      }).sort((a, b) => a - b);
     };
-    this.activeStation.set(fullStation);
-    this.updateMap(station.isHub ? station.allPlatforms : [station], station);
-    this.fetchRealtimeArrivals(station.lines);
-  }
 
-  selectPlatform(plat: any) {
-    this.isLoading.set(true);
-    const uniqueLines = new Map();
-    Object.keys(plat.lines).forEach(lKey => {
-      const line = plat.lines[lKey];
-      const shortName = line.name || lKey.split('_')[0];
-      if (!uniqueLines.has(shortName)) uniqueLines.set(shortName, { name: shortName, ...line });
-    });
-    this.activeStation.update(s => ({ ...s, name: plat.name, lineDetails: Array.from(uniqueLines.values()), multipleMarkers: true }));
-    this.fetchRealtimeArrivals(plat.lines);
-  }
-
-  getUniqueLineNames(lines: any): string[] {
-    if (!lines) return [];
-    const names = new Set<string>();
-    Object.keys(lines).forEach(k => names.add(lines[k].name || k.split('_')[0]));
-    return Array.from(names);
-  }
-
-  getFirstKey(lines: any, name: string): string {
-    return Object.keys(lines).find(k => (lines[k].name || k.split('_')[0]) === name) || '';
-  }
-
-  openTimetable(line: any) {
-    const currentServiceIds = this.getCurrentServiceIds();
-    const defaultService = currentServiceIds.find(sid => line.timetable[sid]) || Object.keys(line.timetable)[0];
-    this.selectedService.set(defaultService);
-    this.viewingTimetable.set(line);
-  }
-
-  closeTimetable() { this.viewingTimetable.set(null); }
-  getServiceKeys(timetable: any) { return Object.keys(timetable || {}); }
-
-  isNextTime(time: string) {
-    const now = new Date();
-    const [h, m] = time.split(':').map(Number);
-    const nowVal = now.getHours() * 60 + now.getMinutes();
-    const line = this.viewingTimetable();
-    if (!line) return false;
-    const schedule = line.timetable[this.selectedService()];
-    if (!schedule) return false;
-    const nextMatch = schedule.find((t: string) => {
-      const [th, tm] = t.split(':').map(Number);
-      return (th * 60 + tm) >= nowVal;
-    });
-    return time === nextMatch;
-  }
-
-  private updateMap(platforms: any[], hub: any) {
-    if (!this.map) return;
-    this.markers.forEach(m => m.remove());
-    this.markers = [];
-    if (!platforms || platforms.length === 0) return;
-
-    const bounds = new maplibregl.LngLatBounds();
-    platforms.forEach((plat) => {
-      const pos: [number, number] = [plat.lon, plat.lat];
-      bounds.extend(pos);
-
-      const el = document.createElement('div');
-      el.className = 'station-marker';
-      el.style.width = '14px';
-      el.style.height = '14px';
-      el.style.background = '#1a1a1a';
-      el.style.border = '2px solid white';
-      el.style.borderRadius = '50%';
-      el.style.boxShadow = '0 2px 5px rgba(0,0,0,0.3)';
-
-      const marker = new maplibregl.Marker({ element: el })
-        .setLngLat(pos)
-        .addTo(this.map);
-      
-      el.addEventListener('click', () => this.selectPlatform(plat));
-      this.markers.push(marker);
-    });
-
-    if (platforms.length === 1) {
-      const pos: [number, number] = [platforms[0].lon, platforms[0].lat];
-      this.map.easeTo({ center: pos, zoom: 17, duration: 1000 });
-    } else {
-      this.map.fitBounds(bounds, { padding: 100 });
-    }
-  }
-
-  private getCurrentServiceIds(): string[] {
-    const day = new Date().getDay();
-    if (day === 0) return ['Sa-Su', 'Su'];
-    if (day === 6) return ['Sa-Su', 'Sa'];
-    if (day === 5) return ['Mo-Fr', 'green_fridays', 'TE:Mo-Fr'];
-    return ['Mo-Fr', 'TE:Mo-Fr'];
-  }
-
-  private async fetchRealtimeArrivals(stationLines: any) {
-    if (!stationLines) { this.isLoading.set(false); this.isFetchingLines.set(false); return; }
-    this.isFetchingLines.set(true);
-    
-    const arrivals: any[] = [];
-    const stationName = this.activeStation()?.name || '';
-    
-    // Create an array of promises for parallel fetching
-    const fetchPromises = Object.keys(stationLines).map(async (lineKey) => {
-      const lineData = stationLines[lineKey];
-      const shortLine = lineData.name || lineKey.split('_')[0];
-      
-      // Fallback to static timetable calculation
-      const now = new Date();
-      const curH = now.getHours();
-      const curM = now.getMinutes();
-      const currentServiceIds = this.getCurrentServiceIds();
-      
-      let bestEta = Infinity;
-      let scheduledTime = '';
-      
-      currentServiceIds.forEach(serviceId => {
-        const scheduleArray = lineData.timetable[serviceId];
-        if (!scheduleArray) return;
-        for (const timeStr of scheduleArray) {
-          const [hStr, mStr] = timeStr.split(':');
-          let hour = parseInt(hStr, 10);
-          const min = parseInt(mStr, 10);
-          if (hour >= 24) hour -= 24;
-          let diff = (hour * 60 + min) - (curH * 60 + curM);
-          if (diff < 0) diff += 1440;
-          if (diff < bestEta) { 
-            bestEta = diff; 
-            scheduledTime = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`; 
-          }
+    if (bus && bus.shortName === '52') {
+      const staticOffsets: { [key: string]: { [station: string]: number } } = {
+        '52_0': {
+          'Panselelor': 0, 'Parc Industrial Metrom': 1, 'Poienelor': 2, 'Roman': 3,
+          'Carrefour': 5, 'Cometei': 7, 'Neptun': 8, 'Complexul Mare': 10, 'Gemenii': 12,
+          'Scriitorilor': 14, 'Liceul Meșotă': 17, 'Onix': 19, 'Sanitas': 22, 'Primărie': 24,
+          'Biserica Neagră': 28, 'Brâncoveanu': 29, 'Piața Unirii': 31, 'Tocile': 32
+        },
+        '52_1': {
+          'Tocile': 0, 'Piața Unirii': 2, 'Liceul Șaguna': 3, 'Bălcescu': 6, 'Star': 8,
+          'Patria': 10, 'Hidro A': 11, 'Toamnei': 14, 'Traian': 15, 'Gemenii': 17,
+          'Complexul Mare': 19, 'Neptun': 20, 'Cometei': 21, 'Saturn': 22, 'Roman': 22,
+          'Poienelor': 24, 'Parc Industrial Metrom': 25, 'Panselelor': 26
         }
-      });
+      };
 
-      if (bestEta !== Infinity) {
-        arrivals.push({
-          line: lineKey, 
-          shortLine: shortLine,
-          target: lineData.target, 
-          eta: bestEta.toString(), 
-          scheduledTime,
-          color: lineData.color, 
-          textColor: lineData.textColor, 
-          timetable: lineData.timetable,
-          isLive: false
-        });
+      const key = bus.lineKey;
+      if (key && staticOffsets[key]) {
+        const offsets = staticOffsets[key];
+        const currentOffset = offsets[station.stationName] ?? 10;
+        
+        // Find reference trip times based on the Tocile station
+        const referenceStationName = 'Tocile';
+        const referenceStation = bus.stations.find((s: any) => s.stationName === referenceStationName);
+        
+        if (referenceStation) {
+          const refTimes = getTimesInMinutes(referenceStation);
+          
+          // Trip start times are reference times minus the reference offset
+          const refOffset = offsets[referenceStationName];
+          const tripStartTimes = refTimes.map(t => t - refOffset);
+          
+          const currentTimes = getTimesInMinutes(station);
+          
+          return tripStartTimes.map(tStart => {
+            const expected = tStart + currentOffset;
+            const match = currentTimes.find(t => Math.abs(t - expected) <= 2);
+            if (match !== undefined) {
+              const h = Math.floor(match / 60);
+              const m = match % 60;
+              return h.toString().padStart(2, '0') + ':' + m.toString().padStart(2, '0');
+            }
+            return '–';
+          });
+        }
       }
-    });
-
-    await Promise.all(fetchPromises);
-    this.finalizeArrivals(arrivals);
-  }
-
-  private finalizeArrivals(arrivals: any[]) {
-    this.activeStation.update(s => {
-      if (!s) return s;
-      const lineGroups = new Map<string, any[]>();
-      arrivals.forEach((arr: any) => {
-        if (!lineGroups.has(arr.shortLine)) lineGroups.set(arr.shortLine, []);
-        lineGroups.get(arr.shortLine)!.push(arr);
-      });
-      const stationName = this.normalizeText(this.activeStation()?.name || '');
-      let processedArrivals = Array.from(lineGroups.values()).map(group => {
-        group.sort((a,b) => parseInt(a.eta) - parseInt(b.eta));
-        const earliest = group[0];
-        const outbound = group.find((a: any) => this.normalizeText(a.target) !== stationName);
-        return (outbound && this.normalizeText(earliest.target) === stationName) ? { ...earliest, target: outbound.target } : earliest;
-      });
-      processedArrivals.sort((a,b) => parseInt(a.eta) - parseInt(b.eta));
-      return { ...s, arrivals: processedArrivals.slice(0, 100) };
-    });
-    this.isFetchingLines.set(false);
-    this.isLoading.set(false);
-
-    // Call animation after arrivals are processed
-    // Delay animation slightly more to avoid flicker during data bind
-    setTimeout(() => this.animateEntrance(), 150);
-  }
-
-
-  displayLimit = signal(15);
-  showMore() { this.displayLimit.update(v => v + 15); }
-
-  private setupLocationSync() {
-    this.geoService.startTracking();
-    
-    // Sync user marker
-    const sync = () => {
-      if (!this.isAlive) return;
-      const loc = this.geoService.currentLocation();
-      if (loc && this.map) {
-        this.updateUserMarker(loc.lat, loc.lng);
-      }
-      requestAnimationFrame(sync);
-    };
-    sync();
-  }
-
-  private updateUserMarker(lat: number, lng: number) {
-    if (!this.map) return;
-    const pos: [number, number] = [lng, lat];
-
-    if (this.userMarker) {
-      this.userMarker.setLngLat(pos);
-    } else {
-      const el = document.createElement('div');
-      el.className = 'user-location-marker';
-      el.style.width = '20px';
-      el.style.height = '20px';
-      el.style.background = '#4285F4';
-      el.style.border = '3px solid white';
-      el.style.borderRadius = '50%';
-      el.style.boxShadow = '0 0 15px rgba(66, 133, 244, 0.5)';
-      
-      this.userMarker = new maplibregl.Marker({ element: el })
-        .setLngLat(pos)
-        .addTo(this.map);
     }
-  }
 
-  findNearbyStation(auto: boolean = false) {
-    if (!auto) this.isLoading.set(true);
-
-    const loc = this.geoService.currentLocation();
-    if (loc) {
-      this.processNearby(loc.lat, loc.lng, auto);
-    } else {
-      this.geoService.getCurrentPosition().then(l => {
-        if (l) this.processNearby(l.lat, l.lng, auto);
-        else if (!auto) this.isLoading.set(false);
-      });
-    }
-  }
-
-  private processNearby(userLat: number, userLon: number, auto: boolean) {
-    let closest: any = null;
-    let minDist = Infinity;
-    
-    this.smartStops().forEach((stop: any) => {
-      const dist = this.transitService.calculateDistance(userLat, userLon, stop.lat, stop.lon);
-      if (dist < minDist) {
-        minDist = dist;
-        closest = stop;
+    // Standard fallback logic for all other buses
+    let allTimes: string[] = [];
+    serviceKeys.forEach(key => {
+      if (timetable[key]) {
+        allTimes = [...allTimes, ...timetable[key]];
       }
     });
-
-    if (closest) this.selectStation(closest);
-    else if (!auto) this.isLoading.set(false);
-  }
-
-  private getMapStyles() {
-    return [
-      { "featureType": "all", "elementType": "labels.text.fill", "stylers": [{ "color": "#7c93a3" }, { "lightness": "-10" }] },
-      { "featureType": "administrative.country", "elementType": "geometry", "stylers": [{ "visibility": "on" }] },
-      { "featureType": "landscape", "elementType": "geometry", "stylers": [{ "color": "#f5f5f5" }, { "lightness": 20 }] },
-      { "featureType": "poi", "elementType": "geometry", "stylers": [{ "color": "#f5f5f5" }, { "lightness": 21 }] },
-      { "featureType": "poi.park", "elementType": "geometry", "stylers": [{ "color": "#dedede" }, { "lightness": 21 }] },
-      { "featureType": "road.highway", "elementType": "geometry.fill", "stylers": [{ "color": "#ffffff" }, { "lightness": 17 }] },
-      { "featureType": "road.highway", "elementType": "geometry.stroke", "stylers": [{ "color": "#ffffff" }, { "lightness": 29 }, { "weight": 0.2 }] },
-      { "featureType": "road.arterial", "elementType": "geometry", "stylers": [{ "color": "#ffffff" }, { "lightness": 18 }] },
-      { "featureType": "road.local", "elementType": "geometry", "stylers": [{ "color": "#ffffff" }, { "lightness": 16 }] },
-      { "featureType": "transit", "elementType": "geometry", "stylers": [{ "color": "#f2f2f2" }, { "lightness": 19 }] },
-      { "featureType": "water", "elementType": "geometry", "stylers": [{ "color": "#e9e9e9" }, { "lightness": 17 }] }
-    ];
-  }
-
-  takeMeThere(station: any) {
-    if (!station) return;
-    this.router.navigate(['/transport/bus/program'], { 
-      queryParams: { 
-        destLat: station.lat, 
-        destLon: station.lon, 
-        destName: station.isHub ? station.name : (station.displayName || station.name)
-      } 
+    
+    return Array.from(new Set(allTimes)).sort((a, b) => {
+      const [aH, aM] = a.split(':').map(Number);
+      const [bH, bM] = b.split(':').map(Number);
+      return (aH * 60 + aM) - (bH * 60 + bM);
     });
   }
-
-  goBack() { this.router.navigate(['/transport/bus']); }
 }
-
