@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, signal, inject, AfterViewInit, ElementRef, ViewChild, NgZone, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { GeminiService } from '../../../../core/services/gemini.service';
@@ -147,11 +147,20 @@ interface Recommendation {
                 <div class="result-body">
                   <div class="result-header-row">
                     <h3 class="result-name">{{ rec.name }}</h3>
-                    <a [href]="'https://www.google.com/maps/search/?api=1&query=' + rec.name + ' Brasov'" 
-                       target="_blank" class="location-link" [style.color]="activeCategory()?.color">
-                      <span class="material-icons">near_me</span>
-                      MAPS
-                    </a>
+                    <div class="card-actions-row" style="display: flex; gap: 0.5rem; align-items: center;">
+                      <a [href]="'https://www.google.com/maps/search/?api=1&query=' + rec.name + ' Brasov'" 
+                         target="_blank" class="location-link" [style.color]="activeCategory()?.color">
+                        <span class="material-icons" style="font-size: 1.1rem;">near_me</span>
+                        MAPS
+                      </a>
+                      <button (click)="planRouteTo(rec)" class="route-link" 
+                              [style.background]="activeCategory()?.color + '12'" 
+                              [style.color]="activeCategory()?.color"
+                              style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; font-weight: 900; letter-spacing: 0.05em; padding: 0.7rem 1.2rem; border-radius: 100px; border: none; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.02);">
+                        <span class="material-icons" style="font-size: 1.1rem;">directions_bus</span>
+                        RUTĂ
+                      </button>
+                    </div>
                   </div>
                   <p class="result-desc">{{ rec.description }}</p>
                   <div class="result-tip" [style.background]="activeCategory()?.color + '12'">
@@ -484,6 +493,11 @@ interface Recommendation {
       color: #fff !important;
       transform: rotate(3deg);
     }
+    .route-link:hover { 
+      background: #1a1a1a !important; 
+      color: #fff !important;
+      transform: rotate(-3deg);
+    }
     .result-name {
       font-size: 1.6rem;
       font-weight: 800;
@@ -564,6 +578,7 @@ export class WeekendComponent implements AfterViewInit {
   private http = inject(HttpClient);
   private geminiService = inject(GeminiService);
   private zone = inject(NgZone);
+  private router = inject(Router);
   @ViewChild('quizBody') quizBody!: ElementRef;
 
   view = signal<'menu' | 'quiz' | 'loading' | 'results'>('menu');
@@ -962,6 +977,18 @@ export class WeekendComponent implements AfterViewInit {
     if (url) {
       window.open(url, '_blank', 'noopener,noreferrer');
     }
+  }
+
+  planRouteTo(rec: any) {
+    const lat = rec.coordinates?.lat || 45.6483;
+    const lng = rec.coordinates?.lng || 25.5891;
+    this.router.navigate(['/transport/bus/program'], {
+      queryParams: {
+        destLat: lat,
+        destLon: lng,
+        destName: rec.name
+      }
+    });
   }
 
   goBack() {
