@@ -37,7 +37,7 @@ import { TransitService } from '../../services/transit.service';
               </button>
               <div class="header-title-box">
                 <h1 class="header-title">Orar Autobuze</h1>
-                <span class="header-subtitle">Liniile urbane Brașov</span>
+                <span class="header-subtitle">Liniile urbane și metropolitane</span>
               </div>
             }
           </div>
@@ -74,7 +74,10 @@ import { TransitService } from '../../services/transit.service';
                        [class.expanded]="expandedStationId() === station.stationId"
                        (click)="toggleStation(station.stationId)">
                     <div class="timeline-indicator">
-                      <div class="node-badge" [style.background]="selectedBus()?.color" [style.color]="selectedBus()?.textColor">
+                      <div class="node-badge" 
+                           [class.terminal-badge]="idx === 0 || idx === (selectedBus()?.stations?.length || 0) - 1"
+                           [style.background]="selectedBus()?.color" 
+                           [style.color]="selectedBus()?.textColor">
                         {{ idx + 1 }}
                       </div>
                       @if (idx < (selectedBus()?.stations?.length || 0) - 1) {
@@ -177,13 +180,15 @@ import { TransitService } from '../../services/transit.service';
                         @for (route of group.routes; track route.origin + '_' + route.target) {
                           <button class="swiss-route-tile" (click)="selectBus(route)" 
                                   [style.color]="group.textColor"
-                                  [style.background]="group.textColor === '#ffffff' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.06)'">
+                                  [style.background]="group.textColor === '#ffffff' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.12)'">
                             <div class="swiss-route-left">
-                              <span class="material-icons swiss-route-icon">swap_calls</span>
+                              <span class="material-icons swiss-route-icon" [style.color]="group.textColor">swap_calls</span>
                               <span class="swiss-route-path-text">{{ route.origin }} ➔ {{ route.target }}</span>
                             </div>
                             <div class="swiss-route-right">
-                              <span class="swiss-stations-badge" [style.background]="group.textColor === '#ffffff' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.08)'">
+                              <span class="swiss-stations-badge" 
+                                    [style.color]="group.textColor"
+                                    [style.background]="group.textColor === '#ffffff' ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.15)'">
                                 {{ route.stations.length }} stații
                               </span>
                               <span class="material-icons swiss-arrow">arrow_forward</span>
@@ -210,11 +215,13 @@ import { TransitService } from '../../services/transit.service';
   styles: [`
     .bus-shell { height: 100dvh; width: 100%; overflow: hidden; background: var(--bg-primary); font-family: 'Outfit', sans-serif; color: var(--text-primary); display: flex; flex-direction: column; position: relative; }
     
-    .top-nav-modern { padding: calc(var(--safe-top) + 1rem) 1rem 0.5rem; z-index: 100; background: var(--bg-primary); }
-    .nav-card { background: var(--bg-secondary); border-radius: 24px; border: 1px solid var(--border-color); padding: 1rem 1.25rem; box-shadow: 0 8px 32px rgba(0,0,0,0.02); transition: all 0.3s ease; }
-    .nav-header-row { display: flex; align-items: center; gap: 1rem; }
-    .minimal-back-btn { background: transparent; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-primary); cursor: pointer; transition: background 0.2s; }
-    .minimal-back-btn:active { background: rgba(0,0,0,0.05); }
+    .top-nav-modern { padding: calc(var(--safe-top) + 1.2rem) 1rem 0.5rem; z-index: 100; background: var(--bg-primary); }
+    .nav-card { background: var(--bg-card); border-radius: 20px; border: 2px solid var(--border-color); padding: 1.1rem 1.25rem; transition: all 0.3s ease; }
+    .nav-header-row { display: flex; align-items: center; gap: 1.25rem; }
+    
+    .minimal-back-btn { background: var(--bg-secondary); border: 1px solid var(--border-color); width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--text-primary); cursor: pointer; transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .minimal-back-btn:hover { background: var(--border-color); transform: scale(1.05); }
+    .minimal-back-btn:active { transform: scale(0.95); }
     
     /* Themed Header */
     .top-nav-modern.themed-nav .nav-card {
@@ -224,10 +231,15 @@ import { TransitService } from '../../services/transit.service';
       box-shadow: 0 8px 24px rgba(0,0,0,0.08);
     }
     .top-nav-modern.themed-nav .minimal-back-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.2);
       color: var(--bus-theme-text-color);
     }
+    .top-nav-modern.themed-nav .minimal-back-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
     .top-nav-modern.themed-nav .minimal-back-btn:active {
-      background: rgba(255,255,255,0.15);
+      transform: scale(0.95);
     }
     .top-nav-modern.themed-nav .subtitle-text {
       color: var(--bus-theme-text-color);
@@ -256,8 +268,8 @@ import { TransitService } from '../../services/transit.service';
     }
     
     .header-title-box { display: flex; flex-direction: column; }
-    .header-title { font-size: 1.6rem; font-weight: 800; margin: 0; letter-spacing: -0.03em; line-height: 1.1; }
-    .header-subtitle { font-size: 0.85rem; color: var(--text-secondary); font-weight: 600; }
+    .header-title { font-size: 1.5rem; font-weight: 900; margin: 0; letter-spacing: -0.03em; line-height: 1.1; color: var(--text-primary); }
+    .header-subtitle { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 800; color: #188038; margin-top: 2px; }
     
     .bus-badge-container { display: flex; align-items: center; gap: 1rem; flex: 1; min-width: 0; }
     .bus-badge-pill { font-size: 1.3rem; font-weight: 900; padding: 6px 16px; border-radius: 999px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); flex-shrink: 0; }
@@ -271,12 +283,16 @@ import { TransitService } from '../../services/transit.service';
     .spinner { width: 36px; height: 36px; border: 3px solid var(--border-color); border-top-color: #188038; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 1rem; }
     
     /* Bus List Page */
-    .bus-list-page { display: flex; flex-direction: column; gap: 1rem; }
-    .search-bar-box { background: var(--bg-secondary); border-radius: 20px; border: 1px solid var(--border-color); display: flex; align-items: center; padding: 0 1.25rem; height: 56px; gap: 0.85rem; box-shadow: 0 8px 30px rgba(0,0,0,0.02); transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
-    .search-bar-box:focus-within { border-color: #188038; background: var(--bg-primary); box-shadow: 0 8px 30px rgba(24, 128, 56, 0.08); }
-    .search-icon { color: var(--text-secondary); }
-    .search-bar-box input { border: none; background: transparent; flex: 1; font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 600; outline: none; color: var(--text-primary); }
-    .clear-search-btn { background: transparent; border: none; padding: 0; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; }
+    .bus-list-page { display: flex; flex-direction: column; gap: 1.25rem; }
+    .search-bar-box { background: var(--bg-card); border-radius: 16px; border: 2px solid var(--border-color); display: flex; align-items: center; padding: 0 1.25rem; height: 54px; gap: 0.85rem; transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .search-bar-box:focus-within { border-color: #188038; box-shadow: 0 4px 16px rgba(24, 128, 56, 0.08); }
+    .search-icon { color: var(--text-secondary); font-size: 1.35rem; transition: color 0.2s; }
+    .search-bar-box:focus-within .search-icon { color: #188038; }
+    .search-bar-box input { border: none; background: transparent; flex: 1; font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700; outline: none; color: var(--text-primary); }
+    .search-bar-box input::placeholder { color: var(--text-secondary); opacity: 0.7; font-weight: 600; }
+    .clear-search-btn { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; transition: all 0.2s ease; }
+    .clear-search-btn:hover { background: var(--border-color); color: var(--text-primary); transform: scale(1.05); }
+    .clear-search-btn .material-icons { font-size: 1rem; }
     
     .buses-grid { display: flex; flex-direction: column; gap: 1rem; }
     
@@ -300,7 +316,7 @@ import { TransitService } from '../../services/transit.service';
     .bus-group-card.swiss-plate-card:hover .swiss-arrow { transform: translateX(3px); }
     
     .swiss-routes-list { display: flex; flex-direction: column; gap: 0.65rem; border-top: 1px solid transparent; padding-top: 1rem; margin-top: 0.25rem; }
-    .swiss-route-tile { width: 100%; border: none; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; cursor: pointer; text-align: left; font-family: inherit; transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .swiss-route-tile { width: 100%; border: none; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; padding: 0.95rem 1.1rem; cursor: pointer; text-align: left; font-family: inherit; font-weight: 800; transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
     .swiss-route-tile:hover { transform: translateX(4px); filter: brightness(1.08); }
     .swiss-route-tile:active { transform: scale(0.98); opacity: 0.85; }
     .swiss-route-left { display: flex; align-items: center; gap: 0.75rem; min-width: 0; flex: 1; }
@@ -323,14 +339,17 @@ import { TransitService } from '../../services/transit.service';
     
     /* Accordion Timeline List */
     .stations-timeline { display: flex; flex-direction: column; position: relative; padding-left: 0.25rem; z-index: 10; }
-    .timeline-station-card { display: flex; gap: 1.25rem; position: relative; cursor: pointer; border-radius: 20px; padding: 0.85rem 1rem; border: 1px solid transparent; transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .timeline-station-card { display: flex; gap: 1.25rem; position: relative; cursor: pointer; border-radius: 20px; padding: 0.85rem 1.25rem; border: 1px solid transparent; transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); }
     .timeline-station-card:hover { background: rgba(0,0,0,0.02); }
-    .timeline-station-card.expanded { background: var(--bg-secondary); border: 1px solid var(--border-color); box-shadow: 0 8px 30px rgba(0,0,0,0.02); margin-bottom: 0.75rem; padding: 1.25rem; }
+    .timeline-station-card.expanded { background: transparent; border: 1px solid transparent; box-shadow: none; margin-bottom: 0; padding: 0.85rem 1.25rem 1.25rem; }
     
-    .timeline-indicator { display: flex; flex-direction: column; align-items: center; width: 32px; flex-shrink: 0; position: relative; }
+    .timeline-indicator { display: flex; flex-direction: column; align-items: center; width: 38px; flex-shrink: 0; position: relative; align-self: stretch; min-height: 100%; }
     .node-badge { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 800; z-index: 5; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: transform 0.2s; }
+    .node-badge.terminal-badge { width: 38px; height: 38px; font-size: 1rem; font-weight: 900; box-shadow: 0 4px 12px rgba(0,0,0,0.12); border: 2.5px solid rgba(255, 255, 255, 0.4); }
     .timeline-station-card.expanded .node-badge { transform: scale(1.1); }
-    .connector-line { width: 3px; position: absolute; top: 32px; bottom: -16px; left: 50%; transform: translateX(-50%); z-index: 2; opacity: 0.6; }
+    .timeline-station-card.expanded .node-badge.terminal-badge { transform: scale(1.05); }
+    .connector-line { width: 4px; position: absolute; top: 20px; bottom: -32px; left: 50%; transform: translateX(-50%); z-index: 1; opacity: 0.8; }
+    .timeline-station-card.expanded .connector-line { bottom: -50px; }
     
     .station-details { flex: 1; min-width: 0; }
     
