@@ -713,7 +713,8 @@ app.post('/api/v1/routing/plan', async (req, res) => {
 
         const now = new Date();
         const dateStr = now.toISOString().split('T')[0];
-        const timeStr = `${now.getHours()}:${now.getMinutes()}`;
+        const pad = (n) => String(n).padStart(2, '0');
+        const timeStr = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
         
         const otpUrl = `${OTP_BASE_URL}/plan`;
         
@@ -739,8 +740,20 @@ app.post('/api/v1/routing/plan', async (req, res) => {
 
         let routeData = response.data;
 
-        if (!routeData.plan || !routeData.plan.itineraries || !routeData.plan.itineraries.length) {
-            console.log(`[Proxy] No active routes found for tonight. Trying tomorrow morning at 07:00 AM...`);
+        // Find itineraries that actually HAVE transit
+        let transitItineraries = [];
+        if (routeData.plan && routeData.plan.itineraries) {
+            transitItineraries = routeData.plan.itineraries.filter(it => it.legs.some(leg => leg.mode !== 'WALK'));
+        }
+
+        // If no routes at all, OR if transit was requested but only walk routes were found (late hours/night time)
+        const needsFallback = !routeData.plan || 
+                              !routeData.plan.itineraries || 
+                              !routeData.plan.itineraries.length ||
+                              (otpMode.includes('TRANSIT') && transitItineraries.length === 0);
+
+        if (needsFallback) {
+            console.log(`[Proxy] No active transit routes found for tonight. Trying tomorrow morning at 07:00 AM...`);
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
             const tomorrowDateStr = tomorrow.toISOString().split('T')[0];
@@ -761,8 +774,18 @@ app.post('/api/v1/routing/plan', async (req, res) => {
                 });
                 
                 if (fallbackResponse.data.plan && fallbackResponse.data.plan.itineraries && fallbackResponse.data.plan.itineraries.length) {
-                    console.log(`[Proxy] Successfully found fallback itineraries for tomorrow morning!`);
-                    routeData = fallbackResponse.data;
+                    // Update transit itineraries count for tomorrow
+                    const fallbackTransit = fallbackResponse.data.plan.itineraries.filter(it => it.legs.some(leg => leg.mode !== 'WALK'));
+                    
+                    if (fallbackTransit.length > 0 || fallbackResponse.data.plan.itineraries.length > 0) {
+                        console.log(`[Proxy] Successfully found fallback itineraries for tomorrow morning!`);
+                        routeData = fallbackResponse.data;
+                        transitItineraries = fallbackTransit;
+                    } else {
+                        console.warn(`[Proxy] No itineraries found even for tomorrow morning. Falling back to Mock routing!`);
+                        const mockData = generateMockRoute(fromLat, fromLon, toLat, toLon, otpMode);
+                        return res.json(mockData);
+                    }
                 } else {
                     console.warn(`[Proxy] No itineraries found even for tomorrow. Falling back to Mock routing!`);
                     const mockData = generateMockRoute(fromLat, fromLon, toLat, toLon, otpMode);
@@ -775,9 +798,6 @@ app.post('/api/v1/routing/plan', async (req, res) => {
                 return res.json(mockData);
             }
         }
-
-        // Find itineraries that actually HAVE transit
-        let transitItineraries = routeData.plan.itineraries.filter(it => it.legs.some(leg => leg.mode !== 'WALK'));
         
         let itinerary;
         if (transitItineraries.length > 0) {
