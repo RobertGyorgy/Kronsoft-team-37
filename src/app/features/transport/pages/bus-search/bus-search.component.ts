@@ -321,7 +321,7 @@ import { TransitService } from '../../services/transit.service';
       display: flex;
       align-items: center;
       padding: 0.65rem 0;
-      border-bottom: 1px dashed var(--border-color);
+      border-bottom: 1.5px dashed rgba(120, 120, 120, 0.35);
       width: 100%;
     }
     .hourly-row:last-child {
