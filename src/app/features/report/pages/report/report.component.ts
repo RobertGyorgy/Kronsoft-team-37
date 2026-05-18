@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component, signal, computed, inject, AfterViewInit, ElementRef, ViewChild, afterNextRender } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, computed, inject, ElementRef, ViewChild, afterNextRender } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { ReportService } from '../../services/report.service';
-import { UserService } from '../../../../core/services/user.service';
 import { AuthService } from '../../../auth/auth.service';
 import { gsap } from 'gsap';
 
@@ -16,7 +15,6 @@ import { gsap } from 'gsap';
 })
 export class ReportComponent {
   private reportService = inject(ReportService);
-  private userService = inject(UserService);
   private authService = inject(AuthService);
   private router = inject(Router);
 
@@ -45,7 +43,6 @@ export class ReportComponent {
 
     afterNextRender(() => {
       this.animateEntrance();
-      this.userService.loadProfile(); // fetch in background
     });
   }
 

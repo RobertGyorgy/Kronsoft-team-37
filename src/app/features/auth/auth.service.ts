@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { UserService, UserProfileResponse } from '../../core/services/user.service';
 
 // ── Request Interfaces (from OpenAPI spec) ─────────────────────
 
@@ -55,6 +56,7 @@ const USER_ROLE_KEY = 'smart_city_user_role';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
+  private readonly userService = inject(UserService);
   private readonly baseUrl = '/api/auth';
 
   // ── Core Auth ────────────────────────────────────────────────
@@ -132,6 +134,15 @@ export class AuthService {
     localStorage.removeItem(REFRESH_TOKEN_KEY);
     localStorage.removeItem(USER_NAME_KEY);
     localStorage.removeItem(USER_ROLE_KEY);
+    this.userService.clearProfile();
+  }
+
+  /** Loads profile when the app starts with an existing session (e.g. page refresh). */
+  restoreSession(): Promise<UserProfileResponse | null> | void {
+    if (!this.isLoggedIn()) {
+      return;
+    }
+    return this.userService.loadProfile();
   }
 
   private persistSession(response: AuthResponse): void {
@@ -139,5 +150,7 @@ export class AuthService {
     localStorage.setItem(REFRESH_TOKEN_KEY, response.refreshToken);
     localStorage.setItem(USER_NAME_KEY, response.fullName);
     localStorage.setItem(USER_ROLE_KEY, response.role);
+    this.userService.clearProfile();
+    void this.userService.loadProfile();
   }
 }
