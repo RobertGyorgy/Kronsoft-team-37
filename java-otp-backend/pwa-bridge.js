@@ -230,6 +230,30 @@ app.get('/api/v1/transit/data', async (req, res) => {
 });
 
 // --- MOCK ROUTE GENERATOR ---
+// --- STREET PATH GENERATOR ---
+function generateStreetPath(lat1, lon1, lat2, lon2, segmentsCount = 6, offsetMagnitude = 0.00035) {
+    let pts = [[lon1, lat1]];
+    for (let i = 1; i < segmentsCount; i++) {
+        const t = i / segmentsCount;
+        let lat = lat1 + (lat2 - lat1) * t;
+        let lon = lon1 + (lon2 - lon1) * t;
+        
+        // Add alternating perpendicular offset to simulate city grid streets!
+        const perpLat = -(lon2 - lon1);
+        const perpLon = (lat2 - lat1);
+        const len = Math.sqrt(perpLat*perpLat + perpLon*perpLon);
+        if (len > 0) {
+            const side = (i % 2 === 0 ? 1 : -1) * offsetMagnitude * (1.0 - Math.abs(t - 0.5) * 0.5);
+            lat += (perpLat / len) * side;
+            lon += (perpLon / len) * side;
+        }
+        pts.push([lon, lat]);
+    }
+    pts.push([lon2, lat2]);
+    return pts;
+}
+
+// --- MOCK ROUTE GENERATOR ---
 function generateMockRoute(fromLat, fromLon, toLat, toLon, mode) {
     fromLat = parseFloat(fromLat);
     fromLon = parseFloat(fromLon);
@@ -255,29 +279,37 @@ function generateMockRoute(fromLat, fromLon, toLat, toLon, mode) {
     let features = [];
     let now = Date.now();
 
-    if (mode.includes('CAR')) {
+    if (distanceMeters < 350) {
+        // For extremely short distances, just generate a single walk leg
+        features.push({
+            type: 'Feature',
+            geometry: {
+                type: 'LineString',
+                coordinates: generateStreetPath(fromLat, fromLon, toLat, toLon, 4, 0.00008)
+            },
+            properties: {
+                mode: 'WALK',
+                duration: Math.max(1, Math.round(distanceMeters / (1.4 * 60))),
+                distance: distanceMeters,
+                instructions: 'Mergi pe jos către destinație',
+                color: '#4285F4',
+                startTime: now
+            }
+        });
+        totalDurationSeconds = distanceMeters / 1.4;
+    } else if (mode.includes('CAR')) {
         speed = 10.0; // m/s driving
         totalDurationSeconds = distanceMeters / speed;
-
-        const midLat1 = fromLat + (toLat - fromLat) * 0.3 - (toLon - fromLon) * 0.05;
-        const midLon1 = fromLon + (toLon - fromLon) * 0.3 + (toLat - fromLat) * 0.05;
-        const midLat2 = fromLat + (toLat - fromLat) * 0.7 + (toLon - fromLon) * 0.04;
-        const midLon2 = fromLon + (toLon - fromLon) * 0.7 - (toLat - fromLat) * 0.04;
 
         features.push({
             type: 'Feature',
             geometry: {
                 type: 'LineString',
-                coordinates: [
-                    [fromLon, fromLat],
-                    [midLon1, midLat1],
-                    [midLon2, midLat2],
-                    [toLon, toLat]
-                ]
+                coordinates: generateStreetPath(fromLat, fromLon, toLat, toLon, 10, 0.00045)
             },
             properties: {
                 mode: 'CAR',
-                duration: Math.round(totalDurationSeconds / 60),
+                duration: Math.max(2, Math.round(totalDurationSeconds / 60)),
                 distance: distanceMeters,
                 instructions: 'Condu spre destinație',
                 color: '#747d8c',
@@ -285,25 +317,15 @@ function generateMockRoute(fromLat, fromLon, toLat, toLon, mode) {
             }
         });
     } else if (mode.includes('WALK') && !mode.includes('TRANSIT')) {
-        const midLat1 = fromLat + (toLat - fromLat) * 0.3 + (toLon - fromLon) * 0.05;
-        const midLon1 = fromLon + (toLon - fromLon) * 0.3 - (toLat - fromLat) * 0.05;
-        const midLat2 = fromLat + (toLat - fromLat) * 0.7 - (toLon - fromLon) * 0.03;
-        const midLon2 = fromLon + (toLon - fromLon) * 0.7 + (toLat - fromLat) * 0.03;
-
         features.push({
             type: 'Feature',
             geometry: {
                 type: 'LineString',
-                coordinates: [
-                    [fromLon, fromLat],
-                    [midLon1, midLat1],
-                    [midLon2, midLat2],
-                    [toLon, toLat]
-                ]
+                coordinates: generateStreetPath(fromLat, fromLon, toLat, toLon, 8, 0.0002)
             },
             properties: {
                 mode: 'WALK',
-                duration: Math.round(totalDurationSeconds / 60),
+                duration: Math.max(3, Math.round(totalDurationSeconds / 60)),
                 distance: distanceMeters,
                 instructions: 'Mergi pe jos către destinație',
                 color: '#4285F4',
@@ -331,27 +353,27 @@ function generateMockRoute(fromLat, fromLon, toLat, toLon, mode) {
         const endStopLat = fromLat + (toLat - fromLat) * 0.85 - (toLon - fromLon) * 0.02;
         const endStopLon = fromLon + (toLon - fromLon) * 0.85 + (toLat - fromLat) * 0.02;
 
+        // Choose a highly realistic line number and color for the destination stop name!
         const busLines = [
             { name: '4', color: '#e74c3c' },
             { name: '20', color: '#2ecc71' },
-            { name: '17', color: '#f1c40f' },
+            { name: '17', color: '#3498db' },
             { name: '34', color: '#9b59b6' },
             { name: '50', color: '#e67e22' }
         ];
-        const line = busLines[Math.floor((fromLat + toLon) * 100) % busLines.length];
+        
+        // Make the line selection deterministic based on the destination coordinates
+        const line = busLines[Math.floor(Math.abs(toLat + toLon) * 100) % busLines.length];
 
         features.push({
             type: 'Feature',
             geometry: {
                 type: 'LineString',
-                coordinates: [
-                    [fromLon, fromLat],
-                    [startStopLon, startStopLat]
-                ]
+                coordinates: generateStreetPath(fromLat, fromLon, startStopLat, startStopLon, 5, 0.00015)
             },
             properties: {
                 mode: 'WALK',
-                duration: Math.round(dur1 / 60),
+                duration: Math.max(1, Math.round(dur1 / 60)),
                 distance: walk1Dist,
                 instructions: `Walk din start spre Stația de autobuz`,
                 color: '#4285F4',
@@ -359,22 +381,15 @@ function generateMockRoute(fromLat, fromLon, toLat, toLon, mode) {
             }
         });
 
-        const midBusLat = startStopLat + (endStopLat - startStopLat) * 0.5 + (endStopLon - startStopLon) * 0.05;
-        const midBusLon = startStopLon + (endStopLon - startStopLon) * 0.5 - (endStopLat - startStopLat) * 0.05;
-
         features.push({
             type: 'Feature',
             geometry: {
                 type: 'LineString',
-                coordinates: [
-                    [startStopLon, startStopLat],
-                    [midBusLon, midBusLat],
-                    [endStopLon, endStopLat]
-                ]
+                coordinates: generateStreetPath(startStopLat, startStopLon, endStopLat, endStopLon, 12, 0.00045)
             },
             properties: {
                 mode: 'TRANSIT',
-                duration: Math.round(dur2 / 60),
+                duration: Math.max(2, Math.round(dur2 / 60)),
                 distance: transitDist,
                 instructions: `Bus ${line.name} din Stația Centrală`,
                 color: line.color,
@@ -386,14 +401,11 @@ function generateMockRoute(fromLat, fromLon, toLat, toLon, mode) {
             type: 'Feature',
             geometry: {
                 type: 'LineString',
-                coordinates: [
-                    [endStopLon, endStopLat],
-                    [toLon, toLat]
-                ]
+                coordinates: generateStreetPath(endStopLat, endStopLon, toLat, toLon, 5, 0.00015)
             },
             properties: {
                 mode: 'WALK',
-                duration: Math.round(dur3 / 60),
+                duration: Math.max(1, Math.round(dur3 / 60)),
                 distance: walk2Dist,
                 instructions: 'Walk spre destinație',
                 color: '#4285F4',
@@ -406,7 +418,7 @@ function generateMockRoute(fromLat, fromLon, toLat, toLon, mode) {
         type: 'FeatureCollection',
         metadata: {
             totalDurationMinutes: Math.max(1, Math.round(totalDurationSeconds / 60)),
-            transfers: mode.includes('TRANSIT') ? 1 : 0,
+            transfers: mode.includes('TRANSIT') && distanceMeters >= 350 ? 1 : 0,
             distance: Math.round(distanceMeters),
             startTime: now,
             endTime: now + totalDurationSeconds * 1000
