@@ -35,6 +35,13 @@ import maplibregl from 'maplibre-gl';
         </div>
       </header>
 
+      @if (locationMessage()) {
+        <div class="location-banner" role="status">
+          <span class="material-icons">location_off</span>
+          <p>{{ locationMessage() }}</p>
+        </div>
+      }
+
       @if (searchResults().length > 0) {
         <div class="search-overlay">
           <div class="results-container">
@@ -163,6 +170,9 @@ import maplibregl from 'maplibre-gl';
                 }
               </h1>
               <p class="hero-subtext">Search for a station or find one nearby to see real-time schedules.</p>
+              @if (!hasUserLocation()) {
+                <p class="location-hint">Tap the button below — your browser will ask to use your location.</p>
+              }
               <button class="primary-bold-btn" (click)="findNearbyStation()">
                 <span class="material-icons">my_location</span>
                 <span>Find nearby stations</span>
@@ -220,6 +230,29 @@ import maplibregl from 'maplibre-gl';
     .search-pill input { border: none; background: transparent; flex: 1; padding: 0.8rem 0; outline: none; font-size: 1rem; font-weight: 700; color: var(--text-primary); }
     .search-ico { color: #ccc; margin-right: 0.5rem; font-size: 1.2rem; }
     .minimal-locate { background: #f5f5f5; border: none; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #1a1a1a; cursor: pointer; }
+
+    .location-banner {
+      position: absolute;
+      top: calc(var(--safe-top) + 5.5rem);
+      left: 1.25rem;
+      right: 1.25rem;
+      z-index: 1002;
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      padding: 0.9rem 1rem;
+      border-radius: 16px;
+      background: #fff3e0;
+      border: 1px solid #ffcc80;
+      color: #5d4037;
+      font-size: 0.85rem;
+      font-weight: 600;
+      line-height: 1.4;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+    .location-banner .material-icons { font-size: 1.25rem; flex-shrink: 0; margin-top: 0.1rem; }
+    .location-banner p { margin: 0; }
+    .location-hint { color: #888; font-size: 0.95rem; font-weight: 600; margin: 0; text-align: center; max-width: 280px; }
 
     .search-overlay { position: absolute; top: calc(var(--safe-top) + 5rem); left: 1.25rem; right: 1.25rem; background: var(--bg-card); border-radius: 28px; z-index: 1001; box-shadow: 0 20px 50px rgba(0,0,0,0.15); max-height: 60vh; overflow-y: auto; padding: 1rem; border: 1px solid var(--border-color); }
     .result-card { display: flex; align-items: center; gap: 1rem; padding: 1.2rem; border-radius: 20px; transition: all 0.2s; cursor: pointer; }
@@ -332,41 +365,47 @@ export class BusSearchComponent implements OnInit, OnDestroy {
   selectedService = signal<string>('Mo-Fr');
 
   isMinimized = signal<boolean>(false);
+  locationMessage = signal<string | null>(null);
+  hasUserLocation = signal<boolean>(false);
 
   private locationTimeout: any;
 
   constructor() {
-    if (typeof window !== 'undefined') {
-      const hasRefreshed = sessionStorage.getItem('transport_first_load_refreshed');
-      if (!hasRefreshed) {
-        sessionStorage.setItem('transport_first_load_refreshed', 'true');
-        window.location.reload();
-        return;
-      }
-    }
-
     afterNextRender(async () => {
       this.isLoading.set(true);
-      
-      const coords = await this.geoService.getCurrentPosition();
-      this.initMap(coords || undefined);
-      
+      this.initMap();
+
       await this.transitService.loadData();
       this.fetchPopularHubs();
-      
-      if (coords) {
-        this.findNearbyStation(true);
-      } else {
-        this.isLoading.set(false);
+
+      const permission = await this.geoService.getPermissionState();
+      if (permission === 'granted') {
+        const coords = await this.geoService.getCurrentPosition();
+        if (coords) {
+          this.hasUserLocation.set(true);
+          this.centerMapOn(coords);
+          this.setupLocationSync();
+          this.findNearbyStation(true, coords);
+          return;
+        }
       }
 
-      this.setupLocationSync();
+      if (permission === 'denied') {
+        this.locationMessage.set(
+          'Location is blocked for this site. Open site settings (lock icon in the address bar) → Location → Allow, then tap the locate button.'
+        );
+      } else if (permission === 'unsupported') {
+        this.locationMessage.set('Geolocation is not available in this browser.');
+      }
+
+      this.isLoading.set(false);
     });
   }
 
   ngOnInit() {}
   ngOnDestroy() {
     this.isAlive = false;
+    this.geoService.stopTracking();
     if (this.initTimeout) clearTimeout(this.initTimeout);
     if (this.locationTimeout) clearTimeout(this.locationTimeout);
   }
@@ -786,18 +825,54 @@ export class BusSearchComponent implements OnInit, OnDestroy {
     }
   }
 
-  findNearbyStation(auto: boolean = false) {
-    if (!auto) this.isLoading.set(true);
-
-    const loc = this.geoService.currentLocation();
-    if (loc) {
-      this.processNearby(loc.lat, loc.lng, auto);
-    } else {
-      this.geoService.getCurrentPosition().then(l => {
-        if (l) this.processNearby(l.lat, l.lng, auto);
-        else if (!auto) this.isLoading.set(false);
-      });
+  findNearbyStation(auto = false, knownCoords?: { lat: number; lng: number }) {
+    if (knownCoords) {
+      this.applyNearby(knownCoords.lat, knownCoords.lng, auto);
+      return;
     }
+
+    if (auto) {
+      this.geoService.getCurrentPosition().then(loc => {
+        if (loc) this.applyNearby(loc.lat, loc.lng, true);
+        else this.isLoading.set(false);
+      });
+      return;
+    }
+
+    // User tap — call geolocation synchronously so the browser shows the permission prompt.
+    this.isLoading.set(true);
+    this.locationMessage.set(null);
+
+    this.geoService.acquireLocation(
+      (loc) => {
+        this.hasUserLocation.set(true);
+        this.locationMessage.set(null);
+        this.centerMapOn(loc);
+        this.setupLocationSync();
+        this.applyNearby(loc.lat, loc.lng, false);
+      },
+      (err) => {
+        this.isLoading.set(false);
+        const code = 'code' in err ? err.code : 0;
+        if (code === 1) {
+          this.locationMessage.set(
+            'Location access denied. Allow location for this site in browser settings (lock icon → Site settings), then tap the locate button again.'
+          );
+        } else {
+          this.locationMessage.set(err.message || 'Could not get your location.');
+        }
+      }
+    );
+  }
+
+  private applyNearby(lat: number, lng: number, auto: boolean) {
+    this.updateUserMarker(lat, lng);
+    this.processNearby(lat, lng, auto);
+  }
+
+  private centerMapOn(coords: { lat: number; lng: number }) {
+    if (!this.map) return;
+    this.map.easeTo({ center: [coords.lng, coords.lat], zoom: 16, duration: 800 });
   }
 
   private processNearby(userLat: number, userLon: number, auto: boolean) {
