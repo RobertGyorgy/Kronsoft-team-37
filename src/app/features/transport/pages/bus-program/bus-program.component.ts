@@ -445,6 +445,11 @@ export class BusProgramComponent implements OnInit, OnDestroy {
         },
         layout: { 'line-cap': 'round', 'line-join': 'round' }
       });
+
+      // If a route was already fetched and stored before map load was completed, draw it now!
+      if (this.currentRoute()) {
+        this.drawCurrentRoute();
+      }
     });
 
     this.initGoogleServices();
@@ -495,8 +500,13 @@ export class BusProgramComponent implements OnInit, OnDestroy {
     const data = this.currentRoute();
     if (!data) return;
 
-    (this.map.getSource('current-route') as any).setData(data);
-    this.fitBounds(data);
+    const source = this.map.getSource('current-route');
+    if (source) {
+      (source as any).setData(data);
+      this.fitBounds(data);
+    } else {
+      console.warn('Map source "current-route" is not loaded yet. It will be drawn once the map load event fires.');
+    }
   }
 
   private fitBounds(geoJson: any) {
