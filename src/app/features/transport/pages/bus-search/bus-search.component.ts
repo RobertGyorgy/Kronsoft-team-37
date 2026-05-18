@@ -25,6 +25,11 @@ import { TransitService } from '../../services/transit.service';
                   <span class="target-title">{{ selectedBus()?.origin }} ➔ {{ selectedBus()?.target }}</span>
                   <span class="subtitle-text">Traseu complet</span>
                 </div>
+                @if (hasReturnTrip()) {
+                  <button class="swap-direction-btn" (click)="swapDirection()" title="Schimbă sensul de mers">
+                    <span class="material-icons">swap_vert</span>
+                  </button>
+                }
               </div>
             } @else {
               <button class="minimal-back-btn" routerLink="/transport/bus">
@@ -201,6 +206,27 @@ import { TransitService } from '../../services/transit.service';
     .top-nav-modern.themed-nav .subtitle-text {
       color: var(--bus-theme-text-color);
       opacity: 0.85;
+    }
+    .swap-direction-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--bus-theme-text-color);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+      margin-left: auto;
+    }
+    .swap-direction-btn:active {
+      transform: scale(0.9) rotate(180deg);
+      background: rgba(255, 255, 255, 0.25);
+    }
+    .swap-direction-btn .material-icons {
+      font-size: 1.25rem;
     }
     
     .header-title-box { display: flex; flex-direction: column; }
@@ -624,6 +650,29 @@ export class BusSearchComponent implements OnInit, OnDestroy {
     } else {
       this.expandedStationId.set(null);
     }
+  }
+
+  hasReturnTrip(): boolean {
+    const currentBus = this.selectedBus();
+    if (!currentBus) return false;
+    const groups = this.groupedBuses();
+    const group = groups.find(g => g.shortName === currentBus.shortName);
+    return !!(group && group.routes.length > 1);
+  }
+
+  swapDirection() {
+    const currentBus = this.selectedBus();
+    if (!currentBus) return;
+    
+    const groups = this.groupedBuses();
+    const group = groups.find(g => g.shortName === currentBus.shortName);
+    if (!group || group.routes.length <= 1) return;
+    
+    const currentIndex = group.routes.findIndex(r => r.lineKey === currentBus.lineKey);
+    const nextIndex = (currentIndex + 1) % group.routes.length;
+    const nextBus = group.routes[nextIndex];
+    
+    this.selectBus(nextBus);
   }
 
   toggleStation(stationId: string) {
