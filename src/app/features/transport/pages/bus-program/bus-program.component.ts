@@ -229,6 +229,7 @@ declare const google: any;
     .map-view { height: 100vh; width: 100%; flex-shrink: 0; transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1); position: relative; z-index: 1; }
     .current-route-active .map-view { height: 35vh; }
     .minimized-state .map-view { height: calc(100vh - 120px); }
+    .nav-active .map-view { height: 100dvh !important; }
     .map-core { width: 100%; height: 100%; }
     .loading-shimmer { position: absolute; inset: 0; background: rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; z-index: 10; }
     .spinner { width: 32px; height: 32px; border: 3px solid #f1f3f4; border-top-color: #1a73e8; border-radius: 50%; animation: spin 0.8s linear infinite; }
@@ -305,6 +306,7 @@ export class BusProgramComponent implements OnInit, OnDestroy {
   activeSearchType = signal<'origin' | 'destination' | null>(null);
   stepArrivalsMap = signal<Map<string, any[]>>(new Map());
   activeStep = signal<any>(null);
+  activeStepIndex = signal<number>(0);
 
   private watchId: number | null = null;
   private touchStartY = 0;
@@ -393,13 +395,33 @@ export class BusProgramComponent implements OnInit, OnDestroy {
         gsap.to(el, { y: targetY, duration: 0.6, ease: 'power3.out' });
       }, 50);
     });
+
+    effect(() => {
+      const state = {
+        currentRoute: this.currentRoute(),
+        destination: this.destination(),
+        travelMode: this.travelMode(),
+        isNavigating: this.isNavigating(),
+        activeStepIndex: this.activeStepIndex(),
+      };
+      if (state.currentRoute || state.isNavigating) {
+        localStorage.setItem('active_pwa_trip', JSON.stringify(state));
+      } else {
+        localStorage.removeItem('active_pwa_trip');
+      }
+    });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.restorePersistedTrip();
+  }
 
   ngOnDestroy() {
     if (typeof window !== 'undefined') {
       sessionStorage.removeItem('just_entered_transport_program');
+    }
+    if (this.watchId !== null) {
+      navigator.geolocation.clearWatch(this.watchId);
     }
   }
 
@@ -442,6 +464,11 @@ export class BusProgramComponent implements OnInit, OnDestroy {
         },
         layout: { 'line-cap': 'round', 'line-join': 'round' }
       });
+
+      // Redraw restored route if present
+      if (this.currentRoute()) {
+        this.drawCurrentRoute();
+      }
     });
 
     this.initGoogleServices();
@@ -538,7 +565,7 @@ export class BusProgramComponent implements OnInit, OnDestroy {
         });
       }
 
-      if (this.destination()) {
+      if (this.destination() && !this.currentRoute()) {
         this.calculateRoute();
       }
     }, err => {
@@ -547,7 +574,7 @@ export class BusProgramComponent implements OnInit, OnDestroy {
       this.userCoords.set(fallbackPos);
       this.map.setCenter([fallbackPos.lng, fallbackPos.lat]);
       
-      if (this.destination()) {
+      if (this.destination() && !this.currentRoute()) {
         this.calculateRoute();
       }
     });
@@ -592,8 +619,160 @@ export class BusProgramComponent implements OnInit, OnDestroy {
 
   setTravelMode(mode: any) { this.travelMode.set(mode); this.calculateRoute(); }
   toggleNav() { this.isMinimized.set(!this.isMinimized()); }
-  startNavigation() { this.isNavigating.set(true); }
-  stopNavigation() { this.isNavigating.set(false); }
+  
+  startNavigation() {
+    this.isNavigating.set(true);
+    
+    // Set initial active step
+    const steps = this.allSteps();
+    if (steps.length > 0) {
+      this.activeStepIndex.set(0);
+      this.activeStep.set(steps[0]);
+    }
+
+    this.resumeNavigationTracking();
+  }
+
+  stopNavigation() {
+    this.isNavigating.set(false);
+    this.activeStep.set(null);
+    this.activeStepIndex.set(0);
+    if (this.watchId !== null) {
+      navigator.geolocation.clearWatch(this.watchId);
+      this.watchId = null;
+    }
+    localStorage.removeItem('active_pwa_trip');
+    setTimeout(() => { if (this.map) this.map.resize(); }, 150);
+  }
+
+  private resumeNavigationTracking() {
+    if (this.watchId !== null) return;
+    
+    setTimeout(() => { if (this.map) this.map.resize(); }, 150);
+
+    if (navigator.geolocation) {
+      this.watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          const pos = { lat: position.coords.latitude, lng: position.coords.longitude };
+          this.userCoords.set(pos);
+          if (this.userMarker) {
+            this.userMarker.setLngLat([pos.lng, pos.lat]);
+          } else if (this.map) {
+            const el = document.createElement('div');
+            el.className = 'user-location-dot';
+            el.style.width = '16px';
+            el.style.height = '16px';
+            el.style.background = '#4285F4';
+            el.style.border = '3px solid white';
+            el.style.borderRadius = '50%';
+            el.style.boxShadow = '0 0 10px rgba(66, 133, 244, 0.6)';
+            
+            this.userMarker = new maplibregl.Marker({ element: el })
+              .setLngLat([pos.lng, pos.lat])
+              .addTo(this.map);
+          }
+          
+          this.checkNavigationArrival(pos);
+        },
+        (err) => console.error('Error tracking position:', err),
+        { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
+      );
+    }
+  }
+
+  private getDistanceMeters(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const R = 6371e3; // Earth's radius in meters
+    const phi1 = lat1 * Math.PI / 180;
+    const phi2 = lat2 * Math.PI / 180;
+    const deltaPhi = (lat2 - lat1) * Math.PI / 180;
+    const deltaLambda = (lon2 - lon1) * Math.PI / 180;
+
+    const a = Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
+              Math.cos(phi1) * Math.cos(phi2) *
+              Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c;
+  }
+
+  private checkNavigationArrival(pos: { lat: number, lng: number }) {
+    const idx = this.activeStepIndex();
+    const steps = this.allSteps();
+    const routeData = this.currentRoute();
+    if (!routeData || !routeData.features || idx >= steps.length) return;
+
+    const feature = routeData.features[idx];
+    if (!feature || !feature.geometry || !feature.geometry.coordinates) return;
+
+    const coords = feature.geometry.coordinates;
+    if (coords.length === 0) return;
+
+    const lastCoord = coords[coords.length - 1]; // [lon, lat]
+    const dist = this.getDistanceMeters(pos.lat, pos.lng, lastCoord[1], lastCoord[0]);
+
+    // Also check distance to next step's start coordinate if available for maximum geofencing accuracy
+    let distToNext = Infinity;
+    const nextFeature = routeData.features[idx + 1];
+    if (nextFeature && nextFeature.geometry?.coordinates?.length > 0) {
+      const firstCoord = nextFeature.geometry.coordinates[0];
+      distToNext = this.getDistanceMeters(pos.lat, pos.lng, firstCoord[1], firstCoord[0]);
+    }
+
+    if (dist < 25 || distToNext < 25) {
+      const nextIndex = idx + 1;
+      if (nextIndex < steps.length) {
+        this.activeStepIndex.set(nextIndex);
+        this.activeStep.set(steps[nextIndex]);
+        this.cdr.detectChanges();
+        
+        if (this.map) {
+          this.map.panTo([pos.lng, pos.lat], { duration: 1000 });
+        }
+      } else {
+        this.stopNavigation();
+        alert('Ați sosit la destinație!');
+      }
+    } else {
+      // Dynamic remaining distance update
+      const remainingKm = (dist / 1000).toFixed(2);
+      const currentActiveStep = { ...this.activeStep() };
+      if (currentActiveStep.distance) {
+        currentActiveStep.distance = {
+          text: `${remainingKm} km`,
+          value: dist
+        };
+        this.activeStep.set(currentActiveStep);
+      }
+    }
+  }
+
+  private restorePersistedTrip() {
+    if (typeof window === 'undefined') return;
+    const saved = localStorage.getItem('active_pwa_trip');
+    if (saved) {
+      try {
+        const state = JSON.parse(saved);
+        this.destination.set(state.destination);
+        this.travelMode.set(state.travelMode || 'TRANSIT');
+        this.currentRoute.set(state.currentRoute);
+        this.activeStepIndex.set(state.activeStepIndex || 0);
+        
+        if (state.isNavigating) {
+          this.isNavigating.set(true);
+          const steps = this.allSteps();
+          if (steps.length > 0) {
+            const idx = state.activeStepIndex || 0;
+            this.activeStep.set(steps[idx]);
+          }
+          this.resumeNavigationTracking();
+        }
+      } catch (e) {
+        console.error('Failed to restore trip state:', e);
+        localStorage.removeItem('active_pwa_trip');
+      }
+    }
+  }
+
   getStepIcon(step: any) { return step?.travel_mode === 'TRANSIT' ? 'directions_bus' : 'directions_walk'; }
   getStepStartTime(idx: number) { return this.timelineSteps()[idx]?.start || '--:--'; }
   getStepTitle(step: any, isLast: boolean) { return isLast ? 'Destinație' : (step.travel_mode === 'TRANSIT' ? step.instructions : 'Mergi pe jos'); }
