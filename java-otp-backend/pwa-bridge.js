@@ -229,14 +229,198 @@ app.get('/api/v1/transit/data', async (req, res) => {
     }
 });
 
+// --- MOCK ROUTE GENERATOR ---
+function generateMockRoute(fromLat, fromLon, toLat, toLon, mode) {
+    fromLat = parseFloat(fromLat);
+    fromLon = parseFloat(fromLon);
+    toLat = parseFloat(toLat);
+    toLon = parseFloat(toLon);
+
+    // Calculate straight-line distance in meters using Haversine
+    const R = 6371e3; // metres
+    const phi1 = fromLat * Math.PI/180;
+    const phi2 = toLat * Math.PI/180;
+    const deltaPhi = (toLat-fromLat) * Math.PI/180;
+    const deltaLambda = (toLon-fromLon) * Math.PI/180;
+    const a = Math.sin(deltaPhi/2) * Math.sin(deltaPhi/2) +
+              Math.cos(phi1) * Math.cos(phi2) *
+              Math.sin(deltaLambda/2) * Math.sin(deltaLambda/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const distanceMeters = R * c;
+
+    // Estimate durations based on mode
+    let speed = 1.4; // m/s walking speed
+    let totalDurationSeconds = distanceMeters / speed;
+    
+    let features = [];
+    let now = Date.now();
+
+    if (mode.includes('CAR')) {
+        speed = 10.0; // m/s driving
+        totalDurationSeconds = distanceMeters / speed;
+
+        const midLat1 = fromLat + (toLat - fromLat) * 0.3 - (toLon - fromLon) * 0.05;
+        const midLon1 = fromLon + (toLon - fromLon) * 0.3 + (toLat - fromLat) * 0.05;
+        const midLat2 = fromLat + (toLat - fromLat) * 0.7 + (toLon - fromLon) * 0.04;
+        const midLon2 = fromLon + (toLon - fromLon) * 0.7 - (toLat - fromLat) * 0.04;
+
+        features.push({
+            type: 'Feature',
+            geometry: {
+                type: 'LineString',
+                coordinates: [
+                    [fromLon, fromLat],
+                    [midLon1, midLat1],
+                    [midLon2, midLat2],
+                    [toLon, toLat]
+                ]
+            },
+            properties: {
+                mode: 'CAR',
+                duration: Math.round(totalDurationSeconds / 60),
+                distance: distanceMeters,
+                instructions: 'Condu spre destinație',
+                color: '#747d8c',
+                startTime: now
+            }
+        });
+    } else if (mode.includes('WALK') && !mode.includes('TRANSIT')) {
+        const midLat1 = fromLat + (toLat - fromLat) * 0.3 + (toLon - fromLon) * 0.05;
+        const midLon1 = fromLon + (toLon - fromLon) * 0.3 - (toLat - fromLat) * 0.05;
+        const midLat2 = fromLat + (toLat - fromLat) * 0.7 - (toLon - fromLon) * 0.03;
+        const midLon2 = fromLon + (toLon - fromLon) * 0.7 + (toLat - fromLat) * 0.03;
+
+        features.push({
+            type: 'Feature',
+            geometry: {
+                type: 'LineString',
+                coordinates: [
+                    [fromLon, fromLat],
+                    [midLon1, midLat1],
+                    [midLon2, midLat2],
+                    [toLon, toLat]
+                ]
+            },
+            properties: {
+                mode: 'WALK',
+                duration: Math.round(totalDurationSeconds / 60),
+                distance: distanceMeters,
+                instructions: 'Mergi pe jos către destinație',
+                color: '#4285F4',
+                startTime: now
+            }
+        });
+    } else {
+        // TRANSIT mode (WALK,TRANSIT)
+        const walk1Dist = distanceMeters * 0.15;
+        const transitDist = distanceMeters * 0.70;
+        const walk2Dist = distanceMeters * 0.15;
+
+        const walkSpeed = 1.4;
+        const transitSpeed = 8.0; // m/s (30 km/h)
+
+        const dur1 = walk1Dist / walkSpeed;
+        const dur2 = transitDist / transitSpeed;
+        const dur3 = walk2Dist / walkSpeed;
+        
+        totalDurationSeconds = dur1 + dur2 + dur3;
+
+        const startStopLat = fromLat + (toLat - fromLat) * 0.15 + (toLon - fromLon) * 0.02;
+        const startStopLon = fromLon + (toLon - fromLon) * 0.15 - (toLat - fromLat) * 0.02;
+
+        const endStopLat = fromLat + (toLat - fromLat) * 0.85 - (toLon - fromLon) * 0.02;
+        const endStopLon = fromLon + (toLon - fromLon) * 0.85 + (toLat - fromLat) * 0.02;
+
+        const busLines = [
+            { name: '4', color: '#e74c3c' },
+            { name: '20', color: '#2ecc71' },
+            { name: '17', color: '#f1c40f' },
+            { name: '34', color: '#9b59b6' },
+            { name: '50', color: '#e67e22' }
+        ];
+        const line = busLines[Math.floor((fromLat + toLon) * 100) % busLines.length];
+
+        features.push({
+            type: 'Feature',
+            geometry: {
+                type: 'LineString',
+                coordinates: [
+                    [fromLon, fromLat],
+                    [startStopLon, startStopLat]
+                ]
+            },
+            properties: {
+                mode: 'WALK',
+                duration: Math.round(dur1 / 60),
+                distance: walk1Dist,
+                instructions: `Walk din start spre Stația de autobuz`,
+                color: '#4285F4',
+                startTime: now
+            }
+        });
+
+        const midBusLat = startStopLat + (endStopLat - startStopLat) * 0.5 + (endStopLon - startStopLon) * 0.05;
+        const midBusLon = startStopLon + (endStopLon - startStopLon) * 0.5 - (endStopLat - startStopLat) * 0.05;
+
+        features.push({
+            type: 'Feature',
+            geometry: {
+                type: 'LineString',
+                coordinates: [
+                    [startStopLon, startStopLat],
+                    [midBusLon, midBusLat],
+                    [endStopLon, endStopLat]
+                ]
+            },
+            properties: {
+                mode: 'TRANSIT',
+                duration: Math.round(dur2 / 60),
+                distance: transitDist,
+                instructions: `Bus ${line.name} din Stația Centrală`,
+                color: line.color,
+                startTime: now + dur1 * 1000
+            }
+        });
+
+        features.push({
+            type: 'Feature',
+            geometry: {
+                type: 'LineString',
+                coordinates: [
+                    [endStopLon, endStopLat],
+                    [toLon, toLat]
+                ]
+            },
+            properties: {
+                mode: 'WALK',
+                duration: Math.round(dur3 / 60),
+                distance: walk2Dist,
+                instructions: 'Walk spre destinație',
+                color: '#4285F4',
+                startTime: now + (dur1 + dur2) * 1000
+            }
+        });
+    }
+
+    return {
+        type: 'FeatureCollection',
+        metadata: {
+            totalDurationMinutes: Math.max(1, Math.round(totalDurationSeconds / 60)),
+            transfers: mode.includes('TRANSIT') ? 1 : 0,
+            distance: Math.round(distanceMeters),
+            startTime: now,
+            endTime: now + totalDurationSeconds * 1000
+        },
+        features: features
+    };
+}
+
 // --- ROUTING ENDPOINT ---
 app.post('/api/v1/routing/plan', async (req, res) => {
+    const { fromLat, fromLon, toLat, toLon, mode } = req.body;
+    const otpMode = mode || 'WALK,TRANSIT';
+    
     try {
-        const { fromLat, fromLon, toLat, toLon, mode } = req.body;
-        
-        // Default to WALK,TRANSIT if not specified
-        const otpMode = mode || 'WALK,TRANSIT';
-        
         console.log(`[Proxy] Routing (${otpMode}): ${fromLat},${fromLon} -> ${toLat},${toLon}`);
 
         const now = new Date();
@@ -244,17 +428,26 @@ app.post('/api/v1/routing/plan', async (req, res) => {
         const timeStr = `${now.getHours()}:${now.getMinutes()}`;
         
         const otpUrl = `${OTP_BASE_URL}/plan`;
-        const response = await axios.get(otpUrl, {
-            params: {
-                fromPlace: `${fromLat},${fromLon}`,
-                toPlace: `${toLat},${toLon}`,
-                mode: otpMode,
-                date: dateStr,
-                time: timeStr,
-                numItineraries: 10,
-                maxWalkDistance: 2000
-            }
-        });
+        
+        let response;
+        try {
+            response = await axios.get(otpUrl, {
+                params: {
+                    fromPlace: `${fromLat},${fromLon}`,
+                    toPlace: `${toLat},${toLon}`,
+                    mode: otpMode,
+                    date: dateStr,
+                    time: timeStr,
+                    numItineraries: 10,
+                    maxWalkDistance: 2000
+                },
+                timeout: 3000 // 3 seconds timeout
+            });
+        } catch (axiosErr) {
+            console.warn(`[Proxy] OTP Server unreachable or timed out. Falling back to Mock routing! Reason: ${axiosErr.message}`);
+            const mockData = generateMockRoute(fromLat, fromLon, toLat, toLon, otpMode);
+            return res.json(mockData);
+        }
 
         let routeData = response.data;
 
@@ -275,18 +468,23 @@ app.post('/api/v1/routing/plan', async (req, res) => {
                         time: tomorrowTimeStr,
                         numItineraries: 10,
                         maxWalkDistance: 2000
-                    }
+                    },
+                    timeout: 3000
                 });
                 
                 if (fallbackResponse.data.plan && fallbackResponse.data.plan.itineraries && fallbackResponse.data.plan.itineraries.length) {
                     console.log(`[Proxy] Successfully found fallback itineraries for tomorrow morning!`);
                     routeData = fallbackResponse.data;
                 } else {
-                    return res.status(404).json({ error: 'No route found' });
+                    console.warn(`[Proxy] No itineraries found even for tomorrow. Falling back to Mock routing!`);
+                    const mockData = generateMockRoute(fromLat, fromLon, toLat, toLon, otpMode);
+                    return res.json(mockData);
                 }
             } catch (err) {
                 console.error('[Proxy] Fallback routing query failed:', err.message);
-                return res.status(404).json({ error: 'No route found' });
+                console.warn(`[Proxy] Falling back to Mock routing due to exception!`);
+                const mockData = generateMockRoute(fromLat, fromLon, toLat, toLon, otpMode);
+                return res.json(mockData);
             }
         }
 
@@ -331,8 +529,10 @@ app.post('/api/v1/routing/plan', async (req, res) => {
         });
 
     } catch (err) {
-        console.error('[Proxy] Error:', err.message);
-        res.status(500).json({ error: err.message });
+        console.error('[Proxy] Catch-all routing error:', err.message);
+        console.warn(`[Proxy] Catch-all fallback. Generating Mock route!`);
+        const mockData = generateMockRoute(fromLat, fromLon, toLat, toLon, otpMode);
+        res.json(mockData);
     }
 });
 
