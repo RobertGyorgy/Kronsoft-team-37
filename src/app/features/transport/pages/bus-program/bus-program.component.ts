@@ -229,7 +229,7 @@ declare const google: any;
     .map-view { height: 100vh; width: 100%; flex-shrink: 0; transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1); position: relative; z-index: 1; }
     .current-route-active .map-view { height: 35vh; }
     .minimized-state .map-view { height: calc(100vh - 120px); }
-    .nav-active .map-view { height: 100dvh !important; }
+    .nav-active .map-view { height: 100dvh !important; } /* Force full screen map layout on active turn-by-turn navigation state */
     .map-core { width: 100%; height: 100%; }
     .loading-shimmer { position: absolute; inset: 0; background: rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; z-index: 10; }
     .spinner { width: 32px; height: 32px; border: 3px solid #f1f3f4; border-top-color: #1a73e8; border-radius: 50%; animation: spin 0.8s linear infinite; }
