@@ -100,12 +100,12 @@ import { TransitService } from '../../services/transit.service';
                         <div class="hourly-schedule-grid" (click)="$event.stopPropagation()">
                           @for (group of getTimesGroupedByHour(station, selectedDayType()); track group.hour) {
                             <div class="hourly-row">
-                              <div class="hour-cell" [style.background]="selectedBus()?.color + '15'" [style.color]="selectedBus()?.color">
+                              <div class="hour-cell" [style.background]="selectedBus()?.color" [style.color]="selectedBus()?.textColor">
                                 {{ group.hour }}
                               </div>
                               <div class="minutes-cell">
                                 @for (min of group.minutes; track min) {
-                                  <span class="minute-pill" [style.border-color]="selectedBus()?.color + '30'">
+                                  <span class="minute-pill" [style.border-color]="selectedBus()?.color + '40'">
                                     {{ min }}
                                   </span>
                                 }
@@ -141,7 +141,7 @@ import { TransitService } from '../../services/transit.service';
               <!-- Grouped Buses Grid -->
               <div class="buses-grid">
                 @for (group of filteredGroups(); track group.shortName) {
-                  <div class="bus-group-card">
+                  <div class="bus-group-card" [style.border-left-color]="group.color">
                     <div class="group-header">
                       <span class="bus-badge" [style.background]="group.color" [style.color]="group.textColor">
                         {{ group.shortName }}
@@ -154,13 +154,13 @@ import { TransitService } from '../../services/transit.service';
                     
                     <div class="group-routes-list">
                       @for (route of group.routes; track route.origin + '_' + route.target) {
-                        <button class="route-select-row" (click)="selectBus(route)">
+                        <button class="route-select-row" (click)="selectBus(route)" [style.border-left-color]="group.color + '60'">
                           <div class="route-left">
-                            <span class="material-icons route-icon">swap_calls</span>
+                            <span class="material-icons route-icon" [style.color]="group.color">swap_calls</span>
                             <span class="route-path">{{ route.origin }} ➔ {{ route.target }}</span>
                           </div>
                           <div class="route-right">
-                            <span class="route-stations-count">{{ route.stations.length }} stații</span>
+                            <span class="route-stations-count" [style.border-color]="group.color + '40'">{{ route.stations.length }} stații</span>
                             <span class="material-icons route-arrow">chevron_right</span>
                           </div>
                         </button>
@@ -254,7 +254,8 @@ import { TransitService } from '../../services/transit.service';
     .buses-grid { display: flex; flex-direction: column; gap: 1rem; }
     
     /* Grouped Bus Layout Styles */
-    .bus-group-card { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 24px; padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.01); }
+    .bus-group-card { background: var(--bg-secondary); border: 1px solid var(--border-color); border-left: 6px solid transparent; border-radius: 24px; padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; box-shadow: 0 6px 24px rgba(0,0,0,0.02); transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .bus-group-card:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.04); }
     .group-header { display: flex; align-items: center; gap: 1rem; border-bottom: 1px dashed var(--border-color); padding-bottom: 0.75rem; }
     .bus-badge { font-size: 1.1rem; font-weight: 800; width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); flex-shrink: 0; }
     .group-info { display: flex; flex-direction: column; }
@@ -262,10 +263,11 @@ import { TransitService } from '../../services/transit.service';
     .group-subtitle { font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; }
     .group-routes-list { display: flex; flex-direction: column; gap: 0.5rem; }
     
-    .route-select-row { width: 100%; display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); border: 1px solid var(--border-color); padding: 0.85rem 1rem; border-radius: 16px; text-align: left; cursor: pointer; transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .route-select-row { width: 100%; display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); border: 1px solid var(--border-color); border-left: 4px solid transparent; padding: 0.85rem 1rem; border-radius: 16px; text-align: left; cursor: pointer; transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .route-select-row:hover { background: rgba(0,0,0,0.01); transform: translateX(2px); }
     .route-select-row:active { transform: scale(0.98); background: rgba(0,0,0,0.02); }
     .route-left { display: flex; align-items: center; gap: 0.75rem; min-width: 0; flex: 1; }
-    .route-icon { color: var(--text-secondary); opacity: 0.6; font-size: 1.1rem; }
+    .route-icon { opacity: 0.85; font-size: 1.1rem; }
     .route-path { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .route-right { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
     .route-stations-count { font-size: 0.75rem; color: var(--text-secondary); font-weight: 600; background: var(--bg-primary); padding: 4px 8px; border-radius: 99px; border: 1px solid var(--border-color); }
@@ -282,7 +284,7 @@ import { TransitService } from '../../services/transit.service';
     
     .tabs-switcher { display: grid; grid-template-columns: 1fr 1fr; background: var(--bg-secondary); border-radius: 999px; border: 1px solid var(--border-color); padding: 4px; gap: 4px; z-index: 10; position: relative; }
     .tabs-switcher button { border: none; background: transparent; padding: 0.75rem; border-radius: 999px; font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer; transition: all 0.2s; }
-    .tabs-switcher button.active { background: var(--bus-theme-color); color: #ffffff; box-shadow: 0 4px 14px rgba(0,0,0,0.1); }
+    .tabs-switcher button.active { background: var(--bus-theme-color); color: var(--bus-theme-text-color, #ffffff) !important; box-shadow: 0 4px 14px rgba(0,0,0,0.1); }
     
     /* Accordion Timeline List */
     .stations-timeline { display: flex; flex-direction: column; position: relative; padding-left: 0.25rem; z-index: 10; }
@@ -336,14 +338,19 @@ import { TransitService } from '../../services/transit.service';
       gap: 0.35rem;
     }
     .minute-pill {
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       font-weight: 700;
-      padding: 3px 8px;
+      padding: 4px 10px;
       border: 1px solid var(--border-color);
-      border-radius: 6px;
+      border-radius: 8px;
       background: var(--bg-primary);
       color: var(--text-primary);
       box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+      transition: all 0.2s ease;
+    }
+    .minute-pill:hover {
+      background: var(--bg-secondary);
+      border-color: var(--bus-theme-color);
     }
     
     .no-service-pill { font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; padding: 6px 12px; background: rgba(0,0,0,0.02); border-radius: 999px; margin-top: 0.5rem; text-align: center; }
