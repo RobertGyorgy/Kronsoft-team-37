@@ -4,6 +4,7 @@ import { RouterLink, ActivatedRoute } from '@angular/router';
 import { TransitService } from '../../services/transit.service';
 import { gsap } from 'gsap';
 import maplibregl from 'maplibre-gl';
+import * as turf from '@turf/turf';
 
 declare const google: any;
 
@@ -117,20 +118,29 @@ declare const google: any;
 
           <div class="journey-timeline">
             @for (step of allSteps(); track $index) {
-              <div class="timeline-step" [class.transit]="step.travel_mode === 'TRANSIT'">
+              <div class="timeline-step" 
+                   [class.transit]="step.travel_mode === 'TRANSIT'"
+                   [class.completed]="isNavigating() && $index < activeStepIndex()"
+                   [class.active]="isNavigating() && $index === activeStepIndex()">
                 <div class="timeline-indicator">
                   <div class="time-col">
                     <span class="time start">{{ timelineSteps()[$index]?.start }}</span>
                     <span class="time-separator"></span>
                     <span class="time end">{{ timelineSteps()[$index]?.end }}</span>
                   </div>
-                  <div class="node-col" [style.color]="step.transit?.line?.color">
+                  <div class="node-col" [style.color]="isNavigating() && $index < activeStepIndex() ? '#cbd5e1' : step.transit?.line?.color">
                     <div class="dot-container">
-                      <div class="step-dot">
-                        <span class="material-icons">{{ getStepIcon(step) }}</span>
+                      <div class="step-dot" [style.border-color]="isNavigating() && $index < activeStepIndex() ? '#cbd5e1' : step.transit?.line?.color">
+                        @if (isNavigating() && $index < activeStepIndex()) {
+                          <span class="material-icons completed-icon">check</span>
+                        } @else {
+                          <span class="material-icons">{{ getStepIcon(step) }}</span>
+                        }
                       </div>
                     </div>
-                    <div class="connector" [class.dashed]="step.travel_mode === 'WALKING'"></div>
+                    <div class="connector" 
+                         [class.dashed]="step.travel_mode === 'WALKING'"
+                         [style.background]="isNavigating() && $index < activeStepIndex() ? '#cbd5e1' : step.transit?.line?.color"></div>
                   </div>
                 </div>
 
@@ -138,7 +148,7 @@ declare const google: any;
                   <div class="step-card">
                     <div class="step-header">
                       @if (step.transit?.line) {
-                        <div class="line-badge" [style.background]="step.transit.line.color">
+                        <div class="line-badge" [style.background]="isNavigating() && $index < activeStepIndex() ? '#cbd5e1' : step.transit.line.color">
                           {{ step.transit.line.short_name }}
                         </div>
                       }
@@ -229,7 +239,7 @@ declare const google: any;
     .map-view { height: 100vh; width: 100%; flex-shrink: 0; transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1); position: relative; z-index: 1; }
     .current-route-active .map-view { height: 35vh; }
     .minimized-state .map-view { height: calc(100vh - 120px); }
-    .nav-active .map-view { height: 100dvh !important; }
+    .nav-active .map-view { height: 100dvh !important; } /* Force full screen map layout on active turn-by-turn navigation state */
     .map-core { width: 100%; height: 100%; }
     .loading-shimmer { position: absolute; inset: 0; background: rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; z-index: 10; }
     .spinner { width: 32px; height: 32px; border: 3px solid #f1f3f4; border-top-color: #1a73e8; border-radius: 50%; animation: spin 0.8s linear infinite; }
@@ -273,6 +283,23 @@ declare const google: any;
     .departure-info strong { color: #174ea6; font-weight: 800; }
     .realtime-updates { margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem; }
     .arrival-row { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: #70757a; background: #f8f9fa; padding: 8px 12px; border-radius: 999px; border: 1px solid #f1f3f4; }
+    
+    .timeline-step.completed { opacity: 0.5; transition: opacity 0.3s ease; }
+    .timeline-step.completed .step-dot { background: #cbd5e1; color: #64748b; border-color: #cbd5e1 !important; }
+    .timeline-step.completed .completed-icon { font-size: 1.1rem; font-weight: bold; }
+    .timeline-step.active .step-dot { 
+      background: #1a73e8; 
+      color: #fff; 
+      border-color: #1a73e8 !important; 
+      box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.25);
+      animation: pulseActive 2s infinite;
+    }
+    
+    @keyframes pulseActive {
+      0% { box-shadow: 0 0 0 0 rgba(26, 115, 232, 0.4); }
+      70% { box-shadow: 0 0 0 6px rgba(26, 115, 232, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(26, 115, 232, 0); }
+    }
     @keyframes spin { to { transform: rotate(360deg); } }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -298,6 +325,7 @@ export class BusProgramComponent implements OnInit, OnDestroy {
   currentRoute = signal<any>(null);
   destination = signal<any>(null);
   userCoords = signal<any>(null);
+  snappedUserCoords = signal<any>(null);
   userLocationName = signal('Locația ta');
   travelMode = signal<'TRANSIT' | 'WALKING' | 'CAR'>('TRANSIT');
   isNavigating = signal(false);
@@ -356,9 +384,31 @@ export class BusProgramComponent implements OnInit, OnDestroy {
   });
 
   routeDuration = computed(() => {
-    const data = this.currentRoute();
-    if (!data) return '-- min';
-    return `${data.metadata?.totalDurationMinutes || 0} min`;
+    const steps = this.allSteps();
+    if (steps.length === 0) return '-- min';
+
+    const now = new Date();
+    const firstStartMs = now.getTime();
+    let lastEndMs = firstStartMs;
+    
+    let tempMs = firstStartMs;
+    steps.forEach((step: any, idx: number) => {
+      if (step.transit?.departure_stop?.timeMs) {
+        tempMs = step.transit.departure_stop.timeMs;
+      }
+      const durationMs = (step.duration?.value || 0) * 1000;
+      tempMs += durationMs;
+      if (idx === steps.length - 1) {
+        lastEndMs = tempMs;
+      }
+    });
+
+    const sumDurationsMinutes = steps.reduce((sum: number, step: any) => sum + (step.duration?.value || 0) / 60, 0);
+    let totalMinutes = Math.round((lastEndMs - firstStartMs) / 60000);
+    if (totalMinutes < sumDurationsMinutes) {
+      totalMinutes = Math.round(sumDurationsMinutes);
+    }
+    return `${totalMinutes} min`;
   });
 
   arrivalEstimate = computed(() => {
@@ -385,7 +435,8 @@ export class BusProgramComponent implements OnInit, OnDestroy {
     effect(() => {
       const hasRoute = this.currentRoute();
       const minimized = this.isMinimized();
-      if (!hasRoute) return;
+      const navigating = this.isNavigating();
+      if (!hasRoute || navigating) return;
 
       setTimeout(() => {
         const el = this.routePanel?.nativeElement;
@@ -409,6 +460,15 @@ export class BusProgramComponent implements OnInit, OnDestroy {
       } else {
         localStorage.removeItem('active_pwa_trip');
       }
+    });
+
+    effect(() => {
+      // Reactively render the route progress on the map
+      this.currentRoute();
+      this.activeStepIndex();
+      this.isNavigating();
+      this.snappedUserCoords();
+      this.updateRouteProgressOnMap();
     });
   }
 
@@ -440,11 +500,12 @@ export class BusProgramComponent implements OnInit, OnDestroy {
 
     this.map.on('load', () => {
       this.map.addSource('current-route', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+      
       this.map.addLayer({
         id: 'route-line-walk',
         type: 'line',
         source: 'current-route',
-        filter: ['==', ['get', 'mode'], 'WALK'],
+        filter: ['all', ['==', ['get', 'mode'], 'WALK'], ['!=', ['get', 'isCheckpoint'], true]],
         paint: {
           'line-color': ['get', 'color'],
           'line-width': 5,
@@ -457,12 +518,43 @@ export class BusProgramComponent implements OnInit, OnDestroy {
         id: 'route-line-transit',
         type: 'line',
         source: 'current-route',
-        filter: ['!=', ['get', 'mode'], 'WALK'],
+        filter: ['all', ['!=', ['get', 'mode'], 'WALK'], ['!=', ['get', 'isCheckpoint'], true]],
         paint: {
           'line-color': ['get', 'color'],
           'line-width': 7
         },
         layout: { 'line-cap': 'round', 'line-join': 'round' }
+      });
+
+      // Premium outer pulse/glow layer for the active checkpoint stop
+      this.map.addLayer({
+        id: 'route-checkpoints-glow',
+        type: 'circle',
+        source: 'current-route',
+        filter: ['all', ['==', ['get', 'isCheckpoint'], true], ['==', ['get', 'active'], true]],
+        paint: {
+          'circle-radius': 14,
+          'circle-color': ['get', 'color'],
+          'circle-opacity': 0.4
+        }
+      });
+
+      // Checkpoint circles layer representing intermediate stop points on the map
+      this.map.addLayer({
+        id: 'route-checkpoints',
+        type: 'circle',
+        source: 'current-route',
+        filter: ['==', ['get', 'isCheckpoint'], true],
+        paint: {
+          'circle-radius': [
+            'case',
+            ['get', 'active'], 10,
+            8
+          ],
+          'circle-color': '#ffffff',
+          'circle-stroke-width': 4,
+          'circle-stroke-color': ['get', 'color']
+        }
       });
 
       // Redraw restored route if present
@@ -515,12 +607,125 @@ export class BusProgramComponent implements OnInit, OnDestroy {
   }
 
   drawCurrentRoute() {
-    if (!this.map) return;
-    const data = this.currentRoute();
-    if (!data) return;
+    this.updateRouteProgressOnMap();
+    if (!this.isNavigating()) {
+      const data = this.currentRoute();
+      if (data) {
+        this.fitBounds(data);
+      }
+    }
+  }
 
-    (this.map.getSource('current-route') as any).setData(data);
-    this.fitBounds(data);
+  updateRouteProgressOnMap() {
+    if (!this.map || !this.map.isStyleLoaded() || !this.map.getSource('current-route')) return;
+
+    const data = this.currentRoute();
+    if (!data || !data.features) return;
+
+    const activeIdx = this.activeStepIndex();
+    const isNav = this.isNavigating();
+
+    const features: any[] = [];
+
+    // 1. Path Lines
+    data.features.forEach((f: any, idx: number) => {
+      if (f.properties?.isCheckpoint) return;
+
+      const isCompleted = isNav && idx < activeIdx;
+      const isActive = isNav && idx === activeIdx;
+
+      if (isActive && this.snappedUserCoords() && f.geometry?.type === 'LineString' && f.geometry.coordinates.length > 1) {
+        try {
+          const snapped = this.snappedUserCoords();
+          const userPt = turf.point([snapped.lng, snapped.lat]);
+          const lineStart = turf.point(f.geometry.coordinates[0]);
+          const lineEnd = turf.point(f.geometry.coordinates[f.geometry.coordinates.length - 1]);
+          
+          const completedLine = turf.lineSlice(lineStart, userPt, f);
+          const remainingLine = turf.lineSlice(userPt, lineEnd, f);
+
+          features.push({
+            ...f,
+            geometry: completedLine.geometry,
+            properties: { ...f.properties, isCheckpoint: false, completed: true, active: true, color: '#cbd5e1' }
+          });
+
+          features.push({
+            ...f,
+            geometry: remainingLine.geometry,
+            properties: { ...f.properties, isCheckpoint: false, completed: false, active: true, color: f.properties?.color || '#333' }
+          });
+          return;
+        } catch (e) {
+          console.error('Turf slicing failed, falling back to full line', e);
+        }
+      }
+      
+      const color = isCompleted ? '#cbd5e1' : (f.properties?.color || '#333');
+
+      features.push({
+        ...f,
+        properties: {
+          ...f.properties,
+          isCheckpoint: false,
+          completed: isCompleted,
+          active: isActive,
+          color: color
+        }
+      });
+    });
+
+    // 2. Checkpoint Dots
+    data.features.forEach((f: any, idx: number) => {
+      if (f.geometry?.coordinates?.length > 0) {
+        const isCompleted = isNav && idx < activeIdx;
+        const isActive = isNav && idx === activeIdx;
+        
+        const startCoord = f.geometry.coordinates[0];
+        const color = isCompleted ? '#cbd5e1' : (f.properties?.color || '#333');
+
+        features.push({
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: startCoord
+          },
+          properties: {
+            isCheckpoint: true,
+            completed: isCompleted,
+            active: isActive,
+            color: color,
+            instructions: f.properties?.instructions || ''
+          }
+        });
+
+        // Add final destination point
+        if (idx === data.features.length - 1) {
+          const endCoord = f.geometry.coordinates[f.geometry.coordinates.length - 1];
+          features.push({
+            type: 'Feature',
+            geometry: {
+              type: 'Point',
+              coordinates: endCoord
+            },
+            properties: {
+              isCheckpoint: true,
+              completed: isNav && idx <= activeIdx,
+              active: isNav && idx === activeIdx,
+              color: isNav && idx <= activeIdx ? '#cbd5e1' : '#ea4335',
+              instructions: 'Destinație'
+            }
+          });
+        }
+      }
+    });
+
+    const updatedData = {
+      ...data,
+      features: features
+    };
+
+    (this.map.getSource('current-route') as any).setData(updatedData);
   }
 
   private fitBounds(geoJson: any) {
@@ -653,10 +858,34 @@ export class BusProgramComponent implements OnInit, OnDestroy {
     if (navigator.geolocation) {
       this.watchId = navigator.geolocation.watchPosition(
         (position) => {
-          const pos = { lat: position.coords.latitude, lng: position.coords.longitude };
-          this.userCoords.set(pos);
+          const rawPos = { lat: position.coords.latitude, lng: position.coords.longitude };
+          this.userCoords.set(rawPos);
+          
+          let displayPos = { ...rawPos };
+          const route = this.currentRoute();
+          const activeIdx = this.activeStepIndex();
+
+          if (route && route.features && activeIdx < route.features.length) {
+            const activeFeature = route.features[activeIdx];
+            if (activeFeature && activeFeature.geometry?.type === 'LineString') {
+              try {
+                const userPt = turf.point([rawPos.lng, rawPos.lat]);
+                const snapped = turf.nearestPointOnLine(activeFeature, userPt);
+                if (snapped && snapped.properties?.dist !== undefined) {
+                  const distMeters = snapped.properties.dist * 1000;
+                  // Snap with a margin of error of 3 meters
+                  if (distMeters < 3) {
+                    displayPos = { lng: snapped.geometry.coordinates[0], lat: snapped.geometry.coordinates[1] };
+                  }
+                }
+              } catch (e) { console.error('Turf snapping failed', e); }
+            }
+          }
+
+          this.snappedUserCoords.set(displayPos);
+
           if (this.userMarker) {
-            this.userMarker.setLngLat([pos.lng, pos.lat]);
+            this.userMarker.setLngLat([displayPos.lng, displayPos.lat]);
           } else if (this.map) {
             const el = document.createElement('div');
             el.className = 'user-location-dot';
@@ -668,11 +897,11 @@ export class BusProgramComponent implements OnInit, OnDestroy {
             el.style.boxShadow = '0 0 10px rgba(66, 133, 244, 0.6)';
             
             this.userMarker = new maplibregl.Marker({ element: el })
-              .setLngLat([pos.lng, pos.lat])
+              .setLngLat([displayPos.lng, displayPos.lat])
               .addTo(this.map);
           }
           
-          this.checkNavigationArrival(pos);
+          this.checkNavigationArrival(rawPos);
         },
         (err) => console.error('Error tracking position:', err),
         { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }

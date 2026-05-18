@@ -47,7 +47,7 @@ interface Recommendation {
           <h1 class="hero-title line-mask">
             @for (word of titleWords; track word) {
               <span class="word">
-                @for (char of word.split(''); track char) {
+                @for (char of word.split(''); track $index) {
                   <span class="char">{{ char }}</span>
                 }
                 <span class="char">&nbsp;</span>
@@ -60,7 +60,7 @@ interface Recommendation {
             <p class="hero-subtitle line-mask">
               @for (word of subtitleWords; track word) {
                 <span class="word">
-                  @for (char of word.split(''); track char) {
+                  @for (char of word.split(''); track $index) {
                     <span class="char-sub">{{ char }}</span>
                   }
                   <span class="char-sub">&nbsp;</span>

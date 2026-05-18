@@ -9,7 +9,7 @@
       <h1 class="page-title">
         @for (word of splitByWord('Raportează o neregulă'); track word) {
           <span class="word">
-            @for (char of word.split(''); track char) {
+            @for (char of word.split(''); track $index) {
               <span class="char">{{ char }}</span>
             }
             <span class="char">&nbsp;</span>
@@ -41,12 +41,13 @@
       <!-- Categories Chips -->
       <div class="categories-scroll">
         <div class="chips-container">
-          @for (cat of categories; track cat) {
+          @for (cat of categories(); track cat.id) {
             <button 
+              #chipBtn
               class="chip" 
-              [class.active]="activeCategory() === cat"
-              (click)="setCategory(cat)">
-              {{ cat }}
+              [class.active]="activeCategoryId() === cat.id"
+              (click)="setCategory(cat.id)">
+              {{ cat.name }}
             </button>
           }
         </div>

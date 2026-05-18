@@ -31,7 +31,8 @@ export class ReportFormComponent {
     categoryId: 0,
     categoryName: '',
     latitude: 45.6427, // Default Brasov
-    longitude: 25.5890
+    longitude: 25.5890,
+    anonymous: true
   };
 
   uploadedPhotos = signal<string[]>([]);
@@ -213,17 +214,18 @@ export class ReportFormComponent {
     this.isPreviewMode.set(false);
   }
 
-  confirmSubmit() {
+  async confirmSubmit() {
     const finalDescription = `[${this.formData.title}] ${this.formData.address ? 'Locație: ' + this.formData.address + '. ' : ''}${this.formData.description}`;
 
     const payload = {
       description: finalDescription,
       categoryId: this.formData.categoryId,
       latitude: this.formData.latitude,
-      longitude: this.formData.longitude
+      longitude: this.formData.longitude,
+      anonymous: this.formData.anonymous
     };
 
-    this.reportService.addReport(payload, this.photoFile || undefined);
-    this.router.navigate(['/report']);
+    await this.reportService.addReport(payload, this.photoFile || undefined);
+    await this.router.navigate(['/report']);
   }
 }
