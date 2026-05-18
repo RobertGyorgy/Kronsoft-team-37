@@ -749,32 +749,33 @@ export class WeekendComponent implements AfterViewInit {
       ]
     },
     {
-      id: 'experiente', name: 'Experiențe inedite', icon: 'explore',
+      id: 'experiente', name: 'Experiențe', icon: 'star',
       color: '#ff6348', shadow: '0 10px 20px rgba(255,99,72,0.15)',
       questions: [
         { 
-          id: 'tip', text: 'Ce tip de experiență?', 
+          id: 'q1', text: 'Ce tip de experiență?', 
           options: [
-            { label: 'Aventură', icon: 'hiking' },
+            { label: 'Aventură', icon: 'person-hiking' },
             { label: 'Relaxare', icon: 'spa' },
-            { label: 'Culturală', icon: 'theater_comedy' },
-            { label: 'Gastronomică', icon: 'dinner_dining' }
+            { label: 'Culturală', icon: 'landmark' },
+            { label: 'Gastronomică', icon: 'utensils' }
           ] 
         },
         { 
-          id: 'buget', text: 'Care e bugetul?', 
+          id: 'q2', text: 'Cu cine ești?', 
           options: [
-            { label: 'Gratuit', icon: 'money_off' },
-            { label: 'Sub 100 lei', icon: 'attach_money' },
-            { label: 'Peste 100 lei', icon: 'paid' }
+            { label: 'Singur', icon: 'person' },
+            { label: 'Cuplu', icon: 'heart' },
+            { label: 'Prieteni', icon: 'people-group' },
+            { label: 'Familie', icon: 'family' }
           ] 
         },
         { 
-          id: 'preferinta', text: 'Preferi ceva?', 
+          id: 'q3', text: 'Care e bugetul?', 
           options: [
-            { label: 'Unic și necunoscut', icon: 'auto_awesome' },
-            { label: 'Popular dar merită', icon: 'trending_up' },
-            { label: 'Off the beaten path', icon: 'map' }
+            { label: 'Gratuit', icon: 'hand-holding-heart' },
+            { label: 'Sub 100 lei', icon: 'wallet' },
+            { label: 'Peste 100 lei', icon: 'gem' }
           ] 
         }
       ]
@@ -917,7 +918,8 @@ export class WeekendComponent implements AfterViewInit {
       'person-running': 'directions_run',
       'cloud-sun': 'wb_twilight',
       'sun': 'wb_sunny',
-      'moon': 'bedtime'
+      'moon': 'bedtime',
+      'hand-holding-heart': 'volunteer_activism'
     };
     return iconMap[iconName] || iconName;
   }
