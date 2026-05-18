@@ -246,7 +246,8 @@ import { TransitService } from '../../services/transit.service';
     
     /* Bus List Page */
     .bus-list-page { display: flex; flex-direction: column; gap: 1rem; }
-    .search-bar-box { background: var(--bg-secondary); border-radius: 16px; border: 1px solid var(--border-color); display: flex; align-items: center; padding: 0 1rem; height: 52px; gap: 0.75rem; }
+    .search-bar-box { background: var(--bg-secondary); border-radius: 20px; border: 1px solid var(--border-color); display: flex; align-items: center; padding: 0 1.25rem; height: 56px; gap: 0.85rem; box-shadow: 0 8px 30px rgba(0,0,0,0.02); transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .search-bar-box:focus-within { border-color: #188038; background: var(--bg-primary); box-shadow: 0 8px 30px rgba(24, 128, 56, 0.08); }
     .search-icon { color: var(--text-secondary); }
     .search-bar-box input { border: none; background: transparent; flex: 1; font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 600; outline: none; color: var(--text-primary); }
     .clear-search-btn { background: transparent; border: none; padding: 0; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; }
@@ -319,6 +320,16 @@ import { TransitService } from '../../services/transit.service';
     .hourly-row {
       display: flex;
       align-items: center;
+      padding: 0.65rem 0;
+      border-bottom: 1px dashed var(--border-color);
+      width: 100%;
+    }
+    .hourly-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .hourly-row:first-child {
+      padding-top: 0;
     }
     .hour-cell {
       font-size: 0.95rem;
