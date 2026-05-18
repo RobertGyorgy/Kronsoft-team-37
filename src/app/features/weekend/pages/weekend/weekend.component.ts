@@ -686,33 +686,33 @@ export class WeekendComponent implements AfterViewInit {
       ]
     },
     {
-      id: 'cafenele', name: 'Cafenele', icon: 'mug-hot',
+      id: 'cafenele', name: 'Cafenele', icon: 'coffee',
       color: '#bcaaa4', shadow: '0 10px 20px rgba(188,170,164,0.15)',
       questions: [
         { 
           id: 'q1', text: 'Ce atmosferă cauți?', 
           options: [
             { label: 'Cozy', icon: 'mug-hot' },
-            { label: 'Modern', icon: 'bolt' },
-            { label: 'Liniștită', icon: 'leaf' },
+            { label: 'Modern', icon: 'wand-magic-sparkles' },
+            { label: 'Liniștită', icon: 'spa' },
             { label: 'Terasă', icon: 'umbrella-beach' }
           ] 
         },
         { 
-          id: 'q2', text: 'Buget per persoană?', 
-          options: [
-            { label: 'Sub 20 lei', icon: 'coins' },
-            { label: '20–40 lei', icon: 'wallet' },
-            { label: 'Peste 40 lei', icon: 'gem' }
-          ] 
-        },
-        { 
-          id: 'q3', text: 'Cu cine ești?', 
+          id: 'q2', text: 'Cu cine ești?', 
           options: [
             { label: 'Singur', icon: 'person' },
             { label: 'Cuplu', icon: 'heart' },
             { label: 'Prieteni', icon: 'people-group' },
-            { label: 'Familie cu copii', icon: 'children' }
+            { label: 'Familie cu copii', icon: 'family' }
+          ] 
+        },
+        { 
+          id: 'q3', text: 'Buget per persoană?', 
+          options: [
+            { label: 'Sub 20 lei', icon: 'coins' },
+            { label: '20–40 lei', icon: 'wallet' },
+            { label: 'Peste 40 lei', icon: 'gem' }
           ] 
         }
       ]
@@ -905,7 +905,9 @@ export class WeekendComponent implements AfterViewInit {
       'bolt': 'bolt',
       'leaf': 'spa',
       'umbrella-beach': 'beach_access',
-      'children': 'child_care'
+      'children': 'child_care',
+      'wand-magic-sparkles': 'auto_awesome',
+      'coffee': 'coffee'
     };
     return iconMap[iconName] || iconName;
   }
