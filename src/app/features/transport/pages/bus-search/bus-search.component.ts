@@ -142,47 +142,49 @@ import { TransitService } from '../../services/transit.service';
               <div class="buses-grid">
                 @for (group of filteredGroups(); track group.shortName) {
                   @if (group.routes.length === 1) {
-                    <!-- Single Route Card Layout -->
-                    <button class="bus-group-card single-route-card" (click)="selectBus(group.routes[0])" [style.border-left-color]="group.color">
-                      <div class="card-glow-orb" [style.background]="group.color"></div>
-                      <div class="group-header">
-                        <span class="bus-badge" [style.background]="group.color" [style.color]="group.textColor">
-                          {{ group.shortName }}
-                        </span>
-                        <div class="group-info">
-                          <span class="group-title">Linia {{ group.shortName }}</span>
-                          <span class="route-path-single">{{ group.routes[0].origin }} ➔ {{ group.routes[0].target }}</span>
+                    <!-- Single Route Swiss Plate Card -->
+                    <button class="bus-group-card swiss-plate-card" (click)="selectBus(group.routes[0])" 
+                            [style.background]="group.color" 
+                            [style.color]="group.textColor">
+                      <div class="swiss-card-main">
+                        <div class="swiss-line-number">{{ group.shortName }}</div>
+                        <div class="swiss-details">
+                          <span class="swiss-line-label">Linia {{ group.shortName }}</span>
+                          <span class="swiss-route-path">{{ group.routes[0].origin }} ➔ {{ group.routes[0].target }}</span>
                         </div>
                       </div>
-                      <div class="single-route-footer">
-                        <span class="route-stations-count" [style.border-color]="group.color + '40'">{{ group.routes[0].stations.length }} stații</span>
-                        <span class="material-icons route-arrow">chevron_right</span>
+                      <div class="swiss-card-footer" [style.border-top-color]="group.textColor + '30'">
+                        <span class="swiss-stations-badge" [style.background]="group.textColor + '15'">
+                          {{ group.routes[0].stations.length }} stații
+                        </span>
+                        <span class="material-icons swiss-arrow">arrow_forward</span>
                       </div>
                     </button>
                   } @else {
-                    <!-- Multi-Route Card Layout -->
-                    <div class="bus-group-card" [style.border-left-color]="group.color">
-                      <div class="card-glow-orb" [style.background]="group.color"></div>
-                      <div class="group-header">
-                        <span class="bus-badge" [style.background]="group.color" [style.color]="group.textColor">
-                          {{ group.shortName }}
-                        </span>
-                        <div class="group-info">
-                          <span class="group-title">Linia {{ group.shortName }}</span>
-                          <span class="group-subtitle">{{ group.routes.length }} trasee active</span>
+                    <!-- Multi Route Swiss Plate Card -->
+                    <div class="bus-group-card swiss-plate-card" 
+                         [style.background]="group.color" 
+                         [style.color]="group.textColor">
+                      <div class="swiss-card-main">
+                        <div class="swiss-line-number">{{ group.shortName }}</div>
+                        <div class="swiss-details">
+                          <span class="swiss-line-label">Linia {{ group.shortName }}</span>
+                          <span class="swiss-routes-count">{{ group.routes.length }} trasee active</span>
                         </div>
                       </div>
                       
-                      <div class="group-routes-list">
+                      <div class="swiss-routes-list" [style.border-top-color]="group.textColor + '30'">
                         @for (route of group.routes; track route.origin + '_' + route.target) {
-                          <button class="route-select-row" (click)="selectBus(route)">
-                            <div class="route-left">
-                              <span class="material-icons route-icon" [style.color]="group.color">swap_calls</span>
-                              <span class="route-path">{{ route.origin }} ➔ {{ route.target }}</span>
+                          <button class="swiss-route-row" (click)="selectBus(route)" [style.color]="group.textColor">
+                            <div class="swiss-route-left">
+                              <span class="material-icons swiss-route-icon">swap_calls</span>
+                              <span class="swiss-route-path-text">{{ route.origin }} ➔ {{ route.target }}</span>
                             </div>
-                            <div class="route-right">
-                              <span class="route-stations-count" [style.border-color]="group.color + '40'">{{ route.stations.length }} stații</span>
-                              <span class="material-icons route-arrow">chevron_right</span>
+                            <div class="swiss-route-right">
+                              <span class="swiss-stations-badge" [style.background]="group.textColor + '15'">
+                                {{ route.stations.length }} stații
+                              </span>
+                              <span class="material-icons swiss-arrow">arrow_forward</span>
                             </div>
                           </button>
                         }
@@ -277,40 +279,31 @@ import { TransitService } from '../../services/transit.service';
     .buses-grid { display: flex; flex-direction: column; gap: 1rem; }
     
     /* Grouped Bus Layout Styles */
-    .bus-group-card { position: relative; background: var(--bg-secondary); border: 1px solid var(--border-color); border-left: 6px solid transparent; border-radius: 24px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.85rem; box-shadow: 0 4px 20px rgba(0,0,0,0.01); transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); overflow: hidden; }
-    .bus-group-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.03); }
+    /* Swiss Bold Flat Color Block Layout */
+    .bus-group-card.swiss-plate-card { border: none; border-radius: 20px; padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); width: 100%; text-align: left; }
+    .bus-group-card.swiss-plate-card:hover { transform: translateY(-2px); }
+    .bus-group-card.swiss-plate-card:active { transform: scale(0.99); }
     
-    .card-glow-orb { position: absolute; top: -45px; right: -45px; width: 110px; height: 110px; border-radius: 50%; filter: blur(36px); opacity: 0.1; pointer-events: none; transition: all 0.3s ease; z-index: 0; }
-    .bus-group-card:hover .card-glow-orb { transform: scale(1.3); opacity: 0.16; }
+    .swiss-card-main { display: flex; align-items: center; gap: 1.25rem; }
+    .swiss-line-number { font-size: 2.8rem; font-weight: 900; letter-spacing: -0.06em; line-height: 1; min-width: 60px; }
+    .swiss-details { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+    .swiss-line-label { font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8; }
+    .swiss-route-path { font-size: 1.05rem; font-weight: 800; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .swiss-routes-count { font-size: 1.05rem; font-weight: 800; margin-top: 2px; }
     
-    .group-header { display: flex; align-items: center; gap: 1rem; padding-bottom: 0.25rem; z-index: 1; }
-    .bus-badge { position: relative; font-size: 1.2rem; font-weight: 900; width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(0,0,0,0.08); flex-shrink: 0; border: 1px solid rgba(255, 255, 255, 0.15); overflow: hidden; }
-    .bus-badge::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 100%); pointer-events: none; }
+    .swiss-card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid transparent; padding-top: 0.85rem; margin-top: 0.15rem; }
     
-    .group-info { display: flex; flex-direction: column; z-index: 1; }
-    .group-title { font-size: 1.2rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; }
-    .group-subtitle { font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; }
+    .swiss-stations-badge { font-size: 0.75rem; font-weight: 800; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.02em; }
+    .swiss-arrow { font-size: 1.3rem; transition: transform 0.2s; }
+    .bus-group-card.swiss-plate-card:hover .swiss-arrow { transform: translateX(3px); }
     
-    /* Single Route Specific Layout */
-    .bus-group-card.single-route-card { text-align: left; cursor: pointer; font-family: inherit; color: inherit; display: flex; flex-direction: column; gap: 0.75rem; }
-    .bus-group-card.single-route-card:active { transform: scale(0.99); background: var(--bg-card); }
-    .route-path-single { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-top: 2px; }
-    .single-route-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--border-color); padding-top: 0.85rem; margin-top: 0.15rem; z-index: 1; }
-    .single-route-footer .route-arrow { color: var(--text-secondary); opacity: 0.4; font-size: 1.2rem; transition: transform 0.2s ease; }
-    .bus-group-card.single-route-card:hover .route-arrow { transform: translateX(2px); opacity: 0.8; }
-    
-    .group-routes-list { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 0 1.25rem; display: flex; flex-direction: column; z-index: 1; }
-    .route-select-row { width: 100%; display: flex; justify-content: space-between; align-items: center; background: transparent; border: none; border-bottom: 1px dashed var(--border-color); padding: 1rem 0; text-align: left; cursor: pointer; transition: all 0.2s ease; }
-    .route-select-row:last-child { border-bottom: none; }
-    .route-select-row:hover { transform: translateX(4px); }
-    .route-select-row:active { opacity: 0.7; }
-    .route-left { display: flex; align-items: center; gap: 0.75rem; min-width: 0; flex: 1; }
-    .route-icon { opacity: 0.85; font-size: 1.1rem; }
-    .route-path { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .route-right { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
-    .route-stations-count { font-size: 0.75rem; color: var(--text-secondary); font-weight: 700; background: var(--bg-secondary); padding: 4px 10px; border-radius: 99px; border: 1px solid var(--border-color); }
-    .route-arrow { color: var(--text-secondary); opacity: 0.4; font-size: 1.2rem; transition: transform 0.2s ease; }
-    .route-select-row:hover .route-arrow { transform: translateX(2px); opacity: 0.8; }
+    .swiss-routes-list { display: flex; flex-direction: column; border-top: 1px solid transparent; padding-top: 0.5rem; margin-top: 0.15rem; }
+    .swiss-route-row { width: 100%; background: transparent; border: none; display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 0; cursor: pointer; text-align: left; font-family: inherit; transition: transform 0.2s; }
+    .swiss-route-row:hover { transform: translateX(4px); }
+    .swiss-route-left { display: flex; align-items: center; gap: 0.75rem; min-width: 0; flex: 1; }
+    .swiss-route-icon { font-size: 1.15rem; opacity: 0.9; }
+    .swiss-route-path-text { font-size: 0.95rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .swiss-route-right { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
     
     .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem 1.5rem; text-align: center; color: var(--text-secondary); }
     .empty-state .material-icons { font-size: 3rem; margin-bottom: 0.75rem; }
