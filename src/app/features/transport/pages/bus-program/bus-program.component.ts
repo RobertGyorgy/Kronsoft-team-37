@@ -356,9 +356,31 @@ export class BusProgramComponent implements OnInit, OnDestroy {
   });
 
   routeDuration = computed(() => {
-    const data = this.currentRoute();
-    if (!data) return '-- min';
-    return `${data.metadata?.totalDurationMinutes || 0} min`;
+    const steps = this.allSteps();
+    if (steps.length === 0) return '-- min';
+
+    const now = new Date();
+    const firstStartMs = now.getTime();
+    let lastEndMs = firstStartMs;
+    
+    let tempMs = firstStartMs;
+    steps.forEach((step: any, idx: number) => {
+      if (step.transit?.departure_stop?.timeMs) {
+        tempMs = step.transit.departure_stop.timeMs;
+      }
+      const durationMs = (step.duration?.value || 0) * 1000;
+      tempMs += durationMs;
+      if (idx === steps.length - 1) {
+        lastEndMs = tempMs;
+      }
+    });
+
+    const sumDurationsMinutes = steps.reduce((sum: number, step: any) => sum + (step.duration?.value || 0) / 60, 0);
+    let totalMinutes = Math.round((lastEndMs - firstStartMs) / 60000);
+    if (totalMinutes < sumDurationsMinutes) {
+      totalMinutes = Math.round(sumDurationsMinutes);
+    }
+    return `${totalMinutes} min`;
   });
 
   arrivalEstimate = computed(() => {
@@ -385,7 +407,8 @@ export class BusProgramComponent implements OnInit, OnDestroy {
     effect(() => {
       const hasRoute = this.currentRoute();
       const minimized = this.isMinimized();
-      if (!hasRoute) return;
+      const navigating = this.isNavigating();
+      if (!hasRoute || navigating) return;
 
       setTimeout(() => {
         const el = this.routePanel?.nativeElement;
