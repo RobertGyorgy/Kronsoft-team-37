@@ -1953,8 +1953,8 @@
           "Liniștită",
           "Terasă"
         ],
-        "shortDescription": "Specialty coffee în fața Bisericii Negre, situată într-o clădire din sec. XVII.",
-        "description": "CH9 se află în Curtea Johannes Honterus nr. 9, la câțiva pași de intrarea în Biserica Neagră. Oferă cafea de specialitate prăjită local, o terasă cu vedere superbă și un interior minimalist. Ideală pentru o pauză liniștită după vizitarea centrului istoric.",
+        "shortDescription": "Specialty coffee în fața Bisericii Negre – clădire sec. XVII, cafea prăjită local, terasă unică.",
+        "description": "CH9 se află în Curtea Johannes Honterus nr. 9, în inima istorică a Brașovului, fix în față la intrarea în Biserica Neagră. Clădirea datează din sec. XVII și a fost locuită de paracliserul Bisericii Negre. Cafeaua e prăjită mediu de prăjitorii autohtone printr-o metodă unică în România. Pe lângă espresso și filtre, au ceaiuri fine și produse proaspete. Terasa oferă un view direct spre semnul Brașov pe Tâmpa.",
         "address": "Curtea Johannes Honterus nr. 9, Brașov",
         "coordinates": {
           "lat": 45.6413,
@@ -1965,10 +1965,11 @@
           "specialty coffee",
           "liniștit",
           "terasă",
-          "Biserica Neagră"
+          "Biserica Neagră",
+          "istoric"
         ],
-        "tip": "Terasa oferă unul dintre cele mai bune unghiuri pentru a fotografia Biserica Neagră.",
-        "hours": "08:00–19:00",
+        "tip": "Singurul loc din Brașov de unde poți fotografia Biserica Neagră savurând o cafea de specialitate. Terasa e magică dimineața.",
+        "hours": "L-J: 08:00–19:00 / V: 08:00–20:00 / S-D: 09:00–20:00",
         "image": "ch9.jpg"
       },
       "croitoria_cafea": {
@@ -1978,8 +1979,8 @@
           "Cozy",
           "Liniștită"
         ],
-        "shortDescription": "Cafenea și prăjitorie artizanală cu o atmosferă relaxantă pe Bulevardul Iuliu Maniu.",
-        "description": "Amenajată într-un spațiu primitor, Croitoria de Cafea este renumită pentru cafeaua proaspăt prăjită in-house. Locul este perfect pentru a savura un espresso excelent sau o cafea la filtru, având ferestre mari spre bulevard și o atmosferă foarte cozy.",
+        "shortDescription": "Cafenea-prăjitorie cozy pe Iuliu Maniu – specialty coffee proaspăt prăjit, vedere spre Tâmpa.",
+        "description": "Amenajată într-o fostă croitorie de pe Bulevardul Iuliu Maniu, Croitoria de Cafea este una dintre cele mai iubite cafenele specialty din Brașov. Cafeaua arabica e selecționată și proaspăt prăjită de Mugur Treschi, maestru prăjitor cu pasiune. Fereastra mare la stradă oferă o vedere extraordinară spre muntele Tâmpa. Ideal pentru cei care vor să evite agitația din centrul vechi.",
         "address": "Bd. Iuliu Maniu nr. 17, Brașov",
         "coordinates": {
           "lat": 45.6468,
@@ -1990,22 +1991,22 @@
           "specialty coffee",
           "cozy",
           "prăjitorie",
+          "Tâmpa",
           "liniștit"
         ],
-        "tip": "Poți cumpăra boabe de cafea proaspăt prăjite direct de la ei pentru acasă.",
-        "hours": "08:00–18:00",
+        "tip": "Biscuiții home-made sunt legendari. Locul preferat al cunoscătorilor de specialty coffee din Brașov.",
+        "hours": "08:00–20:00",
         "image": "croitoria_cafea.jpg"
       },
       "tipografia": {
         "id": "tipografia",
         "name": "Tipografia",
         "atmosphere": [
-          "Cozy",
-          "Modern"
+          "Cozy"
         ],
-        "shortDescription": "Cafenea și hub cultural în centrul vechi – cafea ziua, bere artizanală și evenimente seara.",
-        "description": "Situată pe strada Postăvarului, Tipografia este un loc de întâlnire iconic în Brașov. Dimineața este excelentă pentru a lucra la laptop (laptop-friendly), iar seara se transformă, găzduind evenimente culturale, concerte și oferind o selecție excelentă de bere artizanală.",
-        "address": "Str. Postăvarului nr. 1, Brașov",
+        "shortDescription": "Hub cultural cozy în centrul vechi – cafea, bere artizanală, concerte live, lansări de carte.",
+        "description": "Situată la intersecția dintre Str. Diaconu Coresi și Str. Postăvarului, Tipografia este un loc special pentru brașovenii de toate vârstele. Dimineața e perfectă pentru cafea și lucru la laptop, seara devine hub cultural: concerte live (rock, jazz, blues, folk), lansări de carte, proiecții de film, expoziții. Sortimente variate de cafea, ceai și bere artizanală.",
+        "address": "Str. Postăvarului nr. 1 (colț cu Str. Diaconu Coresi), Brașov",
         "coordinates": {
           "lat": 45.6432,
           "lng": 25.5896
@@ -2013,11 +2014,13 @@
         "priceRange": "20–40 lei",
         "tags": [
           "cozy",
-          "hub cultural",
+          "cultural",
+          "concerte",
           "bere artizanală",
+          "centru vechi",
           "laptop-friendly"
         ],
-        "tip": "Verifică pagina lor pentru a prinde concertele de jazz sau evenimentele de seară.",
+        "tip": "Verifică programul de evenimente – seara are o energie aparte. Dimineața e perfect liniștit pentru lucrat.",
         "hours": "08:00–00:00",
         "image": "tipografia.jpg"
       },
@@ -2028,8 +2031,8 @@
           "Cozy",
           "Liniștită"
         ],
-        "shortDescription": "Atmosferă intimă, înconjurată de cărți, cafea de specialitate și prăjituri de casă.",
-        "description": "Ascunsă pe o străduță pietonală lăturalnică (Sfântul Ioan), este una dintre cele mai bine cotate cafenele din Brașov pe Google. Un spațiu foarte intim, plin de cărți, care servește specialty coffee și deserturi de casă. Personalul este extrem de pasionat.",
+        "shortDescription": "Cea mai cozy cafenea din Brașov – cărți, specialty coffee, rating 4.9 pe Google, Recenzie de Aur.",
+        "description": "Ascuns pe strada Sfântul Ioan, lângă o veche mănăstire franciscană, Book Coffee Shop este una din cele mai apreciate cafenele de specialitate din Brașov. Rating 4.9 pe Google și Recenzie de Aur din partea Google România. Ambient cozy cu cărți și plante, personal amabil și pasionat, specialty coffee cu origini etiopiene și alte single origin. Terasă mică și intimă pe o stradă pietonală liniștită.",
         "address": "Str. Sfântul Ioan nr. 24, Brașov",
         "coordinates": {
           "lat": 45.6435,
@@ -2041,36 +2044,38 @@
           "liniștit",
           "specialty coffee",
           "cărți",
+          "rating 4.9",
           "terasă intimă"
         ],
-        "tip": "Locul este mic, dar perfect dacă vrei să citești în liniște la o cafea excelentă.",
-        "hours": "09:00–18:00",
+        "tip": "Cere originea etiopiană dacă e disponibilă – e senzațională. Terasa mică e superb pe timp bun.",
+        "hours": "09:00–20:00",
         "image": "book_coffee.jpg"
       },
-      "lira_coffee": {
-        "id": "lira_coffee",
-        "name": "Lira Specialty Coffee",
+      "tekafe": {
+        "id": "tekafe",
+        "name": "Tekafe",
         "atmosphere": [
           "Liniștită",
           "Modern"
         ],
-        "shortDescription": "Cafea de specialitate la superlativ, la doi pași de Piața Sfatului.",
-        "description": "Lira a devenit rapid una dintre cele mai apreciate destinații pentru iubitorii de specialty coffee din Brașov. Cu un design minimalist și modern, pune accent strict pe calitatea extracției, origini atent selecționate și patiserie proaspătă. (Înlocuiește vechiul Tekafe, care s-a închis).",
-        "address": "Str. Grigoraș Dinicu nr. 2, Brașov",
+        "shortDescription": "Specialty coffee scandinav în centrul vechi – filtre alternative (V60, aeropress, syphon), ceaiuri premium.",
+        "description": "Tekafe se află în inima Brașovului, pe Str. Apollonia Hirscher nr. 10. Design minimalist cu influențe scandinavice, ceaiuri din cele mai renumite plantații din lume și cafea preparată exclusiv prin metode alternative: syphon, V60, aeropress, ibric sau espresso. Fără siropuri, fără condimente – cafea pură și onestă.",
+        "address": "Str. Apollonia Hirscher nr. 10, Brașov",
         "coordinates": {
-          "lat": 45.6425,
-          "lng": 25.5885
+          "lat": 45.6422,
+          "lng": 25.588
         },
         "priceRange": "20–40 lei",
         "tags": [
           "specialty coffee",
-          "minimalist",
-          "modern",
-          "liniștit"
+          "scandinav",
+          "filtre alternative",
+          "liniștit",
+          "ceaiuri premium"
         ],
-        "tip": "Întreabă barista despre originile disponibile pe râșniță pentru espresso sau V60.",
-        "hours": "08:30–18:00",
-        "image": "lira_coffee.jpg"
+        "tip": "Dacă ești curios de cafea la filtru, Tekafe e locul ideal – barista îți va explica fiecare metodă.",
+        "hours": "09:00–21:00",
+        "image": "tekafe.jpg"
       },
       "opus9": {
         "id": "opus9",
@@ -2079,8 +2084,8 @@
           "Cozy",
           "Terasă"
         ],
-        "shortDescription": "Cafenea vibrantă în Piața George Enescu – cafea excelentă și atmosferă socială.",
-        "description": "Aflată într-o piațetă pietonală superbă (Piața Enescu), Opus 9 atrage prin energia sa pozitivă, designul prietenos și selecția de cafea și băuturi răcoritoare. Terasa este extrem de populară pe timpul verii.",
+        "shortDescription": "Cafenea cozy în Piața George Enescu – latte excepțional, atmosferă caldă, în inima centrului vechi.",
+        "description": "Opus 9 este o cafenea cu personalitate în Piața George Enescu, la câțiva pași de Bistro de l'Arte și de pietonala Republicii. Latte excepțional, atmosferă caldă, personal prietenos. Locul preferat al brașovenilor pentru o cafea de dimineață sau o pauză în timpul plimbării prin centrul vechi.",
         "address": "Piața George Enescu nr. 9, Brașov",
         "coordinates": {
           "lat": 45.6423,
@@ -2089,11 +2094,12 @@
         "priceRange": "20–40 lei",
         "tags": [
           "cozy",
-          "animat",
+          "latte",
+          "centru vechi",
           "Piața George Enescu",
           "terasă"
         ],
-        "tip": "Terasa din Piața Enescu oferă un vibe urban european excelent pentru relaxare.",
+        "tip": "Latte-ul este considerat printre cele mai bune din Brașov. Piața George Enescu e superb dimineața.",
         "hours": "08:00–21:00",
         "image": "opus9.jpg"
       },
@@ -2103,8 +2109,8 @@
         "atmosphere": [
           "Liniștită"
         ],
-        "shortDescription": "Mică, cochetă, dedicată pasionaților de cafea de specialitate.",
-        "description": "Un spațiu intim situat pe strada Hans Benkner. Nola se distinge prin atenția obsesivă pentru detalii când vine vorba de prepararea cafelei. Barista prietenoși, origini care se schimbă frecvent și un vibe perfect pentru o dimineață lentă.",
+        "shortDescription": "Specialty coffee de nișă – arabica proaspăt prăjit, single origin, latte art, atmosferă intimă.",
+        "description": "Nola Coffee Shop este dedicată pasionaților de cafea proaspăt prăjită. Aduce permanent origini noi de arabica pentru a stârni curiozitatea. Spațiu mic și intim, cu scaune la geam. Barista extrem de prietenoasă și amabilă. Rating înalt pe toate platformele. Ideal pentru un cortado sau espresso liniștit.",
         "address": "Str. Hans Benkner nr. 6, Brașov",
         "coordinates": {
           "lat": 45.6417,
@@ -2115,35 +2121,37 @@
           "specialty coffee",
           "liniștit",
           "single origin",
+          "latte art",
           "intim"
         ],
-        "tip": "Încearcă un Flat White aici, este printre cele mai echilibrate din oraș.",
+        "tip": "Cere origini etiopiene sau din America Centrală. Barista e pasionată și îți va povesti fiecare bob.",
         "hours": "08:30–18:00",
         "image": "nola_coffee.jpg"
       },
       "breakaway": {
         "id": "breakaway",
-        "name": "Breakaway Specialty Coffee",
+        "name": "Breakaway Coffee",
         "atmosphere": [
           "Modern",
           "Liniștită"
         ],
-        "shortDescription": "Cafea de specialitate în zona nouă a orașului (Cartier Coresi).",
-        "description": "Dacă te afli în zona cartierului Coresi (Tractorul), Breakaway este locul de referință. Design aerisit, scandinav, și o comunitate fidelă care vine aici pentru cafeaua impecabilă preparată din boabe atent alese.",
-        "address": "Str. Camil Petrescu nr. 3, Brașov",
+        "shortDescription": "Prăjitorie și cafenea specialty pe pietonala Coresi – cafea prăjită local, design scandinav curat.",
+        "description": "Breakaway este genul de loc care vorbește despre esență: fără artificii, doar cafea de specialitate făcută impecabil. Atmosfera e curată și modernă, cu un aer scandinav. Cafeaua e prăjită local, în propria prăjitorie din Brașov. Selecția de origini se schimbă periodic, cu accent pe prospețime. Espresso clar, filtru impecabil. Pe pietonala Coresi, la nr. 3.",
+        "address": "Str. Camil Petrescu nr. 3, Brașov (Pietonala Coresi)",
         "coordinates": {
-          "lat": 45.6590,
-          "lng": 25.6120
+          "lat": 45.639,
+          "lng": 25.602
         },
         "priceRange": "20–40 lei",
         "tags": [
           "specialty coffee",
+          "prăjitorie proprie",
           "modern",
-          "Coresi",
-          "scandinav"
+          "scandinav",
+          "Coresi"
         ],
-        "tip": "Ideal dacă vrei să eviți aglomerația din centrul istoric, dar vrei o cafea premium.",
-        "hours": "08:00–19:00",
+        "tip": "Poți cumpăra și boabe de cafea de la prăjitoria lor. Filtru-ul e cel mai bun din Brașov pentru mulți.",
+        "hours": "08:00–20:00",
         "image": "breakaway.jpg"
       },
       "lavender_cafe": {
@@ -2153,8 +2161,8 @@
           "Cozy",
           "Terasă"
         ],
-        "shortDescription": "Cafenea-bistro rafinată, celebră pentru deserturile artizanale și ambianță.",
-        "description": "Situată puțin mai departe de centrul aglomerat, oferă un aer elegant, băuturi variate și o vitrină cu deserturi absolut fabuloase (eclere, torturi). Terasa generoasă atrage în special familii și grupuri de prieteni.",
+        "shortDescription": "Cafenea elegantă la poalele Tâmpei – eclere artizanale, Pavlova, vinuri moldovenești, loc de joacă copii.",
+        "description": "Lavender Café e o oază elegantă la poalele muntelui Tâmpa. Premiată de mai multe reviste de turism drept cel mai bun loc pentru cafea și prăjituri din Brașov. Cheesecake cu Gorgonzola, macarons, Pavlova, eclere variate. Cafea de specialitate, limonadă cu lavandă, vinuri moldovenești selecționate. Are și loc de joacă pentru copii și parcare proprie.",
         "address": "Str. Calcarului nr. 19B, Brașov",
         "coordinates": {
           "lat": 45.6395,
@@ -2164,11 +2172,13 @@
         "tags": [
           "cozy",
           "deserturi artizanale",
-          "familii",
+          "Tâmpa",
+          "copii",
+          "vinuri",
           "terasă"
         ],
-        "tip": "Vitrina lor de prăjituri este excepțională – merită să încerci desertul zilei.",
-        "hours": "09:00–21:00",
+        "tip": "Pavlova și eclerele sunt de neratat. Au loc de joacă pentru copii – ideal pentru familiști.",
+        "hours": "L-V: 09:00–21:00 / S-D: 10:00–22:00",
         "image": "lavender_cafe.jpg"
       },
       "moa_bakery": {
@@ -2177,8 +2187,8 @@
         "atmosphere": [
           "Cozy"
         ],
-        "shortDescription": "Locul care a reinventat covrigul brașovean, alături de o cafea excelentă.",
-        "description": "MOA Bakery a devenit virală datorită covrigilor săi umpluți (inclusiv renumitul covrig Dubai, covrigi cu pesto sau Nutella). Spațiul este mic, funcționând mai mult în regim to-go, dar aroma produselor de patiserie proaspete face senzație.",
+        "shortDescription": "Brutărie-cafenea lângă Piața Sfatului – covrigi umpluți (Dubai, pesto, Nutella), cafea grecească.",
+        "description": "MOA Bakery este locul unde poți savura o cafea bună în compania celor mai buni covrigi din Brașov. Covrigi umpluți sărați sau dulci: roșii uscate cu pesto, Dubai (cu kataifi și cremă de pistacchio), Nutella și altele. Aluatul e proaspăt fără aditivi. Cafeaua grecească este senzațională. La câteva minute de Piața Sfatului.",
         "address": "Str. Mureșenilor nr. 5, Brașov",
         "coordinates": {
           "lat": 45.6418,
@@ -2186,14 +2196,14 @@
         },
         "priceRange": "Sub 20 lei",
         "tags": [
-          "brutărie",
+          "cozy",
           "covrigi umpluți",
-          "to-go",
+          "cafea grecească",
           "ieftin",
           "centru"
         ],
-        "tip": "Dacă vezi coadă, așează-te! Covrigii umpluți sunt produși în serii calde și se vând rapid.",
-        "hours": "08:00–20:00",
+        "tip": "Covrigul Dubai și cel cu roșii uscate și pesto sunt top. Dimineața cozii se face repede!",
+        "hours": "08:00–21:00",
         "image": "moa_bakery.jpg"
       },
       "cafeteca": {
@@ -2202,9 +2212,9 @@
         "atmosphere": [
           "Modern"
         ],
-        "shortDescription": "Un clasic al Brașovului pentru iubitorii de cafea și băuturi artizanale.",
-        "description": "Unul dintre cele mai longevive și cunoscute branduri de cafea din Brașov. Locația de pe Republicii are un vibe urban alert, oferind specialty coffee, ceaiuri fine, ciocolată caldă și produse locale. Mereu plină de viață.",
-        "address": "Str. Republicii nr. 13, Brașov",
+        "shortDescription": "Brandul brașovean de referință al cafelei – specialty coffee, ceaiuri premium, produse locale. Mai multe locații.",
+        "description": "Cafeteca este unul dintre cele mai cunoscute branduri brașovene, cu mai multe locații în centru. Specialty coffee, ceaiuri fine, băuturi artizanale calde și reci, sandwichuri cu producători locali. Design modern și primitor. Punct de referință al comunității locale pentru o cafea de calitate la prețul corect.",
+        "address": "Str. Republicii nr. 13, Brașov (locație centrală)",
         "coordinates": {
           "lat": 45.6439,
           "lng": 25.5912
@@ -2213,11 +2223,12 @@
         "tags": [
           "modern",
           "specialty coffee",
-          "animat",
-          "brand local"
+          "ceaiuri",
+          "local",
+          "mai multe locații"
         ],
-        "tip": "Au și opțiuni excelente de băuturi reci vara (cold brew, limonade cu cafea).",
-        "hours": "08:00–21:00",
+        "tip": "Are mai multe locații în centru. Locația de pe Republicii e cea mai animată.",
+        "hours": "08:00–22:00",
         "image": "cafeteca.jpg"
       },
       "kaffeine": {
@@ -2227,8 +2238,8 @@
           "Modern",
           "Terasă"
         ],
-        "shortDescription": "Cafenea modernă renumită pentru imprimarea fotografiilor pe spuma cafelei.",
-        "description": "Aflată pe strada Nicolae Bălcescu, Kaffeine oferă un serviciu distractiv: poți cere să îți imprime fotografia (sau orice imagine din telefon) direct pe spuma latte-ului tău. O atracție excelentă pentru social media, pe lângă cafeaua foarte bună.",
+        "shortDescription": "Specialty coffee cu imprimare foto pe cafea – latte art digital unic în Brașov, centrul orașului.",
+        "description": "Kaffeine este o cafenea de specialitate din centrul Brașovului cu un serviciu unic în oraș: imprimare foto pe cafea și latte art digital. Cafea de calitate superioară, băuturi de sezon, atmosferă modernă. Perfectă pentru o cafea originală sau un cadou inedit sub forma unui latte cu fotografia ta.",
         "address": "Str. Nicolae Bălcescu nr. 10, Brașov",
         "coordinates": {
           "lat": 45.6451,
@@ -2239,10 +2250,11 @@
           "modern",
           "latte art digital",
           "foto pe cafea",
-          "social media"
+          "specialty",
+          "unic"
         ],
-        "tip": "Selfie-ul pe cafea este un must-have dacă vii aici pentru prima dată.",
-        "hours": "09:00–20:00",
+        "tip": "Încearcă imprimarea foto pe cafea – e un suvenir inedit din Brașov!",
+        "hours": "09:00–21:00",
         "image": "kaffeine.jpg"
       },
       "shake_coffee": {
@@ -2252,22 +2264,24 @@
           "Cozy",
           "Terasă"
         ],
-        "shortDescription": "Locul perfect pentru un vibe prietenos, băuturi vegan-friendly și atmosferă caldă.",
-        "description": "Shake Coffee (situată pe strada Sf. Ioan) are o reputație fantastică pentru amabilitatea personalului. Oferă opțiuni excelente pentru vegani (lapte vegetal de calitate), smoothie-uri și un spațiu primitor chiar și pentru cei mici.",
+        "shortDescription": "Cafenea cozy cu vibe prietenos – latte-uri vegane, smoothies, jucării pentru copii, personal calduros.",
+        "description": "Shake Coffee este una dintre cafenelele cu cel mai prietenos vibe din Brașov. Personal amabil care lasă uneori mesaje personalizate lângă cafea. Smoothie-uri naturale, latte-uri vegane, băuturi creative. Are o cutiuță cu jucării pentru copii. Clienții revin în primul rând pentru atmosferă și servire.",
         "address": "Str. Sfântul Ioan nr. 30, Brașov",
         "coordinates": {
           "lat": 45.6433,
-          "lng": 25.5900
+          "lng": 25.59
         },
         "priceRange": "20–40 lei",
         "tags": [
           "cozy",
-          "vegan-friendly",
+          "vegan",
+          "smoothies",
+          "copii",
           "prietenos",
-          "smoothies"
+          "latte art"
         ],
-        "tip": "Dacă preferi latte-ul cu lapte de ovăz, aici vei găsi una dintre cele mai bune variante.",
-        "hours": "08:30–19:00",
+        "tip": "Cere un latte vegan cu lapte de ovăz – e excepțional. Personalul e cel mai primitor din Brașov.",
+        "hours": "08:30–20:00",
         "image": "shake_coffee.jpg"
       }
     },
