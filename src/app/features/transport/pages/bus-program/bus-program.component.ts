@@ -530,7 +530,17 @@ export class BusProgramComponent implements OnInit, OnDestroy {
           mode
         })
       });
+      if (!res.ok) {
+        console.error('Routing plan failed', res.status, await res.text());
+        this.isLoading.set(false);
+        return;
+      }
       const data = await res.json();
+      if (!data?.features?.length) {
+        console.error('Routing plan returned no route features');
+        this.isLoading.set(false);
+        return;
+      }
       this.currentRoute.set(data);
       this.isLoading.set(false);
       this.drawCurrentRoute();
