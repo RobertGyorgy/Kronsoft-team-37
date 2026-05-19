@@ -60,8 +60,10 @@ import { UserService } from '../../../../core/services/user.service';
               
               <div class="add-vehicle-row" [class.active]="showAddPlate">
                 @if (showAddPlate) {
-                  <input type="text" [(ngModel)]="newPlate" (ngModelChange)="newPlate = $event.toUpperCase()" placeholder="BV 01 ABC" class="plate-input">
-                  <button class="save-plate-btn" (click)="addPlate()">SALVEAZĂ</button>
+                  <div class="add-vehicle-form">
+                    <input type="text" [(ngModel)]="newPlate" (ngModelChange)="newPlate = $event.toUpperCase()" placeholder="BV 01 ABC" class="plate-input">
+                    <button type="button" class="save-plate-btn" (click)="addPlate()">SALVEAZĂ</button>
+                  </div>
                 } @else {
                   <button class="add-trigger-btn" (click)="showAddPlate = true">
                     <span class="material-icons">add</span>
@@ -181,10 +183,14 @@ import { UserService } from '../../../../core/services/user.service';
     .plate-num { font-weight: 900; font-size: 1.1rem; padding-right: 8px; color: var(--text-primary); }
     
     .add-vehicle-row { padding: 0.75rem 1.5rem; }
-    .add-vehicle-row.active { display: flex; align-items: center; }
+    .add-vehicle-form { display: flex; flex-direction: column; gap: 0.75rem; width: 100%; }
     .add-trigger-btn { background: none; border: none; display: flex; align-items: center; gap: 0.75rem; color: #4285F4; font-weight: 800; cursor: pointer; width: 100%; padding: 0.5rem 0; }
-    .plate-input { flex: 1; border: 2px solid var(--border-color); border-radius: 12px; padding: 0.75rem 1rem; outline: none; font-weight: 900; font-size: 1rem; margin-right: 0.75rem; background: var(--bg-secondary); color: var(--text-primary); }
-    .save-plate-btn { background: var(--text-primary); color: var(--bg-primary); border: none; border-radius: 12px; padding: 0.75rem 1.5rem; font-weight: 900; cursor: pointer; }
+    .plate-input { width: 100%; min-width: 0; box-sizing: border-box; border: 2px solid var(--border-color); border-radius: 12px; padding: 0.75rem 1rem; outline: none; font-weight: 900; font-size: 1rem; background: var(--bg-secondary); color: var(--text-primary); }
+    .save-plate-btn { width: 100%; box-sizing: border-box; background: var(--text-primary); color: var(--bg-primary); border: none; border-radius: 12px; padding: 0.75rem 1rem; font-weight: 900; cursor: pointer; white-space: nowrap; }
+    @media (min-width: 480px) {
+      .add-vehicle-form { flex-direction: row; align-items: center; }
+      .save-plate-btn { width: auto; flex-shrink: 0; padding: 0.75rem 1.5rem; }
+    }
 
     .ios-toggle { display: none; }
     .ios-toggle + label { display: block; width: 50px; height: 28px; background: #e0e0e0; border-radius: 999px; position: relative; cursor: pointer; transition: background 0.3s; }
