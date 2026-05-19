@@ -99,28 +99,17 @@ export class UserService {
   }
 
   /**
-   * Reloads profile from GET /api/user/profile (bypasses session cache).
-   */
-  async refreshProfile(): Promise<UserProfileResponse | null> {
-    try {
-      const data = await firstValueFrom(this.http.get<UserProfileResponse>('/api/user/profile'));
-      this.profile.set(data);
-      return data;
-    } catch (err) {
-      console.error('Failed to refresh user profile:', err);
-      return null;
-    }
-  }
-
-  /**
    * PUT /api/user/vehicles
-   * Adds a vehicle, then reloads profile from GET /api/user/profile.
+   * Adds a vehicle and updates the locally cached profile from the response.
    */
   async addVehicle(plateNumber: string): Promise<UserProfileResponse | null> {
     const body: VehicleRequest = { plateNumber };
     try {
-      await firstValueFrom(this.http.put<void>('/api/user/vehicles', body));
-      return this.refreshProfile();
+      const updated = await firstValueFrom(
+        this.http.put<UserProfileResponse>('/api/user/vehicles', body)
+      );
+      this.profile.set(updated);
+      return updated;
     } catch (err) {
       console.error('Failed to add vehicle:', err);
       return null;

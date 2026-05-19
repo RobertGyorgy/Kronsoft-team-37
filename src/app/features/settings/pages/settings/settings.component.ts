@@ -278,8 +278,8 @@ export class SettingsComponent implements OnInit {
     document.body.classList.toggle('dark-theme', this.darkMode);
   }
 
-  private async loadUserProfile() {
-    const profile = this.userService.profile() ?? (await this.userService.loadProfile());
+  private loadUserProfile() {
+    const profile = this.userService.profile();
     if (profile) {
       this.userName = profile.fullName;
       this.userEmail = profile.email;
