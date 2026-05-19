@@ -69,22 +69,28 @@ import { gsap } from 'gsap';
                 <div class="input-wrapper password-wrapper">
                   <span class="material-icons input-icon">lock_outline</span>
                   <input
-                    type="password"
+                    [type]="isPasswordVisible() ? 'text' : 'password'"
                     placeholder="Parolă"
                     formControlName="password"
                     class="input-field"
                     autocomplete="new-password"
                   />
+                  <button type="button" class="password-toggle-btn" (click)="togglePasswordVisibility()" tabindex="-1">
+                    <span class="material-icons">{{ isPasswordVisible() ? 'visibility_off' : 'visibility' }}</span>
+                  </button>
                 </div>
                 
                 <div class="input-wrapper confirm-password-wrapper">
                   <span class="material-icons input-icon">lock_outline</span>
                   <input
-                    type="password"
+                    [type]="isPasswordVisible() ? 'text' : 'password'"
                     placeholder="Confirmă Parola"
                     formControlName="confirmPassword"
                     class="input-field"
                   />
+                  <button type="button" class="password-toggle-btn" (click)="togglePasswordVisibility()" tabindex="-1">
+                    <span class="material-icons">{{ isPasswordVisible() ? 'visibility_off' : 'visibility' }}</span>
+                  </button>
                 </div>
                 @if (passwordControl.touched && registerForm.errors?.['mismatch']) {
                   <span class="error-text">Parolele nu se potrivesc</span>

@@ -230,11 +230,16 @@
 .password-toggle-btn {
   background: none;
   border: none;
-  color: var(--auth-primary);
-  font-weight: 700;
-  font-size: 0.9rem;
+  color: #888;
   cursor: pointer;
   padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s;
+}
+.password-toggle-btn:hover {
+  color: var(--auth-primary);
 }
 
 .forgot-link {

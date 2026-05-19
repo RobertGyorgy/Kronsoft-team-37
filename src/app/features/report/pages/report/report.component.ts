@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, signal, computed, inject, ElementRef, ViewChild, afterNextRender } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, computed, inject, AfterViewInit, ElementRef, ViewChild, ViewChildren, QueryList, afterNextRender } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ReportService } from '../../services/report.service';
+import { UserService } from '../../../../core/services/user.service';
 import { AuthService } from '../../../auth/auth.service';
 import { gsap } from 'gsap';
 
@@ -13,26 +14,28 @@ import { gsap } from 'gsap';
   styleUrl: './report.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ReportComponent {
+export class ReportComponent implements AfterViewInit {
   private reportService = inject(ReportService);
+  private userService = inject(UserService);
   private authService = inject(AuthService);
   private router = inject(Router);
 
   @ViewChild('container') container!: ElementRef;
+  @ViewChildren('chipBtn') chipBtns!: QueryList<ElementRef>;
 
-  activeCategory = signal<string>('Toate');
+  activeCategoryId = signal<number | null>(null);
   userName = signal<string>('');
   
-  categories = [
-    'Toate', 'Infrastructură', 'Deșeuri', 'Graffiti', 
-    'Clădiri', 'Iluminare', 'Spații verzi', 'Altele'
-  ];
+  categories = computed(() => {
+    const rawCategories = this.reportService.categories();
+    return [
+      { id: null, name: 'Toate' },
+      ...rawCategories
+    ];
+  });
 
   filteredReports = computed(() => {
-    const cat = this.activeCategory();
-    const allReports = this.reportService.reports();
-    if (cat === 'Toate') return allReports;
-    return allReports.filter(r => r.categoryName === cat);
+    return this.reportService.reports();
   });
 
   constructor() {
@@ -43,6 +46,25 @@ export class ReportComponent {
 
     afterNextRender(() => {
       this.animateEntrance();
+      this.userService.loadProfile(); // fetch in background
+      this.reportService.loadReports(null); // fetch latest reports with empty category
+    });
+  }
+
+  ngAfterViewInit() {
+    this.chipBtns.changes.subscribe((list: QueryList<ElementRef>) => {
+      const elRefs = list.toArray();
+      if (elRefs.length > 1) {
+        const secondaryChips = elRefs.slice(1).map(ref => ref.nativeElement);
+        gsap.set(secondaryChips, { y: 15, opacity: 0 });
+        gsap.to(secondaryChips, {
+          y: 0,
+          opacity: 1,
+          stagger: 0.04,
+          duration: 0.5,
+          ease: 'power2.out'
+        });
+      }
     });
   }
 
@@ -97,8 +119,9 @@ export class ReportComponent {
     }
   }
 
-  setCategory(cat: string) {
-    this.activeCategory.set(cat);
+  setCategory(id: number | null) {
+    this.activeCategoryId.set(id);
+    this.reportService.loadReports(id);
     // Re-trigger animation for cards when category changes
     setTimeout(() => {
       const cards = this.container.nativeElement.querySelectorAll('.report-card');

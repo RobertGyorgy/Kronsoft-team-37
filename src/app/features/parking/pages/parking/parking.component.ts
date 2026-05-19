@@ -39,7 +39,7 @@ import { firstValueFrom } from 'rxjs';
           
           <div class="status-bottom-row" [class.outside]="isOutsideZones">
             <div class="zone-pill" [class]="isOutsideZones ? 'z-none' : 'z-' + selectedZoneIndex" (click)="cycleZone()" style="cursor: pointer;">
-              {{ isOutsideZones ? 'FĂRĂ ZONĂ' : (currentNeighborhood || 'DETECȚIE...') }}
+              {{ isOutsideZones ? 'FĂRĂ ZONĂ' : ('ZONA ' + selectedZoneIndex) }}
             </div>
             <span class="street-label-minimal">{{ isOutsideZones ? 'Ești în afara zonelor de parcare' : (currentStreet || 'Localizare parcare...') }}</span>
           </div>
@@ -87,27 +87,17 @@ import { firstValueFrom } from 'rxjs';
           }
 
           <div class="dock-controls-row">
-            <div class="stepper-pill-glass">
-              <button class="round-step" (click)="decrementHours()">−</button>
-              <span class="hour-val">{{ selectedHours }}h</span>
-              <button class="round-step" (click)="incrementHours()">+</button>
-            </div>
+            @if (selectedZoneIndex === 2) {
+              <div class="stepper-pill-glass zone-2-selector">
+                <button class="duration-btn" [class.active]="selectedHours === 1" (click)="selectedHours = 1">1h</button>
+                <button class="duration-btn" [class.active]="selectedHours === 12" (click)="selectedHours = 12">12h</button>
+              </div>
+            }
             <button class="pay-button-solid" (click)="sendNativeSms()">
               <span>PLĂTEȘTE</span>
               <span class="material-icons">send</span>
             </button>
           </div>
-
-          <div class="dock-extension-drawer" [class.open]="showQuickAdd">
-            <div class="quick-pills">
-              <button (click)="extendTime(30)">+30m</button>
-              <button (click)="extendTime(60)">+1h</button>
-              <button (click)="extendTime(120)">+2h</button>
-            </div>
-          </div>
-          <button class="drawer-trigger" (click)="toggleQuickAdd()">
-            <span class="material-icons">{{ showQuickAdd ? 'expand_less' : 'more_horiz' }}</span>
-          </button>
         </div>
       </section>
 
@@ -204,14 +194,12 @@ import { firstValueFrom } from 'rxjs';
     
     .dock-controls-row { display: flex; gap: 0.75rem; }
     .stepper-pill-glass { flex: 1; height: 56px; background: rgba(0,0,0,0.04); border-radius: 28px; display: flex; align-items: center; justify-content: space-between; padding: 0 0.5rem; }
-    .round-step { width: 44px; height: 44px; border-radius: 50%; background: #fff; border: none; font-size: 1.4rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-    .hour-val { font-size: 1.2rem; font-weight: 950; color: #1a1a1a; min-width: 35px; text-align: center; }
+    .stepper-pill-glass.fixed-duration { justify-content: center; background: rgba(116, 125, 140, 0.1); }
+    .stepper-pill-glass.zone-2-selector { padding: 4px; gap: 4px; }
+    .duration-btn { flex: 1; height: 100%; border-radius: 24px; border: none; background: transparent; font-weight: 800; font-size: 1rem; color: #888; cursor: pointer; transition: all 0.2s; }
+    .duration-btn.active { background: #fff; color: #34a853; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    .hour-val { font-size: 1.1rem; font-weight: 950; color: #1a1a1a; text-align: center; }
     .pay-button-solid { flex: 1.4; height: 56px; background: var(--text-primary); border-radius: 999px; border: none; color: var(--bg-primary); font-weight: 950; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.15); white-space: nowrap; }
-    .dock-extension-drawer { max-height: 0; overflow: hidden; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-    .dock-extension-drawer.open { max-height: 60px; margin-top: -0.25rem; }
-    .quick-pills { display: flex; gap: 0.5rem; }
-    .quick-pills button { flex: 1; height: 48px; border-radius: 999px; background: #fff; border: 1px solid rgba(0,0,0,0.05); font-weight: 900; color: #1a1a1a; cursor: pointer; white-space: nowrap; }
-    .drawer-trigger { width: 40px; height: 20px; background: none; border: none; color: #bbb; position: absolute; bottom: 0.25rem; left: 50%; transform: translateX(-50%); cursor: pointer; display: flex; align-items: center; justify-content: center; }
     .overlay-blur { position: fixed; inset: 0; background: rgba(0,0,0,0.25); backdrop-filter: blur(15px); z-index: 2000; display: flex; align-items: flex-end; }
     .glass-drawer-sheet { width: 100%; background: var(--glass-bg); backdrop-filter: blur(30px); border-radius: 40px 40px 0 0; padding: 2.5rem 1.5rem; box-shadow: 0 -20px 60px rgba(0,0,0,0.1); }
     .sheet-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
@@ -426,10 +414,14 @@ export class ParkingComponent implements OnInit, OnDestroy {
         this.isOutsideZones = false;
         this.selectedZoneIndex = foundNeighborhood.zone;
         this.currentNeighborhood = foundNeighborhood.name.toUpperCase();
+        if (this.selectedZoneIndex !== 2) {
+          this.selectedHours = 1;
+        }
       } else {
         this.isOutsideZones = true;
         this.currentNeighborhood = '';
       }
+
       this.checkProximity(lat, lng);
       this.cdr.detectChanges();
     });
@@ -719,6 +711,9 @@ export class ParkingComponent implements OnInit, OnDestroy {
 
   public cycleZone() {
     this.selectedZoneIndex = (this.selectedZoneIndex + 1) % 3;
+    if (this.selectedZoneIndex !== 2) {
+      this.selectedHours = 1;
+    }
     this.cdr.detectChanges();
   }
 

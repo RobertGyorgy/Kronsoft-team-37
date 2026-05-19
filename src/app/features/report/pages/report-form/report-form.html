@@ -11,7 +11,7 @@
     <h1 class="form-title">
       @for (word of splitByWord('Scrie raportul'); track word) {
         <span class="word">
-          @for (char of word.split(''); track char) {
+          @for (char of word.split(''); track $index) {
             <span class="char">{{ char }}</span>
           }
           <span class="char">&nbsp;</span>
@@ -57,6 +57,22 @@
         <label>Descriere detalii</label>
         <div class="textarea-wrapper">
           <textarea placeholder="Scrie..." rows="4" [(ngModel)]="formData.description"></textarea>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Confidențialitate</label>
+        <div class="privacy-switch-container" (click)="formData.anonymous = !formData.anonymous">
+          <div class="privacy-info">
+            <span class="material-icons privacy-icon">{{ formData.anonymous ? 'visibility_off' : 'visibility' }}</span>
+            <div class="privacy-text-col">
+              <span class="privacy-title">Raportează anonim</span>
+              <span class="privacy-sub">{{ formData.anonymous ? 'Identitatea ta nu va fi dezvăluită.' : 'Numele tău complet va apărea pe sesizare.' }}</span>
+            </div>
+          </div>
+          <div class="switch-outer" [class.active]="formData.anonymous">
+            <div class="switch-inner"></div>
+          </div>
         </div>
       </div>
 
@@ -122,8 +138,17 @@
           <div class="doc-body">
             <div class="doc-date-line">{{ getRomanianDate() }}</div>
             
-            <div class="doc-subject">
+             <div class="doc-subject">
               RAPORT SESIZARE: {{ formData.title | uppercase }}
+            </div>
+
+            <div class="doc-privacy-badge" [class.anonymous]="formData.anonymous">
+              <span class="material-icons">
+                {{ formData.anonymous ? 'visibility_off' : 'visibility' }}
+              </span>
+              <span>
+                {{ formData.anonymous ? 'Acest raport va fi anonim.' : 'Numele tau va fi vizibil in acest raport.' }}
+              </span>
             </div>
 
             <p>Subsemnatul, prin intermediul platformei SmartCity, semnalizez un incident de tip <strong>{{ formData.categoryName }}</strong> identificat în zona <strong>{{ formData.address }}</strong>.</p>
