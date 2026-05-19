@@ -1039,12 +1039,45 @@ export class BusProgramComponent implements OnInit, OnDestroy {
   onTouchStart(e: any) { this.touchStartY = e.touches[0].clientY; }
   onTouchMove(e: any) { if (e.touches[0].clientY - this.touchStartY > 50) this.isMinimized.set(true); }
 
+  private autoSearchDestination(name: string) {
+    this.initGoogleServices();
+    if (!this.autocompleteService) {
+      setTimeout(() => this.autoSearchDestination(name), 300);
+      return;
+    }
+
+    this.autocompleteService.getPlacePredictions(
+      { input: name + ' Brasov', componentRestrictions: { country: 'ro' } },
+      (predictions: any) => {
+        if (predictions && predictions.length > 0) {
+          const firstPrediction = {
+            id: predictions[0].place_id,
+            mainText: predictions[0].structured_formatting.main_text,
+            secondaryText: predictions[0].structured_formatting.secondary_text
+          };
+          this.activeSearchType.set('destination');
+          this.selectPrediction(firstPrediction);
+        } else {
+          console.warn('No auto-search predictions found for name:', name);
+          const dest = {
+            geometry: { location: { lat: 45.6483, lng: 25.5891 } },
+            name: name
+          };
+          this.destination.set(dest);
+        }
+      }
+    );
+  }
+
   private checkIncomingDestination() {
     this.route.queryParams.subscribe(params => {
-      if (params['destLat'] && params['destLon']) {
+      const destName = params['destName'];
+      if (destName) {
+        this.autoSearchDestination(destName);
+      } else if (params['destLat'] && params['destLon']) {
         const dest = {
           geometry: { location: { lat: parseFloat(params['destLat']), lng: parseFloat(params['destLon']) } },
-          name: params['destName'] || 'Destinație selectată'
+          name: 'Destinație selectată'
         };
         this.destination.set(dest);
         setTimeout(() => { if (this.userCoords()) this.calculateRoute(); }, 500);
