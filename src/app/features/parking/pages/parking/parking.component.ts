@@ -90,13 +90,16 @@ import { firstValueFrom } from 'rxjs';
             @if (selectedZoneIndex === 2) {
               <div class="stepper-pill-glass zone-2-selector">
                 <button class="duration-btn" [class.active]="selectedHours === 1" (click)="selectedHours = 1">1h</button>
-                <button class="duration-btn" [class.active]="selectedHours === 12" (click)="selectedHours = 12">12h</button>
+                <button class="duration-btn" [class.active]="selectedHours === 24" (click)="selectedHours = 24">24h</button>
               </div>
             }
             <button class="pay-button-solid" (click)="sendNativeSms()">
               <span>PLĂTEȘTE</span>
               <span class="material-icons">send</span>
             </button>
+            <a href="https://www.tpark.io" target="_blank" class="tpark-button-outline" style="width: 56px; height: 56px; border-radius: 50%; border: 2px solid var(--text-primary); display: flex; align-items: center; justify-content: center; color: var(--text-primary); text-decoration: none; font-weight: 900; font-size: 0.75rem; box-shadow: 0 4px 10px rgba(0,0,0,0.05); flex-shrink: 0; transition: all 0.2s;">
+              TPARK
+            </a>
           </div>
         </div>
       </section>
@@ -123,14 +126,37 @@ import { firstValueFrom } from 'rxjs';
         <div class="overlay-blur" (click)="toggleTariffs()">
           <div class="glass-drawer-sheet" (click)="$event.stopPropagation()">
             <header class="sheet-top"><h2>Tarife Parcare</h2><button (click)="toggleTariffs()" class="close-round"><span class="material-icons">close</span></button></header>
-            <div class="tariff-list-glass">
+            <div class="tariff-list-glass" style="margin-bottom: 1.5rem;">
               @for (zone of PARKING_ZONES; track $index) {
                 <div class="glass-t-item" [class]="'gt-zone-' + $index">
                   <div class="gt-name-group"><span class="gt-title">{{ zone.name.split(' - ')[0] }}</span><span class="gt-desc">{{ zone.name.split(' - ')[1] }}</span></div>
-                  <div class="gt-price-group"><span class="gt-main-price">{{ zone.tariff.toFixed(2) }}€/h</span><span class="gt-sub-price">24h: {{ (zone.tariff * 5).toFixed(2) }}€</span></div>
+                  <div class="gt-price-group">
+                    <span class="gt-main-price">{{ zone.tariff.toFixed(2) }} RON/h</span>
+                    @if ($index === 2) {
+                      <span class="gt-sub-price">24h: 12.00 RON</span>
+                    } @else {
+                      <span class="gt-sub-price">Zilnic indisponibil</span>
+                    }
+                  </div>
                 </div>
               }
             </div>
+
+            <!-- TPARK & SMS INFO -->
+            <div class="tpark-sms-info-box" style="padding: 1.25rem; background: rgba(0,0,0,0.03); border-radius: 20px; border: 1px solid rgba(0,0,0,0.04); font-size: 0.85rem; color: var(--text-primary);">
+              <p style="margin: 0 0 0.75rem; font-weight: 800; font-size: 0.95rem;">📱 Informații Plată SMS (7420)</p>
+              <ul style="margin: 0 0 1rem; padding-left: 1.2rem; line-height: 1.4; display: flex; flex-direction: column; gap: 0.35rem;">
+                <li><strong>Zona 0:</strong> Trimiți <code style="background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px; font-weight: 800;">340NumărMașină</code> (ex: 340BV22LNX) pentru 1 oră (3,00 RON)</li>
+                <li><strong>Zona 1:</strong> Trimiți <code style="background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px; font-weight: 800;">343NumărMașină</code> (ex: 343BV22LNX) pentru 1 oră (2,00 RON)</li>
+                <li><strong>Zona 2 (1h):</strong> Trimiți <code style="background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px; font-weight: 800;">344NumărMașină</code> (ex: 344BV22LNX) pentru 1 oră (1,50 RON)</li>
+                <li><strong>Zona 2 (24h):</strong> Trimiți <code style="background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px; font-weight: 800;">345NumărMașină</code> (ex: 345BV22LNX) pentru 1 zi (12,00 RON)</li>
+              </ul>
+              <div style="border-top: 1px dashed rgba(0,0,0,0.1); padding-top: 0.75rem; display: flex; align-items: center; justify-content: space-between;">
+                <span>Plata se poate face și prin aplicația <strong>TPARK</strong>:</span>
+                <a href="https://www.tpark.io" target="_blank" style="background: #ea4335; color: #fff; text-decoration: none; padding: 0.4rem 0.8rem; border-radius: 10px; font-weight: 900; font-size: 0.75rem; box-shadow: 0 4px 10px rgba(234,67,53,0.2);">tpark.io</a>
+              </div>
+            </div>
+
           </div>
         </div>
       }
@@ -299,31 +325,15 @@ export class ParkingComponent implements OnInit, OnDestroy {
 
   private async loadParkingData() {
     try {
-      // Fetch Production Zones from Java Backend (8083) with fallback
-      let zoneRes: any;
-      try {
-        zoneRes = await firstValueFrom(this.http.get<any>('/api/parking/zones?page=0&size=50'));
-      } catch (err) {
-        console.warn('Could not fetch zones from Java backend, using static fallback zones:', err);
-        zoneRes = {
-          content: [
-            { zone: 'Zona 0 - Centru Vechi', tariffPerHour: 0.60, tariffPerDay: 3.00 },
-            { zone: 'Zona 1 - Centrul Civic', tariffPerHour: 0.40, tariffPerDay: 2.00 },
-            { zone: 'Zona 2 - Periferie', tariffPerHour: 0.30, tariffPerDay: 1.50 }
-          ]
-        };
-      }
+      // Hardcode correct production parking zones in Brasov (RON)
+      this.PARKING_ZONES = [
+        { id: 0, name: 'Zona 0 - Centru Vechi', smsNumber: '7420', tariff: 3.00, tariffPerDay: 72.00 },
+        { id: 1, name: 'Zona 1 - Centrul Civic', smsNumber: '7420', tariff: 2.00, tariffPerDay: 48.00 },
+        { id: 2, name: 'Zona 2 - Periferie', smsNumber: '7420', tariff: 1.50, tariffPerDay: 12.00 }
+      ];
       
       // Fetch Neighborhoods directly from the static GeoJSON asset (served from public/)
       const neighborhoods = await firstValueFrom(this.http.get<any[]>('/brasov_neighborhoods.json'));
-
-      this.PARKING_ZONES = zoneRes.content.map((z: any, idx: number) => ({
-        id: idx,
-        name: z.zone,
-        smsNumber: '1234', // Default for now
-        tariff: z.tariffPerHour,
-        tariffPerDay: z.tariffPerDay
-      }));
 
       this.neighborhoodData = neighborhoods;
       
@@ -646,8 +656,24 @@ export class ParkingComponent implements OnInit, OnDestroy {
   sendNativeSms() {
     if (!this.isPlateSaved && this.tempPlate.trim()) this.savePlate();
     if (!this.carPlate) { alert('Te rugăm să introduci numărul de înmatriculare!'); return; }
-    const recipient = '1234';
-    const body = `${this.carPlate} ${this.selectedHours}`;
+    
+    const recipient = '7420';
+    let body = '';
+    const cleanPlate = this.carPlate.replace(/\s+/g, '').toUpperCase();
+    
+    if (this.selectedZoneIndex === 0) {
+      body = `340${cleanPlate}`;
+    } else if (this.selectedZoneIndex === 1) {
+      body = `343${cleanPlate}`;
+    } else if (this.selectedZoneIndex === 2) {
+      if (this.selectedHours === 1) {
+        body = `344${cleanPlate}`;
+      } else {
+        body = `345${cleanPlate}`;
+      }
+    } else {
+      body = `${cleanPlate} ${this.selectedHours}`;
+    }
     
     // Flag for confirmation when user returns
     localStorage.setItem('pending_parking_confirmation', 'true');
@@ -678,7 +704,21 @@ export class ParkingComponent implements OnInit, OnDestroy {
     const now = new Date();
     const months = ['IAN', 'FEB', 'MAR', 'APR', 'MAI', 'IUN', 'IUL', 'AUG', 'SEP', 'OCT', 'NOI', 'DEC'];
     const zone = this.PARKING_ZONES[this.selectedZoneIndex];
-    const newEntry = { day: String(now.getDate()).padStart(2, '0'), month: months[now.getMonth()], plate: this.carPlate, zone: zone.name, amount: (this.selectedHours * zone.tariff).toFixed(2) + '€' };
+    
+    let cost = 0;
+    if (this.selectedZoneIndex === 2 && this.selectedHours === 24) {
+      cost = 12.00;
+    } else {
+      cost = this.selectedHours * zone.tariff;
+    }
+    
+    const newEntry = { 
+      day: String(now.getDate()).padStart(2, '0'), 
+      month: months[now.getMonth()], 
+      plate: this.carPlate, 
+      zone: zone.name, 
+      amount: cost.toFixed(2) + ' RON' 
+    };
     this.history.unshift(newEntry);
     localStorage.setItem('parking_history', JSON.stringify(this.history));
   }
@@ -690,8 +730,27 @@ export class ParkingComponent implements OnInit, OnDestroy {
   extendTime(minutes: number) {
     this.currentParkingSeconds += minutes * 60;
     localStorage.setItem('parking_expiry', (Date.now() + this.currentParkingSeconds * 1000).toString());
+    
+    const recipient = '7420';
+    let body = '';
+    const cleanPlate = this.carPlate.replace(/\s+/g, '').toUpperCase();
+    
+    if (this.selectedZoneIndex === 0) {
+      body = `340${cleanPlate}`;
+    } else if (this.selectedZoneIndex === 1) {
+      body = `343${cleanPlate}`;
+    } else if (this.selectedZoneIndex === 2) {
+      if (minutes >= 720) {
+        body = `345${cleanPlate}`;
+      } else {
+        body = `344${cleanPlate}`;
+      }
+    } else {
+      body = `${cleanPlate}`;
+    }
+    
     const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    window.location.href = `sms:1234${isIos ? '&' : '?'}body=${encodeURIComponent(this.carPlate + ' ' + Math.ceil(minutes / 60))}`;
+    window.location.href = `sms:${recipient}${isIos ? '&' : '?'}body=${encodeURIComponent(body)}`;
     this.resumeCountdown(this.currentParkingSeconds);
   }
 
