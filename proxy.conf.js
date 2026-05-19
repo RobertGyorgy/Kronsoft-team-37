@@ -80,6 +80,13 @@ const PROXY_CONFIG = {
     "target": backend8081,
     "secure": false
   },
+  "/api/app-events": {
+    "target": backend8083,
+    "pathRewrite": {
+      "^/api/app-events": "/api/events"
+    },
+    "secure": false
+  },
   "/api/parking": {
     "target": backend8083,
     "secure": false

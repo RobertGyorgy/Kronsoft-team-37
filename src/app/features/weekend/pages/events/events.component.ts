@@ -17,6 +17,7 @@ interface EventItem {
   isPromoted?: boolean;
   plan?: string;
   promotedBy?: string;
+  source?: 'scraped' | 'app';
 }
 
 @Component({
@@ -113,6 +114,13 @@ interface EventItem {
           <div class="events-list-clean">
             @for (event of events(); track event.id; let i = $index) {
 
+              @if (showAppEventsSectionHeader(i)) {
+                <div class="events-section-divider">
+                  <p class="section-eyebrow">COMUNITATE</p>
+                  <h3 class="events-section-title">Evenimente promovate în aplicație</h3>
+                </div>
+              }
+
               <!-- Featured card (first item, full width with large image) -->
               <div class="event-featured" *ngIf="i === 0" (click)="openEvent(event.link)">
                 <div class="featured-img-wrap">
@@ -188,6 +196,7 @@ interface EventItem {
           </header>
 
           <form (submit)="submitPromotion($event)" class="modal-form-content">
+            <div class="modal-form-scroll">
             <div class="form-grid-compact">
               
               <div class="input-group">
@@ -279,8 +288,8 @@ interface EventItem {
               </div>
 
             </div>
+            </div>
 
-            <!-- Submit details -->
             <footer class="modal-footer">
               <button type="submit" class="submit-prom-btn" [disabled]="submitting">
                 <span class="spinner" *ngIf="submitting"></span>
@@ -495,6 +504,25 @@ interface EventItem {
     /* Outer list wrapper */
     .events-list-clean { display: flex; flex-direction: column; gap: 0; }
 
+    .events-section-divider {
+      padding: 2rem 0 1rem;
+      margin-top: 0.5rem;
+      border-top: 1px solid var(--border-color);
+    }
+    .events-section-divider .section-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      color: #a55eea;
+      margin: 0 0 0.35rem;
+    }
+    .events-section-divider .events-section-title {
+      font-size: 1.15rem;
+      font-weight: 900;
+      margin: 0;
+      color: var(--text-primary);
+    }
+
     /* ---- FEATURED CARD ---- */
     .event-featured { border-radius: 24px; overflow: hidden; background: var(--bg-card); border: 1px solid var(--border-color); cursor: pointer; margin-bottom: 1.25rem; transition: transform 0.22s ease; }
     .event-featured:active { transform: scale(0.985); }
@@ -608,10 +636,17 @@ interface EventItem {
       backdrop-filter: blur(16px);
       z-index: 1000;
       display: flex;
-      align-items: center;
+      align-items: flex-end;
       justify-content: center;
-      padding: 1.5rem;
+      padding: 0;
       animation: fadeInModal 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @media (min-width: 520px) {
+      .modal-backdrop {
+        align-items: center;
+        padding: 1rem;
+      }
     }
 
     @keyframes fadeInModal {
@@ -623,16 +658,23 @@ interface EventItem {
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
       backdrop-filter: blur(25px);
-      border-radius: 28px;
+      border-radius: 28px 28px 0 0;
       width: 100%;
       max-width: 500px;
-      max-height: 98dvh;
+      max-height: 92dvh;
       box-shadow: 0 30px 70px rgba(0,0,0,0.15);
       display: flex;
       flex-direction: column;
       overflow: hidden;
       font-family: inherit;
       animation: slideUpModal 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @media (min-width: 520px) {
+      .promote-modal-card {
+        border-radius: 28px;
+        max-height: 90dvh;
+      }
     }
 
     @keyframes slideUpModal {
@@ -683,11 +725,18 @@ interface EventItem {
 
     .modal-form-content {
       flex: 1;
-      overflow-y: visible; /* no scroll needed! */
-      padding: 1.25rem 1.5rem;
+      min-height: 0;
       display: flex;
       flex-direction: column;
-      gap: 0.85rem;
+      overflow: hidden;
+    }
+
+    .modal-form-scroll {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 1rem 1.25rem;
     }
 
     .form-grid-compact {
@@ -816,26 +865,28 @@ interface EventItem {
     }
 
     .modal-footer {
-      padding-top: 1rem;
+      flex-shrink: 0;
+      padding: 1rem 1.25rem calc(1rem + env(safe-area-inset-bottom, 0px));
       border-top: 1px solid var(--border-color);
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 1rem;
-      margin-top: 0.5rem;
+      background: var(--glass-bg);
     }
 
     .submit-prom-btn {
+      width: 100%;
       background: #a55eea;
       color: #fff;
       border: none;
       border-radius: 14px;
-      padding: 0.65rem 1.35rem;
+      padding: 1rem 1.35rem;
       font-family: inherit;
       font-weight: 900;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 0.4rem;
       cursor: pointer;
       box-shadow: 0 4px 15px rgba(165, 94, 234, 0.2);
@@ -1462,16 +1513,26 @@ export class EventsComponent implements AfterViewInit {
     this.activeTab.set(tab);
   }
 
+  showAppEventsSectionHeader(index: number): boolean {
+    const list = this.events();
+    const event = list[index];
+    if (event?.source !== 'app') {
+      return false;
+    }
+    return index === 0 || list[index - 1]?.source !== 'app';
+  }
+
   splitByWord(text: string): string[] {
     return text.split(' ');
   }
 
   triggerTitleAnimation() {
-    // Reset initial state of characters
-    gsap.set('.premium-title .char', { y: 30, opacity: 0 });
-    
-    // Play spectacular rise and fade-in stagger animation!
-    gsap.to('.premium-title .char', {
+    const chars = document.querySelectorAll('.premium-title .char');
+    if (!chars.length) {
+      return;
+    }
+    gsap.set(chars, { y: 30, opacity: 0 });
+    gsap.to(chars, {
       y: 0,
       opacity: 1,
       stagger: 0.02,
@@ -1557,22 +1618,18 @@ export class EventsComponent implements AfterViewInit {
   }
 
   async registerPromotion() {
-    // Build ISO Date from separate date & time inputs
-    const eventDate = new Date(`${this.formModel.date}T${this.formModel.time}`);
-    
-    const payload = {
+    await this.eventsService.promoteEvent({
       title: this.formModel.title,
       description: this.formModel.description,
       category: this.formModel.category,
-      imageUrl: this.formModel.imageUrl,
-      when: eventDate.toISOString(),
       location: this.formModel.location,
+      date: this.formModel.date,
+      time: this.formModel.time,
       link: this.formModel.link,
+      imageUrl: this.formModel.imageUrl,
+      plan: this.formModel.plan,
       promotedBy: this.loggedInUser,
-      plan: this.formModel.plan
-    };
-
-    await this.eventsService.promoteEvent(payload);
+    });
     
     alert('Felicitări! Evenimentul tău a fost înregistrat și promovat cu succes! 🎉 Este acum afișat în prim-plan în lista de evenimente.');
     
