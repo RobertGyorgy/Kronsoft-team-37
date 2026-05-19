@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, AfterViewInit, ElementRef, ViewChild, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { gsap } from 'gsap';
 import { AuthService } from '../../../auth/auth.service';
 
@@ -74,10 +74,10 @@ import { AuthService } from '../../../auth/auth.service';
         <button class="icon-btn footer-btn" aria-label="Settings" routerLink="/settings">
           <span class="material-icons">settings</span>
         </button>
-        <a routerLink="/login" class="logout-link">
+        <button type="button" class="logout-link" (click)="logout()">
           <span class="material-icons">logout</span>
           Deconectare
-        </a>
+        </button>
       </footer>
     </main>
   `,
@@ -226,6 +226,8 @@ import { AuthService } from '../../../auth/auth.service';
       }
 
       .logout-link {
+        border: none;
+        font-family: inherit;
         flex: 1;
         max-width: 200px;
         display: flex;
@@ -256,6 +258,7 @@ import { AuthService } from '../../../auth/auth.service';
 })
 export class DashboardComponent implements AfterViewInit {
   private authService = inject(AuthService);
+  private router = inject(Router);
 
   @ViewChild('container') container!: ElementRef;
   @ViewChild('grid') grid!: ElementRef;
@@ -313,5 +316,12 @@ export class DashboardComponent implements AfterViewInit {
 
   onTownHallClick() { 
     window.open('https://www.brasovcity.ro', '_blank');
+  }
+
+  logout(): void {
+    this.authService.logout().subscribe({
+      next: () => void this.router.navigate(['/login']),
+      error: () => void this.router.navigate(['/login']),
+    });
   }
 }

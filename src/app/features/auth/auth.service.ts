@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, of, tap, finalize } from 'rxjs';
 import { UserService, UserProfileResponse } from '../../core/services/user.service';
 
 // ── Request Interfaces (from OpenAPI spec) ─────────────────────
@@ -87,11 +87,18 @@ export class AuthService {
       .pipe(tap((res) => this.persistSession(res)));
   }
 
+  /**
+   * POST /api/auth/logout — revokes refresh token on the server, then clears local session.
+   */
   public logout(): Observable<void> {
     const refreshToken = this.getRefreshToken();
-    this.clearSession();
-    if (!refreshToken) return new Observable(sub => sub.complete());
-    return this.http.post<void>(`${this.baseUrl}/logout`, { refreshToken } satisfies RefreshTokenRequest);
+    if (!refreshToken) {
+      this.clearSession();
+      return of(undefined);
+    }
+    return this.http
+      .post<void>(`${this.baseUrl}/logout`, { refreshToken } satisfies RefreshTokenRequest)
+      .pipe(finalize(() => this.clearSession()));
   }
 
   // ── Password Recovery ────────────────────────────────────────
