@@ -36,7 +36,7 @@ import { firstValueFrom } from 'rxjs';
               <span class="material-icons">history</span>
             </button>
           </div>
-          
+
           <div class="status-bottom-row" [class.outside]="isOutsideZones">
             <div class="zone-pill" [class]="isOutsideZones ? 'z-none' : 'z-' + selectedZoneIndex" (click)="cycleZone()" style="cursor: pointer;">
               {{ isOutsideZones ? 'FĂRĂ ZONĂ' : ('ZONA ' + selectedZoneIndex) }}
@@ -90,13 +90,16 @@ import { firstValueFrom } from 'rxjs';
             @if (selectedZoneIndex === 2) {
               <div class="stepper-pill-glass zone-2-selector">
                 <button class="duration-btn" [class.active]="selectedHours === 1" (click)="selectedHours = 1">1h</button>
-                <button class="duration-btn" [class.active]="selectedHours === 12" (click)="selectedHours = 12">12h</button>
+                <button class="duration-btn" [class.active]="selectedHours === 24" (click)="selectedHours = 24">24h</button>
               </div>
             }
             <button class="pay-button-solid" (click)="sendNativeSms()">
               <span>PLĂTEȘTE</span>
               <span class="material-icons">send</span>
             </button>
+            <a href="https://www.tpark.io" target="_blank" class="tpark-button-outline" style="width: 56px; height: 56px; border-radius: 50%; border: 2px solid var(--text-primary); display: flex; align-items: center; justify-content: center; color: var(--text-primary); text-decoration: none; font-weight: 900; font-size: 0.75rem; box-shadow: 0 4px 10px rgba(0,0,0,0.05); flex-shrink: 0; transition: all 0.2s;">
+              TPARK
+            </a>
           </div>
         </div>
       </section>
@@ -123,14 +126,37 @@ import { firstValueFrom } from 'rxjs';
         <div class="overlay-blur" (click)="toggleTariffs()">
           <div class="glass-drawer-sheet" (click)="$event.stopPropagation()">
             <header class="sheet-top"><h2>Tarife Parcare</h2><button (click)="toggleTariffs()" class="close-round"><span class="material-icons">close</span></button></header>
-            <div class="tariff-list-glass">
+            <div class="tariff-list-glass" style="margin-bottom: 1.5rem;">
               @for (zone of PARKING_ZONES; track $index) {
                 <div class="glass-t-item" [class]="'gt-zone-' + $index">
                   <div class="gt-name-group"><span class="gt-title">{{ zone.name.split(' - ')[0] }}</span><span class="gt-desc">{{ zone.name.split(' - ')[1] }}</span></div>
-                  <div class="gt-price-group"><span class="gt-main-price">{{ zone.tariff.toFixed(2) }}€/h</span><span class="gt-sub-price">24h: {{ (zone.tariff * 5).toFixed(2) }}€</span></div>
+                  <div class="gt-price-group">
+                    <span class="gt-main-price">{{ zone.tariff.toFixed(2) }} RON/h</span>
+                    @if ($index === 2) {
+                      <span class="gt-sub-price">24h: 12.00 RON</span>
+                    } @else {
+                      <span class="gt-sub-price">Zilnic indisponibil</span>
+                    }
+                  </div>
                 </div>
               }
             </div>
+
+            <!-- TPARK & SMS INFO -->
+            <div class="tpark-sms-info-box" style="padding: 1.25rem; background: rgba(0,0,0,0.03); border-radius: 20px; border: 1px solid rgba(0,0,0,0.04); font-size: 0.85rem; color: var(--text-primary);">
+              <p style="margin: 0 0 0.75rem; font-weight: 800; font-size: 0.95rem;">📱 Informații Plată SMS (7420)</p>
+              <ul style="margin: 0 0 1rem; padding-left: 1.2rem; line-height: 1.4; display: flex; flex-direction: column; gap: 0.35rem;">
+                <li><strong>Zona 0:</strong> Trimiți <code style="background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px; font-weight: 800;">340NumărMașină</code> (ex: 340BV22LNX) pentru 1 oră (3,00 RON)</li>
+                <li><strong>Zona 1:</strong> Trimiți <code style="background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px; font-weight: 800;">343NumărMașină</code> (ex: 343BV22LNX) pentru 1 oră (2,00 RON)</li>
+                <li><strong>Zona 2 (1h):</strong> Trimiți <code style="background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px; font-weight: 800;">344NumărMașină</code> (ex: 344BV22LNX) pentru 1 oră (1,50 RON)</li>
+                <li><strong>Zona 2 (24h):</strong> Trimiți <code style="background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px; font-weight: 800;">345NumărMașină</code> (ex: 345BV22LNX) pentru 1 zi (12,00 RON)</li>
+              </ul>
+              <div style="border-top: 1px dashed rgba(0,0,0,0.1); padding-top: 0.75rem; display: flex; align-items: center; justify-content: space-between;">
+                <span>Plata se poate face și prin aplicația <strong>TPARK</strong>:</span>
+                <a href="https://www.tpark.io" target="_blank" style="background: #ea4335; color: #fff; text-decoration: none; padding: 0.4rem 0.8rem; border-radius: 10px; font-weight: 900; font-size: 0.75rem; box-shadow: 0 4px 10px rgba(234,67,53,0.2);">tpark.io</a>
+              </div>
+            </div>
+
           </div>
         </div>
       }
@@ -186,12 +212,12 @@ import { firstValueFrom } from 'rxjs';
     .plate-input-field { flex: 1; border: none; background: transparent; outline: none; font-weight: 800; font-size: 1.1rem; color: var(--text-primary); width: 100%; }
     .pill-check-btn { width: 44px; height: 44px; border-radius: 50%; background: #fff; border: none; color: #ccc; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: all 0.3s; }
     .pill-check-btn.active { background: var(--text-primary); color: var(--bg-primary); }
-    
+
     .saved-plates-strip { display: flex; gap: 0.5rem; overflow-x: auto; padding: 0.25rem 0 0.5rem; scrollbar-width: none; }
     .saved-plates-strip::-webkit-scrollbar { display: none; }
     .plate-tag { padding: 0.5rem 1rem; border-radius: 12px; background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-primary); font-weight: 900; font-size: 0.8rem; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
     .plate-tag.active { background: var(--text-primary); color: var(--bg-primary); border-color: var(--text-primary); }
-    
+
     .dock-controls-row { display: flex; gap: 0.75rem; }
     .stepper-pill-glass { flex: 1; height: 56px; background: rgba(0,0,0,0.04); border-radius: 28px; display: flex; align-items: center; justify-content: space-between; padding: 0 0.5rem; }
     .stepper-pill-glass.fixed-duration { justify-content: center; background: rgba(116, 125, 140, 0.1); }
@@ -257,7 +283,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
   public followMode = true;
   private isUserPanning = false;
   private isAlive = true;
-  
+
   history: any[] = [];
   private timerSubscription: Subscription | undefined;
   public currentParkingSeconds = 0;
@@ -272,7 +298,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
   private polygonObjects: any[] = [];
 
   constructor(
-    private cdr: ChangeDetectorRef, 
+    private cdr: ChangeDetectorRef,
     private zone: NgZone,
     private geoService: GeolocationService,
     private transitService: TransitService,
@@ -299,61 +325,18 @@ export class ParkingComponent implements OnInit, OnDestroy {
 
   private async loadParkingData() {
     try {
-      // Fetch Production Zones from Java Backend (8083) with fallback
-      let zoneRes: any;
-      try {
-        zoneRes = await firstValueFrom(this.http.get<any>('/api/parking/zones?page=0&size=50'));
-      } catch (err) {
-        console.warn('Could not fetch zones from Java backend, using static fallback zones:', err);
-        zoneRes = {
-          content: [
-            { zone: 'Zona 0 - Centru Vechi', tariffPerHour: 0.60, tariffPerDay: 3.00 },
-            { zone: 'Zona 1 - Centrul Civic', tariffPerHour: 0.40, tariffPerDay: 2.00 },
-            { zone: 'Zona 2 - Periferie', tariffPerHour: 0.30, tariffPerDay: 1.50 }
-          ]
-        };
-      }
-      
+      // Hardcode correct production parking zones in Brasov (RON)
+      this.PARKING_ZONES = [
+        { id: 0, name: 'Zona 0 - Centru Vechi', smsNumber: '7420', tariff: 3.00, tariffPerDay: 72.00 },
+        { id: 1, name: 'Zona 1 - Centrul Civic', smsNumber: '7420', tariff: 2.00, tariffPerDay: 48.00 },
+        { id: 2, name: 'Zona 2 - Periferie', smsNumber: '7420', tariff: 1.50, tariffPerDay: 12.00 }
+      ];
+
       // Fetch Neighborhoods directly from the static GeoJSON asset (served from public/)
       const neighborhoods = await firstValueFrom(this.http.get<any[]>('/brasov_neighborhoods.json'));
 
-      let zonesList: any[] = [];
-      if (zoneRes) {
-        if (Array.isArray(zoneRes)) {
-          zonesList = zoneRes;
-        } else if (zoneRes.data && Array.isArray(zoneRes.data)) {
-          zonesList = zoneRes.data;
-        } else if (zoneRes.content && Array.isArray(zoneRes.content)) {
-          zonesList = zoneRes.content;
-        }
-      }
-
-      if (!zonesList || zonesList.length === 0) {
-        zonesList = [
-          { zone: 'Zona 0 - Centru Vechi', tariffPerHour: 0.60, tariffPerDay: 3.00 },
-          { zone: 'Zona 1 - Centrul Civic', tariffPerHour: 0.40, tariffPerDay: 2.00 },
-          { zone: 'Zona 2 - Periferie', tariffPerHour: 0.30, tariffPerDay: 1.50 }
-        ];
-      }
-
-      this.PARKING_ZONES = zonesList.map((z: any, idx: number) => {
-        let rawTariff = z.tariffPerHour !== undefined ? z.tariffPerHour : z.tariff;
-        let rawTariffDay = z.tariffPerDay;
-        
-        let tariff = typeof rawTariff === 'number' ? rawTariff : parseFloat(String(rawTariff || '0'));
-        let tariffPerDay = typeof rawTariffDay === 'number' ? rawTariffDay : parseFloat(String(rawTariffDay || '0'));
-
-        return {
-          id: idx,
-          name: z.zone || `Zona ${idx}`,
-          smsNumber: '1234',
-          tariff: isNaN(tariff) ? 0.50 : tariff,
-          tariffPerDay: isNaN(tariffPerDay) ? 2.50 : tariffPerDay
-        };
-      });
-
       this.neighborhoodData = neighborhoods;
-      
+
       if (!this.map) return;
 
       const features = this.neighborhoodData.map((nb: any, index: number) => {
@@ -364,10 +347,10 @@ export class ParkingComponent implements OnInit, OnDestroy {
         return {
           type: 'Feature',
           geometry: { type: 'Polygon', coordinates: [coords] },
-          properties: { 
+          properties: {
             id: index,
-            name: nb.name, 
-            zone: nb.zone 
+            name: nb.name,
+            zone: nb.zone
           }
         };
       });
@@ -421,7 +404,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
   private updateZoneByLocation(lat: number, lng: number) {
     this.userLat = lat;
     this.userLng = lng;
-    
+
     let foundNeighborhood = null;
     const pt = turf.point([lng, lat]);
 
@@ -429,7 +412,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
       const coords = nb.path.map((p: any) => [p.lng, p.lat]);
       if (coords.length > 0) coords.push(coords[0]);
       const poly = turf.polygon([coords]);
-      
+
       if (turf.booleanPointInPolygon(pt, poly)) {
         foundNeighborhood = nb;
         break;
@@ -454,7 +437,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
     });
 
     this.updateMarker(lat, lng, this.selectedZoneIndex);
-    
+
     if (this.map && this.followMode) {
       this.map.easeTo({ center: [lng, lat], duration: 1000 });
     }
@@ -467,16 +450,16 @@ export class ParkingComponent implements OnInit, OnDestroy {
     const now = Date.now();
     // Only geocode every 30 seconds OR if position moved more than ~50 meters
     const dist = Math.sqrt(Math.pow(lat - this.lastGeocodeCoords.lat, 2) + Math.pow(lng - this.lastGeocodeCoords.lng, 2));
-    
+
     if (this.lastGeocodeTime !== 0 && now - this.lastGeocodeTime < 30000 && dist < 0.0005) return;
-    
+
     this.lastGeocodeTime = now;
     this.lastGeocodeCoords = { lat, lng };
 
     try {
       // Using BigDataCloud's reverse geocode client-side API - it's CORS friendly and free for client-side use
       const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=ro`);
-      
+
       if (!response.ok) return;
 
       const data = await response.json();
@@ -494,13 +477,13 @@ export class ParkingComponent implements OnInit, OnDestroy {
 
   private setupLocationSync() {
     this.geoService.startTracking();
-    
+
     // Watch location changes reactively instead of using a frame loop
     const loc = this.geoService.currentLocation();
     if (loc) {
       this.updateZoneByLocation(loc.lat, loc.lng);
     }
-    
+
     // Check every 2 seconds for location updates
     this.timerSubscription = interval(2000).subscribe(() => {
       if (!this.isAlive) return;
@@ -527,7 +510,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
     if (!this.map) return;
     const pos: [number, number] = [lng, lat];
     const PIN_COLORS: any = { 0: '#ea4335', 1: '#fb8c00', 2: '#34a853' };
-    
+
     if (this.marker) {
       this.marker.setLngLat(pos);
       const el = this.marker.getElement();
@@ -561,7 +544,7 @@ export class ParkingComponent implements OnInit, OnDestroy {
         resolve();
         return;
       }
-      
+
       this.map = new maplibregl.Map({
         container: this.mapContainer.nativeElement,
         style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
@@ -589,9 +572,9 @@ export class ParkingComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() { this.loadPersistedData(); }
-  ngOnDestroy() { 
+  ngOnDestroy() {
     this.isAlive = false;
-    if (this.timerSubscription) this.timerSubscription.unsubscribe(); 
+    if (this.timerSubscription) this.timerSubscription.unsubscribe();
   }
 
   private loadPersistedData() {
@@ -640,18 +623,18 @@ export class ParkingComponent implements OnInit, OnDestroy {
     return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
   }
 
-  savePlate() { 
-    if (this.tempPlate.trim()) { 
-      this.carPlate = this.tempPlate.toUpperCase(); 
-      this.isPlateSaved = true; 
-      localStorage.setItem('parked_plate', this.carPlate); 
-      
+  savePlate() {
+    if (this.tempPlate.trim()) {
+      this.carPlate = this.tempPlate.toUpperCase();
+      this.isPlateSaved = true;
+      localStorage.setItem('parked_plate', this.carPlate);
+
       // Also add to global plates if not exists
       if (!this.userSavedPlates.includes(this.carPlate)) {
         this.userSavedPlates.push(this.carPlate);
         localStorage.setItem('user_plates', JSON.stringify(this.userSavedPlates));
       }
-    } 
+    }
   }
 
   onPlateInputChange(val: string) {
@@ -673,14 +656,30 @@ export class ParkingComponent implements OnInit, OnDestroy {
   sendNativeSms() {
     if (!this.isPlateSaved && this.tempPlate.trim()) this.savePlate();
     if (!this.carPlate) { alert('Te rugăm să introduci numărul de înmatriculare!'); return; }
-    const recipient = '1234';
-    const body = `${this.carPlate} ${this.selectedHours}`;
-    
+
+    const recipient = '7420';
+    let body = '';
+    const cleanPlate = this.carPlate.replace(/\s+/g, '').toUpperCase();
+
+    if (this.selectedZoneIndex === 0) {
+      body = `340${cleanPlate}`;
+    } else if (this.selectedZoneIndex === 1) {
+      body = `343${cleanPlate}`;
+    } else if (this.selectedZoneIndex === 2) {
+      if (this.selectedHours === 1) {
+        body = `344${cleanPlate}`;
+      } else {
+        body = `345${cleanPlate}`;
+      }
+    } else {
+      body = `${cleanPlate} ${this.selectedHours}`;
+    }
+
     // Flag for confirmation when user returns
     localStorage.setItem('pending_parking_confirmation', 'true');
     localStorage.setItem('pending_parking_hours', this.selectedHours.toString());
     localStorage.setItem('pending_parking_zone', this.selectedZoneIndex.toString());
-    
+
     const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
     window.location.href = `sms:${recipient}${isIos ? '&' : '?'}body=${encodeURIComponent(body)}`;
 
@@ -705,7 +704,21 @@ export class ParkingComponent implements OnInit, OnDestroy {
     const now = new Date();
     const months = ['IAN', 'FEB', 'MAR', 'APR', 'MAI', 'IUN', 'IUL', 'AUG', 'SEP', 'OCT', 'NOI', 'DEC'];
     const zone = this.PARKING_ZONES[this.selectedZoneIndex];
-    const newEntry = { day: String(now.getDate()).padStart(2, '0'), month: months[now.getMonth()], plate: this.carPlate, zone: zone.name, amount: (this.selectedHours * zone.tariff).toFixed(2) + '€' };
+
+    let cost = 0;
+    if (this.selectedZoneIndex === 2 && this.selectedHours === 24) {
+      cost = 12.00;
+    } else {
+      cost = this.selectedHours * zone.tariff;
+    }
+
+    const newEntry = {
+      day: String(now.getDate()).padStart(2, '0'),
+      month: months[now.getMonth()],
+      plate: this.carPlate,
+      zone: zone.name,
+      amount: cost.toFixed(2) + ' RON'
+    };
     this.history.unshift(newEntry);
     localStorage.setItem('parking_history', JSON.stringify(this.history));
   }
@@ -717,8 +730,27 @@ export class ParkingComponent implements OnInit, OnDestroy {
   extendTime(minutes: number) {
     this.currentParkingSeconds += minutes * 60;
     localStorage.setItem('parking_expiry', (Date.now() + this.currentParkingSeconds * 1000).toString());
+
+    const recipient = '7420';
+    let body = '';
+    const cleanPlate = this.carPlate.replace(/\s+/g, '').toUpperCase();
+
+    if (this.selectedZoneIndex === 0) {
+      body = `340${cleanPlate}`;
+    } else if (this.selectedZoneIndex === 1) {
+      body = `343${cleanPlate}`;
+    } else if (this.selectedZoneIndex === 2) {
+      if (minutes >= 720) {
+        body = `345${cleanPlate}`;
+      } else {
+        body = `344${cleanPlate}`;
+      }
+    } else {
+      body = `${cleanPlate}`;
+    }
+
     const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    window.location.href = `sms:1234${isIos ? '&' : '?'}body=${encodeURIComponent(this.carPlate + ' ' + Math.ceil(minutes / 60))}`;
+    window.location.href = `sms:${recipient}${isIos ? '&' : '?'}body=${encodeURIComponent(body)}`;
     this.resumeCountdown(this.currentParkingSeconds);
   }
 
@@ -764,10 +796,10 @@ export class ParkingComponent implements OnInit, OnDestroy {
     const zoneIndex = parseInt(localStorage.getItem('pending_parking_zone') || '0');
     this.selectedHours = hours;
     this.selectedZoneIndex = zoneIndex;
-    
+
     localStorage.removeItem('pending_parking_confirmation');
     localStorage.setItem('parked_location', JSON.stringify({ lat: this.userLat, lng: this.userLng }));
-    
+
     this.startCountdown(hours);
     this.addToHistory();
     this.showPaymentConfirmation = false;

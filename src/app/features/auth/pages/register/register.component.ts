@@ -149,9 +149,6 @@ import { gsap } from 'gsap';
             }
           </div>
 
-          <button type="button" class="secondary-btn" (click)="demoContinue()">
-            Continuă (Demo)
-          </button>
         </form>
 
         <div class="divider">SAU</div>
@@ -224,13 +221,6 @@ export class RegisterComponent implements AfterViewInit {
     }
   }
 
-  protected demoContinue(): void {
-    if (this.currentStep() === 1) {
-      this.animateStep(2);
-    } else {
-      this.router.navigateByUrl('/dashboard');
-    }
-  }
 
   protected goBack(): void {
     if (this.currentStep() === 2) {
