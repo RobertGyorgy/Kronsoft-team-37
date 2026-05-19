@@ -91,27 +91,26 @@ export class ReportComponent implements AfterViewInit {
     if (chars.length) gsap.set(chars, { y: 40, opacity: 0 });
     if (validElements.length) gsap.set(validElements, { y: 30, opacity: 0 });
     
-    const tl = timeline => gsap.timeline({ defaults: { ease: 'power3.out', duration: 0.8 } });
-    const activeTimeline = tl();
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out', duration: 0.8 } });
     
     if (chars.length) {
-      activeTimeline.to(chars, { y: 0, opacity: 1, stagger: 0.02 });
+      tl.to(chars, { y: 0, opacity: 1, stagger: 0.02 });
     }
     
     if (hero) {
-      activeTimeline.to(hero, { y: 0, opacity: 1, duration: 1 }, chars.length ? '-=0.6' : 0);
+      tl.to(hero, { y: 0, opacity: 1, duration: 1 }, chars.length ? '-=0.6' : 0);
     }
     
     if (title) {
-      activeTimeline.to(title, { y: 0, opacity: 1 }, '-=0.7');
+      tl.to(title, { y: 0, opacity: 1 }, '-=0.7');
     }
     
     if (chips.length) {
-      activeTimeline.to(chips, { y: 0, opacity: 1, stagger: 0.05 }, '-=0.6');
+      tl.to(chips, { y: 0, opacity: 1, stagger: 0.05 }, '-=0.6');
     }
     
     if (cards.length) {
-      activeTimeline.to(cards, {
+      tl.to(cards, {
         y: 0, opacity: 1, stagger: 0.1,
         onComplete: () => {
           cards.forEach((el: any) => el.classList.add('animated'));
