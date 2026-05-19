@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component, AfterViewInit, ElementRef, ViewChild, inject, signal, afterNextRender } from '@angular/core';
+import { ChangeDetectionStrategy, Component, AfterViewInit, ElementRef, ViewChild, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { gsap } from 'gsap';
-import { UserService } from '../../../../core/services/user.service';
 import { AuthService } from '../../../auth/auth.service';
 
 @Component({
@@ -256,7 +255,6 @@ import { AuthService } from '../../../auth/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent implements AfterViewInit {
-  private userService = inject(UserService);
   private authService = inject(AuthService);
 
   @ViewChild('container') container!: ElementRef;
@@ -270,10 +268,6 @@ export class DashboardComponent implements AfterViewInit {
     const name = this.authService.getUserName() || 'Utilizator';
     const firstName = name.split(' ')[0];
     this.helloWords.set(`Salut, ${firstName}`.split(' '));
-
-    afterNextRender(() => {
-      this.userService.loadProfile(); // fetch in background
-    });
   }
 
   ngAfterViewInit() {

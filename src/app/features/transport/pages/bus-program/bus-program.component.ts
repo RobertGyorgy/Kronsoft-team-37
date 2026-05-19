@@ -349,6 +349,7 @@ export class BusProgramComponent implements OnInit, OnDestroy {
         instructions: f.properties?.instructions || 'Mergi',
         duration: { text: `${f.properties?.duration || 0} min`, value: (f.properties?.duration || 0) * 60 },
         distance: { text: `${((f.properties?.distance || 0) / 1000).toFixed(1)} km`, value: f.properties?.distance || 0 },
+        startTimeMs: f.properties?.startTime ?? null,
         transit: f.properties?.mode !== 'WALK' ? { 
           line: { short_name: f.properties?.instructions?.split(' ')[1] || '?', color: f.properties?.color || '#333' },
           departure_stop: { 
@@ -366,49 +367,54 @@ export class BusProgramComponent implements OnInit, OnDestroy {
 
   timelineSteps = computed(() => {
     const steps = this.allSteps();
-    const now = new Date();
-    let currentMs = now.getTime();
-    
+    const route = this.currentRoute();
+    const tripStartMs = route?.metadata?.startTime ?? steps[0]?.startTimeMs ?? null;
+    let currentMs = Date.now();
+
     return steps.map((step: any) => {
-      if (step.transit?.departure_stop?.timeMs) {
-        currentMs = step.transit.departure_stop.timeMs;
+      if (step.startTimeMs != null) {
+        currentMs = step.startTimeMs;
       }
-      
+
       const startTime = new Date(currentMs);
       const durationMs = (step.duration?.value || 0) * 1000;
-      const endTime = new Date(startTime.getTime() + durationMs);
-      const res = { start: this.formatTime(startTime), end: this.formatTime(endTime) };
+      const endTime = new Date(currentMs + durationMs);
       currentMs = endTime.getTime();
-      return res;
+
+      return {
+        start: this.formatTimelineTime(startTime, tripStartMs),
+        end: this.formatTimelineTime(endTime, tripStartMs),
+        startMs: startTime.getTime(),
+        endMs: endTime.getTime()
+      };
     });
   });
 
   routeDuration = computed(() => {
+    const data = this.currentRoute();
     const steps = this.allSteps();
     if (steps.length === 0) return '-- min';
 
-    const now = new Date();
-    const firstStartMs = now.getTime();
-    let lastEndMs = firstStartMs;
-    
-    let tempMs = firstStartMs;
-    steps.forEach((step: any, idx: number) => {
-      if (step.transit?.departure_stop?.timeMs) {
-        tempMs = step.transit.departure_stop.timeMs;
+    const metadata = data?.metadata;
+    if (metadata?.totalDurationMinutes != null) {
+      return `${Math.round(metadata.totalDurationMinutes)} min`;
+    }
+
+    if (metadata?.startTime != null && metadata?.endTime != null) {
+      return `${Math.round((metadata.endTime - metadata.startTime) / 60000)} min`;
+    }
+
+    const timeline = this.timelineSteps();
+    if (timeline.length > 0) {
+      const firstStartMs = timeline[0].startMs;
+      const lastEndMs = timeline[timeline.length - 1].endMs;
+      if (firstStartMs != null && lastEndMs != null) {
+        return `${Math.round((lastEndMs - firstStartMs) / 60000)} min`;
       }
-      const durationMs = (step.duration?.value || 0) * 1000;
-      tempMs += durationMs;
-      if (idx === steps.length - 1) {
-        lastEndMs = tempMs;
-      }
-    });
+    }
 
     const sumDurationsMinutes = steps.reduce((sum: number, step: any) => sum + (step.duration?.value || 0) / 60, 0);
-    let totalMinutes = Math.round((lastEndMs - firstStartMs) / 60000);
-    if (totalMinutes < sumDurationsMinutes) {
-      totalMinutes = Math.round(sumDurationsMinutes);
-    }
-    return `${totalMinutes} min`;
+    return `${Math.round(sumDurationsMinutes)} min`;
   });
 
   arrivalEstimate = computed(() => {
@@ -599,7 +605,17 @@ export class BusProgramComponent implements OnInit, OnDestroy {
           mode
         })
       });
+      if (!res.ok) {
+        console.error('Routing plan failed', res.status, await res.text());
+        this.isLoading.set(false);
+        return;
+      }
       const data = await res.json();
+      if (!data?.features?.length) {
+        console.error('Routing plan returned no route features');
+        this.isLoading.set(false);
+        return;
+      }
       this.currentRoute.set(data);
       this.isLoading.set(false);
       this.drawCurrentRoute();
@@ -1008,6 +1024,17 @@ export class BusProgramComponent implements OnInit, OnDestroy {
   getStepArrivals(step: any): any[] { return []; }
   getFinalArrivalTime() { return this.arrivalEstimate(); }
   formatTime(d: Date) { return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`; }
+
+  private formatTimelineTime(date: Date, tripStartMs?: number | null): string {
+    const time = this.formatTime(date);
+    if (tripStartMs == null) return time;
+
+    const dayStart = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+    const dayDiff = Math.round((dayStart(date) - dayStart(new Date(tripStartMs))) / 86400000);
+    if (dayDiff === 1) return `mâ. ${time}`;
+    if (dayDiff > 1) return `+${dayDiff}z ${time}`;
+    return time;
+  }
   onViewerScroll(e: any) {}
   onTouchStart(e: any) { this.touchStartY = e.touches[0].clientY; }
   onTouchMove(e: any) { if (e.touches[0].clientY - this.touchStartY > 50) this.isMinimized.set(true); }

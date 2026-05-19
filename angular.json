@@ -70,8 +70,10 @@
           },
           "defaultConfiguration": "development",
           "options": {
+            "proxyConfig": "proxy.conf.js",
             "allowedHosts": [
-              ".ngrok-free.dev"
+              ".ngrok-free.dev",
+              ".ngrok-free.app"
             ]
           }
         },
