@@ -4,9 +4,13 @@ import { firstValueFrom } from 'rxjs';
 
 // ── Response Interfaces (aligned with backend DTOs) ─────────────
 
+export interface VehicleRequest {
+  plateNumber: string;
+}
+
 export interface VehicleResponse {
   id: number;
-  licensePlate: string;
+  plateNumber: string;
 }
 
 export interface UserProfileResponse {
@@ -95,16 +99,28 @@ export class UserService {
   }
 
   /**
-   * POST /api/user/vehicles
-   * Adds a new vehicle (license plate) to the user's profile.
+   * Reloads profile from GET /api/user/profile (bypasses session cache).
    */
-  async addVehicle(licensePlate: string): Promise<UserProfileResponse | null> {
+  async refreshProfile(): Promise<UserProfileResponse | null> {
     try {
-      const updated = await firstValueFrom(
-        this.http.post<UserProfileResponse>('/api/user/vehicles', { licensePlate })
-      );
-      this.profile.set(updated);
-      return updated;
+      const data = await firstValueFrom(this.http.get<UserProfileResponse>('/api/user/profile'));
+      this.profile.set(data);
+      return data;
+    } catch (err) {
+      console.error('Failed to refresh user profile:', err);
+      return null;
+    }
+  }
+
+  /**
+   * PUT /api/user/vehicles
+   * Adds a vehicle, then reloads profile from GET /api/user/profile.
+   */
+  async addVehicle(plateNumber: string): Promise<UserProfileResponse | null> {
+    const body: VehicleRequest = { plateNumber };
+    try {
+      await firstValueFrom(this.http.put<void>('/api/user/vehicles', body));
+      return this.refreshProfile();
     } catch (err) {
       console.error('Failed to add vehicle:', err);
       return null;

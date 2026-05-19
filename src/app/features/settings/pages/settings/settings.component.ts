@@ -4,7 +4,7 @@ import { RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { gsap } from 'gsap';
 import { AuthService } from '../../../auth/auth.service';
-import { UserService, VehicleResponse } from '../../../../core/services/user.service';
+import { UserService } from '../../../../core/services/user.service';
 
 @Component({
   selector: 'app-settings',
@@ -50,7 +50,7 @@ import { UserService, VehicleResponse } from '../../../../core/services/user.ser
                 <div class="vehicle-row">
                   <div class="plate-box">
                     <span class="ro-flag">RO</span>
-                    <span class="plate-num">{{ vehicle.licensePlate }}</span>
+                    <span class="plate-num">{{ vehicle.plateNumber }}</span>
                   </div>
                   <button class="icon-btn-danger" (click)="removePlate(vehicle)">
                     <span class="material-icons">delete_outline</span>
@@ -181,6 +181,7 @@ import { UserService, VehicleResponse } from '../../../../core/services/user.ser
     .plate-num { font-weight: 900; font-size: 1.1rem; padding-right: 8px; color: var(--text-primary); }
     
     .add-vehicle-row { padding: 0.75rem 1.5rem; }
+    .add-vehicle-row.active { display: flex; align-items: center; }
     .add-trigger-btn { background: none; border: none; display: flex; align-items: center; gap: 0.75rem; color: #4285F4; font-weight: 800; cursor: pointer; width: 100%; padding: 0.5rem 0; }
     .plate-input { flex: 1; border: 2px solid var(--border-color); border-radius: 12px; padding: 0.75rem 1rem; outline: none; font-weight: 900; font-size: 1rem; margin-right: 0.75rem; background: var(--bg-secondary); color: var(--text-primary); }
     .save-plate-btn { background: var(--text-primary); color: var(--bg-primary); border: none; border-radius: 12px; padding: 0.75rem 1.5rem; font-weight: 900; cursor: pointer; }
@@ -212,7 +213,7 @@ export class SettingsComponent implements OnInit {
   userName = '';
   userEmail = '';
   avatarUrl = 'https://api.dicebear.com/7.x/avataaars/svg?seed=User';
-  savedPlates: { id: number; licensePlate: string }[] = [];
+  savedPlates: { id: number; plateNumber: string }[] = [];
   showAddPlate = false;
   newPlate = '';
   
@@ -242,21 +243,26 @@ export class SettingsComponent implements OnInit {
   }
 
   async addPlate() {
-    if (this.newPlate.trim() && !this.savedPlates.some(v => v.licensePlate === this.newPlate)) {
-      const result = await this.userService.addVehicle(this.newPlate);
-      if (result?.vehicles) {
-        this.savedPlates = result.vehicles.map(v => ({ id: v.id, licensePlate: v.licensePlate }));
-      }
+    const plateNumber = this.newPlate.trim().toUpperCase();
+    if (!plateNumber || this.savedPlates.some(v => v.plateNumber === plateNumber)) {
+      return;
+    }
+
+    const profile = await this.userService.addVehicle(plateNumber);
+    if (profile?.vehicles) {
+      this.savedPlates = profile.vehicles.map(v => ({ id: v.id, plateNumber: v.plateNumber }));
       this.newPlate = '';
       this.showAddPlate = false;
       this.cdr.detectChanges();
+    } else {
+      this.showToast('Eroare la salvarea vehiculului.');
     }
   }
 
-  async removePlate(vehicle: { id: number; licensePlate: string }) {
+  async removePlate(vehicle: { id: number; plateNumber: string }) {
     const result = await this.userService.removeVehicle(vehicle.id);
     if (result?.vehicles) {
-      this.savedPlates = result.vehicles.map(v => ({ id: v.id, licensePlate: v.licensePlate }));
+      this.savedPlates = result.vehicles.map(v => ({ id: v.id, plateNumber: v.plateNumber }));
     } else {
       this.savedPlates = this.savedPlates.filter(v => v.id !== vehicle.id);
     }
@@ -279,7 +285,7 @@ export class SettingsComponent implements OnInit {
       this.userEmail = profile.email;
       this.avatarUrl = this.userService.getImageUrl(profile.profilePictureUrl);
       if (profile.vehicles) {
-        this.savedPlates = profile.vehicles.map(v => ({ id: v.id, licensePlate: v.licensePlate }));
+        this.savedPlates = profile.vehicles.map(v => ({ id: v.id, plateNumber: v.plateNumber }));
       }
       this.cdr.detectChanges();
     } else {
