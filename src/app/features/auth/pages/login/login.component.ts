@@ -83,10 +83,7 @@ import { gsap } from 'gsap';
           <button type="submit" class="primary-btn" [disabled]="isSubmitting()">
             {{ isSubmitting() ? 'Se autentifică...' : 'Continuă' }}
           </button>
-          
-          <button type="button" class="secondary-btn" routerLink="/dashboard">
-            Continuă (Demo)
-          </button>
+
         </form>
 
         <div class="divider">SAU</div>
