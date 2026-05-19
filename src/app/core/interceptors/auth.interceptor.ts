@@ -9,6 +9,8 @@ const PUBLIC_AUTH_PATHS = [
   '/api/auth/login',
   '/api/auth/register',
   '/api/auth/google',
+  '/api/auth/logout',
+  '/api/auth/refresh',
   '/api/auth/forgot-password',
   '/api/auth/reset-password',
 ];
