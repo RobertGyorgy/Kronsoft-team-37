@@ -53,7 +53,7 @@ const backend8081 = `${protocol}://${host}:8081`;
 
 console.log(`🌐 Proxy targets configured dynamically:`);
 console.log(`   - Main Backend APIs (8083): ${backend8083}`);
-console.log(`   - Transit/OTP APIs  (8081): ${backend8081}\n`);
+console.log(`   - Bridge (8081) — events, /api/v1: ${backend8081}\n`);
 
 const PROXY_CONFIG = {
   "/api/auth": {
@@ -77,7 +77,7 @@ const PROXY_CONFIG = {
     "secure": false
   },
   "/api/events": {
-    "target": backend8083,
+    "target": backend8081,
     "secure": false
   },
   "/api/parking": {

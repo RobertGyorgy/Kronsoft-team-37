@@ -5,6 +5,11 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { AuthService } from './features/auth/auth.service';
+import { LOCALE_ID } from '@angular/core';
+import localeRo from '@angular/common/locales/ro';
+import { registerLocaleData } from '@angular/common';
+
+registerLocaleData(localeRo);
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,5 +21,7 @@ export const appConfig: ApplicationConfig = {
       const authService = inject(AuthService);
       return authService.restoreSession() ?? undefined;
     }),
+    provideAnimations(),
+    { provide: LOCALE_ID, useValue: 'ro-RO' }
   ]
 };

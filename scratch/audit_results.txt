@@ -1,0 +1,37 @@
+Categories present in tree:
+
+- Category ID: 'natura'
+  Label: 'Natură'
+  Number of Places: 29
+  Number of Results Combinations: 64
+  [OK] All places have valid coordinates!
+
+- Category ID: 'arta'
+  Label: 'Artă și istorie'
+  Number of Places: 8
+  Number of Results Combinations: 27
+  [OK] All places have valid coordinates!
+
+- Category ID: 'restaurante'
+  Label: 'Restaurante'
+  Number of Places: 38
+  Number of Results Combinations: 64
+  [OK] All places have valid coordinates!
+
+- Category ID: 'cafenele'
+  Label: 'Cafenele'
+  Number of Places: 13
+  Number of Results Combinations: 48
+  [OK] All places have valid coordinates!
+
+- Category ID: 'plimbari'
+  Label: 'Plimbări'
+  Number of Places: 26
+  Number of Results Combinations: 36
+  [OK] All places have valid coordinates!
+
+- Category ID: 'experiente'
+  Label: 'Experiențe'
+  Number of Places: 29
+  Number of Results Combinations: 36
+  [OK] All places have valid coordinates!
