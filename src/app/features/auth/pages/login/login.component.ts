@@ -86,8 +86,6 @@ import { gsap } from 'gsap';
 
         </form>
 
-        <div class="divider">SAU</div>
-
         <div class="google-btn-host" #googleBtnHost></div>
         @if (authError()) {
           <span class="error-text">{{ authError() }}</span>
@@ -135,7 +133,7 @@ export class LoginComponent implements AfterViewInit {
 
     void this.googleAuthService
       .attachButton(host, (idToken) => this.handleGoogleSignIn(idToken))
-      .catch(() => this.authError.set('Google Sign-In nu este disponibil. Verifica GOOGLE_CLIENT_ID.'));
+      .catch(() => undefined);
   }
 
   protected togglePasswordVisibility(): void {
