@@ -127,35 +127,312 @@ app.post('/api/auth/google', (req, res) => {
     });
 });
 
-// --- EVENTS ENDPOINT ---
-let demoEvents = [
+// --- EVENTS SCRAPER & CACHE ---
+function parseHtmlEntities(str) {
+    if (!str) return '';
+    return str
+        .replace(/&#8211;/g, '–')
+        .replace(/&#8217;/g, "'")
+        .replace(/&#8220;/g, '“')
+        .replace(/&#8221;/g, '”')
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#039;/g, "'");
+}
+
+let eventsCache = null;
+let lastCacheTime = 0;
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes cache
+
+// --- PROMOTED EVENTS PERSISTENCE ---
+const promotedEventsFile = path.resolve(__dirname, './promoted_events.json');
+let promotedEvents = [];
+if (fs.existsSync(promotedEventsFile)) {
+    try {
+        promotedEvents = JSON.parse(fs.readFileSync(promotedEventsFile, 'utf8'));
+        console.log(`[Promoted Events] Loaded ${promotedEvents.length} events from database.`);
+    } catch (e) {
+        console.error('[Promoted Events] Failed to parse promoted_events.json:', e.message);
+    }
+}
+
+let backupEvents = [
     {
         id: 1,
         title: "Concert Subcarpați - Turneu 'Valea Voltului'",
         description: "Vino să simți vibrația autentică a folclorului underground într-un concert exploziv la Kruhnen Musik Halle.",
-        date: "15 MAI",
-        time: "20:00",
-        location: "Kruhnen Musik Halle",
-        image: "https://zilesinopti.ro/wp-content/uploads/2024/03/Subcarpati-Valea-Voltului.jpg",
         category: "CONCERT",
-        price: "120 RON",
-        link: "https://www.iabilet.ro/bilete-brasov-subcarpati-valea-voltului-95431/"
+        imageUrl: "https://zilesinopti.ro/wp-content/uploads/2024/03/Subcarpati-Valea-Voltului.jpg",
+        when: new Date().toISOString(),
+        location: "Kruhnen Musik Halle",
+        link: "https://zilesinopti.ro/evenimente/sot-fidel-centrul-cultural-reduta/"
     },
     {
         id: 2,
         title: "Street Food Festival Brașov",
         description: "Arome din toată lumea, burgeri artizanali, tacos și delicii asiatice.",
-        date: "22 MAI",
-        time: "11:00",
-        location: "Parcul Nicolae Titulescu",
-        image: "https://zilesinopti.ro/wp-content/uploads/2024/05/Street-Food-Brasov.jpg",
         category: "FESTIVAL",
+        imageUrl: "https://zilesinopti.ro/wp-content/uploads/2024/05/Street-Food-Brasov.jpg",
+        when: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        location: "Parcul Nicolae Titulescu",
         link: "https://streetfoodfestival.ro"
     }
 ];
 
-app.get('/api/v1/events', (req, res) => {
-    res.json(demoEvents);
+async function getLiveEvents() {
+    const now = Date.now();
+    if (eventsCache && (now - lastCacheTime < CACHE_DURATION)) {
+        console.log('[Events Cache] Returning cached events.');
+        return eventsCache;
+    }
+
+    try {
+        console.log('[Events Scraper] Fetching fresh events from Zile si Nopti...');
+        const response = await axios.get('https://zilesinopti.ro/evenimente-brasov/', {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+            },
+            timeout: 8000
+        });
+        const html = response.data;
+        const items = html.split(/<div class=["']kzn-sw-item["']/);
+        const events = [];
+
+        for (let i = 1; i < items.length; i++) {
+            const block = items[i];
+
+            const titleMatch = block.match(/<h3[^>]*>\s*<a href=["']([^"']+)["'][^>]*>([^<]+)<\/a>\s*<\/h3>/);
+            if (!titleMatch) continue;
+
+            const link = titleMatch[1];
+            const rawTitle = titleMatch[2].trim();
+            const title = parseHtmlEntities(rawTitle);
+
+            const summaryMatch = block.match(/<div class=["'][^"']*kzn-sw-item-sumar[^"']*["'][^>]*>([\s\S]*?)<\/div>/);
+            const description = summaryMatch ? parseHtmlEntities(summaryMatch[1].trim()) : '';
+
+            const categoryMatch = block.match(/<div class=['"][^'"]*kzn-sw-item-textsus[^'"]*['"][^>]*>([\s\S]*?)<\/div>/);
+            const category = categoryMatch ? categoryMatch[1].trim().toUpperCase() : 'EVENIMENT';
+
+            const imgMatch = block.match(/background-image\s*:\s*url\s*\(([^)]+)\)/);
+            let imageUrl = imgMatch ? imgMatch[1].replace(/['"]/g, '').trim() : '';
+
+            if (!imageUrl) {
+                const cat = category.toUpperCase();
+                const titleLower = title.toLowerCase();
+
+                // --- ȘTIRI / ARTICOLE EDITORIALE ---
+                if (cat.includes('FASHION') || titleLower.includes('fashion') || titleLower.includes('chromatique') || titleLower.includes('titor')) {
+                    imageUrl = 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800&q=80'; // Fashion editorial
+                } else if (cat.includes('FILM') || cat.includes('PREMIERĂ') || cat.includes('PREMIERA') || titleLower.includes('film') || titleLower.includes('cinema') || titleLower.includes('star wars') || titleLower.includes('mandalorian')) {
+                    imageUrl = 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80'; // Cinema/film
+                } else if (cat.includes('MUZICĂ NOUĂ') || cat.includes('MUZICA NOUA') || titleLower.includes('ce ascultăm') || titleLower.includes('muzică nouă') || titleLower.includes('playlist')) {
+                    imageUrl = 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80'; // Headphones/music editorial
+                } else if (cat.includes('CLIN D') || cat.includes('POVESTI') || cat.includes('POVEȘTI') || cat.includes('INTERVIU') || titleLower.includes('interviu') || titleLower.includes('clin d')) {
+                    imageUrl = 'https://images.unsplash.com/photo-1478737270197-f849b9f32a0c?auto=format&fit=crop&w=800&q=80'; // Interview/journalism
+                } else if (cat.includes('OPINIE') || titleLower.includes('esport') || titleLower.includes('faker') || titleLower.includes('opinie') || titleLower.includes('gen z')) {
+                    imageUrl = 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80'; // Editorial/esports
+                } else if (cat.includes('MIXOLOGY') || titleLower.includes('cocktail') || titleLower.includes('mixology') || titleLower.includes('pahar')) {
+                    imageUrl = 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=800&q=80'; // Cocktails
+                } else if (titleLower.includes('eurovision') || titleLower.includes('rock days') || titleLower.includes('nibiru')) {
+                    imageUrl = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=800&q=80'; // Rock concert stage
+
+                // --- ARTĂ & EXPOZIȚII ---
+                } else if (cat.includes('EXPOZI') || titleLower.includes('expozi') || titleLower.includes('vernisaj') || titleLower.includes('galerie') || titleLower.includes('iriși') || titleLower.includes('irisi') || titleLower.includes('plastice') || titleLower.includes('fragments') || titleLower.includes('scrieri') || titleLower.includes('bachmann') || titleLower.includes('steaua') || titleLower.includes('lehmann')) {
+                    imageUrl = 'https://images.unsplash.com/photo-1541367777708-7905fe3296c0?auto=format&fit=crop&w=800&q=80'; // Art gallery/exhibition
+
+                // --- TEATRU & SPECTACOLE ---
+                } else if (cat.includes('TEATRU') || cat.includes('SPECTACOL') || titleLower.includes('teatru') || titleLower.includes('spectacol') || titleLower.includes('soț fidel') || titleLower.includes('shakespeare') || titleLower.includes('irina brook') || titleLower.includes('scenă')) {
+                    imageUrl = 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=80'; // Theatre stage
+
+                // --- CONCERTE & MUZICĂ LIVE ---
+                } else if (cat.includes('CONCERT') || cat.includes('MUZICĂ') || cat.includes('MUZICA') || titleLower.includes('concert') || titleLower.includes('filarmonica') || titleLower.includes('recital') || titleLower.includes('vioară') || titleLower.includes('subcarpați')) {
+                    imageUrl = 'https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=800&q=80'; // Live concert
+
+                // --- FESTIVALURI ---
+                } else if (cat.includes('FESTIVAL') || titleLower.includes('festival') || titleLower.includes('zilele redutei') || titleLower.includes('oktoberfest') || titleLower.includes('zilele')) {
+                    imageUrl = 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&w=800&q=80'; // Festival crowd
+
+                // --- SPORT & COMPETIȚII ---
+                } else if (cat.includes('SPORT') || titleLower.includes('sport') || titleLower.includes('cursa') || titleLower.includes('heroes') || titleLower.includes('kastel') || titleLower.includes('brasov heroes') || titleLower.includes('olimpia') || titleLower.includes('fotbal')) {
+                    imageUrl = 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=800&q=80'; // Sport event
+
+                // --- CARITABIL ---
+                } else if (cat.includes('CARITABIL') || titleLower.includes('caritabil') || titleLower.includes('donație')) {
+                    imageUrl = 'https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=800&q=80'; // Charity/community
+
+                // --- CULTURĂ GENERALĂ (conferințe, lansări cărți, bibliotecă) ---
+                } else if (cat.includes('CULTURĂ') || cat.includes('CULTURA') || titleLower.includes('aromânii') || titleLower.includes('biblioteca') || titleLower.includes('modarom') || titleLower.includes('carte') || titleLower.includes('lansare') || titleLower.includes('lectură') || titleLower.includes('muzeu')) {
+                    imageUrl = 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=800&q=80'; // Books/library/culture
+
+                // --- PARTY & CLUBBING ---
+                } else if (cat.includes('PARTY') || titleLower.includes('party') || titleLower.includes('club') || titleLower.includes('dj')) {
+                    imageUrl = 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=800&q=80'; // Party/nightclub
+
+                // --- FOOD & GASTRONOMY ---
+                } else if (titleLower.includes('food') || titleLower.includes('gastronomie') || titleLower.includes('street food') || titleLower.includes('burger')) {
+                    imageUrl = 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=800&q=80'; // Food festival
+
+                // --- DEFAULT (orice altceva) ---
+                } else {
+                    imageUrl = 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=800&q=80'; // Generic event Brasov
+                }
+            }
+
+            let eventDate = new Date();
+            eventDate.setFullYear(2026);
+            let parsedTime = '19:00';
+
+            const dateMatch = block.match(/<i class=['"]eicon-calendar['"]><\/i>\s*([^<]+)/);
+            if (dateMatch) {
+                const dateStr = dateMatch[1].trim();
+                const parts = dateStr.match(/(\d+)\/(\d+)/);
+                if (parts) {
+                    const day = parseInt(parts[1], 10);
+                    const month = parseInt(parts[2], 10) - 1;
+                    eventDate.setMonth(month, day);
+                }
+            }
+
+            const timeMatch = block.match(/<i class=['"]eicon-clock-o['"]><\/i>\s*([^<]+)/);
+            if (timeMatch) {
+                parsedTime = timeMatch[1].trim();
+            }
+
+            const [hours, minutes] = parsedTime.split(':').map(Number);
+            eventDate.setHours(hours || 19, minutes || 0, 0, 0);
+
+            // Filter out events older than May 18, 2026
+            const minDate = new Date('2026-05-18T00:00:00.000Z');
+            if (eventDate < minDate) {
+                console.log(`[Events Scraper] Skipping older event: "${title}" on ${eventDate.toDateString()}`);
+                continue;
+            }
+
+            const when = eventDate.toISOString();
+
+            const locMatch = block.match(/kzn-sw-item-adresa-eveniment[\s\S]*?<a href=[^>]*>([^<]+)<\/a>/);
+            const location = locMatch ? parseHtmlEntities(locMatch[1].trim()) : 'Brașov';
+
+            events.push({
+                id: i,
+                title,
+                description,
+                category,
+                imageUrl,
+                when,
+                location,
+                link
+            });
+        }
+
+        if (events.length > 0) {
+            // Sort chronologically starting from May 18, 2026
+            events.sort((a, b) => new Date(a.when) - new Date(b.when));
+            
+            // Merge promoted events AT THE TOP
+            const combinedEvents = [...promotedEvents, ...events];
+            
+            eventsCache = combinedEvents;
+            lastCacheTime = now;
+            console.log(`[Events Scraper] Successfully scraped, filtered, and merged ${combinedEvents.length} events (Promoted: ${promotedEvents.length})!`);
+            return combinedEvents;
+        } else {
+            console.warn('[Events Scraper] Scraped 0 events, using backupEvents.');
+            const combinedBackup = [...promotedEvents, ...backupEvents];
+            return combinedBackup;
+        }
+    } catch (err) {
+        console.error('[Events Scraper] Scraping failed, using backupEvents. Error:', err.message);
+        return backupEvents;
+    }
+}
+
+// ── EVENTS ENDPOINTS FOR ANGULAR DEV SERVER ──
+
+app.post('/api/events', async (req, res) => {
+    try {
+        const { title, description, category, imageUrl, when, location, link, promotedBy, plan } = req.body;
+        
+        // Form a premium promoted event object
+        const newEvent = {
+            id: 'promoted-' + Date.now(),
+            title: title || 'Eveniment Fără Titlu',
+            description: description || '',
+            category: (category || 'EVENIMENT').toUpperCase(),
+            imageUrl: imageUrl || 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&w=800&q=80',
+            when: when || new Date().toISOString(),
+            location: location || 'Brașov',
+            link: link || '',
+            promotedBy: promotedBy || 'Utilizator Anonim',
+            plan: (plan || 'BASIC').toUpperCase(),
+            isPromoted: true // Glowing outline & badge marker
+        };
+        
+        promotedEvents.push(newEvent);
+        
+        // Persist to file
+        await fs.promises.writeFile(promotedEventsFile, JSON.stringify(promotedEvents, null, 2), 'utf8');
+        
+        // Reset the cache to merge and reflect the promoted event instantly
+        eventsCache = null;
+        lastCacheTime = 0;
+        
+        console.log(`[Promoted Events] Successfully registered promoted event: "${newEvent.title}" by ${newEvent.promotedBy} [Plan: ${newEvent.plan}]`);
+        res.json({ success: true, event: newEvent });
+    } catch (err) {
+        console.error('[Promoted Events] Failed to register promoted event:', err.message);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/api/events/current-week', async (req, res) => {
+    try {
+        const events = await getLiveEvents();
+        res.json({ content: events });
+    } catch (err) {
+        res.json({ content: backupEvents });
+    }
+});
+
+app.get('/api/events/next-week', async (req, res) => {
+    try {
+        const events = await getLiveEvents();
+        const nextEvents = events.slice(Math.min(5, events.length));
+        res.json({ content: nextEvents });
+    } catch (err) {
+        res.json({ content: backupEvents });
+    }
+});
+
+app.get('/api/events', async (req, res) => {
+    try {
+        const events = await getLiveEvents();
+        const query = req.query.q ? String(req.query.q).toLowerCase() : '';
+        if (query) {
+            const filtered = events.filter(e => 
+                e.title.toLowerCase().includes(query) || 
+                e.location.toLowerCase().includes(query) ||
+                e.category.toLowerCase().includes(query)
+            );
+            res.json({ content: filtered });
+        } else {
+            res.json({ content: events });
+        }
+    } catch (err) {
+        res.json({ content: backupEvents });
+    }
+});
+
+app.get('/api/v1/events', async (req, res) => {
+    try {
+        const events = await getLiveEvents();
+        res.json(events);
+    } catch (err) {
+        res.json(backupEvents);
+    }
 });
 
 // --- PARKING DATA ENDPOINT ---

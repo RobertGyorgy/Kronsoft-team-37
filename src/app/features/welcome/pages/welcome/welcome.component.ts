@@ -31,7 +31,7 @@ import { gsap } from 'gsap';
 
         <section class="main-content">
           <div class="text-group">
-            <h1 class="headline">Descoperă Viitorul<br/>Mobilității Urbane</h1>
+            <h1 class="headline">Descoperă viitorul<br/>mobilității urbane</h1>
             <p class="tagline">Experimentează transportul public și parcarea inteligentă în Brașov — sigur, rapid și modern.</p>
           </div>
         </section>
@@ -39,7 +39,7 @@ import { gsap } from 'gsap';
         <footer class="bottom-action-zone">
           <div class="action-container">
             <a routerLink="/login" class="theme-action-btn">
-              <span class="btn-label">Începe Acum</span>
+              <span class="btn-label">Începe acum</span>
               <div class="arrow-ico">
                 <span class="material-icons">east</span>
               </div>
