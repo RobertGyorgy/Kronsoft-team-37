@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone, afterNextRender, ViewChild, ElementRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone, afterNextRender, ViewChild, ElementRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -7,6 +7,8 @@ import { gsap } from 'gsap';
 import maplibregl from 'maplibre-gl';
 import * as turf from '@turf/turf';
 import { GeolocationService } from '../../../../core/services/geolocation.service';
+import { UserService } from '../../../../core/services/user.service';
+import { ParkingService } from '../../services/parking.service';
 import { TransitService } from '../../../transport/services/transit.service';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
@@ -78,9 +80,9 @@ import { firstValueFrom } from 'rxjs';
 
           @if (userSavedPlates.length > 0) {
             <div class="saved-plates-strip">
-              @for (p of userSavedPlates; track p) {
-                <button class="plate-tag" [class.active]="tempPlate === p" (click)="selectSavedPlate(p)">
-                  {{ p }}
+              @for (v of userSavedPlates; track v.id) {
+                <button class="plate-tag" [class.active]="tempPlate === v.plateNumber" (click)="selectSavedPlate(v)">
+                  {{ v.plateNumber }}
                 </button>
               }
             </div>
@@ -261,6 +263,9 @@ import { firstValueFrom } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ParkingComponent implements OnInit, OnDestroy {
+  private userService = inject(UserService);
+  private parkingService = inject(ParkingService);
+
   @ViewChild('mapContainer') mapContainer!: ElementRef;
 
   showTariffs = false;
@@ -271,7 +276,8 @@ export class ParkingComponent implements OnInit, OnDestroy {
   carPlate = '';
   isPlateSaved = false;
   tempPlate = '';
-  userSavedPlates: string[] = [];
+  userSavedPlates: { id: number; plateNumber: string }[] = [];
+  selectedVehicleId: number | null = null;
   selectedHours = 1;
   selectedZoneIndex = 0;
   currentStreet = '';
@@ -327,9 +333,9 @@ export class ParkingComponent implements OnInit, OnDestroy {
     try {
       // Hardcode correct production parking zones in Brasov (RON)
       this.PARKING_ZONES = [
-        { id: 0, name: 'Zona 0 - Centru Vechi', smsNumber: '7420', tariff: 3.00, tariffPerDay: 72.00 },
-        { id: 1, name: 'Zona 1 - Centrul Civic', smsNumber: '7420', tariff: 2.00, tariffPerDay: 48.00 },
-        { id: 2, name: 'Zona 2 - Periferie', smsNumber: '7420', tariff: 1.50, tariffPerDay: 12.00 }
+        { id: 0, zoneCode: '0', name: 'Zona 0 - Centru Vechi', smsNumber: '7420', tariff: 3.00, tariffPerDay: 72.00 },
+        { id: 1, zoneCode: '1', name: 'Zona 1 - Centrul Civic', smsNumber: '7420', tariff: 2.00, tariffPerDay: 48.00 },
+        { id: 2, zoneCode: '2', name: 'Zona 2 - Periferie', smsNumber: '7420', tariff: 1.50, tariffPerDay: 12.00 }
       ];
 
       // Fetch Neighborhoods directly from the static GeoJSON asset (served from public/)
@@ -571,7 +577,10 @@ export class ParkingComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit() { this.loadPersistedData(); }
+  ngOnInit() {
+    this.loadPersistedData();
+    this.applyUserVehiclesFromCachedProfile();
+  }
   ngOnDestroy() {
     this.isAlive = false;
     if (this.timerSubscription) this.timerSubscription.unsubscribe();
@@ -591,16 +600,19 @@ export class ParkingComponent implements OnInit, OnDestroy {
     }
     const pending = localStorage.getItem('pending_parking_confirmation');
     if (pending === 'true') this.showPaymentConfirmation = true;
+  }
 
-    // Load Global Saved Plates from Settings
-    const globalPlates = localStorage.getItem('user_plates');
-    if (globalPlates) {
-      this.userSavedPlates = JSON.parse(globalPlates);
-      // If no plate currently set in parking, use the first saved one
-      if (!this.carPlate && this.userSavedPlates.length > 0) {
-        this.selectSavedPlate(this.userSavedPlates[0]);
-      }
+  private applyUserVehiclesFromCachedProfile() {
+    const profile = this.userService.profile();
+    if (!profile?.vehicles?.length) {
+      return;
     }
+
+    this.userSavedPlates = profile.vehicles.map(v => ({ id: v.id, plateNumber: v.plateNumber }));
+    if (!this.carPlate && this.userSavedPlates.length > 0) {
+      this.selectSavedPlate(this.userSavedPlates[0]);
+    }
+    this.cdr.detectChanges();
   }
 
   private resumeCountdown(seconds: number) {
@@ -628,26 +640,40 @@ export class ParkingComponent implements OnInit, OnDestroy {
       this.carPlate = this.tempPlate.toUpperCase();
       this.isPlateSaved = true;
       localStorage.setItem('parked_plate', this.carPlate);
-
-      // Also add to global plates if not exists
-      if (!this.userSavedPlates.includes(this.carPlate)) {
-        this.userSavedPlates.push(this.carPlate);
-        localStorage.setItem('user_plates', JSON.stringify(this.userSavedPlates));
-      }
+      const match = this.userSavedPlates.find(v => v.plateNumber === this.carPlate);
+      this.selectedVehicleId = match?.id ?? null;
     }
   }
 
   onPlateInputChange(val: string) {
     this.tempPlate = val.toUpperCase();
     this.isPlateSaved = (this.tempPlate === this.carPlate);
+    const match = this.userSavedPlates.find(v => v.plateNumber === this.tempPlate);
+    this.selectedVehicleId = match?.id ?? null;
   }
 
-  selectSavedPlate(plate: string) {
-    this.tempPlate = plate;
-    this.carPlate = plate;
+  selectSavedPlate(vehicle: { id: number; plateNumber: string }) {
+    this.tempPlate = vehicle.plateNumber;
+    this.carPlate = vehicle.plateNumber;
+    this.selectedVehicleId = vehicle.id;
     this.isPlateSaved = true;
     localStorage.setItem('parked_plate', this.carPlate);
     this.cdr.detectChanges();
+  }
+
+  private resolveVehicleId(): number | null {
+    if (this.selectedVehicleId) {
+      return this.selectedVehicleId;
+    }
+    const profile = this.userService.profile();
+    if (!profile?.vehicles?.length) {
+      return null;
+    }
+    const normalized = this.carPlate.replace(/\s+/g, '').toUpperCase();
+    const vehicle = profile.vehicles.find(
+      v => v.plateNumber.replace(/\s+/g, '').toUpperCase() === normalized
+    );
+    return vehicle?.id ?? null;
   }
 
   incrementHours() { if (this.selectedHours < 24) this.selectedHours++; }
@@ -791,11 +817,30 @@ export class ParkingComponent implements OnInit, OnDestroy {
     this.showProximityWarning = minDistance < 100;
   }
 
-  confirmPayment() {
-    const hours = parseInt(localStorage.getItem('pending_parking_hours') || '1');
-    const zoneIndex = parseInt(localStorage.getItem('pending_parking_zone') || '0');
+  async confirmPayment() {
+    const hours = parseInt(localStorage.getItem('pending_parking_hours') || '1', 10);
+    const zoneIndex = parseInt(localStorage.getItem('pending_parking_zone') || '0', 10);
     this.selectedHours = hours;
     this.selectedZoneIndex = zoneIndex;
+
+    const zone = this.PARKING_ZONES[zoneIndex];
+    const vehicleId = this.resolveVehicleId();
+    if (!zone || !vehicleId) {
+      alert('Selectează o mașină salvată în profil (Setări) înainte de a confirma plata.');
+      return;
+    }
+
+    try {
+      await this.parkingService.createPayment({
+        vehicleId,
+        zoneCode: zone.zoneCode,
+        durationHours: hours,
+        ...(this.userLat && this.userLng ? { latitude: this.userLat, longitude: this.userLng } : {})
+      });
+    } catch {
+      alert('Eroare la salvarea plății. Încearcă din nou.');
+      return;
+    }
 
     localStorage.removeItem('pending_parking_confirmation');
     localStorage.setItem('parked_location', JSON.stringify({ lat: this.userLat, lng: this.userLng }));

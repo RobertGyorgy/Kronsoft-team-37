@@ -5,7 +5,7 @@ import { firstValueFrom } from 'rxjs';
 // ── Request/Response Interfaces (from OpenAPI spec) ────────────
 
 export interface ParkingPaymentRequest {
-  plateNumber: string;
+  vehicleId: number;
   zoneCode: string;
   durationHours: number;
   latitude?: number;
