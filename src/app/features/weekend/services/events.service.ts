@@ -5,11 +5,16 @@ import { firstValueFrom } from 'rxjs';
 // ── Response Interfaces (from OpenAPI spec) ────────────────────
 
 export interface EventItem {
-  id: number;
+  id: number | string;
   title: string;
   when: string;
   location: string;
   imageUrl: string;
+  category?: string;
+  link?: string;
+  isPromoted?: boolean;
+  plan?: string;
+  promotedBy?: string;
 }
 
 @Injectable({
@@ -70,6 +75,24 @@ export class EventsService {
     } catch (err) {
       console.error('Failed to search events:', err);
       return [];
+    }
+  }
+
+  /**
+   * POST /api/events
+   * Register and promote a custom user event
+   */
+  async promoteEvent(eventData: any): Promise<any> {
+    try {
+      const res = await firstValueFrom(
+        this.http.post<any>('/api/events', eventData)
+      );
+      // Reload active events to immediately show the newly promoted event
+      await this.loadEvents();
+      return res;
+    } catch (err) {
+      console.error('Failed to promote event:', err);
+      throw err;
     }
   }
 }

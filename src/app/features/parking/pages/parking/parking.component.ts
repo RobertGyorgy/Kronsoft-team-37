@@ -317,13 +317,40 @@ export class ParkingComponent implements OnInit, OnDestroy {
       // Fetch Neighborhoods directly from the static GeoJSON asset (served from public/)
       const neighborhoods = await firstValueFrom(this.http.get<any[]>('/brasov_neighborhoods.json'));
 
-      this.PARKING_ZONES = zoneRes.content.map((z: any, idx: number) => ({
-        id: idx,
-        name: z.zone,
-        smsNumber: '1234', // Default for now
-        tariff: z.tariffPerHour,
-        tariffPerDay: z.tariffPerDay
-      }));
+      let zonesList: any[] = [];
+      if (zoneRes) {
+        if (Array.isArray(zoneRes)) {
+          zonesList = zoneRes;
+        } else if (zoneRes.data && Array.isArray(zoneRes.data)) {
+          zonesList = zoneRes.data;
+        } else if (zoneRes.content && Array.isArray(zoneRes.content)) {
+          zonesList = zoneRes.content;
+        }
+      }
+
+      if (!zonesList || zonesList.length === 0) {
+        zonesList = [
+          { zone: 'Zona 0 - Centru Vechi', tariffPerHour: 0.60, tariffPerDay: 3.00 },
+          { zone: 'Zona 1 - Centrul Civic', tariffPerHour: 0.40, tariffPerDay: 2.00 },
+          { zone: 'Zona 2 - Periferie', tariffPerHour: 0.30, tariffPerDay: 1.50 }
+        ];
+      }
+
+      this.PARKING_ZONES = zonesList.map((z: any, idx: number) => {
+        let rawTariff = z.tariffPerHour !== undefined ? z.tariffPerHour : z.tariff;
+        let rawTariffDay = z.tariffPerDay;
+        
+        let tariff = typeof rawTariff === 'number' ? rawTariff : parseFloat(String(rawTariff || '0'));
+        let tariffPerDay = typeof rawTariffDay === 'number' ? rawTariffDay : parseFloat(String(rawTariffDay || '0'));
+
+        return {
+          id: idx,
+          name: z.zone || `Zona ${idx}`,
+          smsNumber: '1234',
+          tariff: isNaN(tariff) ? 0.50 : tariff,
+          tariffPerDay: isNaN(tariffPerDay) ? 2.50 : tariffPerDay
+        };
+      });
 
       this.neighborhoodData = neighborhoods;
       

@@ -28,7 +28,7 @@ Aplicația este integrată cu ecosistemul de producție al orașului:
 | :--- | :--- | :--- |
 | **Auth** | `/api/auth/*` | Java 8083 |
 | **Reports** | `/api/reports`, `/api/report-categories` | Java 8083 |
-| **Events** | `/api/events/current-week` | Java 8083 |
+| **Events** | `/api/events/current-week` | Bridge 8081 (scraper) |
 | **Parking** | `/api/parking/zones` | Java 8083 |
 | **Routing** | `/api/v1/routing/plan` | Bridge 8081 |
 | **AI** | `/api/v1/ai/recommendation` | Bridge 8081 |
@@ -42,9 +42,20 @@ GOOGLE_MAPS_API_KEY=cheia_ta_aici
 GROQ_API_KEY=cheia_ta_aici
 ```
 
-### 2. Pornire Backend Bridge
+### 2. Pornire motor OTP + bridge (backend)
+
+Routing OpenTripPlanner și bridge-ul Node rulează din `backend/`:
+
 ```bash
-cd java-otp-backend
+cd ../backend/algo-rutare-main/algo-rutare-main
+docker compose up -d
+```
+
+Bridge local (fără Docker):
+
+```bash
+cd ../backend
+npm install
 node pwa-bridge.js
 ```
 
